@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="src" displayName="src" projectFiles="true">
+      <logicalFolder name="atoms" displayName="atoms" projectFiles="true">
+        <itemPath>src/atoms/Atoms.cpp</itemPath>
+        <itemPath>src/atoms/Atoms.h</itemPath>
+        <itemPath>src/atoms/Lattice.cpp</itemPath>
+        <itemPath>src/atoms/Lattice.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="cache" displayName="cache" projectFiles="true">
+        <itemPath>src/cache/cache.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="grid" displayName="grid" projectFiles="true">
+        <itemPath>src/grid/grid.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="include" displayName="include" projectFiles="true">
+        <itemPath>src/include/qmicad.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="negf" displayName="negf" projectFiles="true">
+        <itemPath>src/negf/NEGF.cpp</itemPath>
+        <itemPath>src/negf/NEGF.h</itemPath>
+        <itemPath>src/negf/NegfEloop.cpp</itemPath>
+        <itemPath>src/negf/NegfEloop.h</itemPath>
+        <itemPath>src/negf/computegs.cpp</itemPath>
+        <itemPath>src/negf/computegs.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="parallel" displayName="parallel" projectFiles="true">
+        <itemPath>src/parallel/parloop.cpp</itemPath>
+        <itemPath>src/parallel/parloop.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="potential" displayName="potential" projectFiles="true">
+        <itemPath>src/potential/linearPot.cpp</itemPath>
+        <itemPath>src/potential/linearPot.h</itemPath>
+        <itemPath>src/potential/potential.cpp</itemPath>
+        <itemPath>src/potential/potential.h</itemPath>
+        <itemPath>src/potential/terminal.cpp</itemPath>
+        <itemPath>src/potential/terminal.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="python" displayName="python" projectFiles="true">
+        <itemPath>src/python/pyqmicad.cpp</itemPath>
+        <itemPath>src/python/pyqmicad.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="qm" displayName="qm" projectFiles="true">
+        <logicalFolder name="kp" displayName="kp" projectFiles="true">
+          <itemPath>src/qm/kp/genKpAtoms.cpp</itemPath>
+          <itemPath>src/qm/kp/genKpAtoms.h</itemPath>
+          <itemPath>src/qm/kp/graphenekp.cpp</itemPath>
+          <itemPath>src/qm/kp/graphenekp.h</itemPath>
+          <itemPath>src/qm/kp/kpParams.hpp</itemPath>
+          <itemPath>src/qm/kp/tikp.cpp</itemPath>
+          <itemPath>src/qm/kp/tikp.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="tb" displayName="tb" projectFiles="true">
+          <itemPath>src/qm/tb/graphenetb.hpp</itemPath>
+        </logicalFolder>
+        <itemPath>src/qm/genHam.hpp</itemPath>
+        <itemPath>src/qm/hamParams.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="simulations" displayName="simulations" projectFiles="true">
+        <itemPath>src/simulations/Device.cpp</itemPath>
+        <itemPath>src/simulations/Device.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>src/utils/ConsoleProgressBar.cpp</itemPath>
+        <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
+        <itemPath>src/utils/Exception.h</itemPath>
+        <itemPath>src/utils/Printable.hpp</itemPath>
+        <itemPath>src/utils/fermi.hpp</itemPath>
+        <itemPath>src/utils/geometry.hpp</itemPath>
+        <itemPath>src/utils/myenums.hpp</itemPath>
+        <itemPath>src/utils/mymath.h</itemPath>
+        <itemPath>src/utils/serialize.hpp</itemPath>
+        <itemPath>src/utils/stringutils.cpp</itemPath>
+        <itemPath>src/utils/stringutils.h</itemPath>
+        <itemPath>src/utils/svec.h</itemPath>
+        <itemPath>src/utils/trace.hpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>src</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="2">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>/usr/include/python2.6</pElem>
+            <pElem>/home/kh8hk/usr/include</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>/usr/include/python2.6</pElem>
+            <pElem>/home/kh8hk/usr/include</pElem>
+          </incDir>
+        </ccTool>
+        <fortranCompilerTool>
+          <architecture>2</architecture>
+        </fortranCompilerTool>
+        <asmTool>
+          <architecture>2</architecture>
+        </asmTool>
+        <linkerTool>
+          <output>lib/qmicad.${CND_DLIB_EXT}</output>
+          <linkerLibItems>
+            <linkerOptionItem>-Wl,--start-group</linkerOptionItem>
+            <linkerOptionItem>/home/kh8hk/usr/lib/libboost_mpi_python.a</linkerOptionItem>
+            <linkerOptionItem>/home/kh8hk/usr/lib/libboost_mpi.a</linkerOptionItem>
+            <linkerOptionItem>-Wl,--end-group</linkerOptionItem>
+            <linkerOptionItem>-Wl,--start-group</linkerOptionItem>
+            <linkerOptionItem>/opt/intel/mkl/lib/intel64/libmkl_intel_lp64.a</linkerOptionItem>
+            <linkerOptionItem>/opt/intel/mkl/lib/intel64/libmkl_core.a</linkerOptionItem>
+            <linkerOptionItem>/opt/intel/mkl/lib/intel64/libmkl_intel_thread.a</linkerOptionItem>
+            <linkerOptionItem>-Wl,--end-group</linkerOptionItem>
+            <linkerOptionItem>-Wl,-Bdynamic</linkerOptionItem>
+            <linkerOptionItem>-L/home/kh8hk/usr/lib -lboost_serialization</linkerOptionItem>
+            <linkerOptionItem>-L/home/kh8hk/usr/lib -lboost_python</linkerOptionItem>
+            <linkerOptionItem>-L/opt/intel/lib/intel64 -liomp5</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-lm</linkerOptionItem>
+            <linkerOptionItem>-ldl</linkerOptionItem>
+            <linkerOptionItem>-Wl,--no-as-needed</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="src/atoms/Atoms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/atoms/Atoms.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/atoms/Lattice.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/atoms/Lattice.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/cache/cache.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/NEGF.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/negf/NegfEloop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/NegfEloop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/negf/computegs.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/computegs.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/parallel/parloop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/parallel/parloop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/potential/linearPot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/potential/linearPot.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/potential/potential.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/potential/potential.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/potential/terminal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/genHam.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/hamParams.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/genKpAtoms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/kp/genKpAtoms.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/kpParams.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/kp/tikp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/tb/graphenetb.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/simulations/Device.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/simulations/Device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/ConsoleProgressBar.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/ConsoleProgressBar.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/fermi.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/geometry.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/mymath.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/stringutils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/stringutils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/svec.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/trace.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="2">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="src/atoms/Atoms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/atoms/Atoms.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/atoms/Lattice.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/atoms/Lattice.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/cache/cache.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/NEGF.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/negf/NegfEloop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/NegfEloop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/negf/computegs.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/computegs.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/parallel/parloop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/parallel/parloop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/potential/linearPot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/potential/linearPot.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/potential/potential.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/potential/potential.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/potential/terminal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/genHam.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/hamParams.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/genKpAtoms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/kp/genKpAtoms.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/kpParams.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/kp/tikp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qm/tb/graphenetb.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/simulations/Device.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/simulations/Device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/ConsoleProgressBar.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/ConsoleProgressBar.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/fermi.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/geometry.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/mymath.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/stringutils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/stringutils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/svec.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/trace.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
