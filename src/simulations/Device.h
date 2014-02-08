@@ -134,7 +134,7 @@ public:
     void        VG(int ig, double VG);
     void        VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0);
     
-    NegfParams& NegfParam() { return np; };
+    NegfParams NegfParam();
     
     virtual string toString() const;
 

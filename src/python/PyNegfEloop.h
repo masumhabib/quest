@@ -37,6 +37,7 @@ public:
     virtual void    collectTE() {NegfEloop::collectTE(); };
     
     virtual void    stepCompleted() {NegfEloop::stepCompleted(); };
+    
 };
 }}
 #endif	/* PYNEGFELOOP_H */

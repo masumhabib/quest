@@ -262,5 +262,9 @@ void Device::runNegfEloop(){
     Eloop.saveTE(p.OutFileName + "TE.dat");
 }
 
+NegfParams Device::NegfParam() { 
+    return np; 
+};
+
 }
 

@@ -32,7 +32,7 @@ char const* greet()
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VDS, VDS, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VLR, VLR, 3, 5)
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
@@ -90,6 +90,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("addLinearRegion", &Device::addLinearRegion)
         .def("computePotential", &Device::computePotential)
         .def("runNegfEloop", &Device::runNegfEloop)
+        .def("NegfParam", &Device::NegfParam)
         .def("toString", &Device::toString)
         .def("xmax", &Device::xmax)
         .def("xmin", &Device::xmin)
@@ -104,23 +105,23 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("VLR", &Device::VLR, Device_VLR())
     ; 
  
-//    class_<PyNegfEloop>("QnegfEloop", init<VecGrid&, const NegfParams&, const communicator&>())
-//        .def_readonly("TE", &PyNegfEloop::TE)
-//        .def_readonly("I1", &PyNegfEloop::I1)
-//        .def("prepare", &PyNegfEloop::prepare)
-//        .def("preCompute", &PyNegfEloop::preCompute)
-//        .def("compute", &PyNegfEloop::compute)
-//        .def("postCompute", &PyNegfEloop::postCompute)
-//        .def("collect", &PyNegfEloop::collect)
-//        .def("computeTE", &PyNegfEloop::computeTE)
-//        .def("collectTE", &PyNegfEloop::collectTE)
-//        .def("stepCompleted", &PyNegfEloop::stepCompleted)
-//        .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
-//        .def("saveTE", &PyNegfEloop::saveTE)        
-//    ;
+    class_<PyNegfEloop>("QnegfEloop", init<VecGrid&, const NegfParams&, const communicator&>())
+        .def_readonly("TE", &PyNegfEloop::TE)
+        .def_readonly("I1", &PyNegfEloop::I1)
+        .def("prepare", &PyNegfEloop::prepare)
+        .def("preCompute", &PyNegfEloop::preCompute)
+        .def("compute", &PyNegfEloop::compute)
+        .def("postCompute", &PyNegfEloop::postCompute)
+        .def("collect", &PyNegfEloop::collect)
+        .def("computeTE", &PyNegfEloop::computeTE)
+        .def("collectTE", &PyNegfEloop::collectTE)
+        .def("stepCompleted", &PyNegfEloop::stepCompleted)
+        .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
+        .def("saveTE", &PyNegfEloop::saveTE)        
+    ;
 
-//    class_<PyNegfParams>("QnegfParams", init<>())
-//    ;
+    class_<PyNegfParams>("QnegfParams", init<>())
+    ;
     
 }
 
