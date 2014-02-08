@@ -13,15 +13,17 @@
 #define	TEMINAL_H
 
 #include <vector>
-#include "../utils/Printable.hpp"
+#include "../utils/Qbase.hpp"
 #include "../utils/geometry.hpp"
 
+namespace qmicad{
 using std::vector;
+using std::stringstream;
 
 /*
  * Terminal class stores terminal data structure.
  */
-struct Terminal:public Printable{
+struct Terminal:public Qbase{
     polygon geom;       // geometry of the terminal
 
     // construct from a string containing definition of a plygon
@@ -79,6 +81,8 @@ struct Contact4:public Terminal4{
 typedef Terminal4   terminal;
 typedef Contact4    contact;
 typedef Gate4       gate;
+
+}
 
 #endif	/* TEMINAL_H */
 

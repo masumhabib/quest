@@ -10,6 +10,9 @@
 
 #include "genKpAtoms.h"
 
+namespace qmicad{
+    
+
 Atoms genKpAtoms(double Lx, double Ly, double ax, double ay, 
         const vector<Atom>& periodicTable){
     MatGrid xy(-Lx/2, Lx/2, ax, -Ly/2, Ly/2, ay);
@@ -34,4 +37,4 @@ Atoms genKpAtoms(double Lx, double Ly, double ax, double ay,
     
     return kpAtoms;
 }
-
+}

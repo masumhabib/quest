@@ -11,6 +11,7 @@
 #include <boost/mpi.hpp>
 #include "../grid/grid.hpp"
 
+namespace qmicad{
 namespace mpi = boost::mpi;
 
 /*
@@ -19,8 +20,8 @@ namespace mpi = boost::mpi;
 template<class T>
 class ParLoop{
 public: 
-    ParLoop(Grid1D<T> L, const mpi::communicator &workers):mL(L), mWorkers(workers),
-            mMasterId(0)
+    ParLoop(const Grid1D<T> &L, const mpi::communicator &workers):
+            mL(L), mWorkers(workers), mMasterId(0)
     {
         mMyCpuId = mWorkers.rank();
         mNcpu = mWorkers.size();
@@ -63,6 +64,8 @@ protected:
     int                 mMyStart;       // Start point for this CPU
     int                 mMyEnd;         // End point for this CPU
 };
+
+}
 
 #endif	/* PARFOR_H */
 

@@ -14,6 +14,7 @@
 
 #include "../include/qmicad.hpp"
 
+namespace qmicad{
 using namespace arma;
 using boost::shared_ptr;
 using boost::static_pointer_cast;
@@ -133,6 +134,8 @@ public:
     void        VG(int ig, double VG);
     void        VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0);
     
+    NegfParams& NegfParam() { return np; };
+    
     virtual string toString() const;
 
 protected:    
@@ -140,5 +143,6 @@ private:
 
 };
 
+}
 #endif	/* DEVICE_H */
 

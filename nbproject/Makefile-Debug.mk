@@ -44,6 +44,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
+	${OBJECTDIR}/src/python/PyNegfEloop.o \
+	${OBJECTDIR}/src/python/PyNegfParams.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qm/kp/genKpAtoms.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
@@ -77,6 +79,10 @@ lib/qmicad.${CND_DLIB_EXT}: ${OBJECTFILES}
 	${MKDIR} -p lib
 	${LINK.cc} -o lib/qmicad.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
 
+: doc/qmicad.doxy 
+	@echo Performing Custom Build Step
+	doxygen
+
 ${OBJECTDIR}/src/atoms/Atoms.o: src/atoms/Atoms.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
@@ -86,6 +92,11 @@ ${OBJECTDIR}/src/atoms/Lattice.o: src/atoms/Lattice.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/Lattice.o src/atoms/Lattice.cpp
+
+${OBJECTDIR}/src/include/qmicad.hpp.gch: src/include/qmicad.hpp 
+	${MKDIR} -p ${OBJECTDIR}/src/include
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o "$@" src/include/qmicad.hpp
 
 ${OBJECTDIR}/src/negf/NEGF.o: src/negf/NEGF.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
@@ -121,6 +132,16 @@ ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
+
+${OBJECTDIR}/src/python/PyNegfEloop.o: src/python/PyNegfEloop.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfEloop.o src/python/PyNegfEloop.cpp
+
+${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
 
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
@@ -164,6 +185,7 @@ ${OBJECTDIR}/src/utils/stringutils.o: src/utils/stringutils.cpp
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
 	${RM} lib/qmicad.${CND_DLIB_EXT}
+	${RM} 
 
 # Subprojects
 .clean-subprojects:

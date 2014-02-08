@@ -20,14 +20,15 @@
 #include "../utils/stringutils.h"
 #include "../utils/myenums.hpp"
 #include "../utils/trace.hpp"
-#include "../utils/Printable.hpp"
+#include "../utils/Qbase.hpp"
 #include "../utils/fermi.hpp"
 #include "../cache/cache.hpp"
 #include "computegs.h"
 
-using std::string;
+namespace qmicad{
 using namespace arma;
 using namespace constants;
+using std::string;
 using myenums::Option;
 using myenums::Enabled;
 using myenums::Disabled;
@@ -48,7 +49,7 @@ using myenums::Disabled;
  * The method constructing NEGF object is responsible
  * for memory management of NEGFParams.
  */
-struct NegfParams: public Printable {
+struct NegfParams: public Qbase {
     
     // Options
     Option              DCache;
@@ -62,8 +63,6 @@ struct NegfParams: public Printable {
     Option              GiNCache;
     Option              Giip1Cache;
     Option              Giim1Cache;
-    
-    bool                calcTE;
     
     bool                isOrthogonal;
     
@@ -118,8 +117,6 @@ struct NegfParams: public Printable {
         GiNCache = Disabled;
         Giip1Cache = Disabled;
         Giim1Cache = Disabled; 
-        
-        calcTE = false;
     }
 };
 
@@ -128,7 +125,7 @@ struct NegfParams: public Printable {
  * NEGF class. It implements the RGF algorithm for a single energy point.
  * It only works for coherent transport. It is not parallel right now.
  */
-class Negf: public Printable {
+class Negf: public Qbase {
 /*
  * Helper classes for the potential, Hamiltonian
  * and Green functions.
@@ -326,5 +323,6 @@ private:
     Negf();
 
 }; // end of NEGF
+}  // end of namespace
 #endif	/* NEGF_H */
 

@@ -7,8 +7,9 @@
 
 #include "NEGF.h"
 
+namespace qmicad{
 Negf::Negf(NegfParams newp, double E, string newprefix):
-        Printable(newprefix), mp(newp), mE(E), 
+        Qbase(newprefix), mp(newp), mE(E), 
         mN(newp.nb-2), miLc(0), miRc(newp.nb-1),
         mDi(this, miLc, miRc, newp.DCache), 
         mTl(this, miLc, miRc+1, newp.TCache),
@@ -551,6 +552,8 @@ inline cx_mat Negf::Ui(int i){
         }
     }
     return Ui;
+}
+
 }
 
 

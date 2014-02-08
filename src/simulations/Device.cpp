@@ -7,6 +7,7 @@
  */
 
 #include "Device.h"
+namespace qmicad{
 
 Device::Device(const communicator &workers, const DeviceParams &p):
 interval(0), mWorkers(workers), p(p)
@@ -261,4 +262,5 @@ void Device::runNegfEloop(){
     Eloop.saveTE(p.OutFileName + "TE.dat");
 }
 
+}
 

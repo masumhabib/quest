@@ -3,6 +3,9 @@
  * Author: K M Masum Habib<masum.habib@virginia.edu>
  *
  * Created on February 3, 2014, 10:58 PM
+ * 
+ * Python interface to our wrappers.
+ * 
  */
 
 
@@ -12,12 +15,12 @@
 #include <boost/python/detail/wrap_python.hpp>
 
 #include "../include/qmicad.hpp"
-#include "../simulations/Device.h"
 
 #include "pyqmicad.h"
 
 
-
+namespace qmicad{
+namespace python{
 
 char const* greet()
 {   
@@ -29,6 +32,7 @@ char const* greet()
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VDS, VDS, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VLR, VLR, 3, 5)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
@@ -98,5 +102,27 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("VDS", &Device::VDS, Device_VDS())
         .def("VG", &Device::VG)
         .def("VLR", &Device::VLR, Device_VLR())
-    ;        
+    ; 
+ 
+//    class_<PyNegfEloop>("QnegfEloop", init<VecGrid&, const NegfParams&, const communicator&>())
+//        .def_readonly("TE", &PyNegfEloop::TE)
+//        .def_readonly("I1", &PyNegfEloop::I1)
+//        .def("prepare", &PyNegfEloop::prepare)
+//        .def("preCompute", &PyNegfEloop::preCompute)
+//        .def("compute", &PyNegfEloop::compute)
+//        .def("postCompute", &PyNegfEloop::postCompute)
+//        .def("collect", &PyNegfEloop::collect)
+//        .def("computeTE", &PyNegfEloop::computeTE)
+//        .def("collectTE", &PyNegfEloop::collectTE)
+//        .def("stepCompleted", &PyNegfEloop::stepCompleted)
+//        .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
+//        .def("saveTE", &PyNegfEloop::saveTE)        
+//    ;
+
+//    class_<PyNegfParams>("QnegfParams", init<>())
+//    ;
+    
+}
+
+}
 }

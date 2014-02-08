@@ -7,11 +7,12 @@
 
 #include "potential.h"
 
+namespace qmicad{
 using namespace std;
 // Constructor
 Potential::Potential(const Atoms &atoms, const contact &source, 
 const contact &drain, const vector<gate> &gates, const string &prefix):
-Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
+Qbase("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
     mV.set_size(ma.NumOfAtoms());
     mV.zeros();
     ms.Title("Source");
@@ -91,5 +92,6 @@ void Potential::exportPotential(const string& path){
     ofstream potf(path.c_str());
     potf << Va << endl;
 }
-    
+
+}
 

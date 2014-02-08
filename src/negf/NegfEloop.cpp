@@ -7,6 +7,9 @@
 
 #include "NegfEloop.h"
 
+namespace qmicad{
+    
+
 void NegfEloop::prepare() {
     if (mIAmMaster){
         cout << " NEGF: |"; 
@@ -100,5 +103,5 @@ void NegfEloop::saveTE(string fileName){
     }    
 }
 
-
+}
 

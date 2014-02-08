@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="doc" projectFiles="true" kind="ROOT">
+      <itemPath>doc/qmicad.doxy</itemPath>
+    </logicalFolder>
     <logicalFolder name="src" displayName="src" projectFiles="true">
       <logicalFolder name="atoms" displayName="atoms" projectFiles="true">
         <itemPath>src/atoms/Atoms.cpp</itemPath>
@@ -38,6 +41,11 @@
         <itemPath>src/potential/terminal.h</itemPath>
       </logicalFolder>
       <logicalFolder name="python" displayName="python" projectFiles="true">
+        <itemPath>src/python/NegfEloop.py</itemPath>
+        <itemPath>src/python/PyNegfEloop.cpp</itemPath>
+        <itemPath>src/python/PyNegfEloop.h</itemPath>
+        <itemPath>src/python/PyNegfParams.cpp</itemPath>
+        <itemPath>src/python/PyNegfParams.h</itemPath>
         <itemPath>src/python/pyqmicad.cpp</itemPath>
         <itemPath>src/python/pyqmicad.h</itemPath>
       </logicalFolder>
@@ -65,7 +73,7 @@
         <itemPath>src/utils/ConsoleProgressBar.cpp</itemPath>
         <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
         <itemPath>src/utils/Exception.h</itemPath>
-        <itemPath>src/utils/Printable.hpp</itemPath>
+        <itemPath>src/utils/Qbase.hpp</itemPath>
         <itemPath>src/utils/fermi.hpp</itemPath>
         <itemPath>src/utils/geometry.hpp</itemPath>
         <itemPath>src/utils/myenums.hpp</itemPath>
@@ -144,6 +152,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="doc/qmicad.doxy" ex="false" tool="3" flavor2="0">
+        <customTool>
+          <customToolCommandline>doxygen</customToolCommandline>
+        </customTool>
+      </item>
       <item path="src/atoms/Atoms.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/atoms/Atoms.h" ex="false" tool="3" flavor2="0">
@@ -156,7 +169,7 @@
       </item>
       <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/include/qmicad.hpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -185,6 +198,16 @@
       <item path="src/potential/terminal.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/NegfEloop.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfEloop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfParams.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -220,7 +243,7 @@
       </item>
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/utils/Qbase.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/fermi.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -261,6 +284,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="doc/qmicad.doxy" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/atoms/Atoms.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/atoms/Atoms.h" ex="false" tool="3" flavor2="0">
@@ -303,6 +328,16 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/python/NegfEloop.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfEloop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfParams.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
@@ -337,7 +372,7 @@
       </item>
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/utils/Qbase.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/fermi.hpp" ex="false" tool="3" flavor2="0">
       </item>

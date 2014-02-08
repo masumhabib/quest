@@ -16,6 +16,7 @@
 #include "../../atoms/Lattice.h"
 #include "../../utils/svec.h"
 
+namespace qmicad{
 /*
  * Generates discretized k.p lattice points and associates them to 
  * fake atoms.
@@ -23,5 +24,6 @@
 Atoms genKpAtoms(double Lx, double Ly, double ax, double ay, 
                  const vector<Atom>& periodicTable);
 
+}
 #endif	/* KPATOMS_H */
 

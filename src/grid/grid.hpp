@@ -8,13 +8,15 @@
 #ifndef GRID_HPP
 #define	GRID_HPP
 
-#include "../utils/Printable.hpp"
+#include "../utils/Qbase.hpp"
 #include "../utils/svec.h"
 #include <armadillo>
 #include <iostream>
 
+namespace qmicad{
 using namespace arma;
 using spacevec::xyvec;
+using std::stringstream;
 
 template<class T>
 void meshgrid(Mat<T> &X, Mat<T> &Y, const Col<T> &xi, const Col<T> &yi);
@@ -25,7 +27,7 @@ void meshgrid(Col<T> &X, Col<T> &Y, const Col<T> &xi, const Col<T> &yi);
  * Vector grid: a one dimensional, linear grid.
  */
 template<class T>
-struct Grid1D:public Printable{
+struct Grid1D:public Qbase{
 public:   
 protected: 
     // data structure
@@ -36,7 +38,7 @@ protected:
     Col<T>      mV;
     
 public:    
-    Grid1D(Col<T>& V, string prefix = ""):Printable(" " + prefix), mV(V){
+    Grid1D(Col<T>& V, string prefix = ""):Qbase(" " + prefix), mV(V){
         mTitle = "Grid";
 
         mNV = V.n_elem;
@@ -46,7 +48,7 @@ public:
         mdV = mV(1)-mV(0);
     }
 
-    Grid1D(T min, T max, T d, string prefix = ""):Printable(" " + prefix),
+    Grid1D(T min, T max, T d, string prefix = ""):Qbase(" " + prefix),
         mMinV(min), mMaxV(max), mdV(d)
     {
         mTitle = "Grid";
@@ -61,7 +63,7 @@ public:
     }
 
     Grid1D(T min = 0, T max = 0, int N = 1, string prefix = ""):
-        Printable(" " + prefix), mMinV(min), mMaxV(max), mNV(N)
+        Qbase(" " + prefix), mMinV(min), mMaxV(max), mNV(N)
     {
         mTitle = "Grid";
 
@@ -114,7 +116,7 @@ protected:
  */
 
 template<class T>
-struct Grid2D:public Printable{
+struct Grid2D:public Qbase{
 public:
 protected:
     // data structure
@@ -133,7 +135,7 @@ protected:
 public:
     
     Grid2D(T minx, T maxx, T dx, T miny, T maxy, T dy, string prefix = ""):
-        Printable(" " + prefix),
+        Qbase(" " + prefix),
         mMinX(minx), mMaxX(maxx), mdX(dx), mMinY(miny), mMaxY(maxy), mdY(dy)
     {
         mTitle = "2D Grid";
@@ -154,7 +156,7 @@ public:
     }
 
     Grid2D(T minx, T maxx, int nx, T miny, T maxy, int ny, string prefix = ""):
-        Printable(" " + prefix),
+        Qbase(" " + prefix),
         mMinX(minx), mMaxX(maxx), mNX(nx), mMinY(miny), mMaxY(maxy), mNY(ny)
     {
         mTitle = "2D Grid";
@@ -173,7 +175,7 @@ public:
         }
     }
 
-    Grid2D(T min, T max, T d, string prefix = ""):Printable(" " + prefix),
+    Grid2D(T min, T max, T d, string prefix = ""):Qbase(" " + prefix),
         mMinX(min), mMaxX(max), mdX(d), mMinY(min), mMaxY(max), mdY(d)
     {
         mTitle = "2D Grid";
@@ -192,7 +194,7 @@ public:
     }
 
     Grid2D(T min = 0, T max = 0, int n = 1, string prefix = ""):
-        Printable(" " + prefix),
+        Qbase(" " + prefix),
         mMinX(min), mMaxX(max), mNX(n), mMinY(min), mMaxY(max), mNY(n)
     {
         mTitle = "2D Grid";
@@ -287,5 +289,7 @@ typedef Grid1D<double> BiasGrid;
 typedef Grid1D<double> VecGrid;
 typedef Grid2D<double> MatGrid;
 
+
+}
 #endif	/* GRID_HPP */
 

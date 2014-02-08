@@ -7,6 +7,7 @@
 
 #include "tikp.h"
 
+namespace qmicad{
 cx_mat TISurfHamGen::operator()(const Atoms& atomi, const Atoms& atomj) const{
     
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1){
@@ -54,3 +55,4 @@ cx_mat TISurfHamGen::operator()(const Atoms& atomi, const Atoms& atomj) const{
     return hmat;
 };
 
+}

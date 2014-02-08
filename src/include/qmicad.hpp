@@ -36,7 +36,7 @@ namespace qmicad{
 #include "../utils/serialize.hpp"
 #include "../utils/stringutils.h"
 
-#include "../utils/Printable.hpp"
+#include "../utils/Qbase.hpp"
 #include "../utils/ConsoleProgressBar.h"
 #include "../utils/Exception.h"
 
@@ -60,6 +60,11 @@ namespace qmicad{
 #include "../negf/NEGF.h"
 #include "../parallel/parloop.h"
 #include "../negf/NegfEloop.h"
+
+#include "../simulations/Device.h"
+
+#include "../python/PyNegfEloop.h"
+#include "../python/PyNegfParams.h"
 
 
 #endif /* QMICAD_HPP */

@@ -13,7 +13,8 @@
 #include "../atoms/Atoms.h"
 #include "terminal.h"
 
-class Potential:public Printable{
+namespace qmicad{
+class Potential:public Qbase{
 public:
 protected:
     const Atoms         &ma;    // Atomistic geometry of the device
@@ -47,6 +48,8 @@ protected:
     };
     
 };
+
+}
 
 #endif	/* POTENTIAL_H */
 

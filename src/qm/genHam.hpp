@@ -17,6 +17,7 @@
 
 #include "../atoms/Atoms.h"
 
+namespace qmicad{
 template<class T>class HamGenerator;
 
 template<class T>
@@ -64,6 +65,6 @@ friend T genHam<T>(const Atoms &ati, const Atoms &atj, const HamGenerator<T>& pg
     
 };
 
-
+}
 #endif	/* GENHAM_H */
 

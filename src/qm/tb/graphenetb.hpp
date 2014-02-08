@@ -17,7 +17,7 @@
 #include "../../atoms/Atoms.h"
 #include "../hamParams.hpp"
 
-namespace Graphene{
+namespace qmicad{
 using arma::mat;
     
 struct GrapheneTbParams: public HamParams{
@@ -121,7 +121,6 @@ private:
 
 };
 
-} // namespace Graphene
-
+}
 #endif	/* GRAPHENETB_HPP */
 

@@ -44,6 +44,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
+	${OBJECTDIR}/src/python/PyNegfEloop.o \
+	${OBJECTDIR}/src/python/PyNegfParams.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qm/kp/genKpAtoms.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
@@ -121,6 +123,16 @@ ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
+
+${OBJECTDIR}/src/python/PyNegfEloop.o: src/python/PyNegfEloop.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfEloop.o src/python/PyNegfEloop.cpp
+
+${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
 
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python

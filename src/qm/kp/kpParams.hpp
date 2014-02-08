@@ -13,11 +13,12 @@
 
 #include "../../utils/mymath.h"
 #include "../../atoms/Atoms.h"
-#include "../../utils/Printable.hpp"
+#include "../../utils/Qbase.hpp"
 
 #include "../hamParams.hpp"
 #include "../genHam.hpp"
 
+namespace qmicad{
 using arma::cx_mat22;
 using arma::cx_mat;
 using namespace constants;
@@ -49,7 +50,7 @@ struct KpParams: public HamParams{
 protected:
 
 };
-
+}
 
 #endif	/* KPPARAMS_HPP */
 

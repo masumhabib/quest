@@ -11,11 +11,12 @@
 #include <armadillo>
 
 #include "../../utils/mymath.h"
-#include "../../utils/Printable.hpp"
+#include "../../utils/Qbase.hpp"
 #include "../../atoms/Atoms.h"
 #include "../genHam.hpp"
 #include "kpParams.hpp"
 
+namespace qmicad{
 using arma::cx_mat22;
 using arma::cx_mat;
 using namespace constants;
@@ -90,5 +91,6 @@ private:
     
 };
 
+}
 #endif	/* TIKP_H */
 

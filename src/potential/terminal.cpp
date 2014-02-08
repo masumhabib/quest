@@ -7,10 +7,11 @@
 
 #include "terminal.h"
 
+namespace qmicad{
 // Construct Terminal from a string containing definition of a plygon
 // "POLYGON((x1 y1, x2 y2, ...))"
 Terminal::Terminal(const string& polygon, const string &prefix): 
-        Printable("" + prefix)
+        Qbase("" + prefix)
 {
     mTitle = "Terminal";
     bg::read_wkt(polygon, geom);
@@ -18,7 +19,7 @@ Terminal::Terminal(const string& polygon, const string &prefix):
 
 // Construct from a vector of points
 Terminal::Terminal(const vector<point>& points, const string &prefix):
-        Printable("" + prefix)
+        Qbase("" + prefix)
 {
     mTitle = "Terminal";
     for (vector<point>::const_iterator it = points.begin(); it != points.end(); ++it){
@@ -27,7 +28,7 @@ Terminal::Terminal(const vector<point>& points, const string &prefix):
 }
 
 // Construct from a vector of points
-Terminal::Terminal(const string &prefix): Printable("" + prefix)
+Terminal::Terminal(const string &prefix): Qbase("" + prefix)
 {
     mTitle = "Terminal";
 }
@@ -75,5 +76,5 @@ string Contact4::toString() const{
     return ss.str();
 }
 
-
+}
 

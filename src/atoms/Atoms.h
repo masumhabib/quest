@@ -34,20 +34,27 @@ using spacevec::svec;
     
     
         
-// Atom in the periodic table
+/**
+ * The Atom structure describes properties of an atom as seen in 
+ * the periodic table.
+ */
 struct Atom {
-    int ia;     // atomic number
-    string sym; // atomic symbol
-    int ne;     // number of electrons
-    int no;     // number of orbitals
+    int ia;     //!< Atomic number
+    string sym; //!< Atomic symbol
+    int ne;     //!< Number of electrons
+    int no;     //!< Number of orbitals
 
+    //! Default constructor.
     Atom() {};
+    //! Detailed constructor taking all the properties.
     Atom(int ia, string sym, int ne, int no){
         this->ia = ia;
         this->sym = sym;
         this->ne = ne;
         this->no = no;
     };
+    
+    //! Copy constructor.
     Atom(const Atom& orig):
     ia(orig.ia),
     sym(orig.sym),
@@ -56,10 +63,11 @@ struct Atom {
         
     };
     
-// For MPI send/receive
 private:
+    //! For MPI send/receive.
     friend class boost::serialization::access;
 
+    //! For MPI send/receive.
     template<class Archive>
     void serialize(Archive& ar, const unsigned int version){
         ar & ia;
@@ -71,7 +79,9 @@ private:
 };
 
 
-/* All atoms in the structure */
+/** 
+ * All atoms in the structure.
+ */
 class Atoms {
 // Fields
 protected:

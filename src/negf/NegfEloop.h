@@ -19,6 +19,7 @@
 
 #include "NEGF.h"
 
+namespace qmicad{
 using boost::shared_ptr;
 namespace mpi = boost::mpi;
 
@@ -27,7 +28,7 @@ namespace mpi = boost::mpi;
  */
 class NegfEloop: public ParLoop<double>{
 public:
-    NegfEloop(VecGrid E, const NegfParams &np, const mpi::communicator &workers):
+    NegfEloop(const VecGrid &E, const NegfParams &np, const mpi::communicator &workers):
             ParLoop<double>(E, workers),TE(1), I1(2), mnp(np)
     {
         mTEn = 1;
@@ -36,7 +37,7 @@ public:
         mprogmx = 80;
     }
     
-    void            enableTE(uword N){mCalcType |= TE; mTEn = N; };
+    void            enableTE(uword N = 1){mCalcType |= TE; mTEn = N; };
     virtual void    saveTE(string FileName);
     
     
@@ -76,6 +77,6 @@ protected:
     int                   mprogmx;  // maximum progress
     
 };
-
+}
 #endif	/* NEGFELOOP_H */
 

@@ -8,6 +8,7 @@
 
 #include "graphenekp.h"
 
+namespace qmicad{
 cx_mat GrapheneKpHamGen::operator()(const Atoms& atomi, const Atoms& atomj)const{
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1) {
         throw invalid_argument("GrapheneHamGen(): atomi and atomj must should contain one atom each.");
@@ -53,5 +54,6 @@ cx_mat GrapheneKpHamGen::operator()(const Atoms& atomi, const Atoms& atomj)const
     return hmat;
 };
 
+}
 
 

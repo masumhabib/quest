@@ -27,7 +27,7 @@
 #include "../utils/stringutils.h"
 
 
-
+namespace qmicad{
 /*
  * Linear terminal emulates linear voltage drop between two 
  * gates.
@@ -65,5 +65,6 @@ public:
     virtual void compute();  
 };
 
+}
 #endif	/* LINEARPOT_H */
 
