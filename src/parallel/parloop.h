@@ -11,7 +11,7 @@
 #include <boost/mpi.hpp>
 #include "../grid/grid.hpp"
 
-namespace qmicad{
+namespace utils{
 namespace mpi = boost::mpi;
 
 /*

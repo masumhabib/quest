@@ -50,12 +50,12 @@ void NegfEloop::stepCompleted(){
         mprog = 0;
     }
 }
-void NegfEloop::computeTE(uword N){
+void NegfEloop::computeTE(uint N){
     mTEproc.push_back(mnegf->TEop(N));
     //cout << "DBG: " << mTEl.back() << endl;
 }
 
-void NegfEloop::gather(vector<cx_mat> &Mproc, list<cx_mat> &M){
+void NegfEloop::gather(vector<cxmat> &Mproc, list<cxmat> &M){
     if(!mIAmMaster){
         // slaves send their local data
         mpi::gather(mWorkers, Mproc, mMasterId);
@@ -63,10 +63,10 @@ void NegfEloop::gather(vector<cx_mat> &Mproc, list<cx_mat> &M){
     // The master collects data        
     }else{
         // Collect T(E)
-        vector<vector<cx_mat> >Mncpu(mN);
+        vector<vector<cxmat> >Mncpu(mN);
         mpi::gather(mWorkers, Mproc, Mncpu, mMasterId);
         
-        vector<vector<cx_mat> >::iterator it;
+        vector<vector<cxmat> >::iterator it;
         for (it = Mncpu.begin(); it != Mncpu.end(); ++it){
             M.insert(M.end(), it->begin(), it->end());
         }
@@ -86,11 +86,11 @@ void NegfEloop::saveTE(string fileName){
                     + fileName + ".");
         }
 
-        list<cx_mat>::iterator it = mTE.begin();
+        list<cxmat>::iterator it = mTE.begin();
         for (int i = 0; i < mL.N(); ++i, ++it){
 
             if (mTEn == 1){
-                rowvec rvec(2); 
+                row rvec(2); 
                 rvec(0) = mL(i);
                 rvec(1) = real((*it)(0,0));
                 transFile << rvec;  

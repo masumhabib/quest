@@ -10,10 +10,12 @@
 
 #include <armadillo>
 #include <stdexcept>
-#include "../utils/mymath.h"
+#include "../maths/constants.h"
 #include "../utils/myenums.hpp"
 
-using namespace arma;
+namespace utils{
+using std::out_of_range;
+using namespace maths::armadillo;
 using myenums::Option;
 using myenums::Enabled;
 using myenums::Disabled;
@@ -138,6 +140,8 @@ private:
 };
 
 typedef MatCache<dcmplx> CxMatCache;
+
+}
 
 #endif	/* CACHE_HPP */
 

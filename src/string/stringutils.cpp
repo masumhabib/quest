@@ -26,7 +26,9 @@
 	return s;
 }*/
 
-string trim(const string& ss, const char* t)
+namespace utils{
+
+    string trim(const string& ss, const char* t)
 {
     string s = ss;
 	s.erase(0, s.find_first_not_of(t));
@@ -34,4 +36,5 @@ string trim(const string& ss, const char* t)
 	return s;
 }
 
+}
 

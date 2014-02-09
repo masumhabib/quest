@@ -14,7 +14,7 @@
 #include "../../grid/grid.hpp"
 #include "../../atoms/Atoms.h"
 #include "../../atoms/Lattice.h"
-#include "../../utils/svec.h"
+#include "../../maths/svec.h"
 
 namespace qmicad{
 /*

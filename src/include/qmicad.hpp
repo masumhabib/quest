@@ -28,17 +28,17 @@ namespace qmicad{
 }
 
 #include "../utils/myenums.hpp"
-#include "../utils/svec.h"
-#include "../utils/mymath.h"
-#include "../utils/trace.hpp"
-#include "../utils/fermi.hpp"
-
 #include "../utils/serialize.hpp"
-#include "../utils/stringutils.h"
-
-#include "../utils/Qbase.hpp"
+#include "../utils/Printable.hpp"
 #include "../utils/ConsoleProgressBar.h"
 #include "../utils/Exception.h"
+
+#include "../string/stringutils.h"
+
+#include "../maths/svec.h"
+#include "../maths/constants.h"
+#include "../maths/trace.hpp"
+#include "../maths/fermi.hpp"
 
 #include "../atoms/Lattice.h"
 #include "../atoms/Atoms.h"

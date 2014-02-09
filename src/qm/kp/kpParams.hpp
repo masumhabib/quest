@@ -11,17 +11,16 @@
 
 #include <armadillo>
 
-#include "../../utils/mymath.h"
+#include "../../maths/constants.h"
 #include "../../atoms/Atoms.h"
-#include "../../utils/Qbase.hpp"
+#include "../../utils/Printable.hpp"
 
 #include "../hamParams.hpp"
 #include "../genHam.hpp"
 
 namespace qmicad{
-using arma::cx_mat22;
-using arma::cx_mat;
-using namespace constants;
+using namespace maths::armadillo;
+using namespace maths::constants;
 
 
 struct KpParams: public HamParams{
@@ -30,12 +29,12 @@ struct KpParams: public HamParams{
     double ay;           // discretization length in y direction
     
     // tight binding parameters
-    cx_mat22 I;
-    cx_mat22 eps;
-    cx_mat22 t01x;
-    cx_mat22 t10x;
-    cx_mat22 t01y;
-    cx_mat22 t10y;
+    cxmat22 I;
+    cxmat22 eps;
+    cxmat22 t01x;
+    cxmat22 t10x;
+    cxmat22 t01y;
+    cxmat22 t10y;
     
     KpParams(const string &prefix = ""):HamParams(prefix){
         mTitle = "k.p paramters";

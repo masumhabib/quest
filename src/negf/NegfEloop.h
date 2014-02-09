@@ -8,9 +8,11 @@
 #ifndef NEGFELOOP_H
 #define	NEGFELOOP_H
 
+#include "../utils/std.hpp"
 #include "../utils/serialize.hpp"
-#include "../utils/fermi.hpp"
+#include "../maths/fermi.hpp"
 #include "../parallel/parloop.h"
+
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
@@ -20,6 +22,9 @@
 #include "NEGF.h"
 
 namespace qmicad{
+using namespace utils::stds;
+using utils::ParLoop;
+using utils::VecGrid;
 using boost::shared_ptr;
 namespace mpi = boost::mpi;
 
@@ -37,7 +42,7 @@ public:
         mprogmx = 80;
     }
     
-    void            enableTE(uword N = 1){mCalcType |= TE; mTEn = N; };
+    void            enableTE(uint N = 1){mCalcType |= TE; mTEn = N; };
     virtual void    saveTE(string FileName);
     
     
@@ -48,15 +53,15 @@ protected:
     virtual void    postCompute(int il);
     virtual void    collect();
     
-    virtual void    computeTE(uword N = 1);
+    virtual void    computeTE(uint N = 1);
     virtual void    collectTE();
     
     virtual void    stepCompleted();
-    virtual void    gather(vector<cx_mat> &Mproc, list<cx_mat> &M);
+    virtual void    gather(vector<cxmat> &Mproc, list<cxmat> &M);
 
 public:
-    const uword           TE;
-    const uword           I1;
+    const uint           TE;
+    const uint           I1;
     
 protected:
     const NegfParams      &mnp;     // Negf parameters
@@ -64,11 +69,11 @@ protected:
     double                mEi;      // current energy
     
     // output
-    uword                 mCalcType; // Which calculations we need to perform
+    uint                 mCalcType; // Which calculations we need to perform
     // TE
-    vector<cx_mat>        mTEproc;  // transmission list for local process
-    list<cx_mat>          mTE;      // transmission list for all processes
-    uword                 mTEn;     // size of TE output matrix
+    vector<cxmat>        mTEproc;  // transmission list for local process
+    list<cxmat>          mTE;      // transmission list for all processes
+    uint                 mTEn;     // size of TE output matrix
     
     
         

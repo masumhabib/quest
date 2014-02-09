@@ -47,12 +47,11 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/python/PyNegfEloop.o \
 	${OBJECTDIR}/src/python/PyNegfParams.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
-	${OBJECTDIR}/src/qm/kp/genKpAtoms.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
 	${OBJECTDIR}/src/qm/kp/tikp.o \
 	${OBJECTDIR}/src/simulations/Device.o \
-	${OBJECTDIR}/src/utils/ConsoleProgressBar.o \
-	${OBJECTDIR}/src/utils/stringutils.o
+	${OBJECTDIR}/src/string/stringutils.o \
+	${OBJECTDIR}/src/utils/ConsoleProgressBar.o
 
 
 # C Compiler Flags
@@ -148,11 +147,6 @@ ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/pyqmicad.o src/python/pyqmicad.cpp
 
-${OBJECTDIR}/src/qm/kp/genKpAtoms.o: src/qm/kp/genKpAtoms.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/genKpAtoms.o src/qm/kp/genKpAtoms.cpp
-
 ${OBJECTDIR}/src/qm/kp/graphenekp.o: src/qm/kp/graphenekp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
 	${RM} "$@.d"
@@ -168,15 +162,15 @@ ${OBJECTDIR}/src/simulations/Device.o: src/simulations/Device.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/simulations/Device.o src/simulations/Device.cpp
 
+${OBJECTDIR}/src/string/stringutils.o: src/string/stringutils.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/string
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/string/stringutils.o src/string/stringutils.cpp
+
 ${OBJECTDIR}/src/utils/ConsoleProgressBar.o: src/utils/ConsoleProgressBar.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/utils
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/ConsoleProgressBar.o src/utils/ConsoleProgressBar.cpp
-
-${OBJECTDIR}/src/utils/stringutils.o: src/utils/stringutils.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/utils
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/stringutils.o src/utils/stringutils.cpp
 
 # Subprojects
 .build-subprojects:

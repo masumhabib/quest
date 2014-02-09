@@ -9,7 +9,7 @@
 
 namespace qmicad{
 Negf::Negf(NegfParams newp, double E, string newprefix):
-        Qbase(newprefix), mp(newp), mE(E), 
+        Printable(newprefix), mp(newp), mE(E), 
         mN(newp.nb-2), miLc(0), miRc(newp.nb-1),
         mDi(this, miLc, miRc, newp.DCache), 
         mTl(this, miLc, miRc+1, newp.TCache),
@@ -33,24 +33,24 @@ Negf::~Negf() {
 /*
  * Transmission operator T(E) = tr{Gamma_1,1*[A_1,1 - G_1,1*Gamma_1,1*G_1,1']}
  */
-cx_mat Negf::TEop(uword traceOverN){
+cxmat Negf::TEop(uint traceOverN){
     // Full Green function G_1,1
     // G_1,1 = [D_1,1 - sig_l_1,1 - T_1,2*grc_2,2*T_2,1]^-1
     // sig_l_1,1 = T_1,0*glc_0,0*T_0,1
-    const cx_mat &glc00 = mglc(0);                    // Get or caluclate glc_0,0
-    cx_mat Gaml11 = mTl(1)*glc00*trans(mTl(1)); 
+    const cxmat &glc00 = mglc(0);                    // Get or caluclate glc_0,0
+    cxmat Gaml11 = mTl(1)*glc00*trans(mTl(1)); 
     Gaml11 = i*(Gaml11 - trans(Gaml11));
-    const cx_mat &G11 = mGii(1);                       // Get or caluclate G_1,1
+    const cxmat &G11 = mGii(1);                       // Get or caluclate G_1,1
     
-    cx_mat TEop = Gaml11*(i*(G11 - trans(G11)) - G11*Gaml11*trans(G11));    
-    return trace<cx_mat>(TEop, traceOverN);
+    cxmat TEop = Gaml11*(i*(G11 - trans(G11)) - G11*Gaml11*trans(G11));    
+    return trace<cxmat>(TEop, traceOverN);
 }
 
 /*
  * Electron density operator. It returns Gn_i,i or sum_j(Gn_i,j*Sj,i)
  * depending on the orthogonality of the basis set.
  */
-cx_mat Negf::niOp(uword traceOverN){
+cxmat Negf::niOp(uint traceOverN){
     
 }
 
@@ -58,29 +58,29 @@ cx_mat Negf::niOp(uword traceOverN){
  * Current operator at terminal 1.
  * I1op
  */
-cx_mat Negf::I1Op(uword traceOverN){
+cxmat Negf::I1Op(uint traceOverN){
     
     // Full Green function G_1,1
     // G_1,1 = [D_1,1 - sig_l_1,1 - T_1,2*grc_2,2*T_2,1]^-1
     // sig_l_1,1 = T_1,0*glc_0,0*T_0,1
-    const cx_mat &glc00 = mglc(0);                    // Get or caluclate glc_0,0
-    cx_mat Sigl11 = mTl(1)*glc00*trans(mTl(1)); 
-    const cx_mat &G11 = mGii(1);                       // Get or caluclate G_1,1
+    const cxmat &glc00 = mglc(0);                    // Get or caluclate glc_0,0
+    cxmat Sigl11 = mTl(1)*glc00*trans(mTl(1)); 
+    const cxmat &G11 = mGii(1);                       // Get or caluclate G_1,1
     
-    cx_mat Gn11;
-    cx_mat I1op;
+    cxmat Gn11;
+    cxmat I1op;
     // Density matrix: Gn11 = G^n_1,1
     // G^n_1,1 = Al_1,1*(f1-fN) + [A_1,1]*fN
     // Al_1,1 = G_1,1*gamma_1,1*G1,1'
     // A_1,1 = i*(G_1,1 - G_1,1')
     // gamma_1,1 =  i*(Sigl_1,1-Sigl_1,1')    
-    cx_mat Gaml11 = i*(Sigl11 - trans(Sigl11)); 
+    cxmat Gaml11 = i*(Sigl11 - trans(Sigl11)); 
     Gn11 = G11*Gaml11*trans(G11)*(mf0-mfNp1) + i*(G11 - trans(G11))*mfNp1;
     // Current operator
     I1op = Gn11*trans(Sigl11) - Sigl11*Gn11 
           +G11*Gaml11*mf0 - Gaml11*trans(G11)*mf0;
     
-    return trace<cx_mat>(I1op, traceOverN);
+    return trace<cxmat>(I1op, traceOverN);
 }
 
 /*
@@ -97,8 +97,8 @@ cx_mat Negf::I1Op(uword traceOverN){
  * ib --------> Block index for which we want G_i,i, G_i,i+1 and G_i,i-1.
  * -----------------------------------------------------------------------------
  */
-const cx_mat& Negf::Giim1::operator ()(int ib){
-    cx_mat& Giim1 = getAt(ib);
+const cxmat& Negf::Giim1::operator ()(int ib){
+    cxmat& Giim1 = getAt(ib);
     if (!isStored(ib)){
         computeGiim1(Giim1, mnegf->mGii(ib-1), ib);
     }
@@ -114,7 +114,7 @@ const cx_mat& Negf::Giim1::operator ()(int ib){
  * ib --------> Block index for which we want G_i,i-1.
  * -----------------------------------------------------------------------------
  */
-inline void Negf::Giim1::computeGiim1(cx_mat& Giim1, const cx_mat& Gim1im1, int ib){
+inline void Negf::Giim1::computeGiim1(cxmat& Giim1, const cxmat& Gim1im1, int ib){
     Negf &nf = *mnegf;
     // Calculate G_i,i-1 using recursive equation    
     // G_i,i-1 = grc_i,i*T_i,i-1*G_i-1,i-1
@@ -136,8 +136,8 @@ inline void Negf::Giim1::computeGiim1(cx_mat& Giim1, const cx_mat& Gim1im1, int 
  * ib --------> Block index for which we want G_i,i+1
  * -----------------------------------------------------------------------------
  */
-const cx_mat& Negf::Giip1::operator ()(int ib){
-    cx_mat& Giip1 = getAt(ib);
+const cxmat& Negf::Giip1::operator ()(int ib){
+    cxmat& Giip1 = getAt(ib);
     if (!isStored(ib)){
         computeGiip1(Giip1, mnegf->mGii(ib), ib);
     }
@@ -153,7 +153,7 @@ const cx_mat& Negf::Giip1::operator ()(int ib){
  * ib --------> Block index for which we want G_i,i+1.
  * -----------------------------------------------------------------------------
  */
-inline void Negf::Giip1::computeGiip1(cx_mat& Giip1, const cx_mat& Gii, int ib){
+inline void Negf::Giip1::computeGiip1(cxmat& Giip1, const cxmat& Gii, int ib){
     Negf &nf = *mnegf;
     // Calculate G_i,i+1 using recursive equation    
     // G_i,i+1 = G_i,i*T_i,i+1*grc_i+1,i+1
@@ -176,15 +176,15 @@ inline void Negf::Giip1::computeGiip1(cx_mat& Giip1, const cx_mat& Gii, int ib){
  * ib --------> Block index for which we want grc.
  * -----------------------------------------------------------------------------
  */
-const cx_mat& Negf::GiN::operator ()(int ib){
+const cxmat& Negf::GiN::operator ()(int ib){
     if (!isStored(ib)){
         // Block from which we start the calculation is the one just before
         // the last calculated block.
         int igStart = mIt - 1; 
         for (int ig = igStart; ig >= ib; --ig){
             int igp1 = (ig == end()) ? ig:ig+1;
-            cx_mat &GiN = getAt(ig);
-            cx_mat &Gip1N = getAt(igp1);
+            cxmat &GiN = getAt(ig);
+            cxmat &Gip1N = getAt(igp1);
             computeGiN(GiN, Gip1N,ig);
         }
     }
@@ -201,7 +201,7 @@ const cx_mat& Negf::GiN::operator ()(int ib){
  * ib --------> Block index for which we want G_i,N.
  * -----------------------------------------------------------------------------
  */
-inline void Negf::GiN::computeGiN(cx_mat& GiN, const cx_mat& Gip1N, int ib){
+inline void Negf::GiN::computeGiN(cxmat& GiN, const cxmat& Gip1N, int ib){
     
     Negf &nf = *mnegf;
     // Calculate GNm1N from GNN = Gii(N)
@@ -230,7 +230,7 @@ inline void Negf::GiN::computeGiN(cx_mat& GiN, const cx_mat& Gip1N, int ib){
  * this function calculates it.
  * ib --------> Block index for which we want G_i,1.
  */
-const cx_mat& Negf::Gi1::operator ()(int ib){
+const cxmat& Negf::Gi1::operator ()(int ib){
     if (!isStored(ib)){
         // Block from which we start the calculation is the one just after
         // the last calculated block.
@@ -240,8 +240,8 @@ const cx_mat& Negf::Gi1::operator ()(int ib){
         //}
         for (int ig = igStart; ig <= ib; ++ig){
             int igm1 = (ig == begin()) ? ig:ig-1;
-            cx_mat &Gi1 = getAt(ig);
-            cx_mat &Gim11 = getAt(igm1);
+            cxmat &Gi1 = getAt(ig);
+            cxmat &Gim11 = getAt(igm1);
             computeGi1(Gi1, Gim11,ig);
         }
     }
@@ -255,7 +255,7 @@ const cx_mat& Negf::Gi1::operator ()(int ib){
  * Gim11 -----> Input: G_i-1,1
  * ib --------> Block index for which we want G_i,1.
  */
-inline void Negf::Gi1::computeGi1(cx_mat& Gi1, const cx_mat& Gim11, int ib){
+inline void Negf::Gi1::computeGi1(cxmat& Gi1, const cxmat& Gim11, int ib){
     Negf &nf = *mnegf;
     // Calculate G21 from G11 = Gii(1)
     if (ib == nf.mGii.begin() + 1){ 
@@ -283,7 +283,7 @@ inline void Negf::Gi1::computeGi1(cx_mat& Gi1, const cx_mat& Gim11, int ib){
  * calculates it.
  * ib --------> Block index for which we want G_i,i.
  */
-const cx_mat& Negf::Gii::operator ()(int ib){
+const cxmat& Negf::Gii::operator ()(int ib){
     if (!isStored(ib)){
         // Block from which we start the calculation is the one just after
         // the last calculated block.
@@ -293,8 +293,8 @@ const cx_mat& Negf::Gii::operator ()(int ib){
         //}
         for (int ig = igStart; ig <= ib; ++ig){
             int igm1 = (ig == begin()) ? ig:ig-1;
-            cx_mat &Gii = getAt(ig);
-            cx_mat &Giim1 = getAt(igm1);
+            cxmat &Gii = getAt(ig);
+            cxmat &Giim1 = getAt(igm1);
             computeGii(Gii, Giim1,ig);
         }
     }
@@ -308,13 +308,13 @@ const cx_mat& Negf::Gii::operator ()(int ib){
  * Gim1im1 ---> Input: G_i-1,i-1.
  * ib --------> Block index for which we want G_i,i.
  */
-inline void Negf::Gii::computeGii(cx_mat& Gii, const cx_mat& Gim1im1, int ib){
+inline void Negf::Gii::computeGii(cxmat& Gii, const cxmat& Gim1im1, int ib){
     // Calculated G_1,1 using
     // G_1,1 = [ES_1,1 - H_1,1 - U_1,1 - sig1_1,1 - sig2_1,1]^-1
     Negf &nf = *mnegf;
     if(ib == nf.miLc+1){
-        const cx_mat &Tiim1 = nf.mTl(ib);
-        const cx_mat &Tip1i = nf.mTl(ib+1);
+        const cxmat &Tiim1 = nf.mTl(ib);
+        const cxmat &Tip1i = nf.mTl(ib+1);
         Gii = inv(nf.mDi(ib) - Tiim1*nf.mglc(ib-1)*trans(Tiim1) 
                 - trans(Tip1i)*nf.mgrc(ib+1)*Tip1i);
         
@@ -322,8 +322,8 @@ inline void Negf::Gii::computeGii(cx_mat& Gii, const cx_mat& Gim1im1, int ib){
     // calculate G_i,i using recursive equation    
     // G_i,i = grc_i,i + grc_i,i*T_i,i-1*G_i-1,i-1*T_i-1,i*grc_i,i
     }else{
-        const cx_mat &grci = nf.mgrc(ib);
-        const cx_mat &Tiim1 = nf.mTl(ib);
+        const cxmat &grci = nf.mgrc(ib);
+        const cxmat &Tiim1 = nf.mTl(ib);
         Gii = grci + grci*Tiim1*Gim1im1*trans(Tiim1)*grci;
     }    
     mIt = ib;
@@ -342,7 +342,7 @@ inline void Negf::Gii::computeGii(cx_mat& Gii, const cx_mat& Gim1im1, int ib){
  * last calculated block upto it.
  * it --------> Block index for which we want glc.
  */
-const cx_mat& Negf::glc::operator ()(int ib){
+const cxmat& Negf::glc::operator ()(int ib){
     if (!isStored(ib)){
         // Block from which we start the calculation is the one just after
         // the last calculated block.
@@ -352,8 +352,8 @@ const cx_mat& Negf::glc::operator ()(int ib){
         //}
         for (int ig = igStart; ig <= ib; ++ig){
             int igm1 = (ig == begin()) ? ig:ig-1;
-            cx_mat &glci = getAt(ig);
-            cx_mat &glcim1 = getAt(igm1);
+            cxmat &glci = getAt(ig);
+            cxmat &glcim1 = getAt(igm1);
             computeglc(glci, glcim1,ig);
         }
     }
@@ -368,9 +368,9 @@ const cx_mat& Negf::glc::operator ()(int ib){
  *              any one of the contacts, this function will calculate
  *              surface Green function.
  */
-inline void Negf::glc::computeglc(cx_mat& glci, const cx_mat& glcim1, int ib){
+inline void Negf::glc::computeglc(cxmat& glci, const cxmat& glcim1, int ib){
     int iLc = mnegf->miLc;
-    const cx_mat &Tiim1 = mnegf->mTl(ib); //load T_ib,ib-1
+    const cxmat &Tiim1 = mnegf->mTl(ib); //load T_ib,ib-1
     // If this is the left contact, calculate surface Green function.
     if(ib == iLc){
         NegfParams &p = mnegf->mp;
@@ -397,7 +397,7 @@ inline void Negf::glc::computeglc(cx_mat& glci, const cx_mat& glcim1, int ib){
  * last calculated block upto it.
  * it --------> Block index for which we want grc.
  */
-const cx_mat& Negf::grc::operator ()(int ib){
+const cxmat& Negf::grc::operator ()(int ib){
     if (!isStored(ib)){
         // Block from which we start the calculation is the one just before
         // the last calculated block.
@@ -407,8 +407,8 @@ const cx_mat& Negf::grc::operator ()(int ib){
         //}
         for (int ig = igStart; ig >= ib; --ig){
             int igp1 = (ig == end()) ? ig:ig+1;
-            cx_mat &grci = getAt(ig);
-            cx_mat &grcip1 = getAt(igp1);
+            cxmat &grci = getAt(ig);
+            cxmat &grcip1 = getAt(igp1);
             computegrc(grci, grcip1,ig);
         }
     }
@@ -423,9 +423,9 @@ const cx_mat& Negf::grc::operator ()(int ib){
  *              any one of the contacts, this function will calculate
  *              surface Green function.
  */
-inline void Negf::grc::computegrc(cx_mat& grci, const cx_mat& grcip1, int ib){
+inline void Negf::grc::computegrc(cxmat& grci, const cxmat& grcip1, int ib){
     int iRc = mnegf->miRc; 
-    const cx_mat &Tip1i = mnegf->mTl(ib+1); //load T_ib+1,ib
+    const cxmat &Tip1i = mnegf->mTl(ib+1); //load T_ib+1,ib
     // If this is the right contact then calculate surface Green function.
     if(ib == iRc){
         NegfParams &p = mnegf->mp;
@@ -450,26 +450,26 @@ inline void Negf::grc::computegrc(cx_mat& grci, const cx_mat& grcip1, int ib){
  * Tij = [Hij + USij - ESij]
  * =============================================================================
  */
-const cx_mat& Negf::Tl::operator ()(int ib){
-    cx_mat& M = getAt(ib);
+const cxmat& Negf::Tl::operator ()(int ib){
+    cxmat& M = getAt(ib);
     if (!isStored(ib)){
         computeTl(M, ib);
     }
     return M;
 }
 
-inline void Negf::Tl::computeTl(cx_mat& Tl, int ib){
+inline void Negf::Tl::computeTl(cxmat& Tl, int ib){
     int ii = toArrayIndx(ib);
     double E = mnegf->mE;
-    cx_mat& Hl = *(mnegf->mp.Hl(ii));
+    cxmat& Hl = *(mnegf->mp.Hl(ii));
     
     // for orthogonal basis
     if (mnegf->mp.isOrthogonal){
         Tl = Hl;
     // for non-orthogonal basisi
     }else{
-        cx_mat& Sl = *(mnegf->mp.Sl(ii));
-        cx_mat Ul = mnegf->Ul(ii);
+        cxmat& Sl = *(mnegf->mp.Sl(ii));
+        cxmat Ul = mnegf->Ul(ii);
         Tl = Hl + Ul - E*Sl;
     }
     mIt = ib;
@@ -480,33 +480,33 @@ inline void Negf::Tl::computeTl(cx_mat& Tl, int ib){
  * Dii = [ESii - USii - Hii]
  * =============================================================================
  */
-const cx_mat& Negf::Di::operator ()(int ib){
+const cxmat& Negf::Di::operator ()(int ib){
     
-    cx_mat& M = getAt(ib);
+    cxmat& M = getAt(ib);
     if (!isStored(ib)){
         computeDi(M, ib);
     }
     return M;
 }
 
-inline void Negf::Di::computeDi(cx_mat& Dii, int ib){
+inline void Negf::Di::computeDi(cxmat& Dii, int ib){
     int ii = toArrayIndx(ib);
     double E = mnegf->mE;
-    cx_mat &Hii = *(mnegf->mp.H0(ii));
+    cxmat &Hii = *(mnegf->mp.H0(ii));
     
     // for orthogonal basis
     if (mnegf->mp.isOrthogonal){
-        cx_mat EIii = eye<cx_mat>(Hii.n_rows, Hii.n_cols);
+        cxmat EIii = eye<cxmat>(Hii.n_rows, Hii.n_cols);
         vec &Vii = *(mnegf->mp.V(ii));
         EIii.diag().fill(E);    // E*I
-        cx_mat UIii(Hii.n_rows, Hii.n_cols, fill::zeros);
+        cxmat UIii(Hii.n_rows, Hii.n_cols, fill::zeros);
         UIii.diag() = dcmplx(-1, 0)*Vii;
         Dii = EIii - UIii - Hii;
         
     // for non-orthogonal basis
     }else{
-        cx_mat& Sii = *(mnegf->mp.S0(ii));
-        cx_mat USii = mnegf->Ui(ii);
+        cxmat& Sii = *(mnegf->mp.S0(ii));
+        cxmat USii = mnegf->Ui(ii);
         Dii = E*Sii - USii - Hii;
     }
     mIt = ib;
@@ -517,9 +517,9 @@ inline void Negf::Di::computeDi(cx_mat& Dii, int ib){
  * Lower diagonal of U matrix for non-orthogonal basis
  * [Uij]m,n = - (V_im+V_in)/2*[Sij]_m,n
  */
-inline cx_mat Negf::Ul(int i){
-    cx_mat Ul;
-    cx_mat &Sl = *(mp.Sl(i));
+inline cxmat Negf::Ul(int i){
+    cxmat Ul;
+    cxmat &Sl = *(mp.Sl(i));
     Ul.copy_size( Sl);
     for(int m = 0; m < Ul.n_rows; ++m){
         for(int n = 0; n < Ul.n_cols; ++n){
@@ -540,9 +540,9 @@ inline cx_mat Negf::Ul(int i){
 /*
  * Diagonal blocks of U matrix for non-orthogonal basis
  */
-inline cx_mat Negf::Ui(int i){
-    cx_mat Ui;
-    cx_mat &Si = *(mp.S0(i));
+inline cxmat Negf::Ui(int i){
+    cxmat Ui;
+    cxmat &Si = *(mp.S0(i));
     Ui.copy_size(Si);
     for(int m = 0; m < Ui.n_rows; ++m){
         for(int n = 0; n < Ui.n_cols; ++n){

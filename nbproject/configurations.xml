@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="f1" displayName="doc" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="doc" projectFiles="true">
       <itemPath>doc/qmicad.doxy</itemPath>
     </logicalFolder>
     <logicalFolder name="src" displayName="src" projectFiles="true">
@@ -19,6 +19,14 @@
       </logicalFolder>
       <logicalFolder name="include" displayName="include" projectFiles="true">
         <itemPath>src/include/qmicad.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="maths" displayName="maths" projectFiles="true">
+        <itemPath>src/maths/arma.hpp</itemPath>
+        <itemPath>src/maths/constants.h</itemPath>
+        <itemPath>src/maths/fermi.hpp</itemPath>
+        <itemPath>src/maths/geometry.hpp</itemPath>
+        <itemPath>src/maths/svec.h</itemPath>
+        <itemPath>src/maths/trace.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="negf" displayName="negf" projectFiles="true">
         <itemPath>src/negf/NEGF.cpp</itemPath>
@@ -51,8 +59,6 @@
       </logicalFolder>
       <logicalFolder name="qm" displayName="qm" projectFiles="true">
         <logicalFolder name="kp" displayName="kp" projectFiles="true">
-          <itemPath>src/qm/kp/genKpAtoms.cpp</itemPath>
-          <itemPath>src/qm/kp/genKpAtoms.h</itemPath>
           <itemPath>src/qm/kp/graphenekp.cpp</itemPath>
           <itemPath>src/qm/kp/graphenekp.h</itemPath>
           <itemPath>src/qm/kp/kpParams.hpp</itemPath>
@@ -69,20 +75,18 @@
         <itemPath>src/simulations/Device.cpp</itemPath>
         <itemPath>src/simulations/Device.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="string" displayName="string" projectFiles="true">
+        <itemPath>src/string/stringutils.cpp</itemPath>
+        <itemPath>src/string/stringutils.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
         <itemPath>src/utils/ConsoleProgressBar.cpp</itemPath>
         <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
         <itemPath>src/utils/Exception.h</itemPath>
-        <itemPath>src/utils/Qbase.hpp</itemPath>
-        <itemPath>src/utils/fermi.hpp</itemPath>
-        <itemPath>src/utils/geometry.hpp</itemPath>
+        <itemPath>src/utils/Printable.hpp</itemPath>
         <itemPath>src/utils/myenums.hpp</itemPath>
-        <itemPath>src/utils/mymath.h</itemPath>
         <itemPath>src/utils/serialize.hpp</itemPath>
-        <itemPath>src/utils/stringutils.cpp</itemPath>
-        <itemPath>src/utils/stringutils.h</itemPath>
-        <itemPath>src/utils/svec.h</itemPath>
-        <itemPath>src/utils/trace.hpp</itemPath>
+        <itemPath>src/utils/std.hpp</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -171,6 +175,18 @@
       </item>
       <item path="src/include/qmicad.hpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="src/maths/arma.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/constants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/fermi.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/svec.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/trace.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/negf/NEGF.h" ex="false" tool="3" flavor2="0">
@@ -217,10 +233,6 @@
       </item>
       <item path="src/qm/hamParams.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/kp/genKpAtoms.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/kp/genKpAtoms.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
@@ -237,31 +249,23 @@
       </item>
       <item path="src/simulations/Device.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/string/stringutils.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/utils/ConsoleProgressBar.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/ConsoleProgressBar.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/Qbase.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/fermi.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/geometry.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/mymath.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/stringutils.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/utils/stringutils.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/svec.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/trace.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/utils/std.hpp" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="2">
@@ -300,6 +304,18 @@
       </item>
       <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/maths/arma.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/constants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/fermi.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/svec.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/trace.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/negf/NEGF.h" ex="false" tool="3" flavor2="0">
@@ -346,10 +362,6 @@
       </item>
       <item path="src/qm/hamParams.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/kp/genKpAtoms.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/kp/genKpAtoms.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
@@ -366,31 +378,23 @@
       </item>
       <item path="src/simulations/Device.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/string/stringutils.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/utils/ConsoleProgressBar.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/ConsoleProgressBar.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/Qbase.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/fermi.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/geometry.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/mymath.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/utils/stringutils.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/utils/stringutils.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/svec.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/utils/trace.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/utils/std.hpp" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

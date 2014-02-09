@@ -9,38 +9,38 @@
  * 
  */
 
-#ifndef QBASE_H
-#define	QBASE_H
+#ifndef PRINTABLE_H
+#define	PRINTABLE_H
 
 #include <string>
 #include <iostream>
 
 /**
- * Base class of all QMICAD classes. All class that want to print itself
+ * Description: Printable class. All class that want to print itself
  * extends this class and overloads the toString() method.
  */
 
-namespace qmicad{
+namespace utils{
 using std::ostream;
 using std::endl;
 using std::string;
 
-class Qbase{
+class Printable{
 protected:
     string mTitle;
     string mPrefix;
 
-    Qbase(const string &prefix = ""):mPrefix(prefix) {
-        mTitle = "Qbase";
+    Printable(const string &prefix = ""):mPrefix(prefix) {
+        mTitle = "Printable";
     };
-    virtual ~Qbase(){};
+    virtual ~Printable(){};
 
 public:
     virtual string toString() const { return mTitle; };
     virtual bool   isEmpty()const { return false; };
 
     /* Dump the data to the stream */
-    friend ostream& operator << (ostream & out, const Qbase &p){
+    friend ostream& operator << (ostream & out, const Printable &p){
         if(!p.isEmpty()){
             if (p.mTitle.length()){
                 out << p.mPrefix << p.mTitle << ":" << endl;
@@ -67,5 +67,5 @@ public:
     }
 };
 }
-#endif	/* QBASE_H */
+#endif	/* PRINTABLE_H */
 

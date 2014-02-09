@@ -24,10 +24,11 @@
 
 #include "terminal.h"
 #include "potential.h"
-#include "../utils/stringutils.h"
+#include "../string/stringutils.h"
 
 
 namespace qmicad{
+using utils::dtos;
 /*
  * Linear terminal emulates linear voltage drop between two 
  * gates.

@@ -33,7 +33,7 @@ public:
     virtual void    postCompute(int il) { NegfEloop::postCompute(il); };
     virtual void    collect() { NegfEloop::collect(); };
     
-    virtual void    computeTE(uword N = 1) {NegfEloop::computeTE(N); };
+    virtual void    computeTE(uint N = 1) {NegfEloop::computeTE(N); };
     virtual void    collectTE() {NegfEloop::collectTE(); };
     
     virtual void    stepCompleted() {NegfEloop::stepCompleted(); };

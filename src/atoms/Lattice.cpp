@@ -10,6 +10,8 @@
 
 #include "Lattice.h"
 
+namespace qmicad{
+
 /* Lattice coordinate */
 
 LatticeCoordinate::LatticeCoordinate(){
@@ -125,3 +127,6 @@ ostream& operator << (ostream& out, const LatticeVector& lv){
     return out;
 
 }
+
+}
+

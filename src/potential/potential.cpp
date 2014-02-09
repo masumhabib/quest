@@ -12,7 +12,7 @@ using namespace std;
 // Constructor
 Potential::Potential(const Atoms &atoms, const contact &source, 
 const contact &drain, const vector<gate> &gates, const string &prefix):
-Qbase("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
+Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
     mV.set_size(ma.NumOfAtoms());
     mV.zeros();
     ms.Title("Source");

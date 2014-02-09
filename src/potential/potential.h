@@ -8,13 +8,16 @@
 #ifndef POTENTIAL_H
 #define	POTENTIAL_H
 
-#include "../utils/stringutils.h"
-#include "../utils/geometry.hpp"
+#include "../string/stringutils.h"
+#include "../maths/geometry.hpp"
 #include "../atoms/Atoms.h"
 #include "terminal.h"
 
 namespace qmicad{
-class Potential:public Qbase{
+
+using utils::itos;
+
+class Potential:public Printable{
 public:
 protected:
     const Atoms         &ma;    // Atomistic geometry of the device

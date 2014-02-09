@@ -10,16 +10,15 @@
 
 #include <armadillo>
 
-#include "../../utils/mymath.h"
-#include "../../utils/Qbase.hpp"
+#include "../../maths/constants.h"
+#include "../../utils/Printable.hpp"
 #include "../../atoms/Atoms.h"
 #include "../genHam.hpp"
 #include "kpParams.hpp"
 
 namespace qmicad{
-using arma::cx_mat22;
-using arma::cx_mat;
-using namespace constants;
+using namespace maths::armadillo;
+using namespace maths::constants;
 
 struct TISurfKpParams: public KpParams{
     // k.p parameters
@@ -31,7 +30,7 @@ struct TISurfKpParams: public KpParams{
         mTitle = "Topological Insulator Surface";
         // default parameters
           
-        I = eye<cx_mat>(2,2);    
+        I = eye<cxmat>(2,2);    
         // Discretized lattice points for k.p Hamiltonian
         PeriodicTable.push_back(Atom(0,  "D",  2, 2));
 
@@ -76,7 +75,7 @@ protected:
 
 };
 /* Tight binding logic for graphene*/
-class TISurfHamGen: public HamGenerator<cx_mat>{
+class TISurfHamGen: public HamGenerator<cxmat>{
 // Fields
 protected:    
     TISurfKpParams p;
@@ -85,7 +84,7 @@ public:
     TISurfHamGen(const TISurfKpParams& p){this->p = p;};
     virtual ~TISurfHamGen(){};
 protected:
-    virtual cx_mat operator()(const Atoms& atomi, const Atoms& atomj) const;
+    virtual cxmat operator()(const Atoms& atomi, const Atoms& atomj) const;
     
 private:
     

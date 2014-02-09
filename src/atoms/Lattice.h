@@ -15,12 +15,14 @@
 #include <armadillo>
 #include <boost/serialization/access.hpp>
 
-#include "../utils/svec.h"
+#include "../maths/svec.h"
 #include "../utils/serialize.hpp"
 
-using namespace std;
-using namespace arma;
-using namespace spacevec;
+namespace qmicad{
+using std::ostream;
+using std::endl;
+using namespace maths::armadillo;
+using namespace maths::spacevec;
 
 /* Lattice coordinates */
 struct LatticeCoordinate{
@@ -76,6 +78,8 @@ struct LatticeVector {
 
 typedef struct LatticeVector lvec;
 typedef struct LatticeCoordinate lcoord;
+
+}
 
 #endif	/* LATTICE_H */
 

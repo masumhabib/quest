@@ -18,7 +18,7 @@
 #include "../hamParams.hpp"
 
 namespace qmicad{
-using arma::mat;
+using namespace maths::armadillo;
     
 struct GrapheneTbParams: public HamParams{
     // Tight binding parameters

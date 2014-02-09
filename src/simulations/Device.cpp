@@ -144,13 +144,13 @@ void Device::prepare(){
         if(typeid(*hp) == typeid(GrapheneKpParams)){
             shared_ptr<GrapheneKpParams> grkpp = boost::static_pointer_cast<GrapheneKpParams>(hp);
             GrapheneKpHamGen generator(*grkpp);
-            H0(0) = genHam<cx_mat>(lyr0, lyr0, generator);   // H_0,0
-            Hl(0) = genHam<cx_mat>(lyr1, lyr0, generator);   // H_0,-1 = H_1,0
+            H0(0) = genHam<cxmat>(lyr0, lyr0, generator);   // H_0,0
+            Hl(0) = genHam<cxmat>(lyr1, lyr0, generator);   // H_0,-1 = H_1,0
         }else if(typeid(*hp) == typeid(TISurfKpParams)){
             shared_ptr<TISurfKpParams> tikpp = boost::static_pointer_cast<TISurfKpParams>(hp);
             TISurfHamGen generator(*tikpp);
-            H0(0) = genHam<cx_mat>(lyr0, lyr0, generator);   // H_0,0
-            Hl(0) = genHam<cx_mat>(lyr1, lyr0, generator);   // H_0,-1 = H_1,0
+            H0(0) = genHam<cxmat>(lyr0, lyr0, generator);   // H_0,0
+            Hl(0) = genHam<cxmat>(lyr1, lyr0, generator);   // H_0,-1 = H_1,0
             
         }
         // Overlap

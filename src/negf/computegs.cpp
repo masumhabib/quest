@@ -7,17 +7,19 @@
 
 #include "computegs.h"
 
+namespace qmicad{
+    
 /**
  * 
  */
-bool computegs(cx_mat& gs, double E, const cx_mat& Hii, const cx_mat& Sii, 
-        const cx_mat& Tij, dcmplx ieta, double TolX){
+bool computegs(cxmat& gs, double E, const cxmat& Hii, const cxmat& Sii, 
+        const cxmat& Tij, dcmplx ieta, double TolX){
  
     // initial guess (see the line just after Eq. 11 of [1])
-    cx_mat epi_1 = Hii;
-    cx_mat epsi_1 = Hii;
-    cx_mat alpai_1 = Tij;
-    cx_mat betai_1 = trans(Tij);
+    cxmat epi_1 = Hii;
+    cxmat epsi_1 = Hii;
+    cxmat alpai_1 = Tij;
+    cxmat betai_1 = trans(Tij);
     double con_error_alpa = 10;
     double con_error_beta = 10;
     int iter = 0;
@@ -25,7 +27,7 @@ bool computegs(cx_mat& gs, double E, const cx_mat& Hii, const cx_mat& Sii,
     bool  flag = true;
 
     // working matrices
-    cx_mat inv_mat, alpai, betai, epi, epsi;
+    cxmat inv_mat, alpai, betai, epi, epsi;
 
     while((con_error_alpa > TolX) || (con_error_beta > TolX)){
         // ---- Eq. B6 of [1] (alpa == A & beta == B)---------
@@ -52,4 +54,6 @@ bool computegs(cx_mat& gs, double E, const cx_mat& Hii, const cx_mat& Sii,
     gs = inv(E*Sii-epsi);
 
     return flag;
+}
+
 }

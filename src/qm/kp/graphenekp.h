@@ -10,17 +10,16 @@
 
 #include <armadillo>
 
-#include "../../utils/mymath.h"
+#include "../../maths/constants.h"
 #include "../../atoms/Atoms.h"
 #include "../genHam.hpp"
-#include "../../utils/Qbase.hpp"
+#include "../../utils/Printable.hpp"
 
 #include "kpParams.hpp"
 
 namespace qmicad{
-using arma::cx_mat22;
-using arma::cx_mat;
-using namespace constants;
+using namespace maths::armadillo;
+using namespace maths::constants;
 
 struct GrapheneKpParams: public KpParams{
     // k.p parameters
@@ -31,7 +30,7 @@ struct GrapheneKpParams: public KpParams{
         mTitle = "Graphene k.p parameters";
         // default parameters
           
-        I = eye<cx_mat>(2,2);    
+        I = eye<cxmat>(2,2);    
         // Discretized lattice points for k.p Hamiltonian
         PeriodicTable.push_back(Atom(0,  "D",  2, 2));
 
@@ -73,7 +72,7 @@ protected:
 
 };
 /* Tight binding logic for graphene*/
-class GrapheneKpHamGen: public HamGenerator<cx_mat>{
+class GrapheneKpHamGen: public HamGenerator<cxmat>{
 // Fields
 protected:    
     GrapheneKpParams p;
@@ -81,7 +80,7 @@ protected:
 public:
     GrapheneKpHamGen(const GrapheneKpParams& p){this->p = p;};
     virtual ~GrapheneKpHamGen(){};
-    virtual cx_mat operator()(const Atoms& atomi, const Atoms& atomj) const;
+    virtual cxmat operator()(const Atoms& atomi, const Atoms& atomj) const;
     
 private:
 

@@ -1,5 +1,5 @@
 /* 
- * File:   mymath.h
+ * File:   constants.h
  * Author: K M Masum Habib <khabib@ee.ucr.edu>
  *
  * Created on April 7, 2013, 10:09 PM
@@ -8,24 +8,15 @@
  * 
  */
 
-#ifndef MYMATH_H
-#define	MYMATH_H
+#ifndef CONSTANTS_H
+#define	CONSTANTS_H
 
-#include <armadillo>
-#include <complex>
+#include "arma.hpp"
 
-typedef std::complex<double> dcmplx;
-typedef std::complex<float>  fcmplx;
-typedef arma::rowvec         rvec;
-typedef arma::colvec         cvec;
-typedef arma::cx_rowvec      cx_rvec;
-typedef arma::cx_colvec      cx_cvec;
-
+namespace maths{
 namespace constants{
     
-using arma::cx_mat22;
-using arma::cx_mat;
-using arma::endr;
+using namespace armadillo;
 
 // cmat22: 2x2 matrix helper class that has a 
 // constructor which can be used to initialie a const object;
@@ -35,11 +26,11 @@ public:
         m << m00 << m01 << endr << m10 << m11 << endr;
     }
     
-    const cx_mat& operator()() const{
+    const cxmat& operator()() const{
         return m;
     }
 private:
-    cx_mat m;
+    cxmat m;
 };
 
     // Math 
@@ -58,13 +49,13 @@ private:
     const double        me      = 9.10938291E-31;       // Mass of an electron: kg  
 
     // Pauli matrices
-    const cmat22              sx = cmat22(0, 1, 1, 0);
-    const cmat22              sy = cmat22(0,-i, i, 0);
-    const cmat22              sz = cmat22(1, 0, 0,-1);
+    const cmat22             sx = cmat22(0, 1, 1, 0);
+    const cmat22             sy = cmat22(0,-i, i, 0);
+    const cmat22             sz = cmat22(1, 0, 0,-1);
     
 };
 
-
+}
 
 #endif	/* MYMATH_H */
 

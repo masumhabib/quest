@@ -19,13 +19,18 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/split_free.hpp>
 
-#include "svec.h"
+#include "../maths/svec.h"
 
-using namespace std;
-using namespace arma;
-using namespace spacevec;
 
-namespace boost {namespace serialization {
+namespace boost {
+namespace serialization {
+using std::stringstream;
+using std::string;
+using std::complex;
+using arma::Mat;
+using arma::Col;
+using arma::Row;
+using namespace maths::spacevec;
 
 /*
  * Serialization for stringstream.

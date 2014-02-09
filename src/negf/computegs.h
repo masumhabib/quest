@@ -8,12 +8,12 @@
 #ifndef COMPUTEGS_H
 #define	COMPUTEGS_H
 
-#include <armadillo>
-#include "../utils/mymath.h"
+#include "../maths/arma.hpp"
+#include "../maths/constants.h"
 
-
-using namespace arma;
-using namespace constants;
+namespace qmicad{
+using namespace maths::armadillo;
+using namespace maths::constants;
 
 /** 
  * This function calculates the surface green's function of a
@@ -38,8 +38,8 @@ using namespace constants;
  */
 
 
-bool computegs(cx_mat& gs, double E, const cx_mat& Hii, const cx_mat& Sii, 
-        const cx_mat& Tij, dcmplx ieta, double TolX);
-
+bool computegs(cxmat& gs, double E, const cxmat& Hii, const cxmat& Sii, 
+        const cxmat& Tij, dcmplx ieta, double TolX);
+}
 #endif	/* COMPUTEGS_H */
 

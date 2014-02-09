@@ -11,6 +11,7 @@
 
 #include "Atoms.h"
 
+namespace qmicad{
 /* Default constructor */
 Atoms::Atoms() {
     initPeriodicTable();
@@ -45,10 +46,10 @@ mXyz(orig.mXyz)
 }
 
 /* Construct from coordinates */
-Atoms::Atoms(const icolvec& atomId, const mat& coordinate, const lvec& lv)
+Atoms::Atoms(const icol& atomId, const mat& coordinate, const lvec& lv)
 {
     if (atomId.n_rows != coordinate.n_rows){
-        throw invalid_argument("In Atoms::Atoms(const icolvec& atomId, const mat& "
+        throw invalid_argument("In Atoms::Atoms(const icol& atomId, const mat& "
                 "coordinate, const lvec& lv) number of rows of atomId and "
                 "coordinate does not match");
     }
@@ -65,10 +66,10 @@ Atoms::Atoms(const icolvec& atomId, const mat& coordinate, const lvec& lv)
 }
 
 /* Construct from coordinates and a periodic table*/
-Atoms::Atoms(const icolvec& atomId, const mat& coordinate, const lvec& lv,
+Atoms::Atoms(const icol& atomId, const mat& coordinate, const lvec& lv,
 const vector<Atom>& PeriodicTable):mPeriodicTable(PeriodicTable){
     if (atomId.n_rows != coordinate.n_rows){
-        throw invalid_argument("In Atoms::Atoms(const icolvec& atomId, const mat& "
+        throw invalid_argument("In Atoms::Atoms(const icol& atomId, const mat& "
                 "coordinate, const lvec& lv) number of rows of atomId and "
                 "coordinate does not match");
     }
@@ -80,6 +81,13 @@ const vector<Atom>& PeriodicTable):mPeriodicTable(PeriodicTable){
     mNumAtoms = mAtomId.n_rows;
     mNumOrbitals = computeNumOfOrbitals();
     mNumElectrons = computeNumOfElectrons();    
+}
+
+Atoms::Atoms(double Lx, double Ly, double ax, double ay, const vector<Atom>& 
+    periodicTable)
+{
+    init();
+    genKpAtoms(Lx, Ly, ax, ay, periodicTable);
 }
 
 /* our periodic table */
@@ -239,11 +247,11 @@ Atoms& Atoms::operator+= (const svec& rvec){
  * in column vector.
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
-Atoms Atoms::operator ()(const ucolvec& index) const{
+Atoms Atoms::operator ()(const ucol& index) const{
     
     //get only the atoms we are interested in
-    icolvec atomId = mAtomId.elem(index);   
-    ucolvec cols;
+    icol atomId = mAtomId.elem(index);   
+    ucol cols;
     cols << spacevec::X << spacevec::Y << spacevec::Z;
     mat coordinate = mXyz(index,cols);        
 
@@ -257,7 +265,7 @@ Atoms Atoms::operator ()(const ucolvec& index) const{
 Atoms Atoms::operator ()(span s) const{
     
     //get only the atoms we are interested in
-    icolvec atomId = mAtomId(s);   
+    icol atomId = mAtomId(s);   
     mat coordinate = mXyz(s,span::all); 
 
     return Atoms(atomId, coordinate, mLatticeVector, mPeriodicTable);
@@ -268,14 +276,14 @@ Atoms Atoms::operator ()(span s) const{
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
 
-Atoms Atoms::operator ()(uword i) const{
+Atoms Atoms::operator ()(uint i) const{
     
-    ucolvec index(1);
+    ucol index(1);
     index(0) = i;
     return (*this)(index);
 }
 
-Atom Atoms::AtomAt(uword i) const{
+Atom Atoms::AtomAt(uint i) const{
     return mPeriodicTable[mAtomId[i]];
 }
 
@@ -343,7 +351,7 @@ void Atoms::importGjf(const string& gjfFileName){
                 mAtomId.resize(mNumAtoms+1);
                 mAtomId(mNumAtoms) =  ind;
                 
-                rowvec r(3);
+                row r(3);
                 r << x << y << z;
                 mXyz.insert_rows(mXyz.n_rows,r);
                 
@@ -378,6 +386,32 @@ void Atoms::exportGjf(const string& gjfFileName){
         
     gjf << *this;
     gjf.close();
+}
+
+void Atoms::genKpAtoms(double Lx, double Ly, double ax, double ay, 
+        const vector<Atom>& periodicTable){
+    MatGrid xy(-Lx/2, Lx/2, ax, -Ly/2, Ly/2, ay);
+    
+    // calculate x, y and z coordinates of the atoms
+    mNumAtoms = xy.Nx()*xy.Ny();            // total number of atoms
+    mXyz.set_size(mNumAtoms, 3);            // xyz coordinate of atoms
+    mXyz.col(spacevec::X) = xy.X();
+    mXyz.col(spacevec::Y) = xy.Y();
+    mXyz.col(spacevec::Z).zeros();
+    
+    // prepare atomId list containing atomic number of a fake atom 'D'.
+    mAtomId.set_size(mNumAtoms);
+    PeriodicTable(periodicTable);           // Copy the periodic table.
+    mAtomId.fill(mPeriodicTable[0].ia);
+    
+    // lattice vector
+    mLatticeVector.a1(spacevec::X) = xy.maxx()-xy.minx() + ax;
+    mLatticeVector.a2(spacevec::Y) = xy.maxy()-xy.miny() + ay;  
+    
+    // calculate number of orbitals and electrons.
+    mNumOrbitals = computeNumOfOrbitals();
+    mNumElectrons = computeNumOfElectrons();    
+ 
 }
 
 int Atoms::convertSymToIndex(const string& sym) const{
@@ -418,6 +452,6 @@ void Atoms::PeriodicTable(const vector<Atom>& periodicTable){
     mNumElectrons = computeNumOfElectrons();
 }
 
-
+}
 
 

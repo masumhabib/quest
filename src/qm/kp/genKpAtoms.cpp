@@ -11,7 +11,7 @@
 #include "genKpAtoms.h"
 
 namespace qmicad{
-    
+using utils::MatGrid;    
 
 Atoms genKpAtoms(double Lx, double Ly, double ax, double ay, 
         const vector<Atom>& periodicTable){
@@ -25,7 +25,7 @@ Atoms genKpAtoms(double Lx, double Ly, double ax, double ay,
     xyz.col(spacevec::Z).zeros();
     
     // prepare atomId list containing atomic number of a fake atom 'D'.
-    icolvec atomId(na);
+    icol atomId(na);
     atomId.fill(periodicTable[0].ia);
     
     // lattice vector

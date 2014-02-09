@@ -15,7 +15,8 @@
 #include "../include/qmicad.hpp"
 
 namespace qmicad{
-using namespace arma;
+using namespace maths::armadillo;
+using namespace utils;
 using boost::shared_ptr;
 using boost::static_pointer_cast;
 using boost::mpi::communicator;
@@ -84,10 +85,10 @@ protected:
     double          no;            // total number of orbitals in the device    
         
     // NEGF
-    field<cx_mat>   H0;            // Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
-    field<cx_mat>   Hl;            // Lower diagonal blocks of Hamiltonian: Hl(i) = [H]_i,i-1
-    field<cx_mat>   S0;            // Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
-    field<cx_mat>   Sl;            // Lower diagonal blocks of overlap matrix: 
+    field<cxmat>   H0;            // Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
+    field<cxmat>   Hl;            // Lower diagonal blocks of Hamiltonian: Hl(i) = [H]_i,i-1
+    field<cxmat>   S0;            // Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
+    field<cxmat>   Sl;            // Lower diagonal blocks of overlap matrix: 
     NegfParams      np;            // NEGF parameters
         
     // Bias

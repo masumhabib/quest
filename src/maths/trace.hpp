@@ -11,10 +11,10 @@
 #ifndef TRACE_HPP
 #define	TRACE_HPP
 
-#include <armadillo>
+#include "arma.hpp"
 #include <stdexcept>
 
-using namespace arma;
+using namespace maths::armadillo;
 using std::invalid_argument;
 
 /*
@@ -29,7 +29,7 @@ using std::invalid_argument;
  */
 
 template<class T>
-T trace(const T &A, uword N = 1){
+T trace(const T &A, uint N = 1){
     int m = A.n_rows;
     int n = A.n_cols;
     

@@ -15,19 +15,19 @@
 #include <armadillo>
 #include <vector>
 
-#include "../utils/ConsoleProgressBar.h"
-#include "../utils/mymath.h"
-#include "../utils/stringutils.h"
+#include "../utils/Printable.hpp"
 #include "../utils/myenums.hpp"
-#include "../utils/trace.hpp"
-#include "../utils/Qbase.hpp"
-#include "../utils/fermi.hpp"
+#include "../string/stringutils.h"
+#include "../maths/constants.h"
+#include "../maths/trace.hpp"
+#include "../maths/fermi.hpp"
 #include "../cache/cache.hpp"
 #include "computegs.h"
 
 namespace qmicad{
-using namespace arma;
-using namespace constants;
+using namespace maths::armadillo;
+using namespace maths::constants;
+using namespace utils;
 using std::string;
 using myenums::Option;
 using myenums::Enabled;
@@ -49,7 +49,7 @@ using myenums::Disabled;
  * The method constructing NEGF object is responsible
  * for memory management of NEGFParams.
  */
-struct NegfParams: public Qbase {
+struct NegfParams: public Printable {
     
     // Options
     Option              DCache;
@@ -67,17 +67,17 @@ struct NegfParams: public Qbase {
     bool                isOrthogonal;
     
     dcmplx              ieta;   // small infinitesimal energy    
-    uword               nb;     // Total number of blocks including contacts
+    uint                nb;     // Total number of blocks including contacts
     double              muS;    // Fermi function at the left contact
     double              muD;    // Fermi function at the right contact
     double              kT;     // k*T
     
     // Hamiltonian , overlap and potential
-    field<cx_mat*>      H0;     // Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
+    field<cxmat*>      H0;     // Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
                                 // H0(0) is on the left contact and H0(N+1) is 
                                 // on the right contact.
     
-    field<cx_mat*>      Hl;     // Lower diagonal blocks of Hamiltonian: 
+    field<cxmat*>      Hl;     // Lower diagonal blocks of Hamiltonian: 
                                 // Hl(i) = [H]_i,i-1. Hl(0) = [H]_0,-1 is the 
                                 // hopping between two left contact blocks.
                                 // H(1) = [H]_1,0 is the hopping 
@@ -86,11 +86,11 @@ struct NegfParams: public Qbase {
                                 // Hl(N+2) is hopping between two right contact
                                 // blocks.
     
-    field<cx_mat*>      S0;     // Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
+    field<cxmat*>      S0;     // Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
                                 // H0(0) is on the left contact and H0(N+1) is 
                                 // on the right contact.
     
-    field<cx_mat*>      Sl;     // Lower diagonal blocks of overlap matrix: 
+    field<cxmat*>      Sl;     // Lower diagonal blocks of overlap matrix: 
                                 // Sl(i) = [S]_i,i-1. Sl(0) = [S]_0,-1 is the 
                                 // overlap between two left contact blocks.
                                 // S(1) = [S]_1,0 is the overlap between 
@@ -125,7 +125,7 @@ struct NegfParams: public Qbase {
  * NEGF class. It implements the RGF algorithm for a single energy point.
  * It only works for coherent transport. It is not parallel right now.
  */
-class Negf: public Qbase {
+class Negf: public Printable {
 /*
  * Helper classes for the potential, Hamiltonian
  * and Green functions.
@@ -139,7 +139,7 @@ protected:
     public:
         NegfMatCache(Negf *negf, int begin, int end, Option cache = Enabled):
             CxMatCache(begin, end, cache), mnegf(negf){};
-        virtual const cx_mat& operator ()(int ib){
+        virtual const cxmat& operator ()(int ib){
             return getAt(ib);
         }
             
@@ -154,9 +154,9 @@ protected:
     public:
         Di(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeDi(cx_mat& M, int ib);
+        inline void computeDi(cxmat& M, int ib);
     }; // end of Di
 
 /*
@@ -167,9 +167,9 @@ protected:
     public:
         Tl(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeTl(cx_mat& Tl, int ib);    
+        inline void computeTl(cxmat& Tl, int ib);    
     }; // end of Tl
 
 /*
@@ -183,9 +183,9 @@ protected:
             // Initally, cache is empty
             mIt = mEnd + 1;            
         };
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computegrc(cx_mat& grci, const cx_mat& grcip1, int ib);    
+        inline void computegrc(cxmat& grci, const cxmat& grcip1, int ib);    
     }; // end of grc
 
 /*
@@ -196,9 +196,9 @@ protected:
     public:
         glc(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeglc(cx_mat& glci, const cx_mat& glcim1, int ib);    
+        inline void computeglc(cxmat& glci, const cxmat& glcim1, int ib);    
     }; // end of glc
 
  /*
@@ -209,9 +209,9 @@ protected:
     public:
         Gii(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeGii(cx_mat& Gii, const cx_mat& Gim1im1, int ib);    
+        inline void computeGii(cxmat& Gii, const cxmat& Gim1im1, int ib);    
     }; // end of Gii    
  
 /*
@@ -222,9 +222,9 @@ protected:
     public:
         Gi1(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeGi1(cx_mat& Gi1, const cx_mat& Gim11, int ib);    
+        inline void computeGi1(cxmat& Gi1, const cxmat& Gim11, int ib);    
     }; // end of Gi1
 
 /*
@@ -235,9 +235,9 @@ protected:
     public:
         GiN(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeGiN(cx_mat& GiN, const cx_mat& Gip1N, int ib);    
+        inline void computeGiN(cxmat& GiN, const cxmat& Gip1N, int ib);    
     }; // end of GiN
 
 /*
@@ -248,9 +248,9 @@ protected:
     public:
         Giip1(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeGiip1(cx_mat& Giip1, const cx_mat& Gii, int ib);    
+        inline void computeGiip1(cxmat& Giip1, const cxmat& Gii, int ib);    
     }; // end of Giip1
 
 /*
@@ -261,9 +261,9 @@ protected:
     public:
         Giim1(Negf *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
-        const cx_mat& operator ()(int ib);
+        const cxmat& operator ()(int ib);
     protected:
-        inline void computeGiim1(cx_mat& Giim1, const cx_mat& Gim1im1, int ib);    
+        inline void computeGiim1(cxmat& Giim1, const cxmat& Gim1im1, int ib);    
     }; // end of Giim1
 
 /*
@@ -272,9 +272,9 @@ protected:
 // Fields    
 protected:
     NegfParams          mp;      // parameters
-    uword               mN;      // number of blocks without the contacts
-    uword               miLc;    // index of left contact block
-    uword               miRc;    // index of right contact block
+    uint               mN;      // number of blocks without the contacts
+    uint               miLc;    // index of left contact block
+    uint               miRc;    // index of right contact block
     double              mE;      // Energy at which calculations are pertormed.
     double              mf0;     // Fermi function at contact 1
     double              mfNp1;   // Fermi function at contact N+1
@@ -306,18 +306,18 @@ public:
     virtual ~Negf();
     
     // Density operator
-    cx_mat niOp(uword N = 1);
+    cxmat niOp(uint N = 1);
     
     // current operator
-    cx_mat I1Op(uword N = 1);
+    cxmat I1Op(uint N = 1);
     
     // transmission operator
-    cx_mat TEop(uword N = 1);
+    cxmat TEop(uint N = 1);
     
     
 protected:
-    inline cx_mat Ui(int i);
-    inline cx_mat Ul(int i);
+    inline cxmat Ui(int i);
+    inline cxmat Ul(int i);
         
 private:
     Negf();

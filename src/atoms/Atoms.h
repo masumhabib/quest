@@ -17,20 +17,24 @@
 #include <fstream>
 #include <vector>
 #include <iomanip> 
-#include <armadillo>
 
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
 
+#include "../string/stringutils.h"
+#include "../maths/svec.h"
+#include "../maths/arma.hpp"
+#include "../grid/grid.hpp"
+
 #include "Lattice.h"
-#include "../utils/stringutils.h"
-#include "../utils/svec.h"
 
-
-using namespace std;
-using namespace arma;
-using spacevec::svec;
+namespace qmicad{
+using utils::trim;
+using utils::MatGrid; 
+using namespace utils::stds;
+using namespace maths::armadillo;
+namespace spacevec = maths::spacevec;
     
     
         
@@ -92,31 +96,33 @@ protected:
     int mNumElectrons;            // no of electrons
 
     // atoms and their coordinates
-    icolvec mAtomId;            // id in periodic table
+    icol mAtomId;            // id in periodic table
     mat     mXyz;        // atom coordinates
     lvec    mLatticeVector;     // lattice vector
 
 // Methods    
 public:
-    // Constructors and destructors.
+    //! Constructors and destructors.
     Atoms(); // default
-    // constructs from a GaussView gjf file
+    //! constructs from a GaussView GJF file.
     Atoms(const string& gjfFileName ); 
-    // constructs from a GaussView gjf file and a periodic table
+    //! constructs from a GaussView GJF file and a periodic table.
     Atoms(const string& gjfFileName, const vector<Atom>& PeriodicTable);
-    // constructs from a atomic coordinates and lattice vector
-    Atoms(const icolvec& atomId, const mat& coordinate, const lvec& lv);
-    // constructs from a atomic coordinates and lattice vector
-    Atoms(const icolvec& atomId, const mat& coordinate, const lvec& lv,
+    //! Constructor for k.p fake atoms.
+    Atoms(double Lx, double Ly, double ax, double ay, const vector<Atom>& periodicTable);
+    //! Constructs from a atomic coordinates and lattice vector.
+    Atoms(const icol& atomId, const mat& coordinate, const lvec& lv);
+    //! Constructs from a atomic coordinates and lattice vector.
+    Atoms(const icol& atomId, const mat& coordinate, const lvec& lv,
     const vector<Atom>& PeriodicTable);
-    // copy constructor
+    //! Copy constructor.
     Atoms(const Atoms& orig);
     virtual ~Atoms(){};
     friend void swap(Atoms& first, Atoms& second);
     // operators
     Atoms  operator()(span s) const;                  // Get a sub cell 
-    Atoms  operator()(const ucolvec& index) const;    // Get a sub cell
-    Atoms  operator()(uword i) const;                 // Get one atom cell
+    Atoms  operator()(const ucol& index) const;    // Get a sub cell
+    Atoms  operator()(uint i) const;                 // Get one atom cell
     
     Atoms& operator= (Atoms rhs);                     // assignment
     Atoms& operator+= (const Atoms& atoms);           // concatenation
@@ -134,16 +140,20 @@ public:
     friend ostream& operator<< (ostream& out, const Atoms &b);
 
     // utilities
+    //! Import atoms from Gaussview file.
     void importGjf(const string &gjfFileName);
+    //! Export atoms to Gaussview file.
     void exportGjf(const string &gjfFileName);
+    //! Create fake k.p atoms.
+    void genKpAtoms(double Lx, double Ly, double ax, double ay, 
+                    const vector<Atom>& periodicTable);
 
     // access functions
-    // get's
-    Atom        AtomAt(uword i) const;       // Get one atom at i
+    Atom        AtomAt(uint i) const;       // Get one atom at i
     string      Symbol(int i) const { return convertIndexToSym(mAtomId(i)); } ;
-    double      X(int i) const { return mXyz(i, spacevec::X); };
-    double      Y(int i) const { return mXyz(i, spacevec::Y); };
-    double      Z(int i) const { return mXyz(i, spacevec::Z); };
+    double      X(uint i) const { return mXyz(i, spacevec::X); };
+    double      Y(uint i) const { return mXyz(i, spacevec::Y); };
+    double      Z(uint i) const { return mXyz(i, spacevec::Z); };
     vec         X() const { return mXyz.col(spacevec::X); };
     vec         Y() const { return mXyz.col(spacevec::Y); };
     vec         Z() const { return mXyz.col(spacevec::Z); };
@@ -151,9 +161,14 @@ public:
     int         NumOfOrbitals() const { return mNumOrbitals; };
     int         NumOfElectrons() const { return mNumElectrons; };
     const lvec& LatticeVector() const { return mLatticeVector; };
-    //set's
     void        LatticeVector(const lvec& a) { this->mLatticeVector = a; };
     void        PeriodicTable(const vector<Atom> &periodicTable);
+    double      xmin() {return min(mXyz.col(spacevec::X)); };
+    double      xmax() {return max(mXyz.col(spacevec::X)); };
+    double      ymin() {return min(mXyz.col(spacevec::Y)); };
+    double      ymax() {return max(mXyz.col(spacevec::Y)); };
+    double      zmin() {return min(mXyz.col(spacevec::Z)); };
+    double      zmax() {return max(mXyz.col(spacevec::Z)); };
 
 
 protected:
@@ -181,6 +196,8 @@ private:
     }
     
 };
+
+}
 
 #endif	/* ATOMS_H */
 

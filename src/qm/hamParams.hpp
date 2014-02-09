@@ -12,19 +12,20 @@
 #define	HAMPARAMS_HPP
 
 #include "../atoms/Atoms.h"
-#include "../utils/Qbase.hpp"
+#include "../utils/Printable.hpp"
 
 namespace qmicad{
-using namespace constants;
+using utils::Printable;
+using namespace maths::constants;
 
 
-struct HamParams: public Qbase{
+struct HamParams: public Printable{
     // Parameters required for all Hamiltonin
     double dtol;         // distance tolerance    
     // our periodic table
     vector<Atom> PeriodicTable;
     
-    HamParams(const string &prefix = ""):Qbase(" " + prefix){
+    HamParams(const string &prefix = ""):Printable(" " + prefix){
         mTitle = "Hamiltonian paramters";
         // default parameters          
     }
