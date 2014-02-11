@@ -11,8 +11,11 @@
 #include "../potential/linearPot.h"
 #include "PyAtomicStruct.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace qmicad{
 namespace python{
+using boost::shared_ptr;
 
 class PyLinearPot: public LinearPot {
 public:
@@ -26,6 +29,13 @@ public:
         return out;
     }
 
+    void VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0){
+        LinearPot::VLR(ilr, Vl, Vr, Vt, Vb);
+    }
+    
+    shared_ptr<vec> toOrbPot(uint start, uint end){
+        return LinearPot::toOrbPot(span(start, end));
+    }
 
 };
 

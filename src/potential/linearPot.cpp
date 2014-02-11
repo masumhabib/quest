@@ -172,6 +172,15 @@ void LinearPot::addLinearRegion(const squadrilateral& sq){
     mlr[it].Title("Linear Region # " + itos(it+1));
 }
 
+
+void LinearPot::VLR(int ilr, double Vl, double Vr, double Vt, double Vb){
+    mlr[ilr].Vl = Vl;
+    mlr[ilr].Vr = Vr;
+    mlr[ilr].Vt = Vt;
+    mlr[ilr].Vb = Vb;
+}
+
+
 /*
     bg::model::multi_polygon<polygon> tmp1, tmp3;
     bg::union_(mg[0].geom, mg[1].geom, tmp1);

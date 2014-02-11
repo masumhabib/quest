@@ -63,11 +63,12 @@ public:
  
     LinearPot(const AtomicStruct &atoms, const string &prefix = "");
     
-    virtual string toString() const;
-    virtual void exportSvg(const string &path);
-    virtual void compute();  
+    virtual string  toString() const;
+    virtual void    exportSvg(const string &path);
+    virtual void    compute();  
     
     void addLinearRegion(const squadrilateral& sq);
+    void VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0);
 };
 
 }

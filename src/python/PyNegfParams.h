@@ -10,13 +10,16 @@
 
 #include "../negf/CohRgfa.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace qmicad{
 namespace python{
+using boost::shared_ptr;
 
 struct PyNegfParams:public NegfParams{
 public:
     PyNegfParams(uint nb):NegfParams(){
-        nb = nb;
+        this->nb = nb;
         // initialize the matrix containers.
         NegfParams::H0.set_size(nb);
         NegfParams::S0.set_size(nb);
@@ -42,9 +45,9 @@ public:
         NegfParams::Sl(it) = Sl;
     }
     
-//    void V(shared_ptr<cxmat> V, uint it){
-//        NegfParams::V(it) = V;
-//    }
+    void V(shared_ptr<vec> V, uint it){
+        NegfParams::V(it) = V;
+    }
 };
 
 }

@@ -65,7 +65,7 @@ public:
     
 protected:
     const NegfParams      &mnp;     // Negf parameters
-    shared_ptr<CohRgfa>      mnegf;    // current Negf calculator
+    shared_ptr<CohRgfa>   mnegf;    // current Negf calculator
     double                mEi;      // current energy
     
     // output
@@ -78,8 +78,8 @@ protected:
     
         
     // user feedback
-    int                   mprog;    // progress
-    int                   mprogmx;  // maximum progress
+    int                  mprog;    // progress
+    int                  mprogmx;  // maximum progress
     
 };
 }

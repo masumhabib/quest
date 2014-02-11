@@ -78,7 +78,7 @@ class GrapheneTransport:
         grkpp.update()
         
         # generate hamiltonian and overlap matrices
-        self.ham = GrapheneKpHam(grkpp)            # hamiltonian generator
+        self.ham = GrapheneKpHam(grkpp)                 # hamiltonian generator
         lyr0 = self.geom.span(0, self.nw-1);            # extract block # 0
         lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
         self.ham.setSize(2)                             # uniform device, only need H_0,0 and H_1,0
@@ -94,12 +94,12 @@ class GrapheneTransport:
             self.np.Hl(self.ham.Hl(0), ib)              # Hl: 0 to N+2
         self.np.isOrthogonal = True                     # k.p is an orthogonal basis
         self.np.kT = self.kT;                           
-        self.np.ieta = 1j*self.eta;                 # imaginary potential
-        self.np.grcCache = Option.Enabled;          # enable grc cache
-        self.np.DCache = Option.Enabled;            # enable D cache
+        self.np.ieta = 1j*self.eta;                     # imaginary potential
+        self.np.grcCache = Option.Enabled;              # enable grc cache
+        self.np.DCache = Option.Enabled;                # enable D cache
 
         # Electrostatic potential
-        self.pot = LinearPot(self.geom)
+        self.V = LinearPot(self.geom)
         # add contacts
         xmn = self.geom.xmin() - self.ax/2
         xmx = self.geom.xmax() + self.ax/2
@@ -109,22 +109,22 @@ class GrapheneTransport:
         # source
         ql = Quadrilateral(Point(xmn, ymn), Point(xmn+self.ax, ymn),
                            Point(xmn+self.ax, ymx),  Point(xmn, ymx))
-        self.pot.addSource(ql)
+        self.V.addSource(ql)
         # drain
         ql = Quadrilateral(Point(xmx-self.ax, ymn), Point(xmx, ymn),
                            Point(xmx, ymx), Point(xmx-self.ax, ymx))
-        self.pot.addDrain(ql)
+        self.V.addDrain(ql)
         # gates
         ql = Quadrilateral(Point(xmn+self.ax, ymn), Point(-ds/2, ymn), 
                            Point(-ds/2, ymx), Point(xmn+self.ax, ymx))
-        self.pot.addGate(ql)
+        self.V.addGate(ql)
         ql = Quadrilateral(Point(ds/2, ymn), Point(xmx-self.ax, ymn),
                            Point(xmx-self.ax, ymx), Point(ds/2, ymx))
-        self.pot.addGate(ql)
+        self.V.addGate(ql)
         # linear region
         ql = Quadrilateral(Point(-ds/2, ymn), Point(ds/2, ymn), 
                            Point(ds/2, ymx), Point(-ds/2, ymx))
-        self.pot.addLinearRegion(ql)
+        self.V.addLinearRegion(ql)
         
         #Bias grid
         self.vdd = VecGrid(self.VDmin, self.VDmax, self.dVD)
@@ -136,17 +136,44 @@ class GrapheneTransport:
         # loop over drain
         for ivd in range(0, self.vdd.N()):
             VDD = self.vdd.V(ivd)
+            VD = VDD*self.rVD
+            VS = VDD*self.rVS
+            self.np.muS = self.mu - VS
+            self.np.muD = self.mu - VD
             # loop over gate
             for ivg in range(0, self.vgg.N()):
                 VGG = self.vgg.V(ivg)
-#                d.VG(0, VGG*p.rVG0)
-#                d.VG(0, VGG*p.rVG0)
-#                d.VLR(0, VGG*p.rVG0, VGG*p.rVG1)
-#                d.computePotential()
-#                np = d.NegfParam()
-#                Eloop = QneffEloop(np, workers)
-#               d.runNegfEloop()
- 
+                VG1 = VGG*self.rVG1
+                VG2 = VGG*self.rVG1
+                self.V.VG(0, VG1)               # bias voltage for gate#1 
+                self.V.VG(1, VG1)               # bias voltage for gate#2
+                self.V.VS(VG1)                  # potential of source
+                self.V.VD(VG2)                  # potential of drain
+                self.V.VLR(0, VG1, VG2)         # potential of linear region
+                # solve for potential
+                self.V.compute()
+                
+                # export potential to NEGF
+                for ib in range(0, self.nl):                  # setup the block hamiltonian
+                    self.np.V(self.V.toOrbPot(self.nw*ib, self.nw*(ib+1)-1), ib)
+
+                # create energy grid
+                if (self.AutoGenE):
+                    Emin = self.np.muD - 10*self.kT
+                    Emax = self.np.muS + 10*self.kT
+                else:
+                    Emin = self.Emin
+                    Emax = self.Emax
+                EE = VecGrid(Emin, Emax, self.dE)
+                
+                # create and run energy loop
+                Eloop = NegfEloop(EE, self.np, self.workers) 
+                Eloop.run()
+                
+                # save results
+                if (self.iAmMaster):
+                    fileName = self.OutFileName + "TE_VDD" + str(VDD) + "VGG" + str(VGG) + ".dat"
+                    Eloop.saveTE(fileName)
 ##
 # Run the simulation
 def simulate(workers):

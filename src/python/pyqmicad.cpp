@@ -8,15 +8,15 @@
  * 
  */
 
+#include "pyqmicad.h"
+#include "../include/qmicad.hpp"
 
+#include <python2.6/Python.h>
 #include <boost/python.hpp>
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
 #include <boost/python/detail/wrap_python.hpp>
 
-#include "../include/qmicad.hpp"
-
-#include "pyqmicad.h"
 
 
 namespace qmicad{
@@ -30,16 +30,16 @@ char const* greet()
     return msg.c_str();
 }
 
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VDS, VDS, 1, 2)
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VLR, VLR, 3, 5)
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyLinearPot_VLR, VLR, 3, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyGrapheneKpHam_setSize, setSize, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
     using boost::mpi::communicator;
     using boost::shared_ptr;
-    using namespace std;
+    using boost::noncopyable;
+    using namespace utils::stds;
     
     def("greet", greet);
    
@@ -58,6 +58,9 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
     
     class_<mat, shared_ptr<mat> >("matp", no_init)
+    ;
+
+    class_<vec, shared_ptr<vec> >("vecp", no_init)
     ;
 
     /**
@@ -123,32 +126,6 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("generate", &PyGrapheneKpHam::generate)
     ;
     
-    /**
-     * NEGF parameters.
-     */
-    class_<PyNegfParams, shared_ptr<PyNegfParams> >("NegfParams", init<uint>())
-        .def("H0", &PyNegfParams::H0)
-        .def("S0", &PyNegfParams::S0)
-        .def("Hl", &PyNegfParams::Hl)
-        .def("Sl", &PyNegfParams::Sl)
-        .def_readwrite("kT", &PyNegfParams::kT)
-        .def_readwrite("ieta", &PyNegfParams::ieta)
-        .def_readwrite("muS", &PyNegfParams::muS)
-        .def_readwrite("muD", &PyNegfParams::muD)
-        .def_readwrite("isOrthogonal", &PyNegfParams::isOrthogonal)
-        .def_readwrite("DCache", &PyNegfParams::DCache)
-        .def_readwrite("TCache", &PyNegfParams::TCache)
-        .def_readwrite("grcCache", &PyNegfParams::grcCache)
-        .def_readwrite("glcCache", &PyNegfParams::glcCache)
-        .def_readwrite("GiiCache", &PyNegfParams::GiiCache)
-        .def_readwrite("GlCache", &PyNegfParams::GlCache)
-        .def_readwrite("GuCache", &PyNegfParams::GuCache)
-        .def_readwrite("Gi1Cache", &PyNegfParams::Gi1Cache)
-        .def_readwrite("GiNCache", &PyNegfParams::GiNCache)
-        .def_readwrite("Giip1Cache", &PyNegfParams::Giip1Cache)
-        .def_readwrite("Giim1Cache", &PyNegfParams::Giim1Cache)
-    ;
-
     class_<point>("Point", init<const double&, const double&>())
     ;
     
@@ -167,6 +144,11 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("addLinearRegion", &PyLinearPot::addLinearRegion)
         .def("compute", &PyLinearPot::compute)
         .def("exportSvg", &PyLinearPot::exportSvg)
+        .def("VD", &PyLinearPot::VD)
+        .def("VS", &PyLinearPot::VS)
+        .def("VG", &PyLinearPot::VG)
+        .def("VLR", &PyLinearPot::VLR, PyLinearPot_VLR()) 
+        .def("toOrbPot", &PyLinearPot::toOrbPot) 
         .def(self_ns::str(self_ns::self))
     ;
      
@@ -182,6 +164,48 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("del", &PyVecGrid::del)
         .def("N", &PyVecGrid::N)
         .def(self_ns::str(self_ns::self))
+    ;
+
+    /**
+     * NEGF parameters.
+     */
+    class_<PyNegfParams, shared_ptr<PyNegfParams> >("NegfParams", init<uint>())
+        .def("H0", &PyNegfParams::H0)
+        .def("S0", &PyNegfParams::S0)
+        .def("Hl", &PyNegfParams::Hl)
+        .def("Sl", &PyNegfParams::Sl)
+        .def("V", &PyNegfParams::V)
+        .def_readwrite("kT", &PyNegfParams::kT)
+        .def_readwrite("ieta", &PyNegfParams::ieta)
+        .def_readwrite("muS", &PyNegfParams::muS)
+        .def_readwrite("muD", &PyNegfParams::muD)
+        .def_readwrite("isOrthogonal", &PyNegfParams::isOrthogonal)
+        .def_readwrite("DCache", &PyNegfParams::DCache)
+        .def_readwrite("TCache", &PyNegfParams::TCache)
+        .def_readwrite("grcCache", &PyNegfParams::grcCache)
+        .def_readwrite("glcCache", &PyNegfParams::glcCache)
+        .def_readwrite("GiiCache", &PyNegfParams::GiiCache)
+        .def_readwrite("GlCache", &PyNegfParams::GlCache)
+        .def_readwrite("GuCache", &PyNegfParams::GuCache)
+        .def_readwrite("Gi1Cache", &PyNegfParams::Gi1Cache)
+        .def_readwrite("GiNCache", &PyNegfParams::GiNCache)
+        .def_readwrite("Giip1Cache", &PyNegfParams::Giip1Cache)
+        .def_readwrite("Giim1Cache", &PyNegfParams::Giim1Cache)
+    ;
+    
+    class_<PyNegfEloop, shared_ptr<PyNegfEloop>, noncopyable>("NegfEloop", 
+            init<PyVecGrid&, const PyNegfParams&, const communicator&>())
+        .def("run", &PyNegfEloop::run)
+        .def("prepare", &PyNegfEloop::prepare)
+        .def("preCompute", &PyNegfEloop::preCompute)
+        .def("compute", &PyNegfEloop::compute)
+        .def("postCompute", &PyNegfEloop::postCompute)
+        .def("collect", &PyNegfEloop::collect)
+        .def("stepCompleted", &PyNegfEloop::stepCompleted)
+        .def("computeTE", &PyNegfEloop::computeTE)
+        .def("collectTE", &PyNegfEloop::collectTE)
+        .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
+        .def("saveTE", &PyNegfEloop::saveTE)        
     ;
 
     /*

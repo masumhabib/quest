@@ -12,20 +12,37 @@
 #define	PYNEGFELOOP_H
 
 #include "../negf/NegfEloop.h"
+#include "PyVecGrid.h"
+#include "PyNegfParams.h"
 
-namespace qmicad{namespace python{
+#include <python2.6/Python.h>
+#include <boost/python.hpp>
+#include <boost/python/wrapper.hpp>
+
+namespace qmicad{
+namespace python{
+using namespace boost::python;
+using boost::mpi::communicator;
 /**
  * Python wrapper for NegfEloop class.
  */
-class PyNegfEloop:public NegfEloop{
+class PyNegfEloop:public NegfEloop, public wrapper<NegfEloop>{
 public:
    
 private:
 
 public:
-    PyNegfEloop(const VecGrid &E, const NegfParams &np, const mpi::communicator &workers):
-        NegfEloop(E, np, workers){
+    PyNegfEloop(const PyVecGrid &E, const PyNegfParams &np, const communicator &workers):
+        NegfEloop(E, np, workers), wrapper<NegfEloop>(){
     };
+    
+    virtual void run(){
+        if (override f = this->get_override("run")){
+            f(); 
+        }
+        
+        NegfEloop::run();
+    }
     
     virtual void    prepare(){ NegfEloop::prepare(); };
     virtual void    preCompute(int il) { NegfEloop::preCompute(il); };

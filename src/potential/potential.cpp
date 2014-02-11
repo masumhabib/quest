@@ -48,11 +48,12 @@ string Potential::toString() const{
 }
 
 // Convert atomic potential to orbital potential
-vec Potential::toOrbPot(span s){
+shared_ptr<vec> Potential::toOrbPot(span s){
     AtomicStruct a = ma(s);
     int no = a.NumOfOrbitals();
     int na = a.NumOfAtoms();
-    vec V(no, fill::zeros);
+    shared_ptr<vec> pV = make_shared<vec>(no, fill::zeros);
+    vec &V = *pV;
 
     int io = 0;
     // loop through the atoms we are interested in
@@ -63,7 +64,7 @@ vec Potential::toOrbPot(span s){
         io += n;
     }  
 
-    return V;
+    return pV;
 }
 
 void Potential::exportSvg(const string& path){
@@ -118,5 +119,17 @@ void Potential::addGate(const squadrilateral& sq){
     int it = mg.size() - 1;
     mg[it].Title("Gate # " + itos(it+1));
 }
+
+void Potential::VG(int ig, double VG){
+    mg[ig].V = VG;
+}
+
+void Potential::VD(double VD){
+    md.V = VD;
+}
+void Potential::VS(double VS){
+    ms.V = VS;
+}
+
 }
 
