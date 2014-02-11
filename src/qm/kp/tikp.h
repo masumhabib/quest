@@ -12,28 +12,34 @@
 
 #include "../../maths/constants.h"
 #include "../../utils/Printable.hpp"
-#include "../../atoms/Atoms.h"
-#include "../genHam.hpp"
-#include "kpParams.hpp"
+#include "../../atoms/AtomicStruct.h"
+#include "../hamiltonian.hpp"
 
 namespace qmicad{
+using boost::static_pointer_cast;
 using namespace maths::armadillo;
 using namespace maths::constants;
 
-struct TISurfKpParams: public KpParams{
-    // k.p parameters
+struct TISurfKpParams: public HamParams{
+    //!< k.p parameters
+    double ax;           // discretization length in x direction
+    double ay;           // discretization length in y direction
     double C;            // C parameter, see Rev. Mod. Phys. 83, 1057 (2011)
     double A2;           // A2 parameter, see Rev. Mod. Phys. 83, 1057 (2011)
     double K;            // parameter to avoid fermion doubling
-        
-    TISurfKpParams(const string &prefix = ""):KpParams(prefix){
+    
+    //!< tight binding parameters
+    cxmat22 I;
+    cxmat22 eps;
+    cxmat22 t01x;
+    cxmat22 t10x;
+    cxmat22 t01y;
+    cxmat22 t10y;
+    
+    TISurfKpParams(const string &prefix = ""):HamParams(prefix){
         mTitle = "Topological Insulator Surface";
         // default parameters
-          
         I = eye<cxmat>(2,2);    
-        // Discretized lattice points for k.p Hamiltonian
-        PeriodicTable.push_back(Atom(0,  "D",  2, 2));
-
     }
     
     // Updates internal tight binding parameters calculated using 
@@ -74,20 +80,24 @@ protected:
     };
 
 };
-/* Tight binding logic for graphene*/
-class TISurfHamGen: public HamGenerator<cxmat>{
-// Fields
+
+/** 
+ * Tight binding Hamiltonian and overlap matrix for TI surface using 
+ *  method k.p.
+ */
+class TISurfHam: public Hamiltonian<cxmat>{
 protected:    
-    TISurfKpParams p;
-// Methods
 public:
-    TISurfHamGen(const TISurfKpParams& p){this->p = p;};
-    virtual ~TISurfHamGen(){};
+    TISurfHam(const TISurfKpParams& p){
+        mhp = shared_ptr<TISurfKpParams> (new TISurfKpParams(p));
+    };
+    virtual ~TISurfHam(){};
 protected:
-    virtual cxmat operator()(const Atoms& atomi, const Atoms& atomj) const;
-    
-private:
-    
+    //!< Generate Hamiltonian between two atoms.
+    virtual cxmat genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj);    
+    //!< Generate overlap matrix between two atoms.
+    virtual cxmat genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj);    
+        
 };
 
 }

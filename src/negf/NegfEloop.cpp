@@ -19,7 +19,7 @@ void NegfEloop::prepare() {
 
 void NegfEloop::preCompute(int il){
     double E = mL(il);
-    mnegf = shared_ptr<Negf>(new Negf(mnp, E));
+    mnegf = shared_ptr<CohRgfa>(new CohRgfa(mnp, E));
 };
 
 void NegfEloop::compute(int il){

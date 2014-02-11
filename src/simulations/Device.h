@@ -74,7 +74,7 @@ protected:
     DeviceParams    p;             // Device parameters
  
     // Atomistic geometry
-    Atoms           da;            // Atomistic geometry of the device containing two contact leads
+    AtomicStruct           da;            // Atomistic geometry of the device containing two contact leads
     double          w;             // width of the device (in A)
     double          l;             // length of the device (in A)
     double          xMin;          // x min of the atoms

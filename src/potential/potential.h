@@ -10,7 +10,7 @@
 
 #include "../string/stringutils.h"
 #include "../maths/geometry.hpp"
-#include "../atoms/Atoms.h"
+#include "../atoms/AtomicStruct.h"
 #include "terminal.h"
 
 namespace qmicad{
@@ -20,7 +20,7 @@ using utils::itos;
 class Potential:public Printable{
 public:
 protected:
-    const Atoms         &ma;    // Atomistic geometry of the device
+    const AtomicStruct         &ma;    // Atomistic geometry of the device
     contact             ms;     // Source contact
     contact             md;     // Drain contact
     vector<gate>        mg;     // Gates    
@@ -28,7 +28,7 @@ protected:
     
 public:
     // Constructor
-    Potential(const Atoms &atoms, const contact &source, const contact &drain, 
+    Potential(const AtomicStruct &atoms, const contact &source, const contact &drain, 
             const vector<gate> &gates, const string &prefix = "");
     // Convert atomic potential to orbital potential
     vec toOrbPot(span s = span::all);

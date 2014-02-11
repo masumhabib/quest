@@ -11,29 +11,34 @@
 #include <armadillo>
 
 #include "../../maths/constants.h"
-#include "../../atoms/Atoms.h"
-#include "../genHam.hpp"
+#include "../../atoms/AtomicStruct.h"
 #include "../../utils/Printable.hpp"
-
-#include "kpParams.hpp"
+#include "../hamiltonian.hpp"
 
 namespace qmicad{
+using boost::static_pointer_cast;
 using namespace maths::armadillo;
 using namespace maths::constants;
 
-struct GrapheneKpParams: public KpParams{
-    // k.p parameters
+struct GrapheneKpParams: public HamParams{
+    //!< k.p parameters
+    double ax;           // discretization length in x direction
+    double ay;           // discretization length in y direction
     double gamma;        // h_bar*v_F for graphene
     double K;            // parameter to avoid fermion doubling
-        
-    GrapheneKpParams(const string &prefix = ""):KpParams(prefix){
-        mTitle = "Graphene k.p parameters";
-        // default parameters
-          
-        I = eye<cxmat>(2,2);    
-        // Discretized lattice points for k.p Hamiltonian
-        PeriodicTable.push_back(Atom(0,  "D",  2, 2));
 
+    //!< tight binding parameters
+    cxmat22 I;
+    cxmat22 eps;
+    cxmat22 t01x;
+    cxmat22 t10x;
+    cxmat22 t01y;
+    cxmat22 t10y;
+    
+    GrapheneKpParams(const string &prefix = ""):HamParams(prefix){
+        mTitle = "Graphene k.p parameters";
+        // default parameters          
+        I = eye<cxmat>(2,2);    
     }
     
     // Updates internal tight binding parameters calculated using 
@@ -71,18 +76,24 @@ protected:
     };
 
 };
-/* Tight binding logic for graphene*/
-class GrapheneKpHamGen: public HamGenerator<cxmat>{
-// Fields
+
+/** 
+ * Tight binding Hamiltonian and overlap matrix for graphene using 
+ *  method k.p.
+ */
+class GrapheneKpHam: public Hamiltonian<cxmat>{
 protected:    
-    GrapheneKpParams p;
-// Methods
 public:
-    GrapheneKpHamGen(const GrapheneKpParams& p){this->p = p;};
-    virtual ~GrapheneKpHamGen(){};
-    virtual cxmat operator()(const Atoms& atomi, const Atoms& atomj) const;
+    GrapheneKpHam(const GrapheneKpParams& p){
+        mhp = shared_ptr<GrapheneKpParams> (new GrapheneKpParams(p));
+    };
+    virtual ~GrapheneKpHam(){};
     
-private:
+protected:
+    //!< Generate Hamiltonian between two atoms.
+    virtual cxmat genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj);    
+    //!< Generate overlap matrix between two atoms.
+    virtual cxmat genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj);
 
 };
 

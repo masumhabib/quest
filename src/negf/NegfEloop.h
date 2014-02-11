@@ -19,7 +19,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/smart_ptr.hpp>
 
-#include "NEGF.h"
+#include "CohRgfa.h"
 
 namespace qmicad{
 using namespace utils::stds;
@@ -65,7 +65,7 @@ public:
     
 protected:
     const NegfParams      &mnp;     // Negf parameters
-    shared_ptr<Negf>      mnegf;    // current Negf calculator
+    shared_ptr<CohRgfa>      mnegf;    // current Negf calculator
     double                mEi;      // current energy
     
     // output

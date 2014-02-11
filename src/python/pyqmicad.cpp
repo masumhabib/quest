@@ -30,17 +30,78 @@ char const* greet()
     return msg.c_str();
 }
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VDS, VDS, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VLR, VLR, 3, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VDS, VDS, 1, 2)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Device_VLR, VLR, 3, 5)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyGrapheneKpHam_setSize, setSize, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
     using boost::mpi::communicator;
+    using boost::shared_ptr;
     using namespace std;
     
     def("greet", greet);
+   
     
+    /**
+     * Our favorite armadillo matrices.
+     */
+    class_<cxmat, boost::shared_ptr<cxmat> >("cxmatp", boost::python::no_init)
+    ;
+    
+    class_<mat, boost::shared_ptr<mat> >("matp", boost::python::no_init)
+    ;
+
+    
+    /**
+     * Periodic table.
+     */
+    class_<PyPeriodicTable, shared_ptr<PyPeriodicTable> >("PeriodicTable")
+        .def("add", &PyPeriodicTable::add)
+    ;
+
+    /**
+     * Atomistic geometry of the device.
+     */
+    class_<PyAtomicStruct, shared_ptr<PyAtomicStruct> >("AtomicStruct", init<const string&>())
+        .def(init<const string&, const PyPeriodicTable>())
+        .def(init<uint, uint, double, double, const PyPeriodicTable>())
+        .def("span", &PyAtomicStruct::span)
+        .def(self_ns::str(self_ns::self))
+    ;
+    
+    /**
+     * Graphene k.p parameters.
+     */
+    class_<PyGrapheneKpParams, shared_ptr<PyGrapheneKpParams> >("GrapheneKpParams")
+        .def_readwrite("dtol", &PyGrapheneKpParams::dtol)
+        .def_readwrite("ax", &PyGrapheneKpParams::ax)
+        .def_readwrite("ay", &PyGrapheneKpParams::ay)
+        .def_readwrite("K", &PyGrapheneKpParams::K)   
+        .def_readwrite("gamma", &PyGrapheneKpParams::gamma)
+        .def("update", &PyGrapheneKpParams::update)
+        .def(self_ns::str(self_ns::self))
+    ;
+
+    /**
+     * Graphene Hamiltonian.
+     */
+    //void (PyGrapheneKpHam::*PyGrapheneKpHam_generate1)(const AtomicStruct&, const AtomicStruct&, uint, uint) = &PyGrapheneKpHam::generate;
+    class_<PyGrapheneKpHam, shared_ptr<PyGrapheneKpHam> >("GrapheneKpHam",init<const PyGrapheneKpParams& >())
+        .def("setSize", &PyGrapheneKpHam::setSize, PyGrapheneKpHam_setSize())
+        .def("getH0", &PyGrapheneKpHam::getH0)
+        .def("getHl", &PyGrapheneKpHam::getHl)
+        .def("getH", &PyGrapheneKpHam::getH)  
+        .def("getSl", &PyGrapheneKpHam::getSl)
+        .def("getS0", &PyGrapheneKpHam::getS0)
+        .def("getS", &PyGrapheneKpHam::getS)  
+        .def("genDiagBlock", &PyGrapheneKpHam::genDiagBlock)
+        .def("genLowDiagBlock", &PyGrapheneKpHam::genLowDiagBlock)
+        .def("generate", &PyGrapheneKpHam::generate)
+    ;
+    
+    /*
     class_<DeviceParams>("DeviceParams")
         .def_readwrite("nl", &DeviceParams::nl)
         .def_readwrite("nw", &DeviceParams::nw)
@@ -121,7 +182,7 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
 
     class_<PyNegfParams>("QnegfParams", init<>())
-    ;
+    ;*/
     
 }
 

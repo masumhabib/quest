@@ -41,30 +41,26 @@ namespace qmicad{
 #include "../maths/fermi.hpp"
 
 #include "../atoms/Lattice.h"
-#include "../atoms/Atoms.h"
+#include "../atoms/AtomicStruct.h"
 #include "../grid/grid.hpp"
 
-#include "../qm/genHam.hpp"
-#include "../qm/kp/genKpAtoms.h"
-#include "../qm/kp/kpParams.hpp"
+#include "../qm/hamiltonian.hpp"
+#include "../qm/tb/graphenetb.h"
 #include "../qm/kp/graphenekp.h"
 #include "../qm/kp/tikp.h"
 
-#include "../qm/tb/graphenetb.hpp"
 
 #include "../potential/terminal.h"
 #include "../potential/potential.h"
 #include "../potential/linearPot.h"
 
 #include "../negf/computegs.h"
-#include "../negf/NEGF.h"
+#include "../negf/CohRgfa.h"
 #include "../parallel/parloop.h"
 #include "../negf/NegfEloop.h"
 
-#include "../simulations/Device.h"
-
-#include "../python/PyNegfEloop.h"
-#include "../python/PyNegfParams.h"
+#include "../python/PyAtomicStruct.h"
+#include "../python/PyGrapheneKpHam.h"
 
 
 #endif /* QMICAD_HPP */

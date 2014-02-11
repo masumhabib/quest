@@ -12,8 +12,7 @@
 #ifndef PRINTABLE_H
 #define	PRINTABLE_H
 
-#include <string>
-#include <iostream>
+#include "std.hpp"
 
 /**
  * Description: Printable class. All class that want to print itself
@@ -21,35 +20,42 @@
  */
 
 namespace utils{
-using std::ostream;
-using std::endl;
-using std::string;
+using namespace stds;
 
 class Printable{
 protected:
-    string mTitle;
-    string mPrefix;
+    string mTitle;          //!< Object title.
+    string mPrefix;         //!< Object prefix.
 
+public:
+        
     Printable(const string &prefix = ""):mPrefix(prefix) {
-        mTitle = "Printable";
     };
     virtual ~Printable(){};
 
-public:
-    virtual string toString() const { return mTitle; };
+    virtual void print() const{
+        cout << *this;
+    }
+    
+    virtual string toString() const { 
+        stringstream out;
+        if (mTitle.length()){
+                out << mPrefix << mTitle << endl;
+            }        
+        return out.str(); 
+    };
+
     virtual bool   isEmpty()const { return false; };
 
     /* Dump the data to the stream */
     friend ostream& operator << (ostream & out, const Printable &p){
         if(!p.isEmpty()){
-            if (p.mTitle.length()){
-                out << p.mPrefix << p.mTitle << ":" << endl;
-            }
             out << p.toString();
         }
         return out;
     };
-
+    
+    
     void Prefix(const string& prefix){
         mPrefix = prefix;  
     };
@@ -65,6 +71,7 @@ public:
     string Title(){
         return mTitle;
     }
+
 };
 }
 #endif	/* PRINTABLE_H */

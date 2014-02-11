@@ -57,7 +57,7 @@ protected:
     vector<linear_region> mlr; // linear voltage region
     
 public:
-    LinearPot(const Atoms &atoms, const contact &source, const contact &drain, 
+    LinearPot(const AtomicStruct &atoms, const contact &source, const contact &drain, 
             const vector<gate> &gates, const vector <linear_region> &linear,
             const string &prefix = "");
     

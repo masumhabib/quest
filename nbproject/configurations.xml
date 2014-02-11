@@ -6,8 +6,8 @@
     </logicalFolder>
     <logicalFolder name="src" displayName="src" projectFiles="true">
       <logicalFolder name="atoms" displayName="atoms" projectFiles="true">
-        <itemPath>src/atoms/Atoms.cpp</itemPath>
-        <itemPath>src/atoms/Atoms.h</itemPath>
+        <itemPath>src/atoms/AtomicStruct.cpp</itemPath>
+        <itemPath>src/atoms/AtomicStruct.h</itemPath>
         <itemPath>src/atoms/Lattice.cpp</itemPath>
         <itemPath>src/atoms/Lattice.h</itemPath>
       </logicalFolder>
@@ -29,8 +29,8 @@
         <itemPath>src/maths/trace.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="negf" displayName="negf" projectFiles="true">
-        <itemPath>src/negf/NEGF.cpp</itemPath>
-        <itemPath>src/negf/NEGF.h</itemPath>
+        <itemPath>src/negf/CohRgfa.cpp</itemPath>
+        <itemPath>src/negf/CohRgfa.h</itemPath>
         <itemPath>src/negf/NegfEloop.cpp</itemPath>
         <itemPath>src/negf/NegfEloop.h</itemPath>
         <itemPath>src/negf/computegs.cpp</itemPath>
@@ -49,7 +49,10 @@
         <itemPath>src/potential/terminal.h</itemPath>
       </logicalFolder>
       <logicalFolder name="python" displayName="python" projectFiles="true">
-        <itemPath>src/python/NegfEloop.py</itemPath>
+        <itemPath>src/python/PyAtomicStruct.cpp</itemPath>
+        <itemPath>src/python/PyAtomicStruct.h</itemPath>
+        <itemPath>src/python/PyGrapheneKpHam.cpp</itemPath>
+        <itemPath>src/python/PyGrapheneKpHam.h</itemPath>
         <itemPath>src/python/PyNegfEloop.cpp</itemPath>
         <itemPath>src/python/PyNegfEloop.h</itemPath>
         <itemPath>src/python/PyNegfParams.cpp</itemPath>
@@ -61,15 +64,14 @@
         <logicalFolder name="kp" displayName="kp" projectFiles="true">
           <itemPath>src/qm/kp/graphenekp.cpp</itemPath>
           <itemPath>src/qm/kp/graphenekp.h</itemPath>
-          <itemPath>src/qm/kp/kpParams.hpp</itemPath>
           <itemPath>src/qm/kp/tikp.cpp</itemPath>
           <itemPath>src/qm/kp/tikp.h</itemPath>
         </logicalFolder>
         <logicalFolder name="tb" displayName="tb" projectFiles="true">
-          <itemPath>src/qm/tb/graphenetb.hpp</itemPath>
+          <itemPath>src/qm/tb/graphenetb.cpp</itemPath>
+          <itemPath>src/qm/tb/graphenetb.h</itemPath>
         </logicalFolder>
-        <itemPath>src/qm/genHam.hpp</itemPath>
-        <itemPath>src/qm/hamParams.hpp</itemPath>
+        <itemPath>src/qm/hamiltonian.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="simulations" displayName="simulations" projectFiles="true">
         <itemPath>src/simulations/Device.cpp</itemPath>
@@ -78,6 +80,9 @@
       <logicalFolder name="string" displayName="string" projectFiles="true">
         <itemPath>src/string/stringutils.cpp</itemPath>
         <itemPath>src/string/stringutils.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="test" projectFiles="true">
+        <itemPath>test/grkp.py</itemPath>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
         <itemPath>src/utils/ConsoleProgressBar.cpp</itemPath>
@@ -108,7 +113,7 @@
   <confs>
     <conf name="Debug" type="2">
       <toolsSet>
-        <compilerSet>default</compilerSet>
+        <compilerSet>MPI|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
@@ -161,9 +166,9 @@
           <customToolCommandline>doxygen</customToolCommandline>
         </customTool>
       </item>
-      <item path="src/atoms/Atoms.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/atoms/AtomicStruct.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/atoms/Atoms.h" ex="false" tool="3" flavor2="0">
+      <item path="src/atoms/AtomicStruct.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/atoms/Lattice.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -187,9 +192,9 @@
       </item>
       <item path="src/maths/trace.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/negf/CohRgfa.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/negf/NEGF.h" ex="false" tool="3" flavor2="0">
+      <item path="src/negf/CohRgfa.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/negf/NegfEloop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -215,7 +220,13 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/python/NegfEloop.py" ex="false" tool="3" flavor2="0">
+      <item path="src/python/PyAtomicStruct.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyAtomicStruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyGrapheneKpHam.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyGrapheneKpHam.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -229,21 +240,19 @@
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/genHam.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/hamParams.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/qm/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/kp/kpParams.hpp" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/qm/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/kp/tikp.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/tb/graphenetb.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/qm/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/simulations/Device.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -290,9 +299,9 @@
       </compileType>
       <item path="doc/qmicad.doxy" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/atoms/Atoms.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/atoms/AtomicStruct.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/atoms/Atoms.h" ex="false" tool="3" flavor2="0">
+      <item path="src/atoms/AtomicStruct.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/atoms/Lattice.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -316,9 +325,9 @@
       </item>
       <item path="src/maths/trace.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/negf/NEGF.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/negf/CohRgfa.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/negf/NEGF.h" ex="false" tool="3" flavor2="0">
+      <item path="src/negf/CohRgfa.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/negf/NegfEloop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -344,7 +353,13 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/python/NegfEloop.py" ex="false" tool="3" flavor2="0">
+      <item path="src/python/PyAtomicStruct.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyAtomicStruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyGrapheneKpHam.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyGrapheneKpHam.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -358,21 +373,19 @@
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/genHam.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/hamParams.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/qm/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/kp/kpParams.hpp" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/qm/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/kp/tikp.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/qm/tb/graphenetb.hpp" ex="false" tool="3" flavor2="0">
+      <item path="src/qm/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qm/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/simulations/Device.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -395,6 +408,8 @@
       <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/std.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/grkp.py" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

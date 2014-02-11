@@ -1,138 +1,120 @@
 /* 
- * File:   Atoms.cpp
+ * File:   AtomicStruct.cpp
  * Author: K M Masum Habib <khabib@ee.ucr.edu>
  * 
  * Created on April 5, 2013, 1:27 PM
  * 
  * Description: The class Atoms encapsulates everything about the atoms present in
- * the device.
+ * the device structure.
  * 
  */
 
-#include "Atoms.h"
+#include "AtomicStruct.h"
 
 namespace qmicad{
 /* Default constructor */
-Atoms::Atoms() {
-    initPeriodicTable();
+AtomicStruct::AtomicStruct():mpt() {
     init();
 }
 
 // constructs from a GaussView gjf file and a periodic table
-Atoms::Atoms(const string& gjfFileName, const vector<Atom>& PeriodicTable):
-mPeriodicTable(PeriodicTable){    
+AtomicStruct::AtomicStruct(const string& gjfFileName, const ptable &periodicTable):
+mpt(periodicTable){    
     init();
     importGjf(gjfFileName);
 }
 
 /* Construct from a GaussView gjf file */
-Atoms::Atoms(const string& gjfFileName) {
-    initPeriodicTable();
+AtomicStruct::AtomicStruct(const string& gjfFileName):mpt() {
     init();
     
     importGjf(gjfFileName);
 }
 
 /* Copy constructor */
-Atoms::Atoms(const Atoms& orig):
-mLatticeVector(orig.mLatticeVector),
-mAtomId(orig.mAtomId),
-mPeriodicTable(orig.mPeriodicTable),
+AtomicStruct::AtomicStruct(const AtomicStruct& orig):
+mlv(orig.mlv),
+mia(orig.mia),
+mpt(orig.mpt),
 mXyz(orig.mXyz)
 {
-    mNumAtoms = orig.mNumAtoms;
-    mNumOrbitals = orig.mNumOrbitals;
-    mNumElectrons = orig.mNumElectrons;
+    mNa = orig.mNa;
+    mNo = orig.mNo;
+    mNe = orig.mNe;
 }
 
 /* Construct from coordinates */
-Atoms::Atoms(const icol& atomId, const mat& coordinate, const lvec& lv)
+AtomicStruct::AtomicStruct(const icol& atomId, const mat& coordinate, const lvec& lv):
+mpt()
 {
     if (atomId.n_rows != coordinate.n_rows){
         throw invalid_argument("In Atoms::Atoms(const icol& atomId, const mat& "
                 "coordinate, const lvec& lv) number of rows of atomId and "
                 "coordinate does not match");
     }
-
-    initPeriodicTable();
     
-    mLatticeVector = lv;
-    mAtomId = atomId;
+    mlv = lv;
+    mia = atomId;
     mXyz = coordinate;
 
-    mNumAtoms = mAtomId.n_rows;
-    mNumOrbitals = computeNumOfOrbitals();
-    mNumElectrons = computeNumOfElectrons();    
+    mNa = mia.n_rows;
+    mNo = computeNumOfOrbitals();
+    mNe = computeNumOfElectrons();    
 }
 
 /* Construct from coordinates and a periodic table*/
-Atoms::Atoms(const icol& atomId, const mat& coordinate, const lvec& lv,
-const vector<Atom>& PeriodicTable):mPeriodicTable(PeriodicTable){
+AtomicStruct::AtomicStruct(const icol& atomId, const mat& coordinate, const lvec& lv,
+const ptable& periodicTable):mpt(periodicTable){
     if (atomId.n_rows != coordinate.n_rows){
         throw invalid_argument("In Atoms::Atoms(const icol& atomId, const mat& "
                 "coordinate, const lvec& lv) number of rows of atomId and "
                 "coordinate does not match");
     }
     
-    mLatticeVector = lv;
-    mAtomId = atomId;
+    mlv = lv;
+    mia = atomId;
     mXyz = coordinate;
 
-    mNumAtoms = mAtomId.n_rows;
-    mNumOrbitals = computeNumOfOrbitals();
-    mNumElectrons = computeNumOfElectrons();    
+    mNa = mia.n_rows;
+    mNo = computeNumOfOrbitals();
+    mNe = computeNumOfElectrons();    
 }
 
-Atoms::Atoms(double Lx, double Ly, double ax, double ay, const vector<Atom>& 
+AtomicStruct::AtomicStruct(double Lx, double Ly, double ax, double ay, const ptable& 
     periodicTable)
 {
     init();
     genKpAtoms(Lx, Ly, ax, ay, periodicTable);
 }
 
-/* our periodic table */
-void Atoms::initPeriodicTable(){
-    // Fill up the periodic table
-    mPeriodicTable.push_back(Atom(0,  "D",  1, 1)); // For discretized Hamiltonian
-    mPeriodicTable.push_back(Atom(1,  "H",  1, 1));
-    mPeriodicTable.push_back(Atom(5,  "B",  1, 1));
-    mPeriodicTable.push_back(Atom(6,  "C",  1, 1));
-    mPeriodicTable.push_back(Atom(7,  "N",  1, 1));
-    mPeriodicTable.push_back(Atom(14, "Si", 1, 1));
-    mPeriodicTable.push_back(Atom(16, "S",  1, 1));
-    mPeriodicTable.push_back(Atom(32, "Ge", 1, 1));
-    mPeriodicTable.push_back(Atom(42, "Mo", 1, 1));
-
-}
-
 /* initializer */
-void Atoms::init(){
-    mNumAtoms = 0;
-    mNumOrbitals = 0;
-    mNumElectrons = 0;
-    mAtomId.clear();
+void AtomicStruct::init(){
+    mNa = 0;
+    mNo = 0;
+    mNe = 0;
+    mia.clear();
     mXyz.clear();
-    mLatticeVector.zeros();
+    mlv.zeros();
 }
 
 /* Assignment operator: 
  * c = b; creates a copy of b and assigns it to c*/
-Atoms& Atoms::operator= (Atoms rhs){
+AtomicStruct& AtomicStruct::operator= (AtomicStruct rhs){
     swap(*this, rhs);
     
     return *this;
 }
 
 /* Swaps two Atoms objects */
-void swap(Atoms& first, Atoms& second){
+void swap(AtomicStruct& first, AtomicStruct& second){
     using std::swap;
 
-    swap(first.mLatticeVector, second.mLatticeVector);
-    swap(first.mAtomId, second.mAtomId);
-    swap(first.mNumAtoms, second.mNumAtoms);
-    swap(first.mNumElectrons, second.mNumElectrons);
-    swap(first.mNumOrbitals, second.mNumOrbitals);
-    swap(first.mPeriodicTable, second.mPeriodicTable);
+    swap(first.mlv, second.mlv);
+    swap(first.mia, second.mia);
+    swap(first.mNa, second.mNa);
+    swap(first.mNe, second.mNe);
+    swap(first.mNo, second.mNo);
+    swap(first.mpt, second.mpt);
     
     /* The swap function in armadillo probably has a bug
      * that prevents swapping a zero sized matrix
@@ -146,62 +128,62 @@ void swap(Atoms& first, Atoms& second){
 }
 
 /* Concatenation: atmi + atmj */
-Atoms operator+ (Atoms atmi, const Atoms& atmj){
+AtomicStruct operator+ (AtomicStruct atmi, const AtomicStruct& atmj){
     atmi += atmj;
     return atmi;
 }
 
 /* Concatenation: atmi += atmj */
-Atoms& Atoms::operator+= (const Atoms& atj){
+AtomicStruct& AtomicStruct::operator+= (const AtomicStruct& atj){
 
     // update the periodic table
-    for(int it = 0; it != atj.mPeriodicTable.size(); ++it){
+    for(int it = 0; it != atj.mpt.size(); ++it){
         // Update our table if we do not already have  
         // the atoms in atj;
-        if (convertSymToIndex(atj.mPeriodicTable[it].sym) == -1){ // not found in our database
-            mPeriodicTable.push_back(atj.mPeriodicTable[it]); // insert it to our database
+        if (mpt.find(atj.mpt[it]) == -1){ // not found in our database
+            mpt.add(atj.mpt[it]);     // insert it to our database
         }
     }
     
     // concatenate the atom id's and coordinates
-    mAtomId.insert_rows(mNumAtoms,atj.mAtomId);
-    mXyz.insert_rows(mNumAtoms,atj.mXyz);
+    mia.insert_rows(mNa,atj.mia);
+    mXyz.insert_rows(mNa,atj.mXyz);
     
     // add the lattice vectors
-    mLatticeVector += atj.mLatticeVector;
+    mlv += atj.mlv;
     
     // add the number of atoms, orbitals and electrons
-    mNumAtoms += atj.mNumAtoms;
-    mNumOrbitals += atj.mNumOrbitals;
-    mNumElectrons += atj.mNumElectrons;
+    mNa += atj.mNa;
+    mNo += atj.mNo;
+    mNe += atj.mNe;
     
     return *this;
 }
 
 /* Atoms - Lattice coordinate*/
-Atoms operator- (Atoms atm, const lcoord& lc){
+AtomicStruct operator- (AtomicStruct atm, const lcoord& lc){
     atm -= lc;
     return atm;
 };
 
 /* Atoms -= Lattice coordinate*/
-Atoms& Atoms::operator-= (const lcoord& lc){
+AtomicStruct& AtomicStruct::operator-= (const lcoord& lc){
     
-    *this -= mLatticeVector.a1*lc.n1;
-    *this -= mLatticeVector.a2*lc.n2;
-    *this -= mLatticeVector.a3*lc.n3;
+    *this -= mlv.a1*lc.n1;
+    *this -= mlv.a2*lc.n2;
+    *this -= mlv.a3*lc.n3;
     
     return *this;
 }
 
 /* Atoms = Atoms - position vector */
-Atoms operator- (Atoms atm, const svec& r){
+AtomicStruct operator- (AtomicStruct atm, const svec& r){
     atm -= r;
     return atm;
 };
 
 /* Atoms -= position vector */
-Atoms& Atoms::operator-= (const svec& rvec){
+AtomicStruct& AtomicStruct::operator-= (const svec& rvec){
     
     mXyz.col(spacevec::X) -= rvec(spacevec::X);
     mXyz.col(spacevec::Y) -= rvec(spacevec::Y);
@@ -211,29 +193,29 @@ Atoms& Atoms::operator-= (const svec& rvec){
 }
 
 /* Atoms + Lattice coordinate*/
-Atoms operator+ (Atoms atm, const lcoord& lc){
+AtomicStruct operator+ (AtomicStruct atm, const lcoord& lc){
     atm += lc;
     return atm;
 };
 
 /* Atoms += Lattice coordinate*/
-Atoms& Atoms::operator+= (const lcoord& lc){
+AtomicStruct& AtomicStruct::operator+= (const lcoord& lc){
     
-    *this += mLatticeVector.a1*lc.n1;
-    *this += mLatticeVector.a2*lc.n2;
-    *this += mLatticeVector.a3*lc.n3;
+    *this += mlv.a1*lc.n1;
+    *this += mlv.a2*lc.n2;
+    *this += mlv.a3*lc.n3;
     
     return *this;
 }
 
 /* Atoms = Atoms + position vector */
-Atoms operator+ (Atoms atm, const svec& r){
+AtomicStruct operator+ (AtomicStruct atm, const svec& r){
     atm += r;
     return atm;
 };
 
 /* Atoms += position vector */
-Atoms& Atoms::operator+= (const svec& rvec){
+AtomicStruct& AtomicStruct::operator+= (const svec& rvec){
     
     mXyz.col(spacevec::X) += rvec(spacevec::X);
     mXyz.col(spacevec::Y) += rvec(spacevec::Y);
@@ -247,28 +229,28 @@ Atoms& Atoms::operator+= (const svec& rvec){
  * in column vector.
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
-Atoms Atoms::operator ()(const ucol& index) const{
+AtomicStruct AtomicStruct::operator ()(const ucol& index) const{
     
     //get only the atoms we are interested in
-    icol atomId = mAtomId.elem(index);   
+    icol atomId = mia.elem(index);   
     ucol cols;
     cols << spacevec::X << spacevec::Y << spacevec::Z;
     mat coordinate = mXyz(index,cols);        
 
-    return Atoms(atomId, coordinate, mLatticeVector, mPeriodicTable);
+    return AtomicStruct(atomId, coordinate, mlv, mpt);
 }
 
 /*
  * Callable operators to extract a subset of atoms defined by a span.
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
-Atoms Atoms::operator ()(span s) const{
+AtomicStruct AtomicStruct::operator ()(span s) const{
     
     //get only the atoms we are interested in
-    icol atomId = mAtomId(s);   
+    icol atomId = mia(s);   
     mat coordinate = mXyz(s,span::all); 
 
-    return Atoms(atomId, coordinate, mLatticeVector, mPeriodicTable);
+    return AtomicStruct(atomId, coordinate, mlv, mpt);
 }
 
 /*
@@ -276,21 +258,26 @@ Atoms Atoms::operator ()(span s) const{
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
 
-Atoms Atoms::operator ()(uint i) const{
+AtomicStruct AtomicStruct::operator ()(uint i) const{
     
     ucol index(1);
     index(0) = i;
     return (*this)(index);
 }
 
-Atom Atoms::AtomAt(uint i) const{
-    return mPeriodicTable[mAtomId[i]];
+Atom AtomicStruct::AtomAt(uint i) const{
+    return mpt[mia[i]];
 }
 
 /* Dump the data to the stream */
-ostream& operator << (ostream & out, const Atoms &b)
-{
+//ostream& operator << (ostream & out, const AtomicStruct &b){
+//    out << b.toString();
+//	return out;
+//}
+
+string AtomicStruct::toString() const{
     
+    stringstream out;
     // write the file header
     out << "# hf/3-21g" << endl; // header command
     out << endl;
@@ -301,23 +288,24 @@ ostream& operator << (ostream & out, const Atoms &b)
     // write atomic coordinates
     out.precision(4);
     out << std::fixed;
-    for(int i=0; i < b.NumOfAtoms(); i++){
+    for(int i=0; i < NumOfAtoms(); i++){
         out.width(3);
-        out << b.Symbol(i);
+        out << Symbol(i);
         out.width(10); 
-        out << std::fixed << b.X(i);
+        out << std::fixed << X(i);
         out.width(10);
-        out << b.Y(i);
+        out << Y(i);
         out.width(10);
-        out << b.Z(i) << endl;
+        out << Z(i) << endl;
     }
     
     out << endl;
     
-	return out;
+	return out.str();
 }
 
-void Atoms::importGjf(const string& gjfFileName){
+
+void AtomicStruct::importGjf(const string& gjfFileName){
     string line;
     ifstream gjf (gjfFileName.c_str());        
     
@@ -345,19 +333,19 @@ void Atoms::importGjf(const string& gjfFileName){
             
             ssline >> sym >> x >> y >> z;
 
-            ind = convertSymToIndex(sym);
+            ind = mpt.find(sym);
             if (ind > -1){
                 
-                mAtomId.resize(mNumAtoms+1);
-                mAtomId(mNumAtoms) =  ind;
+                mia.resize(mNa+1);
+                mia(mNa) =  ind;
                 
                 row r(3);
                 r << x << y << z;
                 mXyz.insert_rows(mXyz.n_rows,r);
                 
-                mNumOrbitals += mPeriodicTable[ind].no;
-                mNumElectrons += mPeriodicTable[ind].ne;
-                mNumAtoms++;
+                mNo += mpt[ind].no;
+                mNe += mpt[ind].ne;
+                mNa++;
             }
 
         // If we find the line that contains "0 1" which is 
@@ -368,15 +356,15 @@ void Atoms::importGjf(const string& gjfFileName){
         }        
     }
     
-    if (mNumAtoms == 0){
-        mAtomId.reset();
+    if (mNa == 0){
+        mia.reset();
         mXyz.reset();
         
         throw runtime_error(" No atoms found in " + gjfFileName + ".");;
     }
 }
 
-void Atoms::exportGjf(const string& gjfFileName){
+void AtomicStruct::exportGjf(const string& gjfFileName){
     
     ofstream gjf(gjfFileName.c_str());
     
@@ -388,68 +376,58 @@ void Atoms::exportGjf(const string& gjfFileName){
     gjf.close();
 }
 
-void Atoms::genKpAtoms(double Lx, double Ly, double ax, double ay, 
-        const vector<Atom>& periodicTable){
-    MatGrid xy(-Lx/2, Lx/2, ax, -Ly/2, Ly/2, ay);
+void AtomicStruct::genKpAtoms(uint nl, uint nw, double ax, double ay, 
+        const ptable &periodicTable){
+    
+    double w = (nw-1)*ax;                  // width (in A)
+    double l = (nl-1)*ay;                  // length  (in A)
+    // create meshgrid of k.p atoms    
+    MatGrid xy(-l/2, l/2, ax, -w/2, w/2, ay);
     
     // calculate x, y and z coordinates of the atoms
-    mNumAtoms = xy.Nx()*xy.Ny();            // total number of atoms
-    mXyz.set_size(mNumAtoms, 3);            // xyz coordinate of atoms
+    mNa = xy.Nx()*xy.Ny();            // total number of atoms
+    mXyz.set_size(mNa, 3);            // xyz coordinate of atoms
     mXyz.col(spacevec::X) = xy.X();
     mXyz.col(spacevec::Y) = xy.Y();
     mXyz.col(spacevec::Z).zeros();
     
     // prepare atomId list containing atomic number of a fake atom 'D'.
-    mAtomId.set_size(mNumAtoms);
-    PeriodicTable(periodicTable);           // Copy the periodic table.
-    mAtomId.fill(mPeriodicTable[0].ia);
+    mia.set_size(mNa);
+    mpt = periodicTable;           // Copy the periodic table.
+    mia.fill(mpt[0].ia);
     
     // lattice vector
-    mLatticeVector.a1(spacevec::X) = xy.maxx()-xy.minx() + ax;
-    mLatticeVector.a2(spacevec::Y) = xy.maxy()-xy.miny() + ay;  
+    mlv.a1(spacevec::X) = xy.maxx()-xy.minx() + ax;
+    mlv.a2(spacevec::Y) = xy.maxy()-xy.miny() + ay;  
     
     // calculate number of orbitals and electrons.
-    mNumOrbitals = computeNumOfOrbitals();
-    mNumElectrons = computeNumOfElectrons();    
+    mNo = computeNumOfOrbitals();
+    mNe = computeNumOfElectrons();    
  
 }
 
-int Atoms::convertSymToIndex(const string& sym) const{
-    for (int it = 0; it < mPeriodicTable.size(); ++it){
-        if (mPeriodicTable[it].sym == sym){
-            return it;
-        }
-    }
-    
-    return -1; // not found
-}
-
-string Atoms::convertIndexToSym(int ind) const {
-    return mPeriodicTable[ind].sym;
-}
-
-int Atoms::computeNumOfOrbitals(){
+int AtomicStruct::computeNumOfOrbitals(){
     int numOrbitals = 0;
-    for(int ia = 0; ia < mNumAtoms; ++ia){
-        numOrbitals += mPeriodicTable[mAtomId[ia]].no; 
+    for(int ia = 0; ia < mNa; ++ia){
+        numOrbitals += mpt[mia[ia]].no; 
     }
     
     return numOrbitals;
 }
 
-int Atoms::computeNumOfElectrons(){
+int AtomicStruct::computeNumOfElectrons(){
     int numElectrons = 0;
-    for(int ia = 0; ia < mNumAtoms; ++ia){
-        numElectrons += mPeriodicTable[mAtomId[ia]].ne;       
+    for(int ia = 0; ia < mNa; ++ia){
+        numElectrons += mpt[mia[ia]].ne;       
     }
     
     return numElectrons;
 }
 
-void Atoms::PeriodicTable(const vector<Atom>& periodicTable){
-    mPeriodicTable = periodicTable; 
-    mNumOrbitals = computeNumOfOrbitals();
-    mNumElectrons = computeNumOfElectrons();
+void AtomicStruct::PeriodicTable(const ptable& periodicTable){
+    mpt = periodicTable; 
+    mNo = computeNumOfOrbitals();
+    mNe = computeNumOfElectrons();
 }
 
 }

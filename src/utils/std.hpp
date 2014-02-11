@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <list>
 #include <algorithm>
@@ -20,16 +21,21 @@ namespace stds{
 
 using std::cout;
 using std::cin;
-using std::string;
-using std::stringstream;
-using std::vector;
-using std::list;
+
+using std::ostream;
 using std::ofstream;
 using std::ifstream;
+using std::stringstream;
+
+using std::string;
+using std::vector;
+using std::list;
 using std::ios_base;
 
 using std::invalid_argument;
 using std::runtime_error;
+
+using std::endl;
 
 }
 }

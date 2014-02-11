@@ -1,12 +1,12 @@
 /* 
- * File:   NEGF.h
+ * File:   CohRgfa.h
  * Author: K M Masum Habib <khabib@ee.ucr.edu>
  *
  * Created on April 22, 2013, 8:05 PM
  */
 
-#ifndef NEGF_H
-#define	NEGF_H
+#ifndef COHRGFA_H
+#define	COHRGFA_H
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,6 +14,7 @@
 #include <string>
 #include <armadillo>
 #include <vector>
+#include <boost/smart_ptr.hpp>
 
 #include "../utils/Printable.hpp"
 #include "../utils/myenums.hpp"
@@ -25,6 +26,7 @@
 #include "computegs.h"
 
 namespace qmicad{
+using boost::shared_ptr;
 using namespace maths::armadillo;
 using namespace maths::constants;
 using namespace utils;
@@ -73,11 +75,11 @@ struct NegfParams: public Printable {
     double              kT;     // k*T
     
     // Hamiltonian , overlap and potential
-    field<cxmat*>      H0;     // Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
+    field<shared_ptr<cxmat> >H0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
                                 // H0(0) is on the left contact and H0(N+1) is 
                                 // on the right contact.
     
-    field<cxmat*>      Hl;     // Lower diagonal blocks of Hamiltonian: 
+    field<shared_ptr<cxmat> >Hl;// Lower diagonal blocks of Hamiltonian: 
                                 // Hl(i) = [H]_i,i-1. Hl(0) = [H]_0,-1 is the 
                                 // hopping between two left contact blocks.
                                 // H(1) = [H]_1,0 is the hopping 
@@ -86,11 +88,11 @@ struct NegfParams: public Printable {
                                 // Hl(N+2) is hopping between two right contact
                                 // blocks.
     
-    field<cxmat*>      S0;     // Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
+    field<shared_ptr<cxmat> >S0;// Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
                                 // H0(0) is on the left contact and H0(N+1) is 
                                 // on the right contact.
     
-    field<cxmat*>      Sl;     // Lower diagonal blocks of overlap matrix: 
+    field<shared_ptr<cxmat> >Sl;// Lower diagonal blocks of overlap matrix: 
                                 // Sl(i) = [S]_i,i-1. Sl(0) = [S]_0,-1 is the 
                                 // overlap between two left contact blocks.
                                 // S(1) = [S]_1,0 is the overlap between 
@@ -99,7 +101,7 @@ struct NegfParams: public Printable {
                                 // Sl(N+2) is hopping between two right contact
                                 // blocks.
     
-    field<vec*>         V;      // Electrostatic potential of all the orbitals
+    field<shared_ptr<vec> >   V;// Electrostatic potential of all the orbitals
                                 // for the entire device: from block#0 
                                 // to block#N+1.
 
@@ -121,11 +123,12 @@ struct NegfParams: public Printable {
 };
 
 
-/*
- * NEGF class. It implements the RGF algorithm for a single energy point.
+/**
+ * CohRgfa - Coherent RGF algorithm class. 
+ * It implements the RGF algorithm for a single energy point.
  * It only works for coherent transport. It is not parallel right now.
  */
-class Negf: public Printable {
+class CohRgfa: public Printable {
 /*
  * Helper classes for the potential, Hamiltonian
  * and Green functions.
@@ -137,14 +140,14 @@ protected:
   */
     class NegfMatCache: public CxMatCache{
     public:
-        NegfMatCache(Negf *negf, int begin, int end, Option cache = Enabled):
+        NegfMatCache(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             CxMatCache(begin, end, cache), mnegf(negf){};
         virtual const cxmat& operator ()(int ib){
             return getAt(ib);
         }
             
     protected:
-        Negf *mnegf;
+        CohRgfa *mnegf;
     };
 /*
  * Diagonal blocks: Dii = [ESii - USii - Hii] for non orthogonal basis.
@@ -152,7 +155,7 @@ protected:
  */
     class Di:public NegfMatCache{
     public:
-        Di(Negf *negf, int begin, int end, Option cache = Enabled):
+        Di(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -165,7 +168,7 @@ protected:
  */
     class Tl:public NegfMatCache{
     public:
-        Tl(Negf *negf, int begin, int end, Option cache = Enabled):
+        Tl(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -178,7 +181,7 @@ protected:
  */
     class grc:public NegfMatCache{
     public:
-        grc(Negf *negf, int begin, int end, Option cache = Enabled):
+        grc(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){
             // Initally, cache is empty
             mIt = mEnd + 1;            
@@ -194,7 +197,7 @@ protected:
  */
     class glc:public NegfMatCache{
     public:
-        glc(Negf *negf, int begin, int end, Option cache = Enabled):
+        glc(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -207,7 +210,7 @@ protected:
  */
     class Gii:public NegfMatCache{
     public:
-        Gii(Negf *negf, int begin, int end, Option cache = Enabled):
+        Gii(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -220,7 +223,7 @@ protected:
  */
     class Gi1:public NegfMatCache{
     public:
-        Gi1(Negf *negf, int begin, int end, Option cache = Enabled):
+        Gi1(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -233,7 +236,7 @@ protected:
  */
     class GiN:public NegfMatCache{
     public:
-        GiN(Negf *negf, int begin, int end, Option cache = Enabled):
+        GiN(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -246,7 +249,7 @@ protected:
  */
     class Giip1:public NegfMatCache{
     public:
-        Giip1(Negf *negf, int begin, int end, Option cache = Enabled):
+        Giip1(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -259,7 +262,7 @@ protected:
  */
     class Giim1:public NegfMatCache{
     public:
-        Giim1(Negf *negf, int begin, int end, Option cache = Enabled):
+        Giim1(CohRgfa *negf, int begin, int end, Option cache = Enabled):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -271,13 +274,13 @@ protected:
  */
 // Fields    
 protected:
-    NegfParams          mp;      // parameters
+    NegfParams         mp;      // parameters
     uint               mN;      // number of blocks without the contacts
     uint               miLc;    // index of left contact block
     uint               miRc;    // index of right contact block
-    double              mE;      // Energy at which calculations are pertormed.
-    double              mf0;     // Fermi function at contact 1
-    double              mfNp1;   // Fermi function at contact N+1
+    double             mE;      // Energy at which calculations are pertormed.
+    double             mf0;     // Fermi function at contact 1
+    double             mfNp1;   // Fermi function at contact N+1
     
     // Hamiltonian, Overlap and Potential matrices.
     // [U]ij = -(Vi+Vj)/2*Sij
@@ -302,8 +305,8 @@ private:
 
 // Methods    
 public:
-    Negf(NegfParams newp, double E, string newprefix = "");
-    virtual ~Negf();
+    CohRgfa(NegfParams newp, double E, string newprefix = "");
+    virtual ~CohRgfa();
     
     // Density operator
     cxmat niOp(uint N = 1);
@@ -320,9 +323,9 @@ protected:
     inline cxmat Ul(int i);
         
 private:
-    Negf();
+    CohRgfa();
 
-}; // end of NEGF
+}; // end of CohRgfa
 }  // end of namespace
-#endif	/* NEGF_H */
+#endif	/* COHRGFA_H */
 

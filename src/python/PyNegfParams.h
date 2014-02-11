@@ -8,7 +8,7 @@
 #ifndef PYNEGFPARAMS_H
 #define	PYNEGFPARAMS_H
 
-#include "../negf/NEGF.h"
+#include "../negf/CohRgfa.h"
 
 namespace qmicad{
 namespace python{

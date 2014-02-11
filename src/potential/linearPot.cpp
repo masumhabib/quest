@@ -26,7 +26,7 @@ string LinearRegion4::toString() const {
 };
 
 
-LinearPot::LinearPot(const Atoms &atoms, const contact &source, 
+LinearPot::LinearPot(const AtomicStruct &atoms, const contact &source, 
 const contact &drain, const vector<gate> &gates, 
 const vector <linear_region> &linear, const string &prefix): 
 Potential(atoms, source, drain, gates, prefix), 

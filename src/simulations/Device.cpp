@@ -71,7 +71,7 @@ string Device::toString() const{
 }
 
 void Device::prepare(){
-
+/*
     HamMethod hMethod;      // k.p, tight binding, EHT
     BasisType bType;        // orthogonal/non-orthogonal
     DeviceType dType;       // uniform/non-uniform
@@ -137,8 +137,8 @@ void Device::prepare(){
     // for uniform device, we just need to store one H_i,i and 
     // one H_i+1,i
     if (dType == Uniform){
-        Atoms lyr0 = da(span(0, p.nw-1));        // take block 0
-        Atoms lyr1 = da(span(p.nw, 2*p.nw-1));   // take block 1
+        AtomicStruct lyr0 = da(span(0, p.nw-1));        // take block 0
+        AtomicStruct lyr1 = da(span(p.nw, 2*p.nw-1));   // take block 1
         H0.set_size(1);
         Hl.set_size(1);
         if(typeid(*hp) == typeid(GrapheneKpParams)){
@@ -206,7 +206,8 @@ void Device::prepare(){
 
     // biases
     VDDs = BiasGrid(p.VDDmn, p.VDDmx, p.dVDD);
-    VGGs = BiasGrid(p.VGmin, p.VGmax, p.dVG);    
+    VGGs = BiasGrid(p.VGmin, p.VGmax, p.dVG);  
+ */  
 }
 
 void Device::VDS(double VD, double VS){
@@ -227,7 +228,7 @@ void Device::VLR(int ilr, double Vl, double Vr, double Vt, double Vb){
 
 
 void Device::computePotential(){
-
+/*
     // block potential vector
     V.set_size(p.nl);
     if (p.PotentialSolver == "Linear"){
@@ -247,9 +248,11 @@ void Device::computePotential(){
     }else{
         throw runtime_error("ERROR: Forgot to set potential solver type?");
     }
+ */
 }
 
 void Device::runNegfEloop(){
+    /*
     VecGrid EE;
     // prepare energy grid
     if(p.AutoGenE){
@@ -260,6 +263,7 @@ void Device::runNegfEloop(){
     NegfEloop Eloop(EE, np, mWorkers);
     Eloop.run();
     Eloop.saveTE(p.OutFileName + "TE.dat");
+   */
 }
 
 NegfParams Device::NegfParam() { 

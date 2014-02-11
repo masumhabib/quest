@@ -10,7 +10,7 @@
 namespace qmicad{
 using namespace std;
 // Constructor
-Potential::Potential(const Atoms &atoms, const contact &source, 
+Potential::Potential(const AtomicStruct &atoms, const contact &source, 
 const contact &drain, const vector<gate> &gates, const string &prefix):
 Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
     mV.set_size(ma.NumOfAtoms());
@@ -41,7 +41,7 @@ string Potential::toString() const{
 
 // Convert atomic potential to orbital potential
 vec Potential::toOrbPot(span s){
-    Atoms a = ma(s);
+    AtomicStruct a = ma(s);
     int no = a.NumOfOrbitals();
     int na = a.NumOfAtoms();
     vec V(no, fill::zeros);

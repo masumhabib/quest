@@ -35,20 +35,23 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/src/atoms/Atoms.o \
+	${OBJECTDIR}/src/atoms/AtomicStruct.o \
 	${OBJECTDIR}/src/atoms/Lattice.o \
-	${OBJECTDIR}/src/negf/NEGF.o \
+	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/computegs.o \
 	${OBJECTDIR}/src/parallel/parloop.o \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
+	${OBJECTDIR}/src/python/PyAtomicStruct.o \
+	${OBJECTDIR}/src/python/PyGrapheneKpHam.o \
 	${OBJECTDIR}/src/python/PyNegfEloop.o \
 	${OBJECTDIR}/src/python/PyNegfParams.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
 	${OBJECTDIR}/src/qm/kp/tikp.o \
+	${OBJECTDIR}/src/qm/tb/graphenetb.o \
 	${OBJECTDIR}/src/simulations/Device.o \
 	${OBJECTDIR}/src/string/stringutils.o \
 	${OBJECTDIR}/src/utils/ConsoleProgressBar.o
@@ -78,20 +81,20 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libqmicad.${CND_DLIB_EXT}: ${OBJECTFI
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libqmicad.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
 
-${OBJECTDIR}/src/atoms/Atoms.o: src/atoms/Atoms.cpp 
+${OBJECTDIR}/src/atoms/AtomicStruct.o: src/atoms/AtomicStruct.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/Atoms.o src/atoms/Atoms.cpp
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/AtomicStruct.o src/atoms/AtomicStruct.cpp
 
 ${OBJECTDIR}/src/atoms/Lattice.o: src/atoms/Lattice.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/Lattice.o src/atoms/Lattice.cpp
 
-${OBJECTDIR}/src/negf/NEGF.o: src/negf/NEGF.cpp 
+${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/NEGF.o src/negf/NEGF.cpp
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/CohRgfa.o src/negf/CohRgfa.cpp
 
 ${OBJECTDIR}/src/negf/NegfEloop.o: src/negf/NegfEloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
@@ -123,6 +126,16 @@ ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
 
+${OBJECTDIR}/src/python/PyAtomicStruct.o: src/python/PyAtomicStruct.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyAtomicStruct.o src/python/PyAtomicStruct.cpp
+
+${OBJECTDIR}/src/python/PyGrapheneKpHam.o: src/python/PyGrapheneKpHam.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGrapheneKpHam.o src/python/PyGrapheneKpHam.cpp
+
 ${OBJECTDIR}/src/python/PyNegfEloop.o: src/python/PyNegfEloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
@@ -147,6 +160,11 @@ ${OBJECTDIR}/src/qm/kp/tikp.o: src/qm/kp/tikp.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/tikp.o src/qm/kp/tikp.cpp
+
+${OBJECTDIR}/src/qm/tb/graphenetb.o: src/qm/tb/graphenetb.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/qm/tb
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/tb/graphenetb.o src/qm/tb/graphenetb.cpp
 
 ${OBJECTDIR}/src/simulations/Device.o: src/simulations/Device.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/simulations
