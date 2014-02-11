@@ -43,14 +43,21 @@ BOOST_PYTHON_MODULE(qmicad)
     
     def("greet", greet);
    
+    /**
+     * Enums.
+     */
+    enum_<Option>("Option") 
+        .value("Disabled", Disabled)
+        .value("Enabled",  Enabled)
+    ;
     
     /**
      * Our favorite armadillo matrices.
      */
-    class_<cxmat, boost::shared_ptr<cxmat> >("cxmatp", boost::python::no_init)
+    class_<cxmat, shared_ptr<cxmat> >("cxmatp", no_init)
     ;
     
-    class_<mat, boost::shared_ptr<mat> >("matp", boost::python::no_init)
+    class_<mat, shared_ptr<mat> >("matp", no_init)
     ;
 
     
@@ -90,15 +97,25 @@ BOOST_PYTHON_MODULE(qmicad)
     //void (PyGrapheneKpHam::*PyGrapheneKpHam_generate1)(const AtomicStruct&, const AtomicStruct&, uint, uint) = &PyGrapheneKpHam::generate;
     class_<PyGrapheneKpHam, shared_ptr<PyGrapheneKpHam> >("GrapheneKpHam",init<const PyGrapheneKpParams& >())
         .def("setSize", &PyGrapheneKpHam::setSize, PyGrapheneKpHam_setSize())
-        .def("getH0", &PyGrapheneKpHam::getH0)
-        .def("getHl", &PyGrapheneKpHam::getHl)
-        .def("getH", &PyGrapheneKpHam::getH)  
-        .def("getSl", &PyGrapheneKpHam::getSl)
-        .def("getS0", &PyGrapheneKpHam::getS0)
-        .def("getS", &PyGrapheneKpHam::getS)  
+        .def("H0", &PyGrapheneKpHam::H0)
+        .def("Hl", &PyGrapheneKpHam::Hl)
+        .def("H", &PyGrapheneKpHam::H)  
+        .def("Sl", &PyGrapheneKpHam::Sl)
+        .def("S0", &PyGrapheneKpHam::S0)
+        .def("S", &PyGrapheneKpHam::S)  
         .def("genDiagBlock", &PyGrapheneKpHam::genDiagBlock)
         .def("genLowDiagBlock", &PyGrapheneKpHam::genLowDiagBlock)
         .def("generate", &PyGrapheneKpHam::generate)
+    ;
+    
+    /**
+     * NEGF parameters.
+     */
+    class_<PyNegfParams, shared_ptr<PyNegfParams> >("NegfParams", init<uint>())
+        .def("H0", &PyNegfParams::H0)
+        .def("S0", &PyNegfParams::S0)
+        .def("Hl", &PyNegfParams::Hl)
+        .def("Sl", &PyNegfParams::Sl)
     ;
     
     /*

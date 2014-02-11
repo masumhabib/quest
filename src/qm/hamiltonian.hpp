@@ -14,12 +14,14 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include <armadillo>
 
 #include "../atoms/AtomicStruct.h"
 
 namespace qmicad{
 using boost::shared_ptr;
+using boost::make_shared;
 
 struct HamParams: public Printable{
     // Parameters required for all Hamiltonin
@@ -65,33 +67,33 @@ public:
     }
 
     //!< Returns the diagonal block of H.
-    shared_ptr<T> getH0(uint ib){
-        return shared_ptr<T>(&mH(ib, 0));
+    shared_ptr<T> H0(uint ib){
+        return mH(ib, 0);
     } 
 
     //!< Returns the lower diagonal block of H.
-    shared_ptr<T> getHl(uint ib){
-        return shared_ptr<T>(&mH(ib, 1));
+    shared_ptr<T> Hl(uint ib){
+        return mH(ib, 1);
     } 
     
     //!< Returns block (ib,jb) of H.
-    shared_ptr<T> getH(uint ib, uint jb){
-        return shared_ptr<T>(&mH(ib, jb));
+    shared_ptr<T> H(uint ib, uint jb){
+        return mH(ib, jb);
     } 
 
     //!< Returns a diagonal block of overlap matrix.
-    shared_ptr<T> getS0(uint ib){
-        return shared_ptr<T>(&mS(ib, 0));
+    shared_ptr<T> S0(uint ib){
+        return mS(ib, 0);
     } 
 
     //!< Returns a lower diagonal block of overlap matrix.
-    shared_ptr<T> getSl(uint ib){
-        return shared_ptr<T>(&mS(ib, 1));
+    shared_ptr<T> Sl(uint ib){
+        return mS(ib, 1);
     } 
     
     //!< Returns block (ib,jb) of overlap matrix.
-    shared_ptr<T> getS(uint ib, uint jb){
-        return shared_ptr<T>(&mS(ib, jb));
+    shared_ptr<T> S(uint ib, uint jb){
+        return mS(ib, jb);
     } 
     
 
@@ -119,9 +121,12 @@ public:
         // In orthogonal basis, only S_i,i are non zero.
         if (mOrth && ib != jb){
                 T smat;
-                generate(mH(ib), smat, bi, bj);
+                mH(ib, jb) = make_shared<T>();
+                generate(*mH(ib, jb), smat, bi, bj);
         }else{
-            generate(mH(ib), mS(ib), bi, bj);
+            mH(ib, jb) = make_shared<T>();
+            mS(ib, jb) = make_shared<T>();
+            generate(*mH(ib, jb), *mS(ib, jb), bi, bj);
         }
     }
 
@@ -169,11 +174,11 @@ protected:
     }   
 
 protected:
-    shared_ptr<HamParams> mhp;  //!< Hamiltonian generation parameters.
+    shared_ptr<HamParams>  mhp;       //!< Hamiltonian generation parameters.
     
-    bool            mOrth;     //!< Is this an orthogonal basis.
-    field<T>        mH;        //!< Block matrices of H: H_i,j.
-    field<T>        mS;        //!< Block matrices of S: S_i,j.
+    bool                   mOrth;     //!< Is this an orthogonal basis.
+    field<shared_ptr<T> >  mH;        //!< Block matrices of H: H_i,j.
+    field<shared_ptr<T> >  mS;        //!< Block matrices of S: S_i,j.
 };
 
 }

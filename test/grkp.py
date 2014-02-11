@@ -12,25 +12,30 @@ from qmicad import *
 class GrapheneTransport:
     def __init__(self, workers):        
         # MPI stuff
-        self.workers = workers
-        self.masterID = 0
-        self.myID = self.workers.rank
-        self.iAmMaster = (self.myID == self.masterID)
+        self.workers = workers                          # MPI workers
+        self.masterID = 0                               # Master ID
+        self.myID = self.workers.rank                   # This process ID
+        self.iAmMaster = (self.myID == self.masterID)   # Master/Slave?
         
-        # simulation 
-        self.VDmin      = 0
-        self.VDmax      = 0
-        self.dVD        = 0.05
-        self.VGmin      = 0
-        self.VGmax      = 0
-        self.dVG        = 0.05
+        # Bias
+        self.VDmin      = 0             # Max drain-source bias
+        self.VDmax      = 0             # Min drain-source bias
+        self.dVD        = 0.05          # Drain-source bias step
+        self.VGmin      = 0             # Min Gate bias
+        self.VGmax      = 0             # Max Gate bias
+        self.dVG        = 0.05          # Gate bias step
+        self.rVD        = 0.5           # Fraction of voltage to be applied to drain
+        self.rVS        = -0.5          # Fraction of voltage to be applied to drain
+        self.rVG1       = 1.0           # Fraction of voltage to be applied to gate # 1
+        self.rVG2       = 1.0           # Fraction of voltage to be applied to gate # 2
 
         # output settings
-        self.OutFileName = "gnr"
+        self.OutFileName = "gnr"        # Output file prefix
         
         # Device parameters
-        self.nl         = 5
-        self.nw         = 3
+        self.nl         = 5             # Length of the device+contacts
+        self.nw         = 3             # Width of the device
+        self.ds         = 1             # Split width: distance between gate 1 and 2.
 
         # NEGF parameters
         self.kT         = 0.0259
@@ -80,25 +85,22 @@ class GrapheneTransport:
         self.ham.genDiagBlock(lyr0, lyr0, 0)            # generate H_0,0 and S_0,0
         self.ham.genLowDiagBlock(lyr1, lyr0, 0)         # generate H_1,0 
         
-        
-    def run(self):
-        pass
- 
+        # Setup the NEGF parameters
+        self.np = NegfParams(self.nl)
+        for ib in range(0, self.nl+1):                  # setup the block hamiltonian
+            if (ib != self.nl):
+                self.np.H0(self.ham.H0(0), ib)          # H0: 0 to N+1
+                self.np.S0(self.ham.S0(0), ib)          # S0: 0 to N+1
+            self.np.Hl(self.ham.Hl(0), ib)              # Hl: 0 to N+2
+        self.np.isOrthogonal = True                     # k.p is an orthogonal basis
+        self.np.kT = self.kT;                           
+        self.np.ieta = 1j*self.eta;                 # imaginary potential
+        self.np.grcCache = Option.Enabled;          # enable grc cache
+        self.np.DCache = Option.Enabled;            # enable D cache
 
-def simulate(workers):
-
-    d = GrapheneTransport(workers)
-    d.prepare()
-
+        # Electrostatic potential
     """# prepare device
     p = GrapheneKpParams()
-    p.ds    = 1
-    p.rVD   = 0.5
-    p.rVS   = -0.5
-    p.rVG0  = 1.0
-    p.rVG1  = 1.0
-    #d = Device( p)
-    d = Device(workers, p)
 
     if (iAmMaster):
         d.tic()
@@ -131,8 +133,19 @@ def simulate(workers):
     ql = Quadrilateral(Point(-ds/2, ymn), Point(ds/2, ymn), 
                        Point(ds/2, ymx), Point(-ds/2, ymx))
     d.addLinearRegion(ql)
+"""        
+        
+    def run(self):
+        pass
+ 
+
+def simulate(workers):
+
+    d = GrapheneTransport(workers)
+    d.prepare()
 
 
+"""
     # bias loops
     # loop over drain
     for ivd in range(0, d.NVDD()):

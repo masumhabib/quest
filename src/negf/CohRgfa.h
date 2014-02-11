@@ -8,13 +8,7 @@
 #ifndef COHRGFA_H
 #define	COHRGFA_H
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <string>
-#include <armadillo>
-#include <vector>
-#include <boost/smart_ptr.hpp>
+#include "computegs.h"
 
 #include "../utils/Printable.hpp"
 #include "../utils/myenums.hpp"
@@ -23,7 +17,15 @@
 #include "../maths/trace.hpp"
 #include "../maths/fermi.hpp"
 #include "../cache/cache.hpp"
-#include "computegs.h"
+
+#include <boost/smart_ptr.hpp>
+
+#include <string>
+#include <armadillo>
+#include <vector>
+
+#include <sys/types.h>
+#include <sys/stat.h>
 
 namespace qmicad{
 using boost::shared_ptr;

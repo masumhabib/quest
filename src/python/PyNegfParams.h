@@ -13,9 +13,38 @@
 namespace qmicad{
 namespace python{
 
-class PyNegfParams:public NegfParams{
+struct PyNegfParams:public NegfParams{
 public:
-    PyNegfParams():NegfParams(){};
+    PyNegfParams(uint nb):NegfParams(){
+        nb = nb;
+        // initialize the matrix containers.
+        NegfParams::H0.set_size(nb);
+        NegfParams::S0.set_size(nb);
+        NegfParams::Hl.set_size(nb+1);
+        NegfParams::Hl.set_size(nb+1);
+        NegfParams::V.set_size(nb);
+        
+    };
+    
+    void H0(shared_ptr<cxmat> H0, uint it){
+        NegfParams::H0(it) = H0;
+    }
+    
+    void S0(shared_ptr<cxmat> S0, uint it){
+        NegfParams::S0(it) = S0;
+    }
+    
+    void Hl(shared_ptr<cxmat> Hl, uint it){
+        NegfParams::Hl(it) = Hl;
+    }
+    
+    void Sl(shared_ptr<cxmat> Sl, uint it){
+        NegfParams::Sl(it) = Sl;
+    }
+    
+//    void V(shared_ptr<cxmat> V, uint it){
+//        NegfParams::V(it) = V;
+//    }
 };
 
 }

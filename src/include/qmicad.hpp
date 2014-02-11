@@ -61,6 +61,7 @@ namespace qmicad{
 
 #include "../python/PyAtomicStruct.h"
 #include "../python/PyGrapheneKpHam.h"
+#include "../python/PyNegfParams.h"
 
 
 #endif /* QMICAD_HPP */
