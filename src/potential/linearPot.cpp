@@ -27,14 +27,19 @@ string LinearRegion4::toString() const {
 
 
 LinearPot::LinearPot(const AtomicStruct &atoms, const contact &source, 
-const contact &drain, const vector<gate> &gates, 
-const vector <linear_region> &linear, const string &prefix): 
-Potential(atoms, source, drain, gates, prefix), 
-mlr(linear){
+        const contact &drain, const vector<gate> &gates, 
+        const vector <linear_region> &linear, const string &prefix): 
+        Potential(atoms, source, drain, gates, prefix), mlr(linear)
+{
     for (int it = 0; it < mlr.size() ; ++it){
         mlr[it].Title("Linear Region # " + dtos(it));
         mlr[it].Prefix(" " + prefix);
     }
+}
+
+LinearPot::LinearPot(const AtomicStruct &atoms, const string &prefix): 
+        Potential(atoms, prefix)
+{
 }
 
 /*
@@ -160,6 +165,12 @@ string LinearPot::toString() const{
     return ss.str();
 }
 
+
+void LinearPot::addLinearRegion(const squadrilateral& sq){
+    mlr.push_back(linear_region(sq.lb, sq.rb, sq.rt, sq.lt));    
+    int it = mlr.size() - 1;
+    mlr[it].Title("Linear Region # " + itos(it+1));
+}
 
 /*
     bg::model::multi_polygon<polygon> tmp1, tmp3;

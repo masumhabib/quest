@@ -46,8 +46,11 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/terminal.o \
 	${OBJECTDIR}/src/python/PyAtomicStruct.o \
 	${OBJECTDIR}/src/python/PyGrapheneKpHam.o \
+	${OBJECTDIR}/src/python/PyLinearPot.o \
 	${OBJECTDIR}/src/python/PyNegfEloop.o \
 	${OBJECTDIR}/src/python/PyNegfParams.o \
+	${OBJECTDIR}/src/python/PyTimer.o \
+	${OBJECTDIR}/src/python/PyVecGrid.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
 	${OBJECTDIR}/src/qm/kp/tikp.o \
@@ -145,6 +148,11 @@ ${OBJECTDIR}/src/python/PyGrapheneKpHam.o: src/python/PyGrapheneKpHam.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGrapheneKpHam.o src/python/PyGrapheneKpHam.cpp
 
+${OBJECTDIR}/src/python/PyLinearPot.o: src/python/PyLinearPot.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyLinearPot.o src/python/PyLinearPot.cpp
+
 ${OBJECTDIR}/src/python/PyNegfEloop.o: src/python/PyNegfEloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
@@ -154,6 +162,16 @@ ${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
+
+${OBJECTDIR}/src/python/PyTimer.o: src/python/PyTimer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTimer.o src/python/PyTimer.cpp
+
+${OBJECTDIR}/src/python/PyVecGrid.o: src/python/PyVecGrid.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyVecGrid.o src/python/PyVecGrid.cpp
 
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python

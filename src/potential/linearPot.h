@@ -57,13 +57,17 @@ protected:
     vector<linear_region> mlr; // linear voltage region
     
 public:
-    LinearPot(const AtomicStruct &atoms, const contact &source, const contact &drain, 
-            const vector<gate> &gates, const vector <linear_region> &linear,
-            const string &prefix = "");
+    LinearPot(const AtomicStruct &atoms, const contact &source, 
+            const contact &drain, const vector<gate> &gates, 
+            const vector <linear_region> &linear, const string &prefix = "");
+ 
+    LinearPot(const AtomicStruct &atoms, const string &prefix = "");
     
     virtual string toString() const;
     virtual void exportSvg(const string &path);
     virtual void compute();  
+    
+    void addLinearRegion(const squadrilateral& sq);
 };
 
 }

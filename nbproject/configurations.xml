@@ -53,10 +53,16 @@
         <itemPath>src/python/PyAtomicStruct.h</itemPath>
         <itemPath>src/python/PyGrapheneKpHam.cpp</itemPath>
         <itemPath>src/python/PyGrapheneKpHam.h</itemPath>
+        <itemPath>src/python/PyLinearPot.cpp</itemPath>
+        <itemPath>src/python/PyLinearPot.h</itemPath>
         <itemPath>src/python/PyNegfEloop.cpp</itemPath>
         <itemPath>src/python/PyNegfEloop.h</itemPath>
         <itemPath>src/python/PyNegfParams.cpp</itemPath>
         <itemPath>src/python/PyNegfParams.h</itemPath>
+        <itemPath>src/python/PyTimer.cpp</itemPath>
+        <itemPath>src/python/PyTimer.h</itemPath>
+        <itemPath>src/python/PyVecGrid.cpp</itemPath>
+        <itemPath>src/python/PyVecGrid.h</itemPath>
         <itemPath>src/python/pyqmicad.cpp</itemPath>
         <itemPath>src/python/pyqmicad.h</itemPath>
       </logicalFolder>
@@ -228,6 +234,10 @@
       </item>
       <item path="src/python/PyGrapheneKpHam.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/python/PyLinearPot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyLinearPot.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/PyNegfEloop.h" ex="false" tool="3" flavor2="0">
@@ -235,6 +245,14 @@
       <item path="src/python/PyNegfParams.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyTimer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyTimer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyVecGrid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyVecGrid.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -361,6 +379,10 @@
       </item>
       <item path="src/python/PyGrapheneKpHam.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/python/PyLinearPot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyLinearPot.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/PyNegfEloop.h" ex="false" tool="3" flavor2="0">
@@ -368,6 +390,14 @@
       <item path="src/python/PyNegfParams.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyTimer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyTimer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyVecGrid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyVecGrid.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>

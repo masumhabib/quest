@@ -10,7 +10,7 @@ import mpi
 from qmicad import *
 
 class GrapheneTransport:
-    def __init__(self, workers):        
+    def __init__(self, workers):         
         # MPI stuff
         self.workers = workers                          # MPI workers
         self.masterID = 0                               # Master ID
@@ -69,16 +69,16 @@ class GrapheneTransport:
         self.geom = AtomicStruct(self.nl, self.nw, self.ax, self.ay, self.ptable)
         
         # k.p parameters for graphene
-        self.grkpp = GrapheneKpParams()
-        self.grkpp.dtol = self.dtol
-        self.grkpp.ax = self.ax
-        self.grkpp.ay = self.ay
-        self.grkpp.K = self.K
-        self.grkpp.gamma = self.gamma
-        self.grkpp.update()
+        grkpp = GrapheneKpParams()
+        grkpp.dtol = self.dtol
+        grkpp.ax = self.ax
+        grkpp.ay = self.ay
+        grkpp.K = self.K
+        grkpp.gamma = self.gamma
+        grkpp.update()
         
         # generate hamiltonian and overlap matrices
-        self.ham = GrapheneKpHam(self.grkpp)            # hamiltonian generator
+        self.ham = GrapheneKpHam(grkpp)            # hamiltonian generator
         lyr0 = self.geom.span(0, self.nw-1);            # extract block # 0
         lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
         self.ham.setSize(2)                             # uniform device, only need H_0,0 and H_1,0
@@ -99,78 +99,70 @@ class GrapheneTransport:
         self.np.DCache = Option.Enabled;            # enable D cache
 
         # Electrostatic potential
-    """# prepare device
-    p = GrapheneKpParams()
-
-    if (iAmMaster):
-        d.tic()
-
-    d.prepare()
-
-    # add contacts
-    xmn = d.xmin() - p.ax/2
-    xmx = d.xmax() + p.ax/2
-    ymn = d.ymin() - p.ay/2
-    ymx = d.ymax() + p.ay/2
-    ds = (p.ds-1)*p.ax;
-
-    # source
-    ql = Quadrilateral(Point(xmn, ymn), Point(xmn+p.ax, ymn),
-                       Point(xmn+p.ax, ymx),  Point(xmn, ymx))
-    d.addSource(ql)
-    # drain
-    ql = Quadrilateral(Point(xmx-p.ax, ymn), Point(xmx, ymn),
-                       Point(xmx, ymx), Point(xmx-p.ax, ymx))
-    d.addDrain(ql)
-    # gates
-    ql = Quadrilateral(Point(xmn+p.ax, ymn), Point(-ds/2, ymn), 
-                       Point(-ds/2, ymx), Point(xmn+p.ax, ymx))
-    d.addGate(ql)
-    ql = Quadrilateral(Point(ds/2, ymn), Point(xmx-p.ax, ymn),
-                       Point(xmx-p.ax, ymx), Point(ds/2, ymx))
-    d.addGate(ql)
-    # linear region
-    ql = Quadrilateral(Point(-ds/2, ymn), Point(ds/2, ymn), 
-                       Point(ds/2, ymx), Point(-ds/2, ymx))
-    d.addLinearRegion(ql)
-"""        
+        self.pot = LinearPot(self.geom)
+        # add contacts
+        xmn = self.geom.xmin() - self.ax/2
+        xmx = self.geom.xmax() + self.ax/2
+        ymn = self.geom.ymin() - self.ay/2
+        ymx = self.geom.ymax() + self.ay/2
+        ds = (self.ds-1)*self.ax;
+        # source
+        ql = Quadrilateral(Point(xmn, ymn), Point(xmn+self.ax, ymn),
+                           Point(xmn+self.ax, ymx),  Point(xmn, ymx))
+        self.pot.addSource(ql)
+        # drain
+        ql = Quadrilateral(Point(xmx-self.ax, ymn), Point(xmx, ymn),
+                           Point(xmx, ymx), Point(xmx-self.ax, ymx))
+        self.pot.addDrain(ql)
+        # gates
+        ql = Quadrilateral(Point(xmn+self.ax, ymn), Point(-ds/2, ymn), 
+                           Point(-ds/2, ymx), Point(xmn+self.ax, ymx))
+        self.pot.addGate(ql)
+        ql = Quadrilateral(Point(ds/2, ymn), Point(xmx-self.ax, ymn),
+                           Point(xmx-self.ax, ymx), Point(ds/2, ymx))
+        self.pot.addGate(ql)
+        # linear region
+        ql = Quadrilateral(Point(-ds/2, ymn), Point(ds/2, ymn), 
+                           Point(ds/2, ymx), Point(-ds/2, ymx))
+        self.pot.addLinearRegion(ql)
+        
+        #Bias grid
+        self.vdd = VecGrid(self.VDmin, self.VDmax, self.dVD)
+        self.vgg = VecGrid(self.VGmin, self.VGmax, self.dVG)
+        
         
     def run(self):
-        pass
+        # Bias loops
+        # loop over drain
+        for ivd in range(0, self.vdd.N()):
+            VDD = self.vdd.V(ivd)
+            # loop over gate
+            for ivg in range(0, self.vgg.N()):
+                VGG = self.vgg.V(ivg)
+#                d.VG(0, VGG*p.rVG0)
+#                d.VG(0, VGG*p.rVG0)
+#                d.VLR(0, VGG*p.rVG0, VGG*p.rVG1)
+#                d.computePotential()
+#                np = d.NegfParam()
+#                Eloop = QneffEloop(np, workers)
+#               d.runNegfEloop()
  
-
+##
+# Run the simulation
 def simulate(workers):
+    # Start clock
+    clock = Timer()
+    clock.tic()
 
-    d = GrapheneTransport(workers)
-    d.prepare()
-
-
-"""
-    # bias loops
-    # loop over drain
-    for ivd in range(0, d.NVDD()):
-        VDD = d.VDD(ivd);
-        d.VDS(VDD*p.rVD, VDD*p.rVS)
-        # loop over gate
-        for ivg in range(0, d.NVGG()):
-            VGG = d.VGG(ivg)
-            d.VG(0, VGG*p.rVG0)
-            d.VG(0, VGG*p.rVG0)
-            d.VLR(0, VGG*p.rVG0, VGG*p.rVG1)
-            d.computePotential()
-            np = d.NegfParam()
-            Eloop = QneffEloop(np, workers)
-            d.runNegfEloop()
-
-    #print d.toString()
+    gt = GrapheneTransport(workers)
+    gt.prepare()
+    gt.run()
     
-    
-    if(iAmMaster):
-        d.toc()
-        print d.time()
-"""
+    clock.toc()
+    print clock
 
-# main function
+##
+# main function.
 def main(argv=None):
     if argv is None:
         argv = sys.argv
@@ -181,6 +173,7 @@ def main(argv=None):
     simulate(workers)
     return 0
 
-
+##
+# Entry point.
 if __name__ == "__main__":
     sys.exit(main())

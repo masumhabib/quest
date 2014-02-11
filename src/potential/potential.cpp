@@ -11,8 +11,9 @@ namespace qmicad{
 using namespace std;
 // Constructor
 Potential::Potential(const AtomicStruct &atoms, const contact &source, 
-const contact &drain, const vector<gate> &gates, const string &prefix):
-Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
+        const contact &drain, const vector<gate> &gates, const string &prefix):
+        Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates)
+{
     mV.set_size(ma.NumOfAtoms());
     mV.zeros();
     ms.Title("Source");
@@ -25,6 +26,13 @@ Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates){
         mg[it].Title("Gate # " + itos(it));
         mg[it].Prefix(" " + prefix);
     }    
+}
+
+Potential::Potential(const AtomicStruct &atoms, const string &prefix):
+        Printable("" + prefix), ma(atoms)
+{
+    mV.set_size(ma.NumOfAtoms());
+    mV.zeros();
 }
 
 
@@ -93,5 +101,22 @@ void Potential::exportPotential(const string& path){
     potf << Va << endl;
 }
 
+void Potential::addSource(const squadrilateral &sq){
+    // source
+    ms = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    ms.Title("Source");
+}
+
+void Potential::addDrain(const squadrilateral &sq) {
+    // drain
+    md = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    md.Title("Drain");
+}
+
+void Potential::addGate(const squadrilateral& sq){
+    mg.push_back(gate(sq.lb, sq.rb, sq.rt, sq.lt)); 
+    int it = mg.size() - 1;
+    mg[it].Title("Gate # " + itos(it+1));
+}
 }
 

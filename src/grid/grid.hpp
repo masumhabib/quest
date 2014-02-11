@@ -286,6 +286,7 @@ void meshgrid(Col<T> &X, Col<T> &Y, const Col<T> &xi, const Col<T> &yi){
 
 // typedefs
 typedef Grid1D<double> BiasGrid;
+typedef Grid1D<double> Egrid;
 typedef Grid1D<double> VecGrid;
 typedef Grid2D<double> MatGrid;
 

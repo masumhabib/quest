@@ -1,4 +1,4 @@
-#Mon Feb 10 22:17:06 EST 2014
+#Tue Feb 11 01:49:22 EST 2014
 /shome/masum/netbeansprojects/qmicad/.git/objects/33/7a8b4ad085e718548888e28d23594958ae8169=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/38/440877951b0c0f5294b0c9fabd4b44b32da5d8=t1391952667000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/mymath.h=c1391115436000
@@ -17,10 +17,11 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/a2/35b9adbb85d5f520f7964c90fb121c7c9049aa=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/a2/dc4e2ad8a3161424d495e1cfb15c074b95b1f6=t1391900926000
 /shome/masum/netbeansprojects/qmicad/.git/objects/9f/35faa98721f63a62cf0f1eed5bd8215bb2b08a=t1391808404000
-/shome/masum/netbeansprojects/qmicad/test/grkp.py=c1392088533000
+/shome/masum/netbeansprojects/qmicad/test/grkp.py=c1392101353000
 /shome/masum/netbeansprojects/qmicad/src/string/stringutils.h=c1391926604000
 /shome/masum/netbeansprojects/qmicad/.git/objects/56/accde9af51632dd42cffae1f95f463b8b1af89=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/38/b22c2123255c20b16f50a59e69706f1ae9d20e=t1392078508000
+/shome/masum/netbeansprojects/qmicad/.git/objects/52/c5187ebc8bb01f52cf875a5c34edeec98cccb2=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/09/4316a152934aea3a776f6201d5c9c17f807c39=t1392078508000
 /shome/masum/netbeansprojects/qmicad/nbproject/private/makefile-variables.mk=c1391562872000
 /shome/masum/netbeansprojects/qmicad/src/simulations/tisimu.h=t1391562872000
@@ -30,6 +31,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/cf/2624aedb1a97d78ed85d927c9610c9774ef0cd=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/22/6b7b717c7f18493f419bd0e69b0c5b687637b5=t1391900926000
 /shome/masum/netbeansprojects/qmicad/.git/objects/da/0ba3a54dd2ae898642a607ec69ed3c48e31ea0=t1391808404000
+/shome/masum/netbeansprojects/qmicad/.git/objects/48/bad8f2de1c38402915c9459712545d17db33a5=t1392088686000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/consoleprogressbar.cpp=c1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/39/553b6890ee022b2123aa3c1d1f0c17e8a48a29=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/9b/a426fee30036ceea533544d2b58ef0fd1a6db5=t1391952667000
@@ -56,7 +58,7 @@
 /shome/masum/netbeansprojects/qmad/src/qmad.hpp=t1391543217000
 /shome/masum/netbeansprojects/qmad/nbproject/makefile-debug.mk=t1391120171000
 /shome/masum/netbeansprojects/qmad/src/qm/tb/graphene.hpp=t1391137472000
-/shome/masum/netbeansprojects/qmicad/.git/refs/heads/master=t1392078508000
+/shome/masum/netbeansprojects/qmicad/.git/refs/heads/master=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/75/11e5f0e184beec8d5caff2004fecaeac84f348=t1392078508000
 /shome/masum/netbeansprojects/graphenekp/nbproject/makefile-release.mk=t1391541940000
 /shome/masum/netbeansprojects/qmicad/.git/objects/fa/a482bf8838cc31f642db1e0b89bbf19c716421=t1391808404000
@@ -73,6 +75,7 @@
 /shome/masum/netbeansprojects/graphenekp/src/simulations/device.h=c1391545089000
 /shome/masum/netbeansprojects/qmicad/.git/objects/06/966884b1623296aafbd9953bef93dd49604f48=t1391952667000
 /shome/masum/netbeansprojects/qmicad/.git/objects/0c/3848cbb831a67241a3f57b859fb4d6472c0597=t1391952667000
+/shome/masum/netbeansprojects/qmicad/.git/objects/88/3d4c0ca6e53077781f8d8e102aaf6a0d4676de=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/22/cfac4ec59a0c9265354d51de70f17caad2f443=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/14/367f395f405f8755b23d55be076d345b714623=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/8f/8f09f0669febd60cf8494e1ea79679452329ab=t1391808404000
@@ -80,7 +83,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/a6/5bf3e6ae5f6624d5fcc7f31ce3e73eb1a2d76d=t1391808404000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/exception.h=c1391124772000
 /shome/masum/netbeansprojects/qmicad/.git/objects/59/10c5f67beda01f0502857ef483786d7ff7b4cd=t1391952667000
-/shome/masum/netbeansprojects/qmicad/src/potential/potential.h=c1391960102000
+/shome/masum/netbeansprojects/qmicad/src/potential/potential.h=c1392096365000
 /shome/masum/netbeansprojects/qmicad/src/utils/geometry.hpp=c1391657792000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/trace.hpp=c1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/d1/1eadaeada596753cb24d141a7a49a751403f77=t1391952667000
@@ -90,6 +93,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/59/ac8d0fc4de2917d95541d64987e112cdbae20f=t1391808404000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/consoleprogressbar.h=c1391115436000
 /shome/masum/netbeansprojects/qmad/src/qm/kp/tikp.cpp=t1391541949000
+/shome/masum/netbeansprojects/qmicad/.git/objects/2c/d979a8c5e9478525e0decce8bd7607d9358fcf=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/c6/c03c334c3d33498aed214e4a256d2f0d4a326a=t1391808404000
 /shome/masum/netbeansprojects/qmad/src/negf/computegs.h=t1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/8a/82d77460666b13a9b5283f555401772fee83fe=t1391952667000
@@ -97,6 +101,7 @@
 /shome/masum/netbeansprojects/qmicad/src/maths/geometry.hpp=c1391657792000
 /shome/masum/netbeansprojects/graphenekp/qmad/qm/tb/graphene.hpp=c1391137472000
 /shome/masum/netbeansprojects/qmicad/.git/objects/a6/ed6714e43513cdba8e4a3780fa94fca6a4569d=t1391952667000
+/shome/masum/netbeansprojects/qmicad/src/python/pylinearpot.h=c1392096459000
 /shome/masum/netbeansprojects/qmicad/.git/objects/9b/c0e25c2346e766fc16c9b8a5d99deeba0351d8=t1391896857000
 /shome/masum/netbeansprojects/qmicad/src/math/fermi.hpp=t1391562932000
 /shome/masum/netbeansprojects/qmicad/.git/objects/76/353fdfd260b9b3321801faedb355a1804c4ea4=t1392078508000
@@ -112,7 +117,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/eb/826e9762575a68aae4e350db044071d754a2fd=t1392078508000
 /shome/masum/netbeansprojects/graphenekp/nbproject/project.xml=t1391486164000
 /shome/masum/netbeansprojects/qmicad/src/qm/kp/graphenekp.cpp=c1392042819000
-/shome/masum/netbeansprojects/qmicad/nbproject/private/timestamps-fir.itc.virginia.edu-kh8hk-22=t1392087131000
+/shome/masum/netbeansprojects/qmicad/nbproject/private/timestamps-fir.itc.virginia.edu-kh8hk-22=t1392101007000
 /shome/masum/netbeansprojects/qmicad/nbproject/package-debug.bash=t1391564371000
 /shome/masum/netbeansprojects/qmicad/src/python/pygraphenekpparams.h=c1392011138000
 /shome/masum/netbeansprojects/qmicad/doc/qmicad.doxy=c1391882709000
@@ -120,10 +125,12 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/94/f491617f2eeed0f9d62a5676b2434b77c48db8=t1391952667000
 /shome/masum/netbeansprojects/qmicad/.git/objects/75/6ec96d470b5901a543cb65937bfe331ca424be=t1391896857000
 /shome/masum/netbeansprojects/graphenekp/qmad/negf/negfloop.cpp=c1391143471000
+/shome/masum/netbeansprojects/qmicad/.git/objects/d9/50ecad3cde7fe4e64e5cad8db38a7cecae7297=t1392088686000
 /shome/masum/netbeansprojects/qmad/src/negf/negf.h=t1391282802000
 /shome/masum/netbeansprojects/qmicad/.git/objects/fd/6799d20c431a4b44de6b16312b6ec4dbd23834=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/d8/38ddb998dfcb7baa56e0b6a8b94b5a2a4a7f93=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/81/89456813272dde1d5ef8f69ae98268562fffe5=t1391952667000
+/shome/masum/netbeansprojects/qmicad/src/python/pytimer.cpp=c1392097414000
 /shome/masum/netbeansprojects/qmad/src/atoms/lattice.h=t1391115434000
 /shome/masum/netbeansprojects/qmicad/src/python/pygraphenekpham.h=c1392077997000
 /shome/masum/netbeansprojects/qmicad/.git/objects/81/067e6b50c4aa5f0a3f2018e118303e97e95c80=t1392078508000
@@ -158,6 +165,7 @@
 /shome/masum/netbeansprojects/qmad/src/qm/kp/ti.h=t1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/ef/e90240993d810e30b4b6a16d98598e99d01345=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/cb/13a79b8939dd89595dc053d2a1e435614ce53b=t1391952667000
+/shome/masum/netbeansprojects/qmicad/src/python/pyvecgrid.h=c1392100321000
 /shome/masum/netbeansprojects/graphenekp/qmad/parallel/parfor.cpp=c1391115436000
 /shome/masum/netbeansprojects/qmicad/nbproject/project.xml=t1391564349000
 /shome/masum/netbeansprojects/qmicad/.git/objects/8d/782374b82f5a01fa37500cb94de0404665875a=t1391952667000
@@ -171,6 +179,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/a5/b2be4094e5c63036c6fc58b8bc6aaf1dc92d04=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/b9/d7f9e135a032d7bfbecca950ab3bf368118975=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/33/40b185dd3acf376dbfbe7f218d4563369b1cb1=t1391808404000
+/shome/masum/netbeansprojects/qmicad/.git/objects/23/8d3c44aafb619b239bbd6a616cb3e73b18b249=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/4b/5a455b6b009d5e737900327105a4ace8fd7718=t1391952667000
 /shome/masum/netbeansprojects/qmad/src/utils/consoleprogressbar.h=t1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/11/147d641af723f61143705765dddbbbdd96f6c6=t1391808404000
@@ -184,6 +193,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/21/55c6e752be58dafb5ae1f856ed8ef9871e6551=t1391808404000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/geometry.hpp=c1391458615000
 /shome/masum/netbeansprojects/qmicad/.git/objects/db/b4269c8c23c95097bff76c3743b67a92eca2b6=t1391808404000
+/shome/masum/netbeansprojects/qmicad/src/python/pylinearpot.cpp=c1392090400000
 /shome/masum/netbeansprojects/qmicad/.git/objects/28/cf920e12f0a118d50e0978b30f8dbf37553f8e=t1392078508000
 /shome/masum/netbeansprojects/qmad/src/qm/kp/tikp.h=t1391544010000
 /shome/masum/netbeansprojects/graphenekp/src/simulations/tisimu.cpp=t1391485776000
@@ -202,6 +212,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/f8/c0661a4f2af75e6c832ecf878a99488249b517=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/f4/c89991280e1b9949ff2467e5c986452ccbd2e1=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/b9/c1a131b6d20c7411772cff11fadea2e020a92c=t1391900926000
+/shome/masum/netbeansprojects/qmicad/src/python/pyvecgrid.cpp=c1392098932000
 /shome/masum/netbeansprojects/qmad/src/utils/printable.hpp=t1391296885000
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/fermi.hpp=c1391183681000
 /shome/masum/netbeansprojects/qmicad/.git/objects/6e/11316c1bcdc4c533abde03d4edf3578d37135a=t1391808404000
@@ -212,9 +223,10 @@
 /shome/masum/netbeansprojects/graphenekp/qmad/utils/svec.h=c1391115436000
 /shome/masum/netbeansprojects/qmicad/src/utils/consoleprogressbar.h=c1391562932000
 /shome/masum/netbeansprojects/qmicad/src/qm/kp/genkpatoms.h=c1391960102000
-/shome/masum/netbeansprojects/qmicad/src/python/pyqmicad.cpp=c1392087714000
+/shome/masum/netbeansprojects/qmicad/src/python/pyqmicad.cpp=c1392101054000
 /shome/masum/netbeansprojects/graphenekp/qmad/qmad.hpp=c1391543217000
 /shome/masum/netbeansprojects/qmicad/.git/objects/6d/c905ce8a795e67c44a022724cc731f0a6618f7=t1391952667000
+/shome/masum/netbeansprojects/qmicad/.git/objects/43/c49e1d4c84b8738f439f0bab2288996ddce9ef=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/4d/6f7dcfdf060d7ca05e5403b1b3303ef2fc29ee=t1391900926000
 /shome/masum/netbeansprojects/qmicad/.git/objects/96/b0c43d63e97c2746d6c298cbc731a8155c5592=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/cf/c82bcf81ab47a319bb19362d5f8a9e34975243=t1391808404000
@@ -235,6 +247,7 @@
 /shome/masum/netbeansprojects/graphenekp/nbproject/private/launcher.properties=t1391485578000
 /shome/masum/netbeansprojects/graphenekp/qmad/atoms/atoms.cpp=c1391125669000
 /shome/masum/netbeansprojects/qmad/src/parallel/parfor.cpp=t1391115436000
+/shome/masum/netbeansprojects/qmicad/.git/objects/ee/a7a49c49c47147e5dccba213e30df5f19305e3=t1392088686000
 /shome/masum/netbeansprojects/qmad/src/utils/exception.h=t1391124772000
 /shome/masum/netbeansprojects/qmicad/.git/objects/c7/d5785bcc877bb9546034c70bab25c036168cdd=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/0a/21132c2650083655b26d9dc8f4bfd1f5367ce6=t1391808404000
@@ -245,6 +258,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/40/89f54f852fb23b8f0406d615d7f9e89b430810=t1391896857000
 /shome/masum/netbeansprojects/qmicad/src/math/arma.hpp=t1391912793000
 /shome/masum/netbeansprojects/qmad/src/cache/cache.hpp=t1391187627000
+/shome/masum/netbeansprojects/qmicad/.git/objects/f4/842524cca7a0158f474ce4a9fa841b5d97da9b=t1392088686000
 /shome/masum/netbeansprojects/qmad/src/utils/svec.h=t1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/2b/b40a7ebb543dd15cb0f8ca684aa50b15bc6c55=t1391896857000
 /shome/masum/netbeansprojects/qmicad/src/qm/tb/graphenetb.hpp=c1391960102000
@@ -277,13 +291,13 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/b5/a9747fb59024696c7630fcacd96ef6ec7822b6=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/af/0ecc9edf562e32981d5bc76e74ed098e6aaacb=t1391900926000
 /shome/masum/netbeansprojects/graphenekp/qmad/potential/potential.h=c1391467273000
-/shome/masum/netbeansprojects/qmicad/src/include/qmicad.hpp=c1392080085000
-/shome/masum/netbeansprojects/qmicad/.git/objects/8f/4498d246850e8432f03ab40f5cf6d24b3f7f89=t1391808404000
+/shome/masum/netbeansprojects/qmicad/src/include/qmicad.hpp=c1392099815000
 /shome/masum/netbeansprojects/qmicad/src/utils/printable.hpp=c1391986285000
+/shome/masum/netbeansprojects/qmicad/.git/objects/8f/4498d246850e8432f03ab40f5cf6d24b3f7f89=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/07/e4a396e60874401acf55ab8c32c952ad1e6447=t1391808404000
 /shome/masum/netbeansprojects/qmicad/src/maths/constants.h=c1391919841000
 /shome/masum/netbeansprojects/qmicad/.git/objects/16/9030fa986e8d6c0c4857fa343fe72aa0dc6b2f=t1391952667000
-/shome/masum/netbeansprojects/qmicad/src/potential/potential.cpp=c1391960065000
+/shome/masum/netbeansprojects/qmicad/src/potential/potential.cpp=c1392096662000
 /shome/masum/netbeansprojects/qmicad/.git/objects/c3/53b24d72e0a2d985b843f01ecb826e1adb0e7a=t1391896857000
 /shome/masum/netbeansprojects/graphenekp/qmad/qm/tb/graphenetb.hpp=c1391543263000
 /shome/masum/netbeansprojects/qmicad/.git/objects/e0/be688d8cb0903657f93d19add5553f51e65687=t1391808404000
@@ -297,6 +311,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/85/a061eba4f74805fad172ae098f4c4246a71b44=t1391808404000
 /shome/masum/netbeansprojects/qmad/src/potential/linearpot.cpp=t1391467163000
 /shome/masum/netbeansprojects/qmicad/src/negf/computegs.cpp=c1391919902000
+/shome/masum/netbeansprojects/qmicad/.git/objects/11/ac18627569e6d8213ef86688ed4db89a705697=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/d3/ecb5837a22e6b14e667c3003cfbceeaa1a814f=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/2b/45129bf9234cf66d61539f447bcc0d4adfb6ea=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/c2/3df65cc42ff3947955dab5251fb616294d1d22=t1391900926000
@@ -329,7 +344,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/03/b1dc42157821bb03f6055a5274f42242898762=t1391900926000
 /shome/masum/netbeansprojects/qmad/src/utils/serialize.hpp=t1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/a2/589dead553d0d9bf0933ea88ac2590be8b7256=t1391896857000
-/shome/masum/netbeansprojects/qmicad/.git/logs/refs/heads/master=t1392078508000
+/shome/masum/netbeansprojects/qmicad/.git/logs/refs/heads/master=t1392088686000
 /shome/masum/netbeansprojects/qmicad/src/atoms/lattice.cpp=c1391915254000
 /shome/masum/netbeansprojects/qmicad/.git/objects/c8/e55f004ce77ad77db148fbcf02546042bb58d5=t1391952667000
 /shome/masum/netbeansprojects/qmad/src/atoms/lattice.cpp=t1391115434000
@@ -358,6 +373,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/53/3c9212192c336aad44d617b9be4a5a50935219=t1392078508000
 /shome/masum/netbeansprojects/qmad/makefile=t1391115385000
 /shome/masum/netbeansprojects/qmicad/.git/objects/a4/931b0ec1f0288b7d795df17c1c01062d55d9f9=t1391808404000
+/shome/masum/netbeansprojects/qmicad/.git/objects/0d/94e3c2406adf6dde756501a6eb369e4f311a5c=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/77/c992c617ff179fe7d72463374502040e1c06c5=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/56/df27bdc4b21c54f9ecd0c2626e1bdb19ba272e=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/8f/83ff22ac176623e9a1289fb0322e3c51c26dc8=t1392078508000
@@ -379,13 +395,15 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/e0/a3ea046dcc053f021a6c7e506fc6fb1b801232=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/e8/21bc1c679c76b96378d3b8b5dc3942b831bf0e=t1391808404000
 /shome/masum/netbeansprojects/graphenekp/src/graphenekp.cpp=c1391528235000
-/shome/masum/netbeansprojects/qmicad/src/grid/grid.hpp=c1391922040000
+/shome/masum/netbeansprojects/qmicad/src/grid/grid.hpp=c1392098845000
 /shome/masum/netbeansprojects/qmicad/.git/objects/4e/ecb65547155097fc8ad966a12ffa7fdec72ab3=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/fe/38b406ac9af5c723a99cddd5195a6d680a71fd=t1391808404000
 /shome/masum/netbeansprojects/graphenekp/qmad/negf/negfloop.h=c1391115436000
-/shome/masum/netbeansprojects/qmicad/.git/index=t1392078508000
+/shome/masum/netbeansprojects/qmicad/.git/index=t1392098920000
+/shome/masum/netbeansprojects/qmicad/src/python/pytimer.h=c1392098571000
 /shome/masum/netbeansprojects/qmicad/src/qm/tb/graphenetb.cpp=c1392043134000
 /shome/masum/netbeansprojects/qmicad/src/utils/exception.h=c1391562932000
+/shome/masum/netbeansprojects/qmicad/.git/objects/59/47455f06f79de6cbf6700f7ca64fdc86293f19=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/43/17e8f8d5cb0f3678e254032c5a5cb8af986a1d=t1391896857000
 /shome/masum/netbeansprojects/qmicad/src/python/pynegfparams.h=c1392087441000
 /shome/masum/netbeansprojects/qmicad/src/math/constants.h=t1391913053000
@@ -393,7 +411,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/81/7f023b6b24865467855a94f98a87f3fde1226a=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/10/a34b864e699a56d58a628842ca672233f5a53f=t1391952667000
 /shome/masum/netbeansprojects/graphenekp/qmad/negf/computegs.cpp=c1391115436000
-/shome/masum/netbeansprojects/qmicad/src/potential/linearpot.cpp=c1391960065000
+/shome/masum/netbeansprojects/qmicad/src/potential/linearpot.cpp=c1392096607000
 /shome/masum/netbeansprojects/qmicad/.git/objects/cc/ecfeebe3fe50984a4ea013adb875807534b19c=t1391952667000
 /shome/masum/netbeansprojects/qmicad/src/negf/cohrgfa.h=c1392078761000
 /shome/masum/netbeansprojects/qmicad/.git/objects/70/3c7d9e57ba55d13cabce8e4bf392d6943b96fa=t1391896857000
@@ -401,7 +419,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/d2/844b5744cf2e5fe5d4561142635baff6cbbb23=t1392078508000
 /shome/masum/netbeansprojects/qmicad/src/maths/fermi.hpp=c1391562932000
 /shome/masum/netbeansprojects/graphenekp/qmad/parallel/parloop.h=c1391115436000
-/shome/masum/netbeansprojects/qmicad/nbproject/makefile-release.mk=t1392012478000
+/shome/masum/netbeansprojects/qmicad/nbproject/makefile-release.mk=t1392098920000
 /shome/masum/netbeansprojects/qmicad/src/utils/std.hpp=c1391967501000
 /shome/masum/netbeansprojects/qmicad/.git/objects/69/f3999de7dfddaafbc1163364af79e6acf8feab=t1391808404000
 /shome/masum/netbeansprojects/qmicad/src/qm/kp/graphenekp.h=c1392043373000
@@ -419,12 +437,14 @@
 /shome/masum/netbeansprojects/qmicad/src/potential/terminal.h=c1391922645000
 /shome/masum/netbeansprojects/qmicad/.git/objects/14/360e4728b84f53ca5705201898a54fe66a1456=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/43/327bc4c326b007d8caace4214c27da140ea0ad=t1391896857000
+/shome/masum/netbeansprojects/qmicad/.git/objects/cc/fea3822bcdf07576c915f51d04b1de101c65b5=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/14/34db3e18ca90157b4e144afb1d71088175ca66=t1391952667000
 /shome/masum/netbeansprojects/qmicad/.git/objects/f7/6f8932e7a760f686be72aee893b381f8ad2581=t1391952667000
 /shome/masum/netbeansprojects/qmicad/.git/objects/8a/1cbb551f6fdb268b38c5f677f887509ce6a67e=t1392078508000
 /shome/masum/netbeansprojects/qmicad/src/utils/svec.h=c1391562932000
 /shome/masum/netbeansprojects/qmicad/.git/objects/fc/8f7f72b50fbb71b6b8d2d2529b74e9aa7bc219=t1392078508000
 /shome/masum/netbeansprojects/qmicad/src/python/pygraphenekpparams.cpp=c1392010366000
+/shome/masum/netbeansprojects/qmicad/.git/objects/0a/6c149799ab8feed017426c78762920a1e08a6c=t1392088686000
 /shome/masum/netbeansprojects/qmad/src/grid/grid.hpp=t1391115434000
 /shome/masum/netbeansprojects/qmad/src/utils/trace.hpp=t1391115436000
 /shome/masum/netbeansprojects/qmicad/src/python/negfeloop.py=c1391887254000
@@ -444,7 +464,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/3a/afb7eb24aae0f975293c2551bb3362f881ea77=t1392078508000
 /shome/masum/netbeansprojects/qmicad/.git/objects/77/5524802d5aee5a2a6083f270878890cc126d71=t1391808404000
 /shome/masum/netbeansprojects/qmad/src/qm/kp/graphenekp.h=t1391543068000
-/shome/masum/netbeansprojects/qmicad/.git/logs/head=t1392078508000
+/shome/masum/netbeansprojects/qmicad/.git/logs/head=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/0c/a72a69c10c5d70c2e185edd9ad766ce8ef987e=t1391952667000
 /shome/masum/netbeansprojects/qmicad/.git/objects/bf/0f18cc08981a59daa4bda2bb07548f2a5e6881=t1391896857000
 /shome/masum/netbeansprojects/qmicad/src/python/pygraphenekpham.cpp=c1392012527000
@@ -453,6 +473,7 @@
 /shome/masum/netbeansprojects/qmicad/.git/objects/25/d668d38374a7a14480ac93babd5186c008fbe9=t1391952667000
 /shome/masum/netbeansprojects/qmicad/src/python/pynegfparams.cpp=c1391896698000
 /shome/masum/netbeansprojects/qmicad/.git/objects/e9/54cc719047908a100dd1227b361c977987f6d1=t1391808404000
+/shome/masum/netbeansprojects/qmicad/.git/objects/b0/6e2e10a1df3b77b299a42c09f772e1a984ad47=t1392088686000
 /shome/masum/netbeansprojects/graphenekp/nbproject/makefile-debug.mk=c1391541940000
 /shome/masum/netbeansprojects/qmicad/.git/objects/a2/1d6a0144d193bc81f895fc1f082d506f1fb825=t1391896857000
 /shome/masum/netbeansprojects/graphenekp/qmad/potential/terminal.h=c1391453243000
@@ -488,20 +509,22 @@
 /shome/masum/netbeansprojects/graphenekp/qmad/qm/kp/ti.h=c1391115436000
 /shome/masum/netbeansprojects/qmicad/.git/objects/4b/88509c1d0bb0161e33ef7ee9b81ea950a89e02=t1391808404000
 /shome/masum/netbeansprojects/qmicad/src/utils/consoleprogressbar.cpp=c1391562932000
-/shome/masum/netbeansprojects/qmicad/nbproject/configurations.xml=t1392078246000
+/shome/masum/netbeansprojects/qmicad/nbproject/configurations.xml=t1392098920000
 /shome/masum/netbeansprojects/qmicad/.git/objects/10/eef91ef50c89c021c9377c305cf52d6233226c=t1392078508000
 /shome/masum/netbeansprojects/qmicad/src/qm/genham.hpp=c1391960102000
 /shome/masum/netbeansprojects/qmicad/.git/objects/1d/cbf014ce99150a7e9670695723485ea0d09213=t1391896857000
 /shome/masum/netbeansprojects/qmicad/.git/objects/4a/2798442f25a122dd105972c6651f368d1dbbfa=t1391896857000
 VERSION=1.3
-/shome/masum/netbeansprojects/qmicad/nbproject/makefile-debug.mk=c1392012478000
+/shome/masum/netbeansprojects/qmicad/nbproject/makefile-debug.mk=c1392098920000
 /shome/masum/netbeansprojects/graphenekp/src/graphenekp.h=c1391486444000
 /shome/masum/netbeansprojects/qmicad/src/math/trace.hpp=t1391562932000
 /shome/masum/netbeansprojects/graphenekp/qmad/atoms/atoms.h=c1391487763000
 /shome/masum/netbeansprojects/qmicad/.git/objects/fc/45836c43be6c7e881b5050faade57a97dd3222=t1391896857000
 /shome/masum/netbeansprojects/qmad/src/qm/kp/kpparams.hpp=t1391544449000
 /shome/masum/netbeansprojects/qmicad/.git/objects/13/78ae1eaa7774a283d9b919a4280d6b4d92c22f=t1391952667000
+/shome/masum/netbeansprojects/qmicad/.git/objects/1c/9b4d9eb935e52025ca306f6832d5663eb5b098=t1392088686000
 /shome/masum/netbeansprojects/qmicad/.git/objects/92/7b2a5bbe4edaa586a0a75bc6a3529157742575=t1391808404000
 /shome/masum/netbeansprojects/qmicad/.git/objects/39/64737107c3873d6ed60a14b9cf45309dd1496b=t1391952667000
 /shome/masum/netbeansprojects/qmicad/src/utils/trace.hpp=c1391562932000
-/shome/masum/netbeansprojects/qmicad/src/potential/linearpot.h=c1391960065000
+/shome/masum/netbeansprojects/qmicad/src/potential/linearpot.h=c1392096167000
+/shome/masum/netbeansprojects/qmicad/.git/objects/27/dec9614f6a55433ba0802c408da8337d531205=t1392088686000

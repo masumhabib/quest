@@ -60,6 +60,14 @@ BOOST_PYTHON_MODULE(qmicad)
     class_<mat, shared_ptr<mat> >("matp", no_init)
     ;
 
+    /**
+     * Wall clock
+     */
+    class_<PyTimer, shared_ptr<PyTimer> >("Timer")
+        .def("tic", &PyTimer::tic)
+        .def("toc", &PyTimer::toc)
+        .def(self_ns::str(self_ns::self))        
+    ;
     
     /**
      * Periodic table.
@@ -71,10 +79,17 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * Atomistic geometry of the device.
      */
-    class_<PyAtomicStruct, shared_ptr<PyAtomicStruct> >("AtomicStruct", init<const string&>())
+    class_<PyAtomicStruct, shared_ptr<PyAtomicStruct> >("AtomicStruct", 
+            init<const string&>())
         .def(init<const string&, const PyPeriodicTable>())
         .def(init<uint, uint, double, double, const PyPeriodicTable>())
         .def("span", &PyAtomicStruct::span)
+        .def("xmax", &PyAtomicStruct::xmax)
+        .def("xmin", &PyAtomicStruct::xmin)
+        .def("ymax", &PyAtomicStruct::ymax)
+        .def("ymin", &PyAtomicStruct::ymin)    
+        .def("zmax", &PyAtomicStruct::zmax)
+        .def("zmin", &PyAtomicStruct::zmin)    
         .def(self_ns::str(self_ns::self))
     ;
     
@@ -94,8 +109,8 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * Graphene Hamiltonian.
      */
-    //void (PyGrapheneKpHam::*PyGrapheneKpHam_generate1)(const AtomicStruct&, const AtomicStruct&, uint, uint) = &PyGrapheneKpHam::generate;
-    class_<PyGrapheneKpHam, shared_ptr<PyGrapheneKpHam> >("GrapheneKpHam",init<const PyGrapheneKpParams& >())
+    class_<PyGrapheneKpHam, shared_ptr<PyGrapheneKpHam> >("GrapheneKpHam",
+            init<const PyGrapheneKpParams& >())
         .def("setSize", &PyGrapheneKpHam::setSize, PyGrapheneKpHam_setSize())
         .def("H0", &PyGrapheneKpHam::H0)
         .def("Hl", &PyGrapheneKpHam::Hl)
@@ -116,8 +131,59 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("S0", &PyNegfParams::S0)
         .def("Hl", &PyNegfParams::Hl)
         .def("Sl", &PyNegfParams::Sl)
+        .def_readwrite("kT", &PyNegfParams::kT)
+        .def_readwrite("ieta", &PyNegfParams::ieta)
+        .def_readwrite("muS", &PyNegfParams::muS)
+        .def_readwrite("muD", &PyNegfParams::muD)
+        .def_readwrite("isOrthogonal", &PyNegfParams::isOrthogonal)
+        .def_readwrite("DCache", &PyNegfParams::DCache)
+        .def_readwrite("TCache", &PyNegfParams::TCache)
+        .def_readwrite("grcCache", &PyNegfParams::grcCache)
+        .def_readwrite("glcCache", &PyNegfParams::glcCache)
+        .def_readwrite("GiiCache", &PyNegfParams::GiiCache)
+        .def_readwrite("GlCache", &PyNegfParams::GlCache)
+        .def_readwrite("GuCache", &PyNegfParams::GuCache)
+        .def_readwrite("Gi1Cache", &PyNegfParams::Gi1Cache)
+        .def_readwrite("GiNCache", &PyNegfParams::GiNCache)
+        .def_readwrite("Giip1Cache", &PyNegfParams::Giip1Cache)
+        .def_readwrite("Giim1Cache", &PyNegfParams::Giim1Cache)
+    ;
+
+    class_<point>("Point", init<const double&, const double&>())
     ;
     
+    class_<SimpleQuadrilateral>("Quadrilateral", init<const point&, const point&, 
+            const point&, const point&>())
+    ;
+
+    /**
+     * Linear potential
+     */    
+    class_<PyLinearPot, shared_ptr<PyLinearPot> >("LinearPot", 
+            init<const PyAtomicStruct&, optional<const string&> >())
+        .def("addSource", &PyLinearPot::addSource)
+        .def("addDrain", &PyLinearPot::addDrain)
+        .def("addGate", &PyLinearPot::addGate)
+        .def("addLinearRegion", &PyLinearPot::addLinearRegion)
+        .def("compute", &PyLinearPot::compute)
+        .def("exportSvg", &PyLinearPot::exportSvg)
+        .def(self_ns::str(self_ns::self))
+    ;
+     
+    /**
+     * Vector grid
+     */
+    class_<PyVecGrid, shared_ptr<PyVecGrid> >("VecGrid", 
+            init<double, double, double, optional<const string&> >())
+        .def(init<optional<double, double, int, const string&> >())
+        .def("V", &PyVecGrid::V)        
+        .def("min", &PyVecGrid::min)
+        .def("max", &PyVecGrid::max)
+        .def("del", &PyVecGrid::del)
+        .def("N", &PyVecGrid::N)
+        .def(self_ns::str(self_ns::self))
+    ;
+
     /*
     class_<DeviceParams>("DeviceParams")
         .def_readwrite("nl", &DeviceParams::nl)
@@ -150,16 +216,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def_readwrite("calcTE", &DeviceParams::CalcTE)
     ;
 
-    class_<point>("Point", init<const double&, const double&>())
-    ;
-    
-    class_<SimpleQuadrilateral>("Quadrilateral", init<const point&, const point&, const point&, const point&>())
-    ;
-
     class_<Device>("Device", init<const communicator&, const DeviceParams&>())
-        .def("tic", &Device::tic)
-        .def("toc", &Device::toc)
-        .def("time", &Device::time)
         .def("setDeviceParams", &Device::setDeviceParams)
         .def("prepare", &Device::prepare)
         .def("addSource", &Device::addSource)
@@ -170,10 +227,6 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("runNegfEloop", &Device::runNegfEloop)
         .def("NegfParam", &Device::NegfParam)
         .def("toString", &Device::toString)
-        .def("xmax", &Device::xmax)
-        .def("xmin", &Device::xmin)
-        .def("ymax", &Device::ymax)
-        .def("ymin", &Device::ymin)
         .def("VDD", &Device::VDD)
         .def("NVDD", &Device::NVDD)
         .def("VGG", &Device::VGG)
@@ -197,9 +250,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
         .def("saveTE", &PyNegfEloop::saveTE)        
     ;
-
-    class_<PyNegfParams>("QnegfParams", init<>())
-    ;*/
+    */
     
 }
 
