@@ -61,143 +61,143 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=-m64
 
 # CC Compiler Flags
-CCFLAGS=
-CXXFLAGS=
+CCFLAGS=-m64
+CXXFLAGS=-m64
 
 # Fortran Compiler Flags
-FFLAGS=
+FFLAGS=-m64
 
 # Assembler Flags
-ASFLAGS=
+ASFLAGS=--64
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-Wl,--start-group /home/kh8hk/usr/lib/libboost_mpi_python.a /home/kh8hk/usr/lib/libboost_mpi.a -Wl,--end-group -Wl,--start-group /opt/intel/mkl/lib/intel64/libmkl_intel_lp64.a /opt/intel/mkl/lib/intel64/libmkl_core.a /opt/intel/mkl/lib/intel64/libmkl_intel_thread.a -Wl,--end-group -Wl,-Bdynamic -L/home/kh8hk/usr/lib -lboost_serialization -L/home/kh8hk/usr/lib -lboost_python -L/opt/intel/lib/intel64 -liomp5 -lpthread -lm -ldl -Wl,--no-as-needed
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libqmicad.${CND_DLIB_EXT}
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk lib/qmicad.${CND_DLIB_EXT}
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libqmicad.${CND_DLIB_EXT}: ${OBJECTFILES}
-	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libqmicad.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
+lib/qmicad.${CND_DLIB_EXT}: ${OBJECTFILES}
+	${MKDIR} -p lib
+	${LINK.cc} -o lib/qmicad.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
 
 ${OBJECTDIR}/src/atoms/AtomicStruct.o: src/atoms/AtomicStruct.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/AtomicStruct.o src/atoms/AtomicStruct.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/AtomicStruct.o src/atoms/AtomicStruct.cpp
 
 ${OBJECTDIR}/src/atoms/Lattice.o: src/atoms/Lattice.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/Lattice.o src/atoms/Lattice.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/Lattice.o src/atoms/Lattice.cpp
 
 ${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/CohRgfa.o src/negf/CohRgfa.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/CohRgfa.o src/negf/CohRgfa.cpp
 
 ${OBJECTDIR}/src/negf/NegfEloop.o: src/negf/NegfEloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/NegfEloop.o src/negf/NegfEloop.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/NegfEloop.o src/negf/NegfEloop.cpp
 
 ${OBJECTDIR}/src/negf/computegs.o: src/negf/computegs.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/computegs.o src/negf/computegs.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/computegs.o src/negf/computegs.cpp
 
 ${OBJECTDIR}/src/parallel/parloop.o: src/parallel/parloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/parallel
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/parallel/parloop.o src/parallel/parloop.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/parallel/parloop.o src/parallel/parloop.cpp
 
 ${OBJECTDIR}/src/potential/linearPot.o: src/potential/linearPot.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/linearPot.o src/potential/linearPot.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/linearPot.o src/potential/linearPot.cpp
 
 ${OBJECTDIR}/src/potential/potential.o: src/potential/potential.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/potential.o src/potential/potential.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/potential.o src/potential/potential.cpp
 
 ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
 
 ${OBJECTDIR}/src/python/PyAtomicStruct.o: src/python/PyAtomicStruct.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyAtomicStruct.o src/python/PyAtomicStruct.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyAtomicStruct.o src/python/PyAtomicStruct.cpp
 
 ${OBJECTDIR}/src/python/PyGrapheneKpHam.o: src/python/PyGrapheneKpHam.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGrapheneKpHam.o src/python/PyGrapheneKpHam.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGrapheneKpHam.o src/python/PyGrapheneKpHam.cpp
 
 ${OBJECTDIR}/src/python/PyLinearPot.o: src/python/PyLinearPot.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyLinearPot.o src/python/PyLinearPot.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyLinearPot.o src/python/PyLinearPot.cpp
 
 ${OBJECTDIR}/src/python/PyNegfEloop.o: src/python/PyNegfEloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfEloop.o src/python/PyNegfEloop.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfEloop.o src/python/PyNegfEloop.cpp
 
 ${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
 
 ${OBJECTDIR}/src/python/PyTimer.o: src/python/PyTimer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTimer.o src/python/PyTimer.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTimer.o src/python/PyTimer.cpp
 
 ${OBJECTDIR}/src/python/PyVecGrid.o: src/python/PyVecGrid.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyVecGrid.o src/python/PyVecGrid.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyVecGrid.o src/python/PyVecGrid.cpp
 
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/pyqmicad.o src/python/pyqmicad.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/pyqmicad.o src/python/pyqmicad.cpp
 
 ${OBJECTDIR}/src/qm/kp/graphenekp.o: src/qm/kp/graphenekp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/graphenekp.o src/qm/kp/graphenekp.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/graphenekp.o src/qm/kp/graphenekp.cpp
 
 ${OBJECTDIR}/src/qm/kp/tikp.o: src/qm/kp/tikp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/tikp.o src/qm/kp/tikp.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/tikp.o src/qm/kp/tikp.cpp
 
 ${OBJECTDIR}/src/qm/tb/graphenetb.o: src/qm/tb/graphenetb.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/qm/tb
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/tb/graphenetb.o src/qm/tb/graphenetb.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/tb/graphenetb.o src/qm/tb/graphenetb.cpp
 
 ${OBJECTDIR}/src/simulations/Device.o: src/simulations/Device.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/simulations
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/simulations/Device.o src/simulations/Device.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/simulations/Device.o src/simulations/Device.cpp
 
 ${OBJECTDIR}/src/string/stringutils.o: src/string/stringutils.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/string
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/string/stringutils.o src/string/stringutils.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/string/stringutils.o src/string/stringutils.cpp
 
 ${OBJECTDIR}/src/utils/ConsoleProgressBar.o: src/utils/ConsoleProgressBar.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/utils
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/ConsoleProgressBar.o src/utils/ConsoleProgressBar.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/ConsoleProgressBar.o src/utils/ConsoleProgressBar.cpp
 
 # Subprojects
 .build-subprojects:
@@ -205,7 +205,7 @@ ${OBJECTDIR}/src/utils/ConsoleProgressBar.o: src/utils/ConsoleProgressBar.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libqmicad.${CND_DLIB_EXT}
+	${RM} lib/qmicad.${CND_DLIB_EXT}
 
 # Subprojects
 .clean-subprojects:

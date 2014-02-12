@@ -48,6 +48,11 @@ public:
     void V(shared_ptr<vec> V, uint it){
         NegfParams::V(it) = V;
     }
+    
+    friend ostream& operator << (ostream & out, const PyNegfParams &p){
+        out << p.toString();
+        return out;
+    }
 };
 
 }

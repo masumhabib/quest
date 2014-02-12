@@ -16,9 +16,9 @@ CND_PACKAGE_NAME_Debug=libqmicad.so.tar
 CND_PACKAGE_PATH_Debug=dist/Debug/MPI-Linux-x86/package/libqmicad.so.tar
 # Release configuration
 CND_PLATFORM_Release=MPI-Linux-x86
-CND_ARTIFACT_DIR_Release=dist/Release/MPI-Linux-x86
-CND_ARTIFACT_NAME_Release=libqmicad.so
-CND_ARTIFACT_PATH_Release=dist/Release/MPI-Linux-x86/libqmicad.so
+CND_ARTIFACT_DIR_Release=lib
+CND_ARTIFACT_NAME_Release=qmicad.so
+CND_ARTIFACT_PATH_Release=lib/qmicad.so
 CND_PACKAGE_DIR_Release=dist/Release/MPI-Linux-x86/package
 CND_PACKAGE_NAME_Release=libqmicad.so.tar
 CND_PACKAGE_PATH_Release=dist/Release/MPI-Linux-x86/package/libqmicad.so.tar

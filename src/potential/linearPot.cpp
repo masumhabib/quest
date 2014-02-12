@@ -19,7 +19,7 @@ LinearRegion4::LinearRegion4(point lb, point rb, point rt, point lt,
 string LinearRegion4::toString() const { 
     stringstream ss;
     ss << Terminal4::toString() << endl;
-    ss << mPrefix << " " << "Vl = " << Vl << " Vr = " << Vr << " Vt = " << Vt 
+    ss << " " << mPrefix << " " << "Vl = " << Vl << " Vr = " << Vr << " Vt = " << Vt 
                   << " Vb = " << Vb;
     
     return ss.str();
@@ -31,15 +31,18 @@ LinearPot::LinearPot(const AtomicStruct &atoms, const contact &source,
         const vector <linear_region> &linear, const string &prefix): 
         Potential(atoms, source, drain, gates, prefix), mlr(linear)
 {
+    mTitle = "Linear Voltage Profile";
+    
     for (int it = 0; it < mlr.size() ; ++it){
         mlr[it].Title("Linear Region # " + dtos(it));
-        mlr[it].Prefix(" " + prefix);
+        mlr[it].Prefix(mlr[it].Prefix() + mPrefix);
     }
 }
 
 LinearPot::LinearPot(const AtomicStruct &atoms, const string &prefix): 
         Potential(atoms, prefix)
 {
+    mTitle = "Linear Voltage Profile";
 }
 
 /*
@@ -153,6 +156,7 @@ void LinearPot::exportSvg(const string& path){
 
 string LinearPot::toString() const{
     stringstream ss;
+    ss << Printable::toString() << ":" << endl;
     ss << mPrefix << ms << endl;
     for (vector<gate>::const_iterator it = mg.begin(); it != mg.end(); ++it){
         ss << mPrefix << *it << endl;
@@ -160,8 +164,7 @@ string LinearPot::toString() const{
     for (vector<linear_region>::const_iterator it = mlr.begin(); it != mlr.end(); ++it){
         ss << mPrefix << *it << endl;
     }
-    ss << mPrefix << md << endl;
-   
+    ss << mPrefix << md;    
     return ss.str();
 }
 
@@ -170,6 +173,7 @@ void LinearPot::addLinearRegion(const squadrilateral& sq){
     mlr.push_back(linear_region(sq.lb, sq.rb, sq.rt, sq.lt));    
     int it = mlr.size() - 1;
     mlr[it].Title("Linear Region # " + itos(it+1));
+    mlr[it].Prefix(mlr[it].Prefix() + mPrefix);
 }
 
 

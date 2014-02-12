@@ -12,24 +12,24 @@ using namespace std;
 // Constructor
 Potential::Potential(const AtomicStruct &atoms, const contact &source, 
         const contact &drain, const vector<gate> &gates, const string &prefix):
-        Printable("" + prefix), ma(atoms), ms(source), md(drain), mg(gates)
+        Printable(" " + prefix), ma(atoms), ms(source), md(drain), mg(gates)
 {
     mV.set_size(ma.NumOfAtoms());
     mV.zeros();
     ms.Title("Source");
     md.Title("Drain");
     
-    ms.Prefix(" " + prefix);
-    md.Prefix(" " + prefix);
+    ms.Prefix(ms.Prefix() + mPrefix);
+    md.Prefix(md.Prefix() + mPrefix);
     
     for (int it = 0; it < mg.size(); ++it){
         mg[it].Title("Gate # " + itos(it));
-        mg[it].Prefix(" " + prefix);
+        mg[it].Prefix(mg[it].Prefix() + mPrefix);
     }    
 }
 
 Potential::Potential(const AtomicStruct &atoms, const string &prefix):
-        Printable("" + prefix), ma(atoms)
+        Printable(" " + prefix), ma(atoms)
 {
     mV.set_size(ma.NumOfAtoms());
     mV.zeros();
@@ -38,6 +38,7 @@ Potential::Potential(const AtomicStruct &atoms, const string &prefix):
 
 string Potential::toString() const{
     stringstream ss;
+    ss << Printable::toString() << ":" << endl;
     ss << mPrefix << ms << endl;
     for (vector<gate>::const_iterator it = mg.begin(); it != mg.end(); ++it){
         ss << mPrefix << *it << endl;
@@ -106,18 +107,21 @@ void Potential::addSource(const squadrilateral &sq){
     // source
     ms = contact(sq.lb, sq.rb, sq.rt, sq.lt);
     ms.Title("Source");
+    ms.Prefix(ms.Prefix() + mPrefix);
 }
 
 void Potential::addDrain(const squadrilateral &sq) {
     // drain
     md = contact(sq.lb, sq.rb, sq.rt, sq.lt);
     md.Title("Drain");
+    md.Prefix(md.Prefix() + mPrefix);
 }
 
 void Potential::addGate(const squadrilateral& sq){
     mg.push_back(gate(sq.lb, sq.rb, sq.rt, sq.lt)); 
     int it = mg.size() - 1;
     mg[it].Title("Gate # " + itos(it+1));
+    mg[it].Prefix(mg[it].Prefix() + mPrefix);
 }
 
 void Potential::VG(int ig, double VG){

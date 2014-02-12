@@ -54,6 +54,7 @@ struct GrapheneKpParams: public HamParams{
     
     virtual string toString() const { 
         stringstream ss;
+        ss << HamParams::toString() << ":" << endl;
         ss << mPrefix << " dtol = " << dtol << endl;
         ss << mPrefix << " ax = " << ax << endl;
         ss << mPrefix << " ay = " << ay << endl;
@@ -61,7 +62,7 @@ struct GrapheneKpParams: public HamParams{
         ss << mPrefix << " gamma = " << gamma << endl;
         ss << mPrefix << " eps: " << endl << eps << endl;
         ss << mPrefix << " t01x: " << endl << t01x << endl;
-        ss << mPrefix << " t01y: " << endl << t01y << endl;
+        ss << mPrefix << " t01y: " << endl << t01y;
 
         return ss.str(); 
     };  

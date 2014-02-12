@@ -431,7 +431,6 @@ inline void CohRgfa::grc::computegrc(cxmat& grci, const cxmat& grcip1, int ib){
         NegfParams &p = mnegf->mp;
         double E = mnegf->mE;
         double VR = (*p.V(iRc))(0); // all the atoms on a contact have the save bias
-        
         computegs(grci, E+VR, *p.H0(iRc), *p.S0(iRc), trans(Tip1i), p.ieta, 
                   p.SurfGTolX);
 

@@ -40,7 +40,7 @@ public:
     virtual string toString() const { 
         stringstream out;
         if (mTitle.length()){
-                out << mPrefix << mTitle << endl;
+                out << mPrefix << mTitle;
             }        
         return out.str(); 
     };

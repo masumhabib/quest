@@ -109,7 +109,7 @@ struct NegfParams: public Printable {
 
     static const double SurfGTolX = 1E-8;
     
-    NegfParams(){
+    NegfParams(const string &prefix = ""):Printable(" " + prefix){
         DCache = Enabled;
         TCache = Disabled;
         grcCache = Enabled;
@@ -121,6 +121,21 @@ struct NegfParams: public Printable {
         GiNCache = Disabled;
         Giip1Cache = Disabled;
         Giim1Cache = Disabled; 
+        
+        mTitle = "NEGF parameters";
+    }
+    
+    virtual string toString() const {
+        stringstream out;
+        out << Printable::toString() << ":" << endl;
+        out << mPrefix << " IsOrthogonal = " << isOrthogonal << endl;
+        out << mPrefix << " nb = " << nb << endl;
+        out << mPrefix << " ieta = " << ieta << endl;
+        out << mPrefix << " kT = " << kT << endl;
+        out << mPrefix << " muS = " << muS << endl;
+        out << mPrefix << " muD = " << muD;
+        
+        return out.str();
     }
 };
 

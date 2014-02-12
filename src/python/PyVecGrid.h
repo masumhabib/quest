@@ -28,7 +28,7 @@ public:
     }
     
     double V(int it){
-        return VecGrid::operator()(it);
+        return (*this)(it);
     }
 };
 

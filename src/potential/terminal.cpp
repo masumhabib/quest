@@ -11,7 +11,7 @@ namespace qmicad{
 // Construct Terminal from a string containing definition of a plygon
 // "POLYGON((x1 y1, x2 y2, ...))"
 Terminal::Terminal(const string& polygon, const string &prefix): 
-        Printable("" + prefix)
+        Printable(" " + prefix)
 {
     mTitle = "Terminal";
     bg::read_wkt(polygon, geom);
@@ -19,7 +19,7 @@ Terminal::Terminal(const string& polygon, const string &prefix):
 
 // Construct from a vector of points
 Terminal::Terminal(const vector<point>& points, const string &prefix):
-        Printable("" + prefix)
+        Printable(" " + prefix)
 {
     mTitle = "Terminal";
     for (vector<point>::const_iterator it = points.begin(); it != points.end(); ++it){
@@ -35,7 +35,8 @@ Terminal::Terminal(const string &prefix): Printable("" + prefix)
 
 string Terminal::toString() const { 
     stringstream ss;
-    ss << mPrefix << " " << bg::wkt<polygon>(geom);
+    ss << Printable::toString() << ":" << endl;
+    ss << " " << mPrefix << " " << bg::wkt<polygon>(geom);
     return ss.str(); 
 }; 
 
@@ -63,7 +64,7 @@ Terminal4::Terminal4(point lb, point rb, point rt, point lt,
 string Gate4::toString() const{
     stringstream ss;
     ss << Terminal4::toString() << endl;
-    ss << mPrefix << " " << "V = " << V;
+    ss << " " << mPrefix << " V = " << V;
     
     return ss.str();
 }
@@ -71,7 +72,7 @@ string Gate4::toString() const{
 string Contact4::toString() const{
     stringstream ss;
     ss << Terminal4::toString() << endl;
-    ss << mPrefix << " " << "E = " << E;
+    ss << " " << mPrefix << " V = " << V << " E = " << E;
     
     return ss.str();
 }

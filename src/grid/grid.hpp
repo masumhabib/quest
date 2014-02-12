@@ -90,10 +90,11 @@ public:
     
     string toString() const { 
         stringstream ss;
+        ss << Printable::toString() << ":" << endl;
         ss << mPrefix << " min = " << min()
                       << ", max = " << max() 
                       << ", N = " << N() << ", del = " << del() << endl;
-        ss << mPrefix << mV << endl;
+        ss << mPrefix << mV;
 
         return ss.str(); 
     }; 

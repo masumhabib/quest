@@ -87,9 +87,6 @@
         <itemPath>src/string/stringutils.cpp</itemPath>
         <itemPath>src/string/stringutils.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="f1" displayName="test" projectFiles="true">
-        <itemPath>test/grkp.py</itemPath>
-      </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
         <itemPath>src/utils/ConsoleProgressBar.cpp</itemPath>
         <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
@@ -304,16 +301,50 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>/usr/include/python2.6</pElem>
+            <pElem>/home/kh8hk/usr/include</pElem>
+          </incDir>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>/usr/include/python2.6</pElem>
+            <pElem>/home/kh8hk/usr/include</pElem>
+          </incDir>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
         </fortranCompilerTool>
         <asmTool>
           <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
         </asmTool>
+        <linkerTool>
+          <output>lib/qmicad.${CND_DLIB_EXT}</output>
+          <linkerLibItems>
+            <linkerOptionItem>-Wl,--start-group</linkerOptionItem>
+            <linkerOptionItem>/home/kh8hk/usr/lib/libboost_mpi_python.a</linkerOptionItem>
+            <linkerOptionItem>/home/kh8hk/usr/lib/libboost_mpi.a</linkerOptionItem>
+            <linkerOptionItem>-Wl,--end-group</linkerOptionItem>
+            <linkerOptionItem>-Wl,--start-group</linkerOptionItem>
+            <linkerOptionItem>/opt/intel/mkl/lib/intel64/libmkl_intel_lp64.a</linkerOptionItem>
+            <linkerOptionItem>/opt/intel/mkl/lib/intel64/libmkl_core.a</linkerOptionItem>
+            <linkerOptionItem>/opt/intel/mkl/lib/intel64/libmkl_intel_thread.a</linkerOptionItem>
+            <linkerOptionItem>-Wl,--end-group</linkerOptionItem>
+            <linkerOptionItem>-Wl,-Bdynamic</linkerOptionItem>
+            <linkerOptionItem>-L/home/kh8hk/usr/lib -lboost_serialization</linkerOptionItem>
+            <linkerOptionItem>-L/home/kh8hk/usr/lib -lboost_python</linkerOptionItem>
+            <linkerOptionItem>-L/opt/intel/lib/intel64 -liomp5</linkerOptionItem>
+            <linkerOptionItem>-lpthread</linkerOptionItem>
+            <linkerOptionItem>-lm</linkerOptionItem>
+            <linkerOptionItem>-ldl</linkerOptionItem>
+            <linkerOptionItem>-Wl,--no-as-needed</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="doc/qmicad.doxy" ex="false" tool="3" flavor2="0">
       </item>
@@ -438,8 +469,6 @@
       <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/std.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="test/grkp.py" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
