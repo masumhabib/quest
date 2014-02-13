@@ -12,6 +12,7 @@
 #include "../utils/serialize.hpp"
 #include "../maths/fermi.hpp"
 #include "../parallel/parloop.h"
+#include "NegfResult.h"
 
 
 #include <boost/mpi.hpp>
@@ -33,18 +34,12 @@ namespace mpi = boost::mpi;
  */
 class NegfEloop: public ParLoop<double>{
 public:
-    NegfEloop(const VecGrid &E, const NegfParams &np, const mpi::communicator &workers):
-            ParLoop<double>(E, workers),TE(1), I1(2), mnp(np)
-    {
-        mTEn = 1;
-        mCalcType = TE;
-        mprog   = 0;
-        mprogmx = 80;
-    }
+    NegfEloop(const VecGrid &E, const NegfParams &np, 
+              const mpi::communicator &workers, bool saveAscii = true);
     
-    void            enableTE(uint N = 1){mCalcType |= TE; mTEn = N; };
-    virtual void    saveTE(string FileName);
-    
+    void            enableTE(uint N = 1);
+    void            disableTE();    
+    virtual void    save(string fileName);
     
 protected:
     virtual void    prepare();
@@ -52,34 +47,22 @@ protected:
     virtual void    compute(int il);  
     virtual void    postCompute(int il);
     virtual void    collect();
-    
-    virtual void    computeTE(uint N = 1);
-    virtual void    collectTE();
-    
     virtual void    stepCompleted();
-    virtual void    gather(vector<cxmat> &Mproc, list<cxmat> &M);
+    virtual void    gather(vector<negfresult> &thisR, NegfResultList &all);
 
 public:
-    const uint           TE;
-    const uint           I1;
     
 protected:
-    const NegfParams      &mnp;     // Negf parameters
-    shared_ptr<CohRgfa>   mnegf;    // current Negf calculator
-    double                mEi;      // current energy
+    const NegfParams      &mnp;         //!< Negf parameters.
+    shared_ptr<CohRgfa>   mnegf;        //!< Current Negf calculator.
     
-    // output
-    uint                 mCalcType; // Which calculations we need to perform
     // TE
-    vector<cxmat>        mTEproc;  // transmission list for local process
-    list<cxmat>          mTE;      // transmission list for all processes
-    uint                 mTEn;     // size of TE output matrix
+    vector<negfresult>    mThisTE;      //!< Transmission list for local process
+    NegfResultList        mTE;          //!< Transmission list for all processes
     
-    
-        
     // user feedback
-    int                  mprog;    // progress
-    int                  mprogmx;  // maximum progress
+    int                  mprog;         //!< Calculation progress.
+    int                  mprogmx;       //!< Maximum progress.
     
 };
 }

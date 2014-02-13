@@ -232,18 +232,12 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
     
     class_<PyNegfEloop, shared_ptr<PyNegfEloop>, noncopyable>("NegfEloop", 
-            init<PyVecGrid&, const PyNegfParams&, const communicator&>())
+            init<PyVecGrid&, const PyNegfParams&, const communicator&,
+            optional<bool> >())
         .def("run", &PyNegfEloop::run)
-        .def("prepare", &PyNegfEloop::prepare)
-        .def("preCompute", &PyNegfEloop::preCompute)
-        .def("compute", &PyNegfEloop::compute)
-        .def("postCompute", &PyNegfEloop::postCompute)
-        .def("collect", &PyNegfEloop::collect)
-        .def("stepCompleted", &PyNegfEloop::stepCompleted)
-        .def("computeTE", &PyNegfEloop::computeTE)
-        .def("collectTE", &PyNegfEloop::collectTE)
+        .def("save", &PyNegfEloop::save)
         .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
-        .def("saveTE", &PyNegfEloop::saveTE)        
+        .def("disableTE", &PyNegfEloop::disableTE)
     ;
     
 }

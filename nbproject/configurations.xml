@@ -33,6 +33,8 @@
         <itemPath>src/negf/CohRgfa.h</itemPath>
         <itemPath>src/negf/NegfEloop.cpp</itemPath>
         <itemPath>src/negf/NegfEloop.h</itemPath>
+        <itemPath>src/negf/NegfResult.cpp</itemPath>
+        <itemPath>src/negf/NegfResult.h</itemPath>
         <itemPath>src/negf/computegs.cpp</itemPath>
         <itemPath>src/negf/computegs.h</itemPath>
       </logicalFolder>
@@ -80,10 +82,6 @@
           <itemPath>src/qm/tb/graphenetb.h</itemPath>
         </logicalFolder>
         <itemPath>src/qm/hamiltonian.hpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="simulations" displayName="simulations" projectFiles="true">
-        <itemPath>src/simulations/Device.cpp</itemPath>
-        <itemPath>src/simulations/Device.h</itemPath>
       </logicalFolder>
       <logicalFolder name="string" displayName="string" projectFiles="true">
         <itemPath>src/string/stringutils.cpp</itemPath>
@@ -205,6 +203,10 @@
       </item>
       <item path="src/negf/NegfEloop.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/negf/NegfResult.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/NegfResult.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/negf/computegs.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/negf/computegs.h" ex="false" tool="3" flavor2="0">
@@ -274,10 +276,6 @@
       <item path="src/qm/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/simulations/Device.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/simulations/Device.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -388,6 +386,10 @@
       </item>
       <item path="src/negf/NegfEloop.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/negf/NegfResult.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/negf/NegfResult.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/negf/computegs.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/negf/computegs.h" ex="false" tool="3" flavor2="0">
@@ -457,10 +459,6 @@
       <item path="src/qm/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/qm/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/simulations/Device.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/simulations/Device.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
       </item>

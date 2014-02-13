@@ -32,28 +32,18 @@ public:
 private:
 
 public:
-    PyNegfEloop(const PyVecGrid &E, const PyNegfParams &np, const communicator &workers):
-        NegfEloop(E, np, workers), wrapper<NegfEloop>(){
+    PyNegfEloop(const PyVecGrid &E, const PyNegfParams &np, 
+            const communicator &workers, bool saveAscii = true):
+            NegfEloop(E, np, workers, saveAscii), wrapper<NegfEloop>()
+    {
     };
     
     virtual void run(){
-        if (override f = this->get_override("run")){
-            f(); 
-        }
-        
+        //if (override f = this->get_override("run")){
+        //    f(); 
+        //}
         NegfEloop::run();
-    }
-    
-    virtual void    prepare(){ NegfEloop::prepare(); };
-    virtual void    preCompute(int il) { NegfEloop::preCompute(il); };
-    virtual void    compute(int il) { NegfEloop::compute(il); };  
-    virtual void    postCompute(int il) { NegfEloop::postCompute(il); };
-    virtual void    collect() { NegfEloop::collect(); };
-    
-    virtual void    computeTE(uint N = 1) {NegfEloop::computeTE(N); };
-    virtual void    collectTE() {NegfEloop::collectTE(); };
-    
-    virtual void    stepCompleted() {NegfEloop::stepCompleted(); };
+    }    
     
 };
 }}

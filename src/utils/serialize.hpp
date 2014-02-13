@@ -26,6 +26,7 @@ namespace boost {
 namespace serialization {
 using std::stringstream;
 using std::string;
+using std::pair;
 using std::complex;
 using arma::Mat;
 using arma::Col;
@@ -53,6 +54,28 @@ void load(Archive& ar, stringstream& ss, const unsigned int version){
 template<class Archive>
 inline void serialize(Archive& ar, stringstream& ss, const unsigned int file_version){
     split_free(ar, ss, file_version); 
+};
+
+/*
+ * Serialization for pair<typename T1, typename T2>.
+ * =============================================================================
+ */
+
+template<class Archive, class T1, class T2>
+void save(Archive& ar, const pair<T1, T2> &value, const unsigned int version){
+    ar << value.first;
+    ar << value.second;
+};
+
+template<class Archive, class T1, class T2>
+void load(Archive& ar, pair<T1, T2> &value, const unsigned int version){
+    ar >> value.first;
+    ar >> value.second;
+};
+
+template<class Archive, class T1, class T2>
+inline void serialize(Archive& ar, pair<T1, T2> &value, const unsigned int file_version){
+    split_free(ar, value, file_version); 
 };
 
 /*

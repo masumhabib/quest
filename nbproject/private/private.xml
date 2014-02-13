@@ -7,28 +7,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/NegfEloop.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/NegfEloop.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/qm/kp/tikp.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/CohRgfa.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/potential/linearPot.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/pyqmicad.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/qm/kp/graphenekp.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyTiKpHam.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/CohRgfa.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/utils/Printable.hpp</file>
             <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/pyqmicad.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/grid/grid.hpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyNegfParams.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/potential/terminal.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/potential/potential.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/potential/linearPot.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/potential/terminal.cpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/NegfEloop.h</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyTISurfHam.cpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/NegfEloop.cpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/CohRgfa.h</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/qm/kp/tikp.h</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyTISurfHam.h</file>
             <file>file:/shome/masum/NetBeansProjects/qmicad/src/include/qmicad.hpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyVecGrid.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyTiKpHam.cpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/negf/CohRgfa.cpp</file>
             <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyGrapheneKpHam.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/parallel/parloop.h</file>
         </group>
     </open-files>
 </project-private>

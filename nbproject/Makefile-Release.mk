@@ -39,6 +39,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/atoms/Lattice.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
+	${OBJECTDIR}/src/negf/NegfResult.o \
 	${OBJECTDIR}/src/negf/computegs.o \
 	${OBJECTDIR}/src/parallel/parloop.o \
 	${OBJECTDIR}/src/potential/linearPot.o \
@@ -56,7 +57,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
 	${OBJECTDIR}/src/qm/kp/tikp.o \
 	${OBJECTDIR}/src/qm/tb/graphenetb.o \
-	${OBJECTDIR}/src/simulations/Device.o \
 	${OBJECTDIR}/src/string/stringutils.o \
 	${OBJECTDIR}/src/utils/ConsoleProgressBar.o
 
@@ -104,6 +104,11 @@ ${OBJECTDIR}/src/negf/NegfEloop.o: src/negf/NegfEloop.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/negf
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/NegfEloop.o src/negf/NegfEloop.cpp
+
+${OBJECTDIR}/src/negf/NegfResult.o: src/negf/NegfResult.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/negf
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/NegfResult.o src/negf/NegfResult.cpp
 
 ${OBJECTDIR}/src/negf/computegs.o: src/negf/computegs.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
@@ -189,11 +194,6 @@ ${OBJECTDIR}/src/qm/tb/graphenetb.o: src/qm/tb/graphenetb.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/qm/tb
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/tb/graphenetb.o src/qm/tb/graphenetb.cpp
-
-${OBJECTDIR}/src/simulations/Device.o: src/simulations/Device.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/simulations
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/simulations/Device.o src/simulations/Device.cpp
 
 ${OBJECTDIR}/src/string/stringutils.o: src/string/stringutils.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/string

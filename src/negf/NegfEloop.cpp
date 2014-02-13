@@ -6,8 +6,18 @@
  */
 
 #include "NegfEloop.h"
+#include "NegfResult.h"
 
 namespace qmicad{
+
+NegfEloop::NegfEloop(const VecGrid &E, const NegfParams &np, 
+        const mpi::communicator &workers, bool saveAscii):
+        ParLoop<double>(E, workers), mnp(np), 
+        mTE("TE", true, saveAscii)
+{
+    mprog   = 0;
+    mprogmx = 80;
+}
     
 
 void NegfEloop::prepare() {
@@ -23,20 +33,23 @@ void NegfEloop::preCompute(int il){
 };
 
 void NegfEloop::compute(int il){
-    if(mCalcType & TE){
-        computeTE(mTEn);
+    if(mTE.enabled){
+        negfresult r;
+        r.second = mnegf->TEop(mTE.N);  // Calculate  T(E)
+        r.first = mL(il);               // this energy
+        mThisTE.push_back(r);  
     }
 }
 
 void NegfEloop::postCompute(int il){
-    mnegf.reset(); // free up memory
-    stepCompleted();
+    mnegf.reset();          // free up memory
+    stepCompleted();        // Show feedback
 }
 
 void NegfEloop::collect(){
     
-    if(mCalcType & TE){
-        collectTE();
+    if(mTE.enabled){
+        gather(mThisTE, mTE);   // Gather T(E)
     }
     
     if (mIAmMaster){
@@ -50,58 +63,44 @@ void NegfEloop::stepCompleted(){
         mprog = 0;
     }
 }
-void NegfEloop::computeTE(uint N){
-    mTEproc.push_back(mnegf->TEop(N));
-    //cout << "DBG: " << mTEl.back() << endl;
-}
 
-void NegfEloop::gather(vector<cxmat> &Mproc, list<cxmat> &M){
+void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
     if(!mIAmMaster){
         // slaves send their local data
-        mpi::gather(mWorkers, Mproc, mMasterId);
+        mpi::gather(mWorkers, thisR, mMasterId);
 
     // The master collects data        
     }else{
         // Collect T(E)
-        vector<vector<cxmat> >Mncpu(mN);
-        mpi::gather(mWorkers, Mproc, Mncpu, mMasterId);
+        vector<vector<negfresult> >gatheredR(mN);
+        mpi::gather(mWorkers, thisR, gatheredR, mMasterId);
         
-        vector<vector<cxmat> >::iterator it;
-        for (it = Mncpu.begin(); it != Mncpu.end(); ++it){
-            M.insert(M.end(), it->begin(), it->end());
+        // merge and store results on mTE list.
+        vector<vector<negfresult> >::iterator it;
+        for (it = gatheredR.begin(); it != gatheredR.end(); ++it){
+            all.R.insert(all.R.end(), it->begin(), it->end());
         }
+        // Sort the results based on energy.
+        all.sort();
     }       
 }
 
-void NegfEloop::collectTE(){
-    gather(mTEproc, mTE);
-}
-
-void NegfEloop::saveTE(string fileName){
+void NegfEloop::save(string fileName){
     if(mIAmMaster){
-        // save to a file
-        ofstream transFile(fileName.c_str());
-        if (!transFile.is_open()){
-            throw ios_base::failure(" NegfLoop::saveTE(): Failed to open file " 
-                    + fileName + ".");
+        if (mTE.enabled){
+            mTE.save(fileName);
         }
-
-        list<cxmat>::iterator it = mTE.begin();
-        for (int i = 0; i < mL.N(); ++i, ++it){
-
-            if (mTEn == 1){
-                row rvec(2); 
-                rvec(0) = mL(i);
-                rvec(1) = real((*it)(0,0));
-                transFile << rvec;  
-            }else{
-                transFile << "E = " << mL(i) << "TE: " << endl << *it << endl;
-            }
-        }
-
-        transFile.close();
-    }    
+    }
 }
 
+void NegfEloop::enableTE(uint N){
+    mTE.enabled = true;
+    mTE.N = N;
 }
 
+void NegfEloop::disableTE(){
+    mTE.enabled = false;
+}
+
+
+}

@@ -13,8 +13,10 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <utility>
 #include <algorithm>
 #include <stdexcept>
+#include <functional>
 
 namespace utils{
 namespace stds{
@@ -31,9 +33,12 @@ using std::string;
 using std::vector;
 using std::list;
 using std::ios_base;
+using std::pair;
 
 using std::invalid_argument;
 using std::runtime_error;
+
+using std::binary_function;
 
 using std::endl;
 
