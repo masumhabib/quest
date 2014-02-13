@@ -34,6 +34,7 @@ char const* greet()
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyLinearPot_VLR, VLR, 3, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyGrapheneKpHam_setSize, setSize, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyTISurfHam_setSize, setSize, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
@@ -62,6 +63,16 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
 
     class_<vec, shared_ptr<vec> >("vecp", no_init)
+    ;
+
+    /**
+     * Geometry classes
+     */
+    class_<point>("Point", init<const double&, const double&>())
+    ;
+    
+    class_<SimpleQuadrilateral>("Quadrilateral", init<const point&, const point&, 
+            const point&, const point&>())
     ;
 
     /**
@@ -127,13 +138,37 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("generate", &PyGrapheneKpHam::generate)
     ;
     
-    class_<point>("Point", init<const double&, const double&>())
-    ;
-    
-    class_<SimpleQuadrilateral>("Quadrilateral", init<const point&, const point&, 
-            const point&, const point&>())
+    /**
+     * TI Surface k.p parameters.
+     */
+    class_<PyTISurfKpParams, shared_ptr<PyTISurfKpParams> >("TISurfKpParams")
+        .def_readwrite("dtol", &PyTISurfKpParams::dtol)
+        .def_readwrite("ax", &PyTISurfKpParams::ax)
+        .def_readwrite("ay", &PyTISurfKpParams::ay)
+        .def_readwrite("K", &PyTISurfKpParams::K)   
+        .def_readwrite("A2", &PyTISurfKpParams::A2)
+        .def_readwrite("C", &PyTISurfKpParams::C)
+        .def("update", &PyTISurfKpParams::update)
+        .def(self_ns::str(self_ns::self))
     ;
 
+    /**
+     * TI Surface Hamiltonian.
+     */
+    class_<PyTISurfHam, shared_ptr<PyTISurfHam> >("TISurfHam",
+            init<const PyTISurfHam& >())
+        .def("setSize", &PyTISurfHam::setSize, PyTISurfHam_setSize())
+        .def("H0", &PyTISurfHam::H0)
+        .def("Hl", &PyTISurfHam::Hl)
+        .def("H", &PyTISurfHam::H)  
+        .def("Sl", &PyTISurfHam::Sl)
+        .def("S0", &PyTISurfHam::S0)
+        .def("S", &PyTISurfHam::S)  
+        .def("genDiagBlock", &PyTISurfHam::genDiagBlock)
+        .def("genLowDiagBlock", &PyTISurfHam::genLowDiagBlock)
+        .def("generate", &PyTISurfHam::generate)
+    ;
+    
     /**
      * Linear potential
      */    

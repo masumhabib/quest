@@ -61,6 +61,7 @@ namespace qmicad{
 
 #include "../python/PyAtomicStruct.h"
 #include "../python/PyGrapheneKpHam.h"
+#include "../python/PyTISurfHam.h"
 #include "../python/PyNegfParams.h"
 #include "../python/PyLinearPot.h"
 #include "../python/PyTimer.h"
