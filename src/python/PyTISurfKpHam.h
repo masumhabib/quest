@@ -1,5 +1,5 @@
 /* 
- * File:   PyTISurfHam.h
+ * File:   PyTISurfKpHam.h
  * Author: K M Masum Habib <masum.habib@virginia.edu>
  *
  * Created on February 13, 2014, 10:37 AM
@@ -24,31 +24,31 @@ struct PyTISurfKpParams :public TISurfKpParams{
 };
 
 
-class PyTISurfHam: public TISurfHam{
+class PyTISurfKpHam: public TISurfKpHam{
 public:
-    PyTISurfHam(const PyTISurfKpParams &tikpp):TISurfHam(tikpp){
+    PyTISurfKpHam(const PyTISurfKpParams &tikpp):TISurfKpHam(tikpp){
     }
     
     void setSize(uint nbi, uint nbj = 2){
-        TISurfHam::setSize(nbi, nbj);
+        TISurfKpHam::setSize(nbi, nbj);
     }
     
     void genDiagBlock(const PyAtomicStruct &bi, const PyAtomicStruct &bj, 
         uint ib)
     {
-        TISurfHam::genDiagBlock(bi, bj, ib);
+        TISurfKpHam::genDiagBlock(bi, bj, ib);
     }
     
     void genLowDiagBlock(const PyAtomicStruct &bi, const PyAtomicStruct &bj, 
         uint ib)
     {
-        TISurfHam::genLowDiagBlock(bi, bj, ib);
+        TISurfKpHam::genLowDiagBlock(bi, bj, ib);
     }
     
     void generate(const PyAtomicStruct &bi, const PyAtomicStruct &bj, 
                           uint ib, uint jb)
     {
-        TISurfHam::generate(bi, bj, ib, jb);
+        TISurfKpHam::generate(bi, bj, ib, jb);
     }
 
     

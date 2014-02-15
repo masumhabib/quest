@@ -8,7 +8,7 @@
 #include "tikp.h"
 
 namespace qmicad{
-cxmat TISurfHam::genTwoAtomHam(const AtomicStruct& atomi, 
+cxmat TISurfKpHam::genTwoAtomHam(const AtomicStruct& atomi, 
         const AtomicStruct& atomj)
 {
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1){
@@ -57,7 +57,7 @@ cxmat TISurfHam::genTwoAtomHam(const AtomicStruct& atomi,
     return hmat;
 };
 
-cxmat TISurfHam::genTwoAtomOvl(const AtomicStruct& atomi, 
+cxmat TISurfKpHam::genTwoAtomOvl(const AtomicStruct& atomi, 
         const AtomicStruct& atomj)
 {
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1){

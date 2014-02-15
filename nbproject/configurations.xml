@@ -61,8 +61,8 @@
         <itemPath>src/python/PyNegfEloop.h</itemPath>
         <itemPath>src/python/PyNegfParams.cpp</itemPath>
         <itemPath>src/python/PyNegfParams.h</itemPath>
-        <itemPath>src/python/PyTISurfHam.cpp</itemPath>
-        <itemPath>src/python/PyTISurfHam.h</itemPath>
+        <itemPath>src/python/PyTISurfKpHam.cpp</itemPath>
+        <itemPath>src/python/PyTISurfKpHam.h</itemPath>
         <itemPath>src/python/PyTimer.cpp</itemPath>
         <itemPath>src/python/PyTimer.h</itemPath>
         <itemPath>src/python/PyVecGrid.cpp</itemPath>
@@ -247,9 +247,9 @@
       </item>
       <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/python/PyTISurfHam.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/python/PyTISurfKpHam.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/python/PyTISurfHam.h" ex="false" tool="3" flavor2="0">
+      <item path="src/python/PyTISurfKpHam.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/PyTimer.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -430,9 +430,9 @@
       </item>
       <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/python/PyTISurfHam.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/python/PyTISurfKpHam.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/python/PyTISurfHam.h" ex="false" tool="3" flavor2="0">
+      <item path="src/python/PyTISurfKpHam.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/PyTimer.cpp" ex="false" tool="1" flavor2="0">
       </item>

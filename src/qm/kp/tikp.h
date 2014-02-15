@@ -85,13 +85,13 @@ protected:
  * Tight binding Hamiltonian and overlap matrix for TI surface using 
  *  method k.p.
  */
-class TISurfHam: public Hamiltonian<cxmat>{
+class TISurfKpHam: public Hamiltonian<cxmat>{
 protected:    
 public:
-    TISurfHam(const TISurfKpParams& p){
+    TISurfKpHam(const TISurfKpParams& p){
         mhp = shared_ptr<TISurfKpParams> (new TISurfKpParams(p));
     };
-    virtual ~TISurfHam(){};
+    virtual ~TISurfKpHam(){};
 protected:
     //!< Generate Hamiltonian between two atoms.
     virtual cxmat genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj);    

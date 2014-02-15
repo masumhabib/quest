@@ -17,6 +17,8 @@
 #include "../maths/geometry.hpp"
 
 namespace qmicad{
+
+using namespace maths::geometry;
 using utils::Printable;
 using std::vector;
 using std::string;

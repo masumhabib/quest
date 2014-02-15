@@ -33,6 +33,10 @@ char const* greet()
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyLinearPot_VLR, VLR, 3, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sx, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sy, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sz, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyGrapheneKpHam_setSize, setSize, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyTISurfHam_setSize, setSize, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
@@ -42,6 +46,7 @@ BOOST_PYTHON_MODULE(qmicad)
     using boost::shared_ptr;
     using boost::noncopyable;
     using namespace utils::stds;
+    using namespace maths::geometry;
     
     def("greet", greet);
    
@@ -73,6 +78,7 @@ BOOST_PYTHON_MODULE(qmicad)
     
     class_<SimpleQuadrilateral>("Quadrilateral", init<const point&, const point&, 
             const point&, const point&>())
+        .def(self_ns::str(self_ns::self))
     ;
 
     /**
@@ -155,18 +161,18 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * TI Surface Hamiltonian.
      */
-    class_<PyTISurfHam, shared_ptr<PyTISurfHam> >("TISurfHam",
-            init<const PyTISurfHam& >())
-        .def("setSize", &PyTISurfHam::setSize, PyTISurfHam_setSize())
-        .def("H0", &PyTISurfHam::H0)
-        .def("Hl", &PyTISurfHam::Hl)
-        .def("H", &PyTISurfHam::H)  
-        .def("Sl", &PyTISurfHam::Sl)
-        .def("S0", &PyTISurfHam::S0)
-        .def("S", &PyTISurfHam::S)  
-        .def("genDiagBlock", &PyTISurfHam::genDiagBlock)
-        .def("genLowDiagBlock", &PyTISurfHam::genLowDiagBlock)
-        .def("generate", &PyTISurfHam::generate)
+    class_<PyTISurfKpHam, shared_ptr<PyTISurfKpHam> >("TISurfKpHam",
+            init<const PyTISurfKpParams& >())
+        .def("setSize", &PyTISurfKpHam::setSize, PyTISurfHam_setSize())
+        .def("H0", &PyTISurfKpHam::H0)
+        .def("Hl", &PyTISurfKpHam::Hl)
+        .def("H", &PyTISurfKpHam::H)  
+        .def("Sl", &PyTISurfKpHam::Sl)
+        .def("S0", &PyTISurfKpHam::S0)
+        .def("S", &PyTISurfKpHam::S)  
+        .def("genDiagBlock", &PyTISurfKpHam::genDiagBlock)
+        .def("genLowDiagBlock", &PyTISurfKpHam::genLowDiagBlock)
+        .def("generate", &PyTISurfKpHam::generate)
     ;
     
     /**
@@ -238,6 +244,10 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("save", &PyNegfEloop::save)
         .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
         .def("disableTE", &PyNegfEloop::disableTE)
+        .def("enableI1", &PyNegfEloop::enableTE, PyNegfEloop_enableI1())
+        .def("enableI1sx", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sx())
+        .def("enableI1sy", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sy())
+        .def("enableI1sz", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sz())
     ;
     
 }

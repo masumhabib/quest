@@ -50,7 +50,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/python/PyLinearPot.o \
 	${OBJECTDIR}/src/python/PyNegfEloop.o \
 	${OBJECTDIR}/src/python/PyNegfParams.o \
-	${OBJECTDIR}/src/python/PyTISurfHam.o \
+	${OBJECTDIR}/src/python/PyTISurfKpHam.o \
 	${OBJECTDIR}/src/python/PyTimer.o \
 	${OBJECTDIR}/src/python/PyVecGrid.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
@@ -160,10 +160,10 @@ ${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
 
-${OBJECTDIR}/src/python/PyTISurfHam.o: src/python/PyTISurfHam.cpp 
+${OBJECTDIR}/src/python/PyTISurfKpHam.o: src/python/PyTISurfKpHam.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTISurfHam.o src/python/PyTISurfHam.cpp
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTISurfKpHam.o src/python/PyTISurfKpHam.cpp
 
 ${OBJECTDIR}/src/python/PyTimer.o: src/python/PyTimer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python

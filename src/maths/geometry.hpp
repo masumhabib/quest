@@ -8,6 +8,9 @@
 #ifndef GEOMETRY_HPP
 #define	GEOMETRY_HPP
 
+#include "../utils/std.hpp"
+#include "../utils/Printable.hpp"
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
@@ -18,8 +21,12 @@
 #include <vector>
 #include <algorithm>
 
+namespace maths{
+namespace geometry{
+
 namespace bg = boost::geometry;
 namespace bgi = boost::geometry::index;
+using namespace utils::stds;
 
 typedef bg::model::point<double, 2, bg::cs::cartesian> point;
 typedef bg::model::box<point> box;
@@ -70,6 +77,24 @@ struct SimpleQuadrilateral{
             rt = p[2];            
         }        
     }
+    
+    
+    
+    virtual string toString() const{
+        stringstream out;
+        out.precision(3);
+        out << "(" << lb.get<0>() << " " << lb.get<1>() << ", "
+                   << rb.get<0>() << " " << rb.get<1>() << ", "
+                   << rt.get<0>() << " " << rt.get<1>() << ", "
+                   << lt.get<0>() << " " << lt.get<1>() << ")";
+        return out.str();
+    }
+    
+    friend ostream& operator << (ostream & out, const SimpleQuadrilateral &sq){
+        out << sq.toString();
+        return out;
+    }
+    
 protected:
     struct OnRight{
         bool operator()(const point &p1, const point &p2){
@@ -80,5 +105,7 @@ protected:
 
 typedef SimpleQuadrilateral squadrilateral;
 
+}
+}
 #endif	/* GEOMETRY_HPP */
 

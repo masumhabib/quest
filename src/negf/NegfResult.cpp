@@ -9,9 +9,8 @@
 
 namespace qmicad{
 
-NegfResultList::NegfResultList(string suffix, bool enabled, bool saveAscii,
-        uint N): suffix(suffix), enabled(enabled), N(N),
-        saveAscii(saveAscii)
+NegfResultList::NegfResultList(string suffix, uint N, bool saveAscii):
+        suffix(suffix), N(N), saveAscii(saveAscii)
 {
 }
 

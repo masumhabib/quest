@@ -28,14 +28,13 @@ struct ResultComparator : public binary_function<negfresult&, negfresult&, bool>
 struct NegfResultList{
 public:    
     list<negfresult>R;              //!< List of results.
-    uint            N;              //!< Size of the cxmat matrix.
-    bool            enabled;        //!< Is this calculation enabled?
+    uint            N;              //!< Size of the cxmat matrix. N == 0 means do not calculate.
     bool            saveAscii;      //!< Save as ascii/binary?
     string          suffix;         //!< Suffix added to the output filename.
     
-    NegfResultList(string suffix, bool enabled = false, bool saveAscii = true,
-                   uint N = 1);
+    NegfResultList(string suffix, uint N = 0, bool saveAscii = true);
     
+    bool    isEnabled() { return N > 0; };  //!< Is calculation enabled? N = 0: no.
     void    sort();
     void    merge(NegfResultList &second);
     void    save(string fileName);
