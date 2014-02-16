@@ -26,8 +26,8 @@ char const* greet()
 {   
     static string msg;
     msg  = "      QMICAD: Quantum Mechanics Inspired Computer Aided Design";
-    msg += " v" + qmicad::version + "\n";
-    msg += " -----------------------------------------------------------------------";
+    msg += "\n                             v" + qmicad::version + "\n";
+    msg += " ------------------------------------------------------------------";
     return msg.c_str();
 }
 
@@ -73,11 +73,14 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * Geometry classes
      */
-    class_<point>("Point", init<const double&, const double&>())
+    class_<PyPoint, shared_ptr<PyPoint> >("Point", 
+            init<const double&, const double&>())
+        .def_pickle(PyPointPickler())
     ;
     
-    class_<SimpleQuadrilateral>("Quadrilateral", init<const point&, const point&, 
-            const point&, const point&>())
+    class_<PyQuadrilateral, shared_ptr<PyQuadrilateral> >("Quadrilateral", 
+            init<const PyPoint&, const PyPoint&, const PyPoint&, const PyPoint&>())
+        .def_pickle(PyQuadrilateralPickler())
         .def(self_ns::str(self_ns::self))
     ;
 
@@ -89,12 +92,23 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("toc", &PyTimer::toc)
         .def(self_ns::str(self_ns::self))        
     ;
+
+    /**
+     * Atom.
+     */
+    class_<PyAtom, shared_ptr<PyAtom> >("Atom")
+        .def_pickle(PyAtomPickler())
+    ;
     
     /**
      * Periodic table.
      */
+    void (PyPeriodicTable::*PyPeriodicTable_add1)(uint, string, uint, uint) = &PyPeriodicTable::add;
+    void (PyPeriodicTable::*PyPeriodicTable_add2)(const PyAtom&) = &PyPeriodicTable::add;
     class_<PyPeriodicTable, shared_ptr<PyPeriodicTable> >("PeriodicTable")
-        .def("add", &PyPeriodicTable::add)
+        .def("add", PyPeriodicTable_add1)
+        .def("add", PyPeriodicTable_add2)
+        .def_pickle(PyPeriodicTablePickler())
     ;
 
     /**

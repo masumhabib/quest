@@ -88,12 +88,12 @@ private:
  * Our periodic table.
  */
 struct PeriodicTable{
-    typedef vector<Atom>::const_iterator citer;
+    typedef map<uint, Atom>::const_iterator piter;
     
-    static const uint nElements = 105;
-    vector<Atom> elements;
+    map<uint, Atom> elements;
     
-    PeriodicTable():elements(nElements){
+    PeriodicTable(){
+        init();
     };
     
     void init(){
@@ -118,9 +118,9 @@ struct PeriodicTable{
     }
     
     int find(const string& sym) const{
-        for (citer it = elements.begin(); it != elements.end(); ++it){
-            if (it->sym == sym){
-                return it->ia;
+        for (piter it = elements.begin(); it != elements.end(); ++it){
+            if (it->second.sym == sym){
+                return it->second.ia;
             }
         }
         return -1; // not found
@@ -135,11 +135,11 @@ struct PeriodicTable{
     }
 
     string atomicNumToSym(uint ia) const {
-        return elements[ia].sym;
+        return elements.find(ia)->second.sym;
     }
     
     Atom operator[](uint ia) const{
-        return elements[ia];
+        return elements.find(ia)->second;
     }
     
     int size() const{

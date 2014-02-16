@@ -46,6 +46,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
 	${OBJECTDIR}/src/python/PyAtomicStruct.o \
+	${OBJECTDIR}/src/python/PyEnums.o \
+	${OBJECTDIR}/src/python/PyGeometry.o \
 	${OBJECTDIR}/src/python/PyGrapheneKpHam.o \
 	${OBJECTDIR}/src/python/PyLinearPot.o \
 	${OBJECTDIR}/src/python/PyNegfEloop.o \
@@ -139,6 +141,16 @@ ${OBJECTDIR}/src/python/PyAtomicStruct.o: src/python/PyAtomicStruct.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyAtomicStruct.o src/python/PyAtomicStruct.cpp
+
+${OBJECTDIR}/src/python/PyEnums.o: src/python/PyEnums.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyEnums.o src/python/PyEnums.cpp
+
+${OBJECTDIR}/src/python/PyGeometry.o: src/python/PyGeometry.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGeometry.o src/python/PyGeometry.cpp
 
 ${OBJECTDIR}/src/python/PyGrapheneKpHam.o: src/python/PyGrapheneKpHam.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python

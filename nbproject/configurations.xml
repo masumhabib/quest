@@ -53,6 +53,10 @@
       <logicalFolder name="python" displayName="python" projectFiles="true">
         <itemPath>src/python/PyAtomicStruct.cpp</itemPath>
         <itemPath>src/python/PyAtomicStruct.h</itemPath>
+        <itemPath>src/python/PyEnums.cpp</itemPath>
+        <itemPath>src/python/PyEnums.h</itemPath>
+        <itemPath>src/python/PyGeometry.cpp</itemPath>
+        <itemPath>src/python/PyGeometry.h</itemPath>
         <itemPath>src/python/PyGrapheneKpHam.cpp</itemPath>
         <itemPath>src/python/PyGrapheneKpHam.h</itemPath>
         <itemPath>src/python/PyLinearPot.cpp</itemPath>
@@ -230,6 +234,14 @@
       <item path="src/python/PyAtomicStruct.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/PyAtomicStruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyEnums.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyEnums.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyGeometry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyGeometry.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/PyGrapheneKpHam.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -413,6 +425,14 @@
       <item path="src/python/PyAtomicStruct.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/PyAtomicStruct.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyEnums.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyEnums.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/python/PyGeometry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/python/PyGeometry.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/PyGrapheneKpHam.cpp" ex="false" tool="1" flavor2="0">
       </item>

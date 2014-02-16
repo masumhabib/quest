@@ -69,7 +69,7 @@ typedef arma::Cube<fcmplx>         cxfcube;    //!< Double precision complex mat
 typedef arma::Cube<int>            icube;      //!< Signed integer matrix.
 typedef arma::Cube<uint>           ucube;      //!< Unsigned integer matrix.
 
-typedef arma::Mat<double>::fixed<2,2>            mat22;     //!< 2x2 Double precision matrix.
+typedef arma::Mat<double>::fixed<2,2>mat22;     //!< 2x2 Double precision matrix.
 typedef cxmat::fixed<2,2>          cxmat22;   //!< 2x2 Double precision complex matrix.
 typedef fmat::fixed<2,2>           fmat22;    //!< 2x2 Double precision matrix.
 typedef cxfmat::fixed<2,2>         cxfmat22;  //!< 2x2 Double precision complex matrix.

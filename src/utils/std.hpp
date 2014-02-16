@@ -13,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <map>
 #include <utility>
 #include <algorithm>
 #include <stdexcept>
@@ -34,6 +35,7 @@ using std::vector;
 using std::list;
 using std::ios_base;
 using std::pair;
+using std::map;
 
 using std::invalid_argument;
 using std::runtime_error;

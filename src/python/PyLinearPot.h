@@ -10,6 +10,7 @@
 
 #include "../potential/linearPot.h"
 #include "PyAtomicStruct.h"
+#include "PyGeometry.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -35,6 +36,22 @@ public:
     
     shared_ptr<vec> toOrbPot(uint start, uint end){
         return LinearPot::toOrbPot(span(start, end));
+    }
+    
+    void addSource(const PyQuadrilateral &ql){
+        LinearPot::addSource(ql);
+    }
+    
+    void addDrain(const PyQuadrilateral &ql){
+        LinearPot::addDrain(ql);
+    }
+    
+    void addGate(const PyQuadrilateral &ql){
+        LinearPot::addGate(ql);
+    }
+
+    void addLinearRegion(const PyQuadrilateral& ql){
+        LinearPot::addLinearRegion(ql);
     }
 
 };

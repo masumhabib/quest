@@ -67,6 +67,8 @@ namespace qmicad{
 #include "../python/PyTimer.h"
 #include "../python/PyVecGrid.h"
 #include "../python/PyNegfEloop.h"
+#include "../python/PyGeometry.h"
+#include "../python/PyEnums.h"
 
 
 #endif /* QMICAD_HPP */
