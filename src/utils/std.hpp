@@ -8,6 +8,7 @@
 #ifndef STD_HPP
 #define	STD_HPP
 
+#include <ios>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -24,7 +25,11 @@ namespace stds{
 
 using std::cout;
 using std::cin;
+using std::cerr;
+using std::endl;
 
+using std::ios_base;
+using std::basic_ostream;
 using std::ostream;
 using std::ofstream;
 using std::ifstream;
@@ -33,7 +38,6 @@ using std::stringstream;
 using std::string;
 using std::vector;
 using std::list;
-using std::ios_base;
 using std::pair;
 using std::map;
 
@@ -41,8 +45,6 @@ using std::invalid_argument;
 using std::runtime_error;
 
 using std::binary_function;
-
-using std::endl;
 
 }
 }

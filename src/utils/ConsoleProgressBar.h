@@ -8,33 +8,36 @@
 #ifndef CONSOLEPROGRESSBAR_H
 #define	CONSOLEPROGRESSBAR_H
 
+#include "vout.h"
+
 #include <iostream>
 #include <string>
 #include <sstream>
 
-using namespace std;
+namespace utils{
+using namespace stds;
 
 class ConsoleProgressBar {
 protected:
-    static const unsigned int mnTotalDots = 50;
-    static const unsigned int mPercentPerDot = 2;
+    static const unsigned int mnTotalDots       = 60;
+    static const float        mPercentPerDot    = 100.0/mnTotalDots;
     
-    unsigned int mnDots;
-    unsigned long mCount;
-    unsigned long mExpectedCount;
+    bool            mLivePercent;
+    unsigned int    mnDots;
+    unsigned long   mCount;
+    unsigned long   mExpectedCount;
     
-    string mPrefix;
-    string mSuffix;
-    char mSpace;
-    char mDot;
-    char mEnds;
+    string          mPrefix;
+    string          mSuffix;
+    char            mSpace;
+    char            mDot;
+    char            mEnds;
     
     
 public:
-    ConsoleProgressBar(unsigned long expectedCount = 100, 
-                       unsigned long count = 0, 
-                       string prefix = "", 
-                       string suffix = "%");
+    ConsoleProgressBar(string prefix = "", unsigned long expectedCount = 100,
+                       unsigned long count = 0, bool livePercent = false);
+    
     virtual ~ConsoleProgressBar();
     
     ConsoleProgressBar& operator+= (unsigned long newCount);
@@ -48,11 +51,12 @@ public:
        
 protected:
     inline unsigned long convertCountToDots();
-    void draw();
-    void step(unsigned long count);
+    virtual void draw();
+    virtual void step(unsigned long count);
 private:
 
 };
 
+}
 #endif	/* CONSOLEPROGRESSBAR_H */
 

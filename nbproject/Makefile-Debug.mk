@@ -37,15 +37,18 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/src/atoms/AtomicStruct.o \
 	${OBJECTDIR}/src/atoms/Lattice.o \
+	${OBJECTDIR}/src/band/BandStruct.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/NegfResult.o \
 	${OBJECTDIR}/src/negf/computegs.o \
+	${OBJECTDIR}/src/parallel/Workers.o \
 	${OBJECTDIR}/src/parallel/parloop.o \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
 	${OBJECTDIR}/src/python/PyAtomicStruct.o \
+	${OBJECTDIR}/src/python/PyBandStruct.o \
 	${OBJECTDIR}/src/python/PyEnums.o \
 	${OBJECTDIR}/src/python/PyGeometry.o \
 	${OBJECTDIR}/src/python/PyGrapheneKpHam.o \
@@ -55,12 +58,14 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/python/PyTISurfKpHam.o \
 	${OBJECTDIR}/src/python/PyTimer.o \
 	${OBJECTDIR}/src/python/PyVecGrid.o \
+	${OBJECTDIR}/src/python/PyWorkers.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
 	${OBJECTDIR}/src/qm/kp/tikp.o \
 	${OBJECTDIR}/src/qm/tb/graphenetb.o \
 	${OBJECTDIR}/src/string/stringutils.o \
-	${OBJECTDIR}/src/utils/ConsoleProgressBar.o
+	${OBJECTDIR}/src/utils/ConsoleProgressBar.o \
+	${OBJECTDIR}/src/utils/vout.o
 
 
 # C Compiler Flags
@@ -101,6 +106,11 @@ ${OBJECTDIR}/src/atoms/Lattice.o: src/atoms/Lattice.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/atoms/Lattice.o src/atoms/Lattice.cpp
 
+${OBJECTDIR}/src/band/BandStruct.o: src/band/BandStruct.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/band
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/band/BandStruct.o src/band/BandStruct.cpp
+
 ${OBJECTDIR}/src/include/qmicad.hpp.gch: src/include/qmicad.hpp 
 	${MKDIR} -p ${OBJECTDIR}/src/include
 	${RM} "$@.d"
@@ -126,6 +136,11 @@ ${OBJECTDIR}/src/negf/computegs.o: src/negf/computegs.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/negf/computegs.o src/negf/computegs.cpp
 
+${OBJECTDIR}/src/parallel/Workers.o: src/parallel/Workers.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/parallel
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/parallel/Workers.o src/parallel/Workers.cpp
+
 ${OBJECTDIR}/src/parallel/parloop.o: src/parallel/parloop.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/parallel
 	${RM} "$@.d"
@@ -150,6 +165,11 @@ ${OBJECTDIR}/src/python/PyAtomicStruct.o: src/python/PyAtomicStruct.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyAtomicStruct.o src/python/PyAtomicStruct.cpp
+
+${OBJECTDIR}/src/python/PyBandStruct.o: src/python/PyBandStruct.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyBandStruct.o src/python/PyBandStruct.cpp
 
 ${OBJECTDIR}/src/python/PyEnums.o: src/python/PyEnums.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
@@ -196,6 +216,11 @@ ${OBJECTDIR}/src/python/PyVecGrid.o: src/python/PyVecGrid.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyVecGrid.o src/python/PyVecGrid.cpp
 
+${OBJECTDIR}/src/python/PyWorkers.o: src/python/PyWorkers.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyWorkers.o src/python/PyWorkers.cpp
+
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
@@ -225,6 +250,11 @@ ${OBJECTDIR}/src/utils/ConsoleProgressBar.o: src/utils/ConsoleProgressBar.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/utils
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/ConsoleProgressBar.o src/utils/ConsoleProgressBar.cpp
+
+${OBJECTDIR}/src/utils/vout.o: src/utils/vout.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/utils
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/vout.o src/utils/vout.cpp
 
 # Subprojects
 .build-subprojects:

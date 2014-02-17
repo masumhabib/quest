@@ -59,6 +59,7 @@ namespace qmicad{
 #include "../parallel/parloop.h"
 #include "../negf/NegfEloop.h"
 
+#include "../python/PyWorkers.h"
 #include "../python/PyAtomicStruct.h"
 #include "../python/PyGrapheneKpHam.h"
 #include "../python/PyTISurfKpHam.h"
@@ -69,6 +70,8 @@ namespace qmicad{
 #include "../python/PyNegfEloop.h"
 #include "../python/PyGeometry.h"
 #include "../python/PyEnums.h"
+#include "../python/PyBandStruct.h"
+
 
 
 #endif /* QMICAD_HPP */

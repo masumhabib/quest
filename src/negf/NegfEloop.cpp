@@ -11,30 +11,27 @@
 namespace qmicad{
 
 NegfEloop::NegfEloop(const VecGrid &E, const NegfParams &np, 
-        const mpi::communicator &workers, bool saveAscii):
-        ParLoop<double>(E, workers), mnp(np), 
-        mTE("TE", 1, saveAscii),
-        mI1op("I1", 0, saveAscii), mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0)
+        const Workers &workers, bool saveAscii):
+        ParLoop(workers, E.N()), mnp(np), 
+        mTE("TE", 1, saveAscii), mE(E),
+        mI1op("I1", 0, saveAscii), mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0),
+        mbar("  NEGF: ")
 {
-    mprog   = 0;
-    mprogmx = 80;
 }
     
 
 void NegfEloop::prepare() {
-    if (mIAmMaster){
-        cout << "  NEGF: |"; 
-    }
+    mbar.start();
 }
 
 void NegfEloop::preCompute(int il){
-    double E = mL(il);
+    double E = mE(il);
     mnegf = shared_ptr<CohRgfa>(new CohRgfa(mnp, E));
 };
 
 void NegfEloop::compute(int il){
     negfresult r;
-    r.first = mL(il);               // this energy
+    r.first = mE(il);               // this energy
     // Transmission
     if(mTE.isEnabled()){
         r.second = mnegf->TEop(mTE.N);  // Calculate  T(E)
@@ -49,7 +46,7 @@ void NegfEloop::compute(int il){
 
 void NegfEloop::postCompute(int il){
     mnegf.reset();          // free up memory
-    stepCompleted();        // Show feedback
+    ++mbar;                 // Show feedback
 }
 
 void NegfEloop::collect(){
@@ -63,29 +60,23 @@ void NegfEloop::collect(){
     if(mI1op.isEnabled()){
         gather(mThisI1op, mI1op);
     }
-    
-    if (mIAmMaster){
-        cout << "|"; 
-    }
-}
 
-void NegfEloop::stepCompleted(){
-    if (++mprog * mprogmx/mN != 0){
-        cout << "*";
-        mprog = 0;
-    }
+    // Update the progress bar.
+    mbar.complete();
+    
 }
 
 void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
-    if(!mIAmMaster){
+    
+    if(!mWorkers.IAmMaster()){    
         // slaves send their local data
-        mpi::gather(mWorkers, thisR, mMasterId);
+        mpi::gather(mWorkers.Comm(), thisR, mWorkers.MasterId());
 
     // The master collects data        
     }else{
         // Collect T(E)
         vector<vector<negfresult> >gatheredR(mN);
-        mpi::gather(mWorkers, thisR, gatheredR, mMasterId);
+        mpi::gather(mWorkers.Comm(), thisR, gatheredR, mWorkers.MasterId());
         
         // merge and store results on mTE list.
         vector<vector<negfresult> >::iterator it;
@@ -98,7 +89,7 @@ void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
 }
 
 void NegfEloop::save(string fileName){
-    if(mIAmMaster){
+    if(mWorkers.MasterId()){
         // Transmission 
         if (mTE.isEnabled()){
             mTE.save(fileName);

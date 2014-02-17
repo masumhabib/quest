@@ -8,42 +8,21 @@
 #ifndef PARFOR_H
 #define	PARFOR_H
 
-#include <boost/mpi.hpp>
 #include "../grid/grid.hpp"
+#include "../utils/vout.h"
+#include "Workers.h"
+
 
 namespace utils{
-namespace mpi = boost::mpi;
-
 /*
  * Parallel loop
  */
-template<class T>
 class ParLoop{
 public: 
-    ParLoop(const Grid1D<T> &L, const mpi::communicator &workers):
-            mL(L), mWorkers(workers), mMasterId(0)
-    {
-        mMyCpuId = mWorkers.rank();
-        mNcpu = mWorkers.size();
-        mIAmMaster = (mMasterId == mMyCpuId);
-        mN = mL.N();
-        
-        int quo = mN/mNcpu;
-        int rem = mN%mNcpu;
-        mMyStart = mMyCpuId*quo + (mMyCpuId < rem ? mMyCpuId:rem);
-        mMyEnd = mMyStart + quo + (mMyCpuId < rem ? 1:0) - 1;
-        
-    }    
-
-    virtual void run(){
-        prepare();
-        for(int il = mMyStart; il <= mMyEnd; ++il){
-            preCompute(il);
-            compute(il);
-            postCompute(il);
-        }
-        collect();
-    }
+    ParLoop(const Workers &workers, int N);
+    virtual void assign(int N);
+    virtual void run();
+    
 protected:
     virtual void prepare(){};
     virtual void preCompute(int il){};
@@ -53,16 +32,11 @@ protected:
     
     
 protected:
-    Grid1D<T>           mL;             // loop variable
-    int                 mN;             // number of grid points
-    const mpi::communicator &mWorkers;       // MPI worker processes 
-    int                 mMyCpuId;       // This process ID
-    int                 mNcpu;          // Total number of processes
-    bool                mIAmMaster;     // Master process
-    const int           mMasterId;      // Master ID
+    int                 mN;             //!< number of grid points
+    const Workers       &mWorkers;      //!< MPI worker processes 
     
-    int                 mMyStart;       // Start point for this CPU
-    int                 mMyEnd;         // End point for this CPU
+    int                 mMyStart;       //!< Start point for this CPU
+    int                 mMyEnd;         //!< End point for this CPU
 };
 
 }

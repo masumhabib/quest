@@ -11,9 +11,10 @@
 #ifndef PYNEGFELOOP_H
 #define	PYNEGFELOOP_H
 
-#include "../negf/NegfEloop.h"
 #include "PyVecGrid.h"
 #include "PyNegfParams.h"
+#include "PyWorkers.h"
+#include "../negf/NegfEloop.h"
 
 #include <python2.6/Python.h>
 #include <boost/python.hpp>
@@ -22,7 +23,6 @@
 namespace qmicad{
 namespace python{
 using namespace boost::python;
-using boost::mpi::communicator;
 /**
  * Python wrapper for NegfEloop class.
  */
@@ -33,7 +33,7 @@ private:
 
 public:
     PyNegfEloop(const PyVecGrid &E, const PyNegfParams &np, 
-            const communicator &workers, bool saveAscii = true):
+            const PyWorkers &workers, bool saveAscii = true):
             NegfEloop(E, np, workers, saveAscii), wrapper<NegfEloop>()
     {
     };

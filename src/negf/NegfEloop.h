@@ -8,11 +8,14 @@
 #ifndef NEGFELOOP_H
 #define	NEGFELOOP_H
 
+#include "NegfResult.h"
+
+#include "../utils/ConsoleProgressBar.h"
 #include "../utils/std.hpp"
+#include "../utils/vout.h"
 #include "../utils/serialize.hpp"
 #include "../maths/fermi.hpp"
 #include "../parallel/parloop.h"
-#include "NegfResult.h"
 
 
 #include <boost/mpi.hpp>
@@ -32,10 +35,10 @@ namespace mpi = boost::mpi;
 /*
  * NegfCalculations specifies what to calculate.
  */
-class NegfEloop: public ParLoop<double>{
+class NegfEloop: public ParLoop{
 public:
-    NegfEloop(const VecGrid &E, const NegfParams &np, 
-              const mpi::communicator &workers, bool saveAscii = true);
+    NegfEloop(const VecGrid &E, const NegfParams &np, const Workers &workers, 
+              bool saveAscii = true);
     
     void            enableTE(uint N = 1);
     void            disableTE();    
@@ -52,7 +55,6 @@ protected:
     virtual void    compute(int il);  
     virtual void    postCompute(int il);
     virtual void    collect();
-    virtual void    stepCompleted();
     virtual void    gather(vector<negfresult> &thisR, NegfResultList &all);
 
 public:
@@ -60,6 +62,7 @@ public:
 protected:
     const NegfParams      &mnp;         //!< Negf parameters.
     shared_ptr<CohRgfa>   mnegf;        //!< Current Negf calculator.
+    VecGrid               mE;           //!< Energy grid.
     
     // TE
     vector<negfresult>    mThisTE;      //!< Transmission list for local process
@@ -74,8 +77,9 @@ protected:
     uint                  mI1szN;       //!< Calculate spin z current?
     
     // user feedback
-    int                   mprog;         //!< Calculation progress.
-    int                   mprogmx;       //!< Maximum progress.
+//    int                   mprog;         //!< Calculation progress.
+//    int                   mprogmx;       //!< Maximum progress.
+    ConsoleProgressBar    mbar;          //!< Shows a nice progress bar.
     
 };
 }

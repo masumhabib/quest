@@ -5,17 +5,18 @@
  * Created on April 8, 2013, 11:35 AM
  */
 
-#include <ios>
-
 #include "ConsoleProgressBar.h"    
 
-ConsoleProgressBar::ConsoleProgressBar(unsigned long expectedCount, 
-    unsigned long count, string prefix, string suffix):
-mExpectedCount(expectedCount),
-mCount(count < expectedCount ? count:expectedCount),
-mPrefix(prefix),
-mSuffix(suffix){
+namespace utils{
     
+
+ConsoleProgressBar::ConsoleProgressBar(string prefix, unsigned long expectedCount, 
+    unsigned long count, bool livePercent):
+    mExpectedCount(expectedCount),
+    mCount(count < expectedCount ? count:expectedCount),
+    mPrefix(prefix), mLivePercent(livePercent)
+{
+    mSuffix = "%";
     mSpace = ' ';
     mDot   = '=';
     mEnds  = '|';
@@ -27,21 +28,35 @@ ConsoleProgressBar::~ConsoleProgressBar() {
 }
 
 void ConsoleProgressBar::draw(){
-    string bar;
-    stringstream ssbar;
-    
-    bar.insert(bar.length(), mnDots, mDot);
-    bar.insert(bar.length(), mnTotalDots - mnDots, mSpace);
+    // Updates live progress percentage.
+    if(mLivePercent){
+        string bar;
+        stringstream ssbar;
 
-    ssbar << mPrefix << "[";
-    ssbar.width(3);
-    ssbar << mnDots*mPercentPerDot;
-    ssbar << mSuffix;
-    ssbar << "] " << mEnds;
-    ssbar << bar << mEnds;
-    
-    cout << ssbar.str() << endl;
-    cout << "\033[F";
+        bar.insert(bar.length(), mnDots, mDot);
+        bar.insert(bar.length(), mnTotalDots - mnDots, mSpace);
+
+        ssbar << mPrefix << "[";
+        ssbar.width(3);
+        ssbar << int(mnDots*mPercentPerDot);
+        ssbar << mSuffix;
+        ssbar << "] " << mEnds;
+        ssbar << bar << mEnds;
+
+        vout << ssbar.str() << endl;
+        vout << "\033[F";
+    // Does not show the live progress percentage.
+    }else{
+        if (mnDots == 0){
+            vout << vnormal << mPrefix << mEnds;
+        }else if(mnDots == mnTotalDots){
+            vout << vnormal << mEnds;
+        }else{
+            vout << vnormal << mDot;
+        }
+        
+        
+    }
 }
 
 void ConsoleProgressBar::step(unsigned long count){
@@ -93,4 +108,5 @@ void ConsoleProgressBar::start(){
     draw();
 }
 
+}
 

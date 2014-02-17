@@ -71,6 +71,19 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
 
     /**
+     * MPI communicator wrapper.
+     */
+    class_<PyWorkers, shared_ptr<PyWorkers>, noncopyable>("Workers", 
+            init<const communicator&>())
+        .def("MyId", &PyWorkers::MyId)
+        .def("MasterId", &PyWorkers::MasterId)
+        .def("N", &PyWorkers::N)
+        .def("AmIMaster", &PyWorkers::AmIMaster)
+        .def("IAmMaster", &PyWorkers::IAmMaster)
+    ;
+    
+    
+    /**
      * Geometry classes
      */
     class_<PyPoint, shared_ptr<PyPoint> >("Point", 
@@ -252,7 +265,7 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
     
     class_<PyNegfEloop, shared_ptr<PyNegfEloop>, noncopyable>("NegfEloop", 
-            init<PyVecGrid&, const PyNegfParams&, const communicator&,
+            init<PyVecGrid&, const PyNegfParams&, const PyWorkers&,
             optional<bool> >())
         .def("run", &PyNegfEloop::run)
         .def("save", &PyNegfEloop::save)
@@ -262,6 +275,11 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("enableI1sx", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sx())
         .def("enableI1sy", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sy())
         .def("enableI1sz", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sz())
+    ;
+
+    class_<PyBandStruct, shared_ptr<PyBandStruct>, noncopyable>("BandStruct",
+            init<shared_ptr<mat>, const PyBandStructParams, 
+            const PyWorkers&>()) 
     ;
     
 }
