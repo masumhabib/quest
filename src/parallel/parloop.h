@@ -32,11 +32,12 @@ protected:
     
     
 protected:
-    int                 mN;             //!< number of grid points
-    const Workers       &mWorkers;      //!< MPI worker processes 
+    int                 mN;             //!< Number of grid points.
+    int                 mMyN;           //!< Number of grid points to be calculated by this process.
+    const Workers       &mWorkers;      //!< MPI worker processes.
     
-    int                 mMyStart;       //!< Start point for this CPU
-    int                 mMyEnd;         //!< End point for this CPU
+    int                 mMyStart;       //!< Start point for this CPU.
+    int                 mMyEnd;         //!< End point for this CPU.
 };
 
 }

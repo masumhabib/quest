@@ -29,9 +29,18 @@ public:
     PyTISurfKpHam(const PyTISurfKpParams &tikpp):TISurfKpHam(tikpp){
     }
     
-    void setSize(uint nbi, uint nbj = 2){
+    void setSize(uint nbi, uint nbj){
         TISurfKpHam::setSize(nbi, nbj);
     }
+    
+    void setSizeForNegf(uint nbi){
+        TISurfKpHam::setSizeForNegf(nbi);
+    }
+
+    void setSizeForBand(uint nbi){
+        TISurfKpHam::setSizeForBand(nbi);
+    }
+    
     
     void genDiagBlock(const PyAtomicStruct &bi, const PyAtomicStruct &bj, 
         uint ib)
@@ -43,6 +52,12 @@ public:
         uint ib)
     {
         TISurfKpHam::genLowDiagBlock(bi, bj, ib);
+    }
+
+    void genNearestNeigh(const PyAtomicStruct &bi, const PyAtomicStruct &bj, 
+        uint ib)
+    {
+        TISurfKpHam::genNearestNeigh(bi, bj, ib);
     }
     
     void generate(const PyAtomicStruct &bi, const PyAtomicStruct &bj, 

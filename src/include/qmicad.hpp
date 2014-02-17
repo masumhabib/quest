@@ -71,6 +71,7 @@ namespace qmicad{
 #include "../python/PyGeometry.h"
 #include "../python/PyEnums.h"
 #include "../python/PyBandStruct.h"
+#include "../python/PySvec.h"
 
 
 

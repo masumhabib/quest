@@ -27,7 +27,18 @@ using namespace utils::stds;
 
 
 struct PyBandStructParams: public BandStructParams{
+    PyBandStructParams(uint nn):BandStructParams(){
+        BandStructParams::H.set_size(nn);
+        BandStructParams::pv.set_size(nn);
+    }
     
+    void H(shared_ptr<cxmat> H, uint it){
+        BandStructParams::H(it) = H;
+    }
+    
+    void S(shared_ptr<cxmat> S, uint it){
+        BandStructParams::S(it) = S;
+    }
 };
 
 

@@ -19,12 +19,11 @@
 #include "../grid/grid.hpp"
 #include "../string/stringutils.h"
 #include "../maths/constants.h"
+#include "../maths/svec.h"
+#include "../maths/arma.hpp"
 
 #include <boost/smart_ptr.hpp>
 
-#include <string>
-#include <armadillo>
-#include <vector>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -42,8 +41,6 @@ namespace mpi = boost::mpi;
 using boost::shared_ptr;
 using std::string;
 
-
-
 /**
  * Band structure parameters
  */
@@ -51,8 +48,11 @@ struct BandStructParams: public Printable{
     
     field<shared_ptr<cxmat> >H; //!< Hamiltonian of all nearest neighboring cells.
                                 //!< H(0) is the cell # 0.
+    field<shared_ptr<cxmat> >S; //!< Overlap matrix of all nearest neighboring cells.
+                                //!< H(0) is the cell # 0.
     field<svec>     pv;         //!< Position vectors of neighbors.
     uint            Nb;         //!< Number of bands to be saved.
+    uint            Ne;         //!< Number of electrons in the super cell.
     bool            saveAscii;  //!< Save ASCII/Binary file?
 };
 
@@ -63,9 +63,15 @@ struct BandStructParams: public Printable{
 class BandStruct: public ParLoop {
 // Fields    
 protected:
-    BandStructParams    mp;  //!< Simulation parameters.
-    shared_ptr<mat>     mk;  //!< k-points: (# of kpoints) x        2 (or 3).
-    mat                 mE;  //!< Eigen energy: (# of bands)  x  (# of kpoints).
+    BandStructParams    mp;         //!< Simulation parameters.
+    shared_ptr<mat>     mk;         //!< k-points:     (# of kpoints)  x  3.
+    mat                 mE;         //!< Eigen energy: (# of kpoints)  x  (# of bands).
+    mat                 mThisE;     //!< Eigen energy for this process: 
+                                    //!< (# of kpoints for this proc)  x  (# of bands).
+    
+    int                 mlb;        //!< lowest band to calculate
+    int                 mub;        //!< highest band to calculate    
+
 
     ConsoleProgressBar  mbar;//!< Progress bar.
 // Methods    
@@ -73,7 +79,7 @@ public:
     BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, const Workers &workers);
 
     
-    int NumOfKpoints() const { return mk->n_rows; };
+    int NumOfKpoints() const { return mN; };
     
     
     // functionality
@@ -85,7 +91,6 @@ protected:
     virtual void    compute(int il);  
     virtual void    postCompute(int il);
     virtual void    collect();
-    virtual void    stepCompleted();
     //virtual void    gather(vector<negfresult> &thisR, NegfResultList &all);
 
 private:

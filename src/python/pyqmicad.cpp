@@ -10,6 +10,7 @@
 
 #include "pyqmicad.h"
 #include "../include/qmicad.hpp"
+#include "../utils/vout.h"
 
 #include <python2.6/Python.h>
 #include <boost/python.hpp>
@@ -37,8 +38,6 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sx, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sy, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sz, enableI1, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyGrapheneKpHam_setSize, setSize, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyTISurfHam_setSize, setSize, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
@@ -71,6 +70,17 @@ BOOST_PYTHON_MODULE(qmicad)
     ;
 
     /**
+     * Spatial vector/position vector.
+     */
+    class_<PySvec, shared_ptr<PySvec> >("svec", 
+            init<optional<double, double, double> >())
+        .add_property("X", &PySvec::getx, &PySvec::setx)
+        .add_property("Y", &PySvec::gety, &PySvec::sety)
+        .add_property("Z", &PySvec::getz, &PySvec::setz)
+    ;
+
+    
+    /**
      * MPI communicator wrapper.
      */
     class_<PyWorkers, shared_ptr<PyWorkers>, noncopyable>("Workers", 
@@ -80,8 +90,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("N", &PyWorkers::N)
         .def("AmIMaster", &PyWorkers::AmIMaster)
         .def("IAmMaster", &PyWorkers::IAmMaster)
-    ;
-    
+    ; 
     
     /**
      * Geometry classes
@@ -159,7 +168,9 @@ BOOST_PYTHON_MODULE(qmicad)
      */
     class_<PyGrapheneKpHam, shared_ptr<PyGrapheneKpHam> >("GrapheneKpHam",
             init<const PyGrapheneKpParams& >())
-        .def("setSize", &PyGrapheneKpHam::setSize, PyGrapheneKpHam_setSize())
+        .def("setSize", &PyGrapheneKpHam::setSize)
+        .def("setSizeForNegf", &PyGrapheneKpHam::setSizeForNegf)
+        .def("setSizeForBand", &PyGrapheneKpHam::setSizeForBand)
         .def("H0", &PyGrapheneKpHam::H0)
         .def("Hl", &PyGrapheneKpHam::Hl)
         .def("H", &PyGrapheneKpHam::H)  
@@ -168,6 +179,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("S", &PyGrapheneKpHam::S)  
         .def("genDiagBlock", &PyGrapheneKpHam::genDiagBlock)
         .def("genLowDiagBlock", &PyGrapheneKpHam::genLowDiagBlock)
+        .def("genNearestNeigh", &PyGrapheneKpHam::genNearestNeigh)
         .def("generate", &PyGrapheneKpHam::generate)
     ;
     
@@ -190,7 +202,9 @@ BOOST_PYTHON_MODULE(qmicad)
      */
     class_<PyTISurfKpHam, shared_ptr<PyTISurfKpHam> >("TISurfKpHam",
             init<const PyTISurfKpParams& >())
-        .def("setSize", &PyTISurfKpHam::setSize, PyTISurfHam_setSize())
+        .def("setSize", &PyTISurfKpHam::setSize)
+        .def("setSizeForNegf", &PyTISurfKpHam::setSizeForNegf)
+        .def("setSizeForBand", &PyTISurfKpHam::setSizeForBand)
         .def("H0", &PyTISurfKpHam::H0)
         .def("Hl", &PyTISurfKpHam::Hl)
         .def("H", &PyTISurfKpHam::H)  
@@ -199,6 +213,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("S", &PyTISurfKpHam::S)  
         .def("genDiagBlock", &PyTISurfKpHam::genDiagBlock)
         .def("genLowDiagBlock", &PyTISurfKpHam::genLowDiagBlock)
+        .def("genNearestNeigh", &PyTISurfKpHam::genNearestNeigh)
         .def("generate", &PyTISurfKpHam::generate)
     ;
     

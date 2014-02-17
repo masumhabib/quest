@@ -13,10 +13,13 @@ BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp,
         const Workers &workers): ParLoop(workers, pk->n_rows), 
         mp(bp), mk(pk)
 {    
-    
+    mlb = mp.Ne/2 - mp.Nb/2;     // lowest band to calculate
+    mub = mp.Ne/2 + mp.Nb/2-1;   // highest band to calculate    
 }
 
 void BandStruct::prepare(){
+    
+    mThisE.set_size(mMyN, mp.Nb);     // Eigen energy: (# of kpoints)  x  (# of bands).
     mbar.start();
 }
 
@@ -29,6 +32,28 @@ void BandStruct::postCompute(int il){
 }
 
 void BandStruct::compute(int il){
+    
+    uint    N = mp.H(0)->n_rows;
+    cxmat   Hk(N, N, fill::zeros);
+    
+    mat &k = *mk;
+    double kx = k(il, X);
+    double ky = k(il, Y);
+    //double kz = k(il, Z);
+    
+    for (int ih = 0; ih < mp.H.n_elem; ++ih){
+        double th = kx*mp.pv(ih)(X) 
+                  + ky*mp.pv(ih)(Y);
+                  //+ kz*mp.pv(ih)(Z);
+        
+        Hk += *mp.H(ih)*exp(th);
+    }
+    
+    int ik = il - mMyStart;
+    col E = eig_sym(Hk);
+    mThisE.row(ik) = trans(E.rows(mlb, mub));
+    
+    dout << dbg << endl << mThisE;
 //    // CHECKS
 //    if(mk.empty()){
 //        throw runtime_error(" No k-points found.");
@@ -136,10 +161,6 @@ void BandStruct::compute(int il){
 }
 
 void BandStruct::collect(){
-    
-}
-
-void BandStruct::stepCompleted(){
     
 }
 

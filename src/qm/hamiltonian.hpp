@@ -50,12 +50,24 @@ public:
         mhp = (new HamParams(hp));
     };
 
-    //!< Sets size of the internal storage of H and S matrices.
-    virtual void setSize(uint nbi, uint nbj = 2){
+    //!< Sets size of the internal storage of H and S matrices for 
+    //!< NEGF calculations.
+    virtual void setSizeForNegf(uint nbi){
+        setSize(nbi, 2);
+    }
+
+    //!< Sets size of the internal storage of H and S matrices for
+    //!< band structure calculation.
+    virtual void setSizeForBand(uint nbi){
+        setSize(nbi, 1);
+    }
+
+   //!< Sets size of the internal storage of H and S matrices.
+    virtual void setSize(uint nbi, uint nbj){
         setHsize(nbi, nbj);
         setSsize(nbi, nbj);
     }
-        
+
     //!< Sets size of the internal storage of H matrix. This does not allocate 
     //!< memory. Memory is allocated when the matrices are calculated.
     virtual void setHsize(uint nbi, uint nbj){
@@ -66,18 +78,18 @@ public:
         mS.set_size(nbi, nbj);
     }
 
-    //!< Returns the diagonal block of H.
+    //!< Returns the diagonal block of H for NEGF.
     shared_ptr<T> H0(uint ib){
         return mH(ib, 0);
     } 
 
-    //!< Returns the lower diagonal block of H.
+    //!< Returns the lower diagonal block of H for NEGF.
     shared_ptr<T> Hl(uint ib){
         return mH(ib, 1);
     } 
     
     //!< Returns block (ib,jb) of H.
-    shared_ptr<T> H(uint ib, uint jb){
+    shared_ptr<T> H(uint ib, uint jb = 0){
         return mH(ib, jb);
     } 
 
@@ -92,7 +104,7 @@ public:
     } 
     
     //!< Returns block (ib,jb) of overlap matrix.
-    shared_ptr<T> S(uint ib, uint jb){
+    shared_ptr<T> S(uint ib, uint jb = 0){
         return mS(ib, jb);
     } 
     
@@ -112,6 +124,15 @@ public:
     {
         generate(bi, bj, ib, 1);
     }
+    
+    //!< Generates the hamiltonaina and overlap matrices between neighbors
+    //!< and store them in (ib, 0) location.
+    virtual void genNearestNeigh(const AtomicStruct &bi, const AtomicStruct &bj, 
+        uint ib)
+    {
+        generate(bi, bj, ib, 0);
+    }
+
     
     //!< Generates the hamiltonaina and overlap matrices between atomc block
     //!< i and atomic block j and store them in (ib, jb) location.

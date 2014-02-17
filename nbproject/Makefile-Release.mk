@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/atoms/AtomicStruct.o \
 	${OBJECTDIR}/src/atoms/Lattice.o \
 	${OBJECTDIR}/src/band/BandStruct.o \
+	${OBJECTDIR}/src/kpoints/Kpoints.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/NegfResult.o \
@@ -55,6 +56,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/python/PyLinearPot.o \
 	${OBJECTDIR}/src/python/PyNegfEloop.o \
 	${OBJECTDIR}/src/python/PyNegfParams.o \
+	${OBJECTDIR}/src/python/PySvec.o \
 	${OBJECTDIR}/src/python/PyTISurfKpHam.o \
 	${OBJECTDIR}/src/python/PyTimer.o \
 	${OBJECTDIR}/src/python/PyVecGrid.o \
@@ -106,6 +108,11 @@ ${OBJECTDIR}/src/band/BandStruct.o: src/band/BandStruct.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/band
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/band/BandStruct.o src/band/BandStruct.cpp
+
+${OBJECTDIR}/src/kpoints/Kpoints.o: src/kpoints/Kpoints.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/kpoints
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/kpoints/Kpoints.o src/kpoints/Kpoints.cpp
 
 ${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
@@ -191,6 +198,11 @@ ${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
+
+${OBJECTDIR}/src/python/PySvec.o: src/python/PySvec.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/python
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PySvec.o src/python/PySvec.cpp
 
 ${OBJECTDIR}/src/python/PyTISurfKpHam.o: src/python/PyTISurfKpHam.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python

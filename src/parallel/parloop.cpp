@@ -26,6 +26,7 @@ void ParLoop::assign(int N){
     int rem = mN%ncpu;
     mMyStart = myId*quo + (myId < rem ? myId:rem);
     mMyEnd = mMyStart + quo + (myId < rem ? 1:0) - 1;        
+    mMyN = mMyEnd - mMyStart + 1;
 }
             
 void ParLoop::run(){

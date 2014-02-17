@@ -45,10 +45,10 @@ namespace spacevec = maths::spacevec;
  * the periodic table.
  */
 struct Atom {
-    uint ia;     //!< Atomic number
-    string sym;  //!< Atomic symbol
-    uint ne;     //!< Number of electrons
-    uint no;     //!< Number of orbitals
+    uint    ia;   //!< Atomic number
+    string  sym;  //!< Atomic symbol
+    uint    ne;   //!< Number of electrons
+    uint    no;   //!< Number of orbitals
 
     //! Default constructor.
     Atom() {};
@@ -185,12 +185,12 @@ public:
     virtual ~AtomicStruct(){};
     friend void swap(AtomicStruct& first, AtomicStruct& second);
     // operators
-    AtomicStruct  operator()(span s) const;                  // Get a sub cell 
-    AtomicStruct  operator()(const ucol& index) const;    // Get a sub cell
+    AtomicStruct  operator()(span s) const;                 // Get a sub cell 
+    AtomicStruct  operator()(const ucol& index) const;      // Get a sub cell
     AtomicStruct  operator()(uint i) const;                 // Get one atom cell
     
-    AtomicStruct& operator= (AtomicStruct rhs);                     // assignment
-    AtomicStruct& operator+= (const AtomicStruct& atoms);           // concatenation
+    AtomicStruct& operator= (AtomicStruct rhs);              // assignment
+    AtomicStruct& operator+= (const AtomicStruct& atoms);    // concatenation
     AtomicStruct& operator-= (const lcoord& latticeCoord);   // coordinate shifting
     AtomicStruct& operator-= (const svec& positionVect);     // coordinate shifting
     AtomicStruct& operator+= (const lcoord& latticeCoord);   // coordinate shifting
