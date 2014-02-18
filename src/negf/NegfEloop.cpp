@@ -13,7 +13,7 @@ namespace qmicad{
 NegfEloop::NegfEloop(const VecGrid &E, const NegfParams &np, 
         const Workers &workers, bool saveAscii):
         ParLoop(workers, E.N()), mnp(np), 
-        mTE("TE", 1, saveAscii), mE(E),
+        mTE("TE", 0, saveAscii), mE(E),
         mI1op("I1", 0, saveAscii), mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0),
         mbar("  NEGF: ")
 {
@@ -145,10 +145,6 @@ void NegfEloop::save(string fileName){
 
 void NegfEloop::enableTE(uint N){
     mTE.N = N;
-}
-
-void NegfEloop::disableTE(){
-    mTE.N = 0;
 }
 
 void NegfEloop::enableI1(uint N){

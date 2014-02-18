@@ -37,13 +37,13 @@ void BandStruct::compute(int il){
     cxmat   Hk(N, N, fill::zeros);
     
     mat &k = *mk;
-    double kx = k(il, X);
-    double ky = k(il, Y);
+    double kx = k(il, coord::X);
+    double ky = k(il, coord::Y);
     //double kz = k(il, Z);
     
     for (int ih = 0; ih < mp.H.n_elem; ++ih){
-        double th = kx*mp.pv(ih)(X) 
-                  + ky*mp.pv(ih)(Y);
+        double th = kx*mp.pv(ih)(coord::X) 
+                  + ky*mp.pv(ih)(coord::Y);
                   //+ kz*mp.pv(ih)(Z);
         
         Hk += *mp.H(ih)*exp(th);

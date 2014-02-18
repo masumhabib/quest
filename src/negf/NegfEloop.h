@@ -8,6 +8,7 @@
 #ifndef NEGFELOOP_H
 #define	NEGFELOOP_H
 
+#include "CohRgfa.h"
 #include "NegfResult.h"
 
 #include "../utils/ConsoleProgressBar.h"
@@ -22,8 +23,6 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/smart_ptr.hpp>
-
-#include "CohRgfa.h"
 
 namespace qmicad{
 using namespace utils::stds;
@@ -40,8 +39,7 @@ public:
     NegfEloop(const VecGrid &E, const NegfParams &np, const Workers &workers, 
               bool saveAscii = true);
     
-    void            enableTE(uint N = 1);
-    void            disableTE();    
+    void            enableTE(uint N = 1);   
     void            enableI1(uint N = 1);
     void            enableI1sx(uint N = 1);
     void            enableI1sy(uint N = 1);
@@ -77,8 +75,6 @@ protected:
     uint                  mI1szN;       //!< Calculate spin z current?
     
     // user feedback
-//    int                   mprog;         //!< Calculation progress.
-//    int                   mprogmx;       //!< Maximum progress.
     ConsoleProgressBar    mbar;          //!< Shows a nice progress bar.
     
 };

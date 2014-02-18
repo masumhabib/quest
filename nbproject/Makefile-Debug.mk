@@ -48,25 +48,13 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
-	${OBJECTDIR}/src/python/PyAtomicStruct.o \
-	${OBJECTDIR}/src/python/PyBandStruct.o \
-	${OBJECTDIR}/src/python/PyEnums.o \
-	${OBJECTDIR}/src/python/PyGeometry.o \
-	${OBJECTDIR}/src/python/PyGrapheneKpHam.o \
-	${OBJECTDIR}/src/python/PyLinearPot.o \
-	${OBJECTDIR}/src/python/PyNegfEloop.o \
-	${OBJECTDIR}/src/python/PyNegfParams.o \
-	${OBJECTDIR}/src/python/PySvec.o \
-	${OBJECTDIR}/src/python/PyTISurfKpHam.o \
-	${OBJECTDIR}/src/python/PyTimer.o \
-	${OBJECTDIR}/src/python/PyVecGrid.o \
-	${OBJECTDIR}/src/python/PyWorkers.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qm/kp/graphenekp.o \
 	${OBJECTDIR}/src/qm/kp/tikp.o \
 	${OBJECTDIR}/src/qm/tb/graphenetb.o \
 	${OBJECTDIR}/src/string/stringutils.o \
 	${OBJECTDIR}/src/utils/ConsoleProgressBar.o \
+	${OBJECTDIR}/src/utils/Timer.o \
 	${OBJECTDIR}/src/utils/vout.o
 
 
@@ -168,71 +156,6 @@ ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
 
-${OBJECTDIR}/src/python/PyAtomicStruct.o: src/python/PyAtomicStruct.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyAtomicStruct.o src/python/PyAtomicStruct.cpp
-
-${OBJECTDIR}/src/python/PyBandStruct.o: src/python/PyBandStruct.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyBandStruct.o src/python/PyBandStruct.cpp
-
-${OBJECTDIR}/src/python/PyEnums.o: src/python/PyEnums.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyEnums.o src/python/PyEnums.cpp
-
-${OBJECTDIR}/src/python/PyGeometry.o: src/python/PyGeometry.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGeometry.o src/python/PyGeometry.cpp
-
-${OBJECTDIR}/src/python/PyGrapheneKpHam.o: src/python/PyGrapheneKpHam.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyGrapheneKpHam.o src/python/PyGrapheneKpHam.cpp
-
-${OBJECTDIR}/src/python/PyLinearPot.o: src/python/PyLinearPot.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyLinearPot.o src/python/PyLinearPot.cpp
-
-${OBJECTDIR}/src/python/PyNegfEloop.o: src/python/PyNegfEloop.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfEloop.o src/python/PyNegfEloop.cpp
-
-${OBJECTDIR}/src/python/PyNegfParams.o: src/python/PyNegfParams.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyNegfParams.o src/python/PyNegfParams.cpp
-
-${OBJECTDIR}/src/python/PySvec.o: src/python/PySvec.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PySvec.o src/python/PySvec.cpp
-
-${OBJECTDIR}/src/python/PyTISurfKpHam.o: src/python/PyTISurfKpHam.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTISurfKpHam.o src/python/PyTISurfKpHam.cpp
-
-${OBJECTDIR}/src/python/PyTimer.o: src/python/PyTimer.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyTimer.o src/python/PyTimer.cpp
-
-${OBJECTDIR}/src/python/PyVecGrid.o: src/python/PyVecGrid.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyVecGrid.o src/python/PyVecGrid.cpp
-
-${OBJECTDIR}/src/python/PyWorkers.o: src/python/PyWorkers.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/python
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/PyWorkers.o src/python/PyWorkers.cpp
-
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
@@ -262,6 +185,11 @@ ${OBJECTDIR}/src/utils/ConsoleProgressBar.o: src/utils/ConsoleProgressBar.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/utils
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/ConsoleProgressBar.o src/utils/ConsoleProgressBar.cpp
+
+${OBJECTDIR}/src/utils/Timer.o: src/utils/Timer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/utils
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/Timer.o src/utils/Timer.cpp
 
 ${OBJECTDIR}/src/utils/vout.o: src/utils/vout.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/utils

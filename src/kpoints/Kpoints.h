@@ -13,7 +13,7 @@
 #include "../maths/geometry.hpp"
 
 namespace qmicad{
-using namespace maths::spacevec;
+using namespace maths::spvec;
 using namespace maths::armadillo;
 using maths::geometry::point;
 

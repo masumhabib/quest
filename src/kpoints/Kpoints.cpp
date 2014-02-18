@@ -36,8 +36,8 @@ void Kpoints::addKLine(const point& start, const point& end, double dk){
     // Generate k points along the line                             
     mat newk(nknew,2);
     // generate kx and ky
-    newk.col(X) = linspace<col>(kxs, kxe, nknew);
-    newk.col(Y) = linspace<col>(kys, kye, nknew);
+    newk.col(coord::X) = linspace<col>(kxs, kxe, nknew);
+    newk.col(coord::Y) = linspace<col>(kys, kye, nknew);
     // insert new k-points
     mk.insert_rows(mk.n_rows,newk);
 }
@@ -66,8 +66,8 @@ void Kpoints::addKRect(const point& lb, const point& rt, double dk){
     for(int ikx = 0; ikx < nkx; ++ikx){
         mat newk(nky,2);
 
-        newk.col(X).fill(newkx(ikx));
-        newk.col(Y) = newky;
+        newk.col(coord::X).fill(newkx(ikx));
+        newk.col(coord::Y) = newky;
         mk.insert_rows(mk.n_rows,newk);
     }
 

@@ -33,7 +33,7 @@
 namespace qmicad{
 using namespace maths::armadillo;
 using namespace maths::constants;
-using namespace maths::spacevec;
+using namespace maths::spvec;
 using namespace utils;
 using namespace myenums;
 
@@ -54,6 +54,9 @@ struct BandStructParams: public Printable{
     uint            Nb;         //!< Number of bands to be saved.
     uint            Ne;         //!< Number of electrons in the super cell.
     bool            saveAscii;  //!< Save ASCII/Binary file?
+    
+    void setH(shared_ptr<cxmat> H, uint it){ this->H(it) = H; }
+    void setS(shared_ptr<cxmat> S, uint it){ this->S(it) = S; }
 };
 
 

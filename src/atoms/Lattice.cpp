@@ -114,15 +114,15 @@ LatticeVector& LatticeVector::operator-= (const LatticeVector& rhs){
 ostream& operator << (ostream& out, const LatticeVector& lv){
         
     out.precision(4);
-    out << " a1 = [" << std::fixed << lv.a1(X) << " " 
-                     << std::fixed << lv.a1(Y) << " " 
-                     << std::fixed << lv.a1(Z) << "]" << endl;
-    out << " a2 = [" << std::fixed << lv.a2(X) << " " 
-                     << std::fixed << lv.a2(Y) << " " 
-                     << std::fixed << lv.a2(Z) << "]" << endl;
-    out << " a3 = [" << std::fixed << lv.a3(X) << " " 
-                     << std::fixed << lv.a3(Y) << " " 
-                     << std::fixed << lv.a3(Z) << "]";
+    out << " a1 = [" << std::fixed << lv.a1(coord::X) << " " 
+                     << std::fixed << lv.a1(coord::Y) << " " 
+                     << std::fixed << lv.a1(coord::Z) << "]" << endl;
+    out << " a2 = [" << std::fixed << lv.a2(coord::X) << " " 
+                     << std::fixed << lv.a2(coord::Y) << " " 
+                     << std::fixed << lv.a2(coord::Z) << "]" << endl;
+    out << " a3 = [" << std::fixed << lv.a3(coord::X) << " " 
+                     << std::fixed << lv.a3(coord::Y) << " " 
+                     << std::fixed << lv.a3(coord::Z) << "]";
     
     return out;
 

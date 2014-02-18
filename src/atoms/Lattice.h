@@ -22,7 +22,7 @@ namespace qmicad{
 using std::ostream;
 using std::endl;
 using namespace maths::armadillo;
-using namespace maths::spacevec;
+using namespace maths::spvec;
 
 /* Lattice coordinates */
 struct LatticeCoordinate{

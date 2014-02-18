@@ -15,7 +15,7 @@
 
 namespace utils{
 using namespace maths::armadillo;
-using maths::spacevec::xyvec;
+using namespace maths::spvec;
 using std::stringstream;
 
 template<class T>
@@ -87,6 +87,8 @@ public:
     T   max() const { return mMaxV; };
     T   del() const { return mdV; };
     int N()   const { return mNV; };
+    
+    T   V(int it) { return (*this)(it); }
     
     string toString() const { 
         stringstream ss;
@@ -230,8 +232,8 @@ public:
         return Y(i);
     }
     
-    xyvec operator()(int i, int j){
-        xyvec xy;
+    svec2 operator()(int i, int j){
+        svec2 xy;
         xy(0) = mX(i,j);
         xy(1) = mY(i,j);
         

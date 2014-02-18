@@ -13,30 +13,37 @@
 #ifndef ATOMS_H
 #define	ATOMS_H
 
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <iomanip> 
+#include <python2.6/Python.h>
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/python/str.hpp>
+
+#include "Lattice.h"
+
+#include "../string/stringutils.h"
+#include "../grid/grid.hpp"
+#include "../utils/Printable.hpp"
+#include "../maths/svec.h"
+#include "../maths/arma.hpp"
 
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
 
-#include "../string/stringutils.h"
-#include "../maths/svec.h"
-#include "../maths/arma.hpp"
-#include "../grid/grid.hpp"
-#include "../utils/Printable.hpp"
 
-#include "Lattice.h"
+
 
 namespace qmicad{
+using namespace boost::python;
+
 using utils::Printable;
 using utils::trim;
 using utils::MatGrid; 
 using namespace utils::stds;
 using namespace maths::armadillo;
-namespace spacevec = maths::spacevec;
+using namespace maths::spvec;
     
     
         
@@ -152,7 +159,7 @@ typedef PeriodicTable ptable;
 /** 
  * All atoms in the structure.
  */
-class AtomicStruct:Printable {
+class AtomicStruct: public Printable {
 // Fields
 protected:
     ptable mpt;         //!< Our periodic table.
@@ -185,9 +192,9 @@ public:
     virtual ~AtomicStruct(){};
     friend void swap(AtomicStruct& first, AtomicStruct& second);
     // operators
-    AtomicStruct  operator()(span s) const;                 // Get a sub cell 
-    AtomicStruct  operator()(const ucol& index) const;      // Get a sub cell
-    AtomicStruct  operator()(uint i) const;                 // Get one atom cell
+    AtomicStruct  operator()(maths::armadillo::span s) const;// Get a sub cell 
+    AtomicStruct  operator()(const ucol& index) const;       // Get a sub cell
+    AtomicStruct  operator()(uint i) const;                  // Get one atom cell
     
     AtomicStruct& operator= (AtomicStruct rhs);              // assignment
     AtomicStruct& operator+= (const AtomicStruct& atoms);    // concatenation
@@ -218,24 +225,26 @@ public:
     // access functions
     Atom        AtomAt(uint i) const;       // Get one atom at i
     string      Symbol(uint i) const { return mpt[mia(i)].sym; } ;
-    double      X(uint i) const { return mXyz(i, spacevec::X); };
-    double      Y(uint i) const { return mXyz(i, spacevec::Y); };
-    double      Z(uint i) const { return mXyz(i, spacevec::Z); };
-    vec         X() const { return mXyz.col(spacevec::X); };
-    vec         Y() const { return mXyz.col(spacevec::Y); };
-    vec         Z() const { return mXyz.col(spacevec::Z); };
+    double      X(uint i) const { return mXyz(i, coord::X); };
+    double      Y(uint i) const { return mXyz(i, coord::Y); };
+    double      Z(uint i) const { return mXyz(i, coord::Z); };
+    vec         X() const { return mXyz.col(coord::X); };
+    vec         Y() const { return mXyz.col(coord::Y); };
+    vec         Z() const { return mXyz.col(coord::Z); };
     int         NumOfAtoms() const { return mNa; };
     int         NumOfOrbitals() const { return mNo; };
     int         NumOfElectrons() const { return mNe; };
     const lvec& LatticeVector() const { return mlv; };
     void        LatticeVector(const lvec& a) { this->mlv = a; };
     void        PeriodicTable(const ptable &periodicTable);
-    double      xmin() {return min(mXyz.col(spacevec::X)); };
-    double      xmax() {return max(mXyz.col(spacevec::X)); };
-    double      ymin() {return min(mXyz.col(spacevec::Y)); };
-    double      ymax() {return max(mXyz.col(spacevec::Y)); };
-    double      zmin() {return min(mXyz.col(spacevec::Z)); };
-    double      zmax() {return max(mXyz.col(spacevec::Z)); };
+    double      xmin() {return min(mXyz.col(coord::X)); };
+    double      xmax() {return max(mXyz.col(coord::X)); };
+    double      ymin() {return min(mXyz.col(coord::Y)); };
+    double      ymax() {return max(mXyz.col(coord::Y)); };
+    double      zmin() {return min(mXyz.col(coord::Z)); };
+    double      zmax() {return max(mXyz.col(coord::Z)); };
+    
+    AtomicStruct span(uint start, uint end) const;
 
 
 protected:
@@ -259,6 +268,54 @@ private:
     }
     
 };
+
+/**
+ * For python pickle.
+ */
+
+struct AtomPickler : public pickle_suite{
+    static tuple getinitargs(const Atom& a){
+        return make_tuple(a.ia, a.sym, a.ne, a.no);
+    }
+};
+
+ struct PeriodicTablePickler : public pickle_suite{
+//    static
+//    boost::python::tuple
+//    getinitargs(const world& w)
+//    {
+//        using namespace boost::python;
+//        return make_tuple(w.get_country());
+//    }
+
+    static object getstate(const PeriodicTable& pt){
+        PeriodicTable::piter it;
+        // Convert periodic table to string.
+        stringstream out;
+        for (it = pt.elements.begin(); it != pt.elements.end(); ++it){
+            out << it->second.ia << " " << it->second.sym 
+                << " " << it->second.ne << " " << it->second.no << endl;
+        }
+        
+        // Return the string to pickle for storage.
+        return str(out.str());
+    }
+
+    static void setstate(PeriodicTable& pt, object state){
+        
+        // Extract string from pickled state.
+        str s = extract<str> (state)();
+        string st = extract<string> (s)();    
+        stringstream in(st);
+    
+        // Create the periodic table.
+        Atom a;
+        while(in >> a.ia && in >> a.sym && in >> a.ne && in >> a.no){
+            pt.add(a);
+        }           
+    }
+};
+
 
 }
 

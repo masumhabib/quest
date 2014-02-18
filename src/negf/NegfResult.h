@@ -8,8 +8,8 @@
 #ifndef NEGFRESULT_H
 #define	NEGFRESULT_H
 
-#include "../utils/std.hpp"
 #include "../maths/arma.hpp"
+#include "../utils/std.hpp"
 
 namespace qmicad{
 using namespace utils::stds;
@@ -27,7 +27,7 @@ struct ResultComparator : public binary_function<negfresult&, negfresult&, bool>
 
 struct NegfResultList{
 public:    
-    list<negfresult>R;              //!< List of results.
+    std::list<negfresult>R;              //!< List of results.
     uint            N;              //!< Size of the cxmat matrix. N == 0 means do not calculate.
     bool            saveAscii;      //!< Save as ascii/binary?
     string          suffix;         //!< Suffix added to the output filename.

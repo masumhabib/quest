@@ -68,6 +68,10 @@ shared_ptr<vec> Potential::toOrbPot(span s){
     return pV;
 }
 
+shared_ptr<vec> Potential::toOrbPot(uint start, uint end){
+    return toOrbPot(span(start, end));
+}
+
 void Potential::exportSvg(const string& path){
     using namespace std;
     using namespace bg;
@@ -94,10 +98,10 @@ void Potential::exportSvg(const string& path){
 void Potential::exportPotential(const string& path){
     int na = ma.NumOfAtoms();
     mat Va(na, 4);
-    Va.col(spacevec::X) = ma.X();
-    Va.col(spacevec::Y) = ma.Y();
-    Va.col(spacevec::Z) = ma.Z();
-    Va.col(spacevec::Z+1) = mV;
+    Va.col(coord::X) = ma.X();
+    Va.col(coord::Y) = ma.Y();
+    Va.col(coord::Z) = ma.Z();
+    Va.col(coord::Z+1) = mV;
     
     ofstream potf(path.c_str());
     potf << Va << endl;

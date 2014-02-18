@@ -11,6 +11,13 @@
 #include "../utils/std.hpp"
 #include "../utils/Printable.hpp"
 
+#include <python2.6/Python.h>
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/python/str.hpp>
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
@@ -24,9 +31,11 @@
 namespace maths{
 namespace geometry{
 
+using namespace boost::python;
 namespace bg = boost::geometry;
 namespace bgi = boost::geometry::index;
 using namespace utils::stds;
+using utils::Printable;
 
 typedef bg::model::point<double, 2, bg::cs::cartesian> point;
 typedef bg::model::box<point> box;
@@ -37,14 +46,15 @@ typedef polygon::ring_type polyring;
 /*
  * Quadrilateral for python guys
  */
-struct SimpleQuadrilateral{
+struct SimpleQuadrilateral: public Printable{
     point lb;
     point rb;
     point rt;
     point lt;
 
     SimpleQuadrilateral(const point &lb, const point &rb, const point &rt, 
-    const point &lt):lb(lb), rb(rb), rt(rt), lt(lt){
+    const point &lt, const string &prefix = ""):Printable(" " + prefix), 
+        lb(lb), rb(rb), rt(rt), lt(lt){
         
         correct();
     }    
@@ -90,11 +100,6 @@ struct SimpleQuadrilateral{
         return out.str();
     }
     
-    friend ostream& operator << (ostream & out, const SimpleQuadrilateral &sq){
-        out << sq.toString();
-        return out;
-    }
-    
 protected:
     struct OnRight{
         bool operator()(const point &p1, const point &p2){
@@ -104,6 +109,23 @@ protected:
 };
 
 typedef SimpleQuadrilateral squadrilateral;
+typedef SimpleQuadrilateral quadrilateral;
+
+
+
+
+struct PointPickler: public pickle_suite{
+    static tuple getinitargs(const point& p){
+        return make_tuple(p.get<0>(), p.get<1>());
+    }
+}; 
+
+struct QuadrilateralPickler: public pickle_suite{
+    static tuple getinitargs(const quadrilateral& ql){
+        return make_tuple(ql.lb, ql.rb, ql.rt, ql.lt);
+    }
+}; 
+
 
 }
 }

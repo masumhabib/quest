@@ -8,23 +8,29 @@
  * 
  */
 
-#include "pyqmicad.h"
-#include "../include/qmicad.hpp"
-#include "../utils/vout.h"
-
 #include <python2.6/Python.h>
 #include <boost/python.hpp>
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/python/str.hpp>
 #include <boost/python/detail/wrap_python.hpp>
+
+#include "pyqmicad.h"
+#include "../include/qmicad.hpp"
+#include "../utils/vout.h"
+
 
 
 
 namespace qmicad{
 namespace python{
 
-char const* greet()
-{   
+/**
+ * Prints welcome message.
+ */
+char const* greet(){   
     static string msg;
     msg  = "      QMICAD: Quantum Mechanics Inspired Computer Aided Design";
     msg += "\n                             v" + qmicad::version + "\n";
@@ -32,12 +38,20 @@ char const* greet()
     return msg.c_str();
 }
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyLinearPot_VLR, VLR, 3, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableTE, enableTE, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1, enableI1, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sx, enableI1, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sy, enableI1, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyNegfEloop_enableI1sz, enableI1, 0, 1)
+/**
+ * Sets application verbosity level.
+ */
+
+void setVerbosity(int verb){
+    stds::vout.appVerbosity(verbosity(verb));
+}
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LinearPot_VLR, VLR, 3, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableTE, enableTE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sx, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sy, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sz, enableI1, 0, 1)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
@@ -48,6 +62,7 @@ BOOST_PYTHON_MODULE(qmicad)
     using namespace maths::geometry;
     
     def("greet", greet);
+    def("setVerbosity", setVerbosity);
    
     /**
      * Enums.
@@ -69,233 +84,251 @@ BOOST_PYTHON_MODULE(qmicad)
     class_<vec, shared_ptr<vec> >("vecp", no_init)
     ;
 
+    class_<Printable, shared_ptr<Printable> >("Printable", 
+            init<optional<const string&> >())
+        .def(self_ns::str(self_ns::self))
+    ;
+    
     /**
      * Spatial vector/position vector.
      */
-    class_<PySvec, shared_ptr<PySvec> >("svec", 
+    class_<PyVec, shared_ptr<PyVec> >("svec", 
             init<optional<double, double, double> >())
-        .add_property("X", &PySvec::getx, &PySvec::setx)
-        .add_property("Y", &PySvec::gety, &PySvec::sety)
-        .add_property("Z", &PySvec::getz, &PySvec::setz)
+        .add_property("X", &PyVec::getx, &PyVec::setx)
+        .add_property("Y", &PyVec::gety, &PyVec::sety)
+        .add_property("Z", &PyVec::getz, &PyVec::setz)
     ;
-
     
     /**
      * MPI communicator wrapper.
      */
-    class_<PyWorkers, shared_ptr<PyWorkers>, noncopyable>("Workers", 
+    class_<Workers, shared_ptr<Workers>, noncopyable>("Workers", 
             init<const communicator&>())
-        .def("MyId", &PyWorkers::MyId)
-        .def("MasterId", &PyWorkers::MasterId)
-        .def("N", &PyWorkers::N)
-        .def("AmIMaster", &PyWorkers::AmIMaster)
-        .def("IAmMaster", &PyWorkers::IAmMaster)
+        .def("MyId", &Workers::MyId)
+        .def("MasterId", &Workers::MasterId)
+        .def("N", &Workers::N)
+        .def("AmIMaster", &Workers::AmIMaster)
+        .def("IAmMaster", &Workers::IAmMaster)
     ; 
     
     /**
      * Geometry classes
      */
-    class_<PyPoint, shared_ptr<PyPoint> >("Point", 
+    class_<point, shared_ptr<point> >("Point", 
             init<const double&, const double&>())
-        .def_pickle(PyPointPickler())
+        .def_pickle(PointPickler())
     ;
     
-    class_<PyQuadrilateral, shared_ptr<PyQuadrilateral> >("Quadrilateral", 
-            init<const PyPoint&, const PyPoint&, const PyPoint&, const PyPoint&>())
-        .def_pickle(PyQuadrilateralPickler())
-        .def(self_ns::str(self_ns::self))
+    class_<quadrilateral, bases<Printable>, shared_ptr<quadrilateral> >("Quadrilateral", 
+            init<const point&, const point&, const point&, 
+            const point&, optional<const string&> >())
+        .def_pickle(QuadrilateralPickler())
     ;
 
     /**
      * Wall clock
      */
-    class_<PyTimer, shared_ptr<PyTimer> >("Timer")
-        .def("tic", &PyTimer::tic)
-        .def("toc", &PyTimer::toc)
-        .def(self_ns::str(self_ns::self))        
+    class_<Timer, bases<Printable>, shared_ptr<Timer> >("Timer", 
+            init<optional<const string&> >())
+        .def("tic", &Timer::tic)
+        .def("toc", &Timer::toc)
     ;
 
+    
     /**
      * Atom.
      */
-    class_<PyAtom, shared_ptr<PyAtom> >("Atom")
-        .def_pickle(PyAtomPickler())
+    class_<Atom, shared_ptr<Atom> >("Atom")
+        .def_pickle(AtomPickler())
     ;
     
     /**
      * Periodic table.
      */
-    void (PyPeriodicTable::*PyPeriodicTable_add1)(uint, string, uint, uint) = &PyPeriodicTable::add;
-    void (PyPeriodicTable::*PyPeriodicTable_add2)(const PyAtom&) = &PyPeriodicTable::add;
-    class_<PyPeriodicTable, shared_ptr<PyPeriodicTable> >("PeriodicTable")
-        .def("add", PyPeriodicTable_add1)
-        .def("add", PyPeriodicTable_add2)
-        .def_pickle(PyPeriodicTablePickler())
+    void (PeriodicTable::*PeriodicTable_add1)(uint, string, uint, uint) = &PeriodicTable::add;
+    void (PeriodicTable::*PeriodicTable_add2)(const Atom&) = &PeriodicTable::add;
+    class_<PeriodicTable, shared_ptr<PeriodicTable> >("PeriodicTable")
+        .def("add", PeriodicTable_add1)
+        .def("add", PeriodicTable_add2)
+        .def_pickle(PeriodicTablePickler())
     ;
 
     /**
      * Atomistic geometry of the device.
      */
-    class_<PyAtomicStruct, shared_ptr<PyAtomicStruct> >("AtomicStruct", 
+    class_<AtomicStruct, bases<Printable>, shared_ptr<AtomicStruct> >("AtomicStruct", 
             init<const string&>())
-        .def(init<const string&, const PyPeriodicTable>())
-        .def(init<uint, uint, double, double, const PyPeriodicTable>())
-        .def("span", &PyAtomicStruct::span)
-        .def("xmax", &PyAtomicStruct::xmax)
-        .def("xmin", &PyAtomicStruct::xmin)
-        .def("ymax", &PyAtomicStruct::ymax)
-        .def("ymin", &PyAtomicStruct::ymin)    
-        .def("zmax", &PyAtomicStruct::zmax)
-        .def("zmin", &PyAtomicStruct::zmin)    
-        .def(self_ns::str(self_ns::self))
+        .def(init<const string&, const PeriodicTable>())
+        .def(init<uint, uint, double, double, const PeriodicTable>())
+        .def("span", &AtomicStruct::span)
+        .def("xmax", &AtomicStruct::xmax)
+        .def("xmin", &AtomicStruct::xmin)
+        .def("ymax", &AtomicStruct::ymax)
+        .def("ymin", &AtomicStruct::ymin)    
+        .def("zmax", &AtomicStruct::zmax)
+        .def("zmin", &AtomicStruct::zmin)    
+    ;
+    
+    /**
+     * Hamiltonian parameters.
+     */
+    class_<HamParams, bases<Printable>, shared_ptr<HamParams> >("HamParams", 
+            init<const string&>())
     ;
     
     /**
      * Graphene k.p parameters.
      */
-    class_<PyGrapheneKpParams, shared_ptr<PyGrapheneKpParams> >("GrapheneKpParams")
-        .def_readwrite("dtol", &PyGrapheneKpParams::dtol)
-        .def_readwrite("ax", &PyGrapheneKpParams::ax)
-        .def_readwrite("ay", &PyGrapheneKpParams::ay)
-        .def_readwrite("K", &PyGrapheneKpParams::K)   
-        .def_readwrite("gamma", &PyGrapheneKpParams::gamma)
-        .def("update", &PyGrapheneKpParams::update)
-        .def(self_ns::str(self_ns::self))
+    class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
+        .def_readwrite("dtol", &GrapheneKpParams::dtol)
+        .def_readwrite("ax", &GrapheneKpParams::ax)
+        .def_readwrite("ay", &GrapheneKpParams::ay)
+        .def_readwrite("K", &GrapheneKpParams::K)   
+        .def_readwrite("gamma", &GrapheneKpParams::gamma)
+        .def("update", &GrapheneKpParams::update)
     ;
 
     /**
      * Graphene Hamiltonian.
      */
-    class_<PyGrapheneKpHam, shared_ptr<PyGrapheneKpHam> >("GrapheneKpHam",
-            init<const PyGrapheneKpParams& >())
-        .def("setSize", &PyGrapheneKpHam::setSize)
-        .def("setSizeForNegf", &PyGrapheneKpHam::setSizeForNegf)
-        .def("setSizeForBand", &PyGrapheneKpHam::setSizeForBand)
-        .def("H0", &PyGrapheneKpHam::H0)
-        .def("Hl", &PyGrapheneKpHam::Hl)
-        .def("H", &PyGrapheneKpHam::H)  
-        .def("Sl", &PyGrapheneKpHam::Sl)
-        .def("S0", &PyGrapheneKpHam::S0)
-        .def("S", &PyGrapheneKpHam::S)  
-        .def("genDiagBlock", &PyGrapheneKpHam::genDiagBlock)
-        .def("genLowDiagBlock", &PyGrapheneKpHam::genLowDiagBlock)
-        .def("genNearestNeigh", &PyGrapheneKpHam::genNearestNeigh)
-        .def("generate", &PyGrapheneKpHam::generate)
+    void (GrapheneKpHam::*GrapheneKpHam_generate1)(const AtomicStruct&, 
+            const AtomicStruct&, uint, uint) = &GrapheneKpHam::generate;
+    class_<GrapheneKpHam, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
+            init<const GrapheneKpParams& >())
+        .def("setSize", &GrapheneKpHam::setSize)
+        .def("setSizeForNegf", &GrapheneKpHam::setSizeForNegf)
+        .def("setSizeForBand", &GrapheneKpHam::setSizeForBand)
+        .def("H0", &GrapheneKpHam::H0)
+        .def("Hl", &GrapheneKpHam::Hl)
+        .def("H", &GrapheneKpHam::H)  
+        .def("Sl", &GrapheneKpHam::Sl)
+        .def("S0", &GrapheneKpHam::S0)
+        .def("S", &GrapheneKpHam::S)  
+        .def("genDiagBlock", &GrapheneKpHam::genDiagBlock)
+        .def("genLowDiagBlock", &GrapheneKpHam::genLowDiagBlock)
+        .def("genNearestNeigh", &GrapheneKpHam::genNearestNeigh)
+        .def("generate", GrapheneKpHam_generate1)
     ;
     
     /**
      * TI Surface k.p parameters.
      */
-    class_<PyTISurfKpParams, shared_ptr<PyTISurfKpParams> >("TISurfKpParams")
-        .def_readwrite("dtol", &PyTISurfKpParams::dtol)
-        .def_readwrite("ax", &PyTISurfKpParams::ax)
-        .def_readwrite("ay", &PyTISurfKpParams::ay)
-        .def_readwrite("K", &PyTISurfKpParams::K)   
-        .def_readwrite("A2", &PyTISurfKpParams::A2)
-        .def_readwrite("C", &PyTISurfKpParams::C)
-        .def("update", &PyTISurfKpParams::update)
-        .def(self_ns::str(self_ns::self))
+    class_<TISurfKpParams, bases<HamParams>, shared_ptr<TISurfKpParams> >("TISurfKpParams")
+        .def_readwrite("dtol", &TISurfKpParams::dtol)
+        .def_readwrite("ax", &TISurfKpParams::ax)
+        .def_readwrite("ay", &TISurfKpParams::ay)
+        .def_readwrite("K", &TISurfKpParams::K)   
+        .def_readwrite("A2", &TISurfKpParams::A2)
+        .def_readwrite("C", &TISurfKpParams::C)
+        .def("update", &TISurfKpParams::update)
     ;
 
     /**
      * TI Surface Hamiltonian.
      */
-    class_<PyTISurfKpHam, shared_ptr<PyTISurfKpHam> >("TISurfKpHam",
-            init<const PyTISurfKpParams& >())
-        .def("setSize", &PyTISurfKpHam::setSize)
-        .def("setSizeForNegf", &PyTISurfKpHam::setSizeForNegf)
-        .def("setSizeForBand", &PyTISurfKpHam::setSizeForBand)
-        .def("H0", &PyTISurfKpHam::H0)
-        .def("Hl", &PyTISurfKpHam::Hl)
-        .def("H", &PyTISurfKpHam::H)  
-        .def("Sl", &PyTISurfKpHam::Sl)
-        .def("S0", &PyTISurfKpHam::S0)
-        .def("S", &PyTISurfKpHam::S)  
-        .def("genDiagBlock", &PyTISurfKpHam::genDiagBlock)
-        .def("genLowDiagBlock", &PyTISurfKpHam::genLowDiagBlock)
-        .def("genNearestNeigh", &PyTISurfKpHam::genNearestNeigh)
-        .def("generate", &PyTISurfKpHam::generate)
+    void (TISurfKpHam::*TISurfKpHam_generate1)(const AtomicStruct&, 
+            const AtomicStruct&, uint, uint) = &TISurfKpHam::generate;    
+    class_<TISurfKpHam, shared_ptr<TISurfKpHam> >("TISurfKpHam",
+            init<const TISurfKpParams& >())
+        .def("setSize", &TISurfKpHam::setSize)
+        .def("setSizeForNegf", &TISurfKpHam::setSizeForNegf)
+        .def("setSizeForBand", &TISurfKpHam::setSizeForBand)
+        .def("H0", &TISurfKpHam::H0)
+        .def("Hl", &TISurfKpHam::Hl)
+        .def("H", &TISurfKpHam::H)  
+        .def("Sl", &TISurfKpHam::Sl)
+        .def("S0", &TISurfKpHam::S0)
+        .def("S", &TISurfKpHam::S)  
+        .def("genDiagBlock", &TISurfKpHam::genDiagBlock)
+        .def("genLowDiagBlock", &TISurfKpHam::genLowDiagBlock)
+        .def("genNearestNeigh", &TISurfKpHam::genNearestNeigh)
+        .def("generate", TISurfKpHam_generate1)
     ;
     
     /**
      * Linear potential
-     */    
-    class_<PyLinearPot, shared_ptr<PyLinearPot> >("LinearPot", 
-            init<const PyAtomicStruct&, optional<const string&> >())
-        .def("addSource", &PyLinearPot::addSource)
-        .def("addDrain", &PyLinearPot::addDrain)
-        .def("addGate", &PyLinearPot::addGate)
-        .def("addLinearRegion", &PyLinearPot::addLinearRegion)
-        .def("compute", &PyLinearPot::compute)
-        .def("exportSvg", &PyLinearPot::exportSvg)
-        .def("exportPotential", &PyLinearPot::exportPotential)
-        .def("VD", &PyLinearPot::VD)
-        .def("VS", &PyLinearPot::VS)
-        .def("VG", &PyLinearPot::VG)
-        .def("VLR", &PyLinearPot::VLR, PyLinearPot_VLR()) 
-        .def("toOrbPot", &PyLinearPot::toOrbPot) 
-        .def(self_ns::str(self_ns::self))
+     */  
+    shared_ptr<vec> (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;    
+    class_<Potential, bases<Printable>, shared_ptr<Potential> >("Potential", 
+            init<const AtomicStruct&, optional<const string&> >())
+        .def("addSource", &Potential::addSource)
+        .def("addDrain", &Potential::addDrain)
+        .def("addGate", &Potential::addGate)
+        .def("compute", &Potential::compute)
+        .def("exportSvg", &Potential::exportSvg)
+        .def("exportPotential", &Potential::exportPotential)
+        .def("VD", &Potential::VD)
+        .def("VS", &Potential::VS)
+        .def("VG", &Potential::VG)
+        .def("toOrbPot", Potential_toOrbPot) 
+    ;
+    
+    /**
+     * Linear potential
+     */  
+    class_<LinearPot, bases<Potential>, shared_ptr<LinearPot> >("LinearPot", 
+            init<const AtomicStruct&, optional<const string&> >())
+        .def("addLinearRegion", &LinearPot::addLinearRegion)
+        .def("VLR", &LinearPot::VLR, LinearPot_VLR()) 
     ;
      
     /**
      * Vector grid
      */
-    class_<PyVecGrid, shared_ptr<PyVecGrid> >("VecGrid", 
+    class_<VecGrid, bases<Printable>, shared_ptr<VecGrid> >("VecGrid", 
             init<double, double, double, optional<const string&> >())
         .def(init<optional<double, double, int, const string&> >())
-        .def("V", &PyVecGrid::V)        
-        .def("min", &PyVecGrid::min)
-        .def("max", &PyVecGrid::max)
-        .def("del", &PyVecGrid::del)
-        .def("N", &PyVecGrid::N)
-        .def(self_ns::str(self_ns::self))
+        .def("V", &VecGrid::V)        
+        .def("min", &VecGrid::min)
+        .def("max", &VecGrid::max)
+        .def("del", &VecGrid::del)
+        .def("N", &VecGrid::N)
     ;
 
     /**
      * NEGF parameters.
      */
-    class_<PyNegfParams, shared_ptr<PyNegfParams> >("NegfParams", init<uint>())
-        .def("H0", &PyNegfParams::H0)
-        .def("S0", &PyNegfParams::S0)
-        .def("Hl", &PyNegfParams::Hl)
-        .def("Sl", &PyNegfParams::Sl)
-        .def("V", &PyNegfParams::V)
-        .def_readwrite("kT", &PyNegfParams::kT)
-        .def_readwrite("ieta", &PyNegfParams::ieta)
-        .def_readwrite("muS", &PyNegfParams::muS)
-        .def_readwrite("muD", &PyNegfParams::muD)
-        .def_readwrite("isOrthogonal", &PyNegfParams::isOrthogonal)
-        .def_readwrite("DCache", &PyNegfParams::DCache)
-        .def_readwrite("TCache", &PyNegfParams::TCache)
-        .def_readwrite("grcCache", &PyNegfParams::grcCache)
-        .def_readwrite("glcCache", &PyNegfParams::glcCache)
-        .def_readwrite("GiiCache", &PyNegfParams::GiiCache)
-        .def_readwrite("GlCache", &PyNegfParams::GlCache)
-        .def_readwrite("GuCache", &PyNegfParams::GuCache)
-        .def_readwrite("Gi1Cache", &PyNegfParams::Gi1Cache)
-        .def_readwrite("GiNCache", &PyNegfParams::GiNCache)
-        .def_readwrite("Giip1Cache", &PyNegfParams::Giip1Cache)
-        .def_readwrite("Giim1Cache", &PyNegfParams::Giim1Cache)
-        .def(self_ns::str(self_ns::self))
+    class_<NegfParams, bases<Printable>, shared_ptr<NegfParams> >("NegfParams", 
+            init<uint>())
+        .def("H0", &NegfParams::setH0)
+        .def("S0", &NegfParams::setS0)
+        .def("Hl", &NegfParams::setHl)
+        .def("Sl", &NegfParams::setSl)
+        .def("V", &NegfParams::setV)
+        .def_readwrite("kT", &NegfParams::kT)
+        .def_readwrite("ieta", &NegfParams::ieta)
+        .def_readwrite("muS", &NegfParams::muS)
+        .def_readwrite("muD", &NegfParams::muD)
+        .def_readwrite("isOrthogonal", &NegfParams::isOrthogonal)
+        .def_readwrite("DCache", &NegfParams::DCache)
+        .def_readwrite("TCache", &NegfParams::TCache)
+        .def_readwrite("grcCache", &NegfParams::grcCache)
+        .def_readwrite("glcCache", &NegfParams::glcCache)
+        .def_readwrite("GiiCache", &NegfParams::GiiCache)
+        .def_readwrite("GlCache", &NegfParams::GlCache)
+        .def_readwrite("GuCache", &NegfParams::GuCache)
+        .def_readwrite("Gi1Cache", &NegfParams::Gi1Cache)
+        .def_readwrite("GiNCache", &NegfParams::GiNCache)
+        .def_readwrite("Giip1Cache", &NegfParams::Giip1Cache)
+        .def_readwrite("Giim1Cache", &NegfParams::Giim1Cache)
     ;
     
-    class_<PyNegfEloop, shared_ptr<PyNegfEloop>, noncopyable>("NegfEloop", 
-            init<PyVecGrid&, const PyNegfParams&, const PyWorkers&,
+    class_<NegfEloop, shared_ptr<NegfEloop>, noncopyable>("NegfEloop", 
+            init<VecGrid&, const NegfParams&, const Workers&, 
             optional<bool> >())
-        .def("run", &PyNegfEloop::run)
-        .def("save", &PyNegfEloop::save)
-        .def("enableTE", &PyNegfEloop::enableTE, PyNegfEloop_enableTE())
-        .def("disableTE", &PyNegfEloop::disableTE)
-        .def("enableI1", &PyNegfEloop::enableTE, PyNegfEloop_enableI1())
-        .def("enableI1sx", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sx())
-        .def("enableI1sy", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sy())
-        .def("enableI1sz", &PyNegfEloop::enableTE, PyNegfEloop_enableI1sz())
+        .def("run", &NegfEloop::run)
+        .def("save", &NegfEloop::save)
+        .def("enableTE", &NegfEloop::enableTE, NegfEloop_enableTE())
+        .def("enableI1", &NegfEloop::enableTE, NegfEloop_enableI1())
+        .def("enableI1sx", &NegfEloop::enableTE, NegfEloop_enableI1sx())
+        .def("enableI1sy", &NegfEloop::enableTE, NegfEloop_enableI1sy())
+        .def("enableI1sz", &NegfEloop::enableTE, NegfEloop_enableI1sz())
     ;
 
-    class_<PyBandStruct, shared_ptr<PyBandStruct>, noncopyable>("BandStruct",
-            init<shared_ptr<mat>, const PyBandStructParams, 
-            const PyWorkers&>()) 
-    ;
+//    class_<BandStruct, shared_ptr<BandStruct>, noncopyable>("BandStruct",
+//            init<shared_ptr<mat>, const BandStructParams, 
+//            const Workers&>()) 
+//    ;
     
 }
 

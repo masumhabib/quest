@@ -15,50 +15,59 @@
 
 
 namespace maths{
-namespace spacevec{
-using armadillo::row;
+namespace spvec{
+
 using armadillo::row3;
 using armadillo::row2;
 
+namespace coord{
     // index definition
     static const int X = 0;
     static const int Y = 1;
     static const int Z = 2;  
-
-    typedef row3     svec;  // special vector is a three component row vector
-    typedef row2     xyvec; // two dimensional vector
-/*    
-class SVec: public row{
+}
+ 
+typedef row3     svec;  // special vector is a three component row vector
+typedef row3     svec3;  // special vector is a three component row vector
+typedef row2     svec2; // two dimensional vector
+   
+/*
+ * Python wrapper for 
+ */    
+class PyVec: public svec{
 public:
-    SVec(double x = 0, double y = 0, double z = 0):row(3){
+    PyVec(double x = 0, double y = 0, double z = 0):svec(){
         setx(x);
-        setx(y);
-        setx(z);
+        sety(y);
+        setz(z);
+    }
+    
+    
+    PyVec(const svec & rhs):svec(){
+        setx(rhs(coord::X));
+        sety(rhs(coord::Y));
+        setz(rhs(coord::Z));
     }
     
     // Access functions
-    double  x() const    { return (*this)(X); }
-    void    x(double x)  { (*this)(X) = x; }
-    double  y() const    { return (*this)(Y); }
-    void    y(double y)  { (*this)(Y) = y; }
-    double  z() const    { return (*this)(Z); }
-    void    z(double z)  { (*this)(Z) = z; }
-
-    //!< For python wrapper.
-    double  getx() const  { return x(); };
-    void    setx(double x){ x(x);}
-    double  gety() const  { return y(); };
-    void    sety(double y){ y(y);}
-    double  getz() const  { return z(); };
-    void    setz(double z){ z(z);}
+    double  getx() const    { return (*this)(coord::X); }
+    void    setx(double x)  { (*this)(coord::X) = x; }
+    double  gety() const    { return (*this)(coord::Y); }
+    void    sety(double y)  { (*this)(coord::Y) = y; }
+    double  getz() const    { return (*this)(coord::Z); }
+    void    setz(double z)  { (*this)(coord::Z) = z; }
     
-public:
-    // index definition
-    static const int X = 0;
-    static const int Y = 1;
-    static const int Z = 2;  
+    svec2 xy() const{ 
+        svec2 r2; 
+        r2(coord::X) = getx(); 
+        r2(coord::Y) = gety(); 
+        return r2; 
+    }
+    
+    void xy(double x, double y)  { setx(x); sety(y);}
+    
 };
-   */ 
+
 }
 }
 #endif	/* SVECT_H */

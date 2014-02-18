@@ -1,5 +1,5 @@
 /* 
- * File:   PyTimer.h
+ * File:   Timer.h
  * Author: K M Masum Habib<masum.habib@virginia.edu>
  *
  * Created on February 11, 2014, 12:43 AM
@@ -11,16 +11,22 @@
 #include "../maths/arma.hpp"
 #include "../utils/std.hpp"
 #include "../string/stringutils.h"
+#include "Printable.hpp"
 
 namespace qmicad{
 namespace python{
 using maths::armadillo::wall_clock;
 using namespace utils::stds;
+using utils::Printable;
 using utils::ttos;
 
 
-class PyTimer{
+class Timer: public Printable{
 public:
+    
+    Timer(const string &prefix = ""):Printable(" " + prefix){
+    }
+    
     void tic(){
         clock.tic();
     }
@@ -34,10 +40,10 @@ public:
         return " Runtime: " + ttos(interval) + ".";
     }
     
-    friend ostream& operator << (ostream & out, const PyTimer &p){
-        out << p.toString();
-        return out;
-    }
+//    friend ostream& operator << (ostream & out, const PyTimer &p){
+//        out << p.toString();
+//        return out;
+//    }
 protected:
     wall_clock clock;
     double interval;

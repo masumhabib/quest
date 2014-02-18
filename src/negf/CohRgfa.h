@@ -109,7 +109,8 @@ struct NegfParams: public Printable {
 
     static const double SurfGTolX = 1E-8;
     
-    NegfParams(const string &prefix = ""):Printable(" " + prefix){
+    NegfParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
+            nb(nb), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
         DCache = Enabled;
         TCache = Disabled;
         grcCache = Enabled;
@@ -124,6 +125,13 @@ struct NegfParams: public Printable {
         
         mTitle = "NEGF parameters";
     }
+    
+    // Easy access for python
+    void setH0(shared_ptr<cxmat> H0, uint it){ this->H0(it) = H0; }
+    void setS0(shared_ptr<cxmat> S0, uint it){ this->S0(it) = S0; }
+    void setHl(shared_ptr<cxmat> Hl, uint it){ this->Hl(it) = Hl; }
+    void setSl(shared_ptr<cxmat> Sl, uint it){ this->Sl(it) = Sl; }
+    void setV(shared_ptr<vec> V, uint it){ this->V(it) = V; }
     
     virtual string toString() const {
         stringstream out;

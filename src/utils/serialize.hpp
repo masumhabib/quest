@@ -31,7 +31,7 @@ using std::complex;
 using arma::Mat;
 using arma::Col;
 using arma::Row;
-using namespace maths::spacevec;
+using namespace maths::spvec;
 
 /*
  * Serialization for stringstream.
@@ -110,9 +110,9 @@ inline void serialize(Archive& ar, complex<T> &value, const unsigned int file_ve
 
 template<class Archive>
 void serialize(Archive& ar, svec& sv, const unsigned int version){
-    ar & sv(X);
-    ar & sv(Y);
-    ar & sv(Z);
+    ar & sv(coord::X);
+    ar & sv(coord::Y);
+    ar & sv(coord::Z);
 };
 
 /*

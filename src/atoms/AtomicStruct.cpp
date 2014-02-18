@@ -185,9 +185,9 @@ AtomicStruct operator- (AtomicStruct atm, const svec& r){
 /* Atoms -= position vector */
 AtomicStruct& AtomicStruct::operator-= (const svec& rvec){
     
-    mXyz.col(spacevec::X) -= rvec(spacevec::X);
-    mXyz.col(spacevec::Y) -= rvec(spacevec::Y);
-    mXyz.col(spacevec::Z) -= rvec(spacevec::Z);
+    mXyz.col(coord::X) -= rvec(coord::X);
+    mXyz.col(coord::Y) -= rvec(coord::Y);
+    mXyz.col(coord::Z) -= rvec(coord::Z);
     
     return *this;
 }
@@ -217,9 +217,9 @@ AtomicStruct operator+ (AtomicStruct atm, const svec& r){
 /* Atoms += position vector */
 AtomicStruct& AtomicStruct::operator+= (const svec& rvec){
     
-    mXyz.col(spacevec::X) += rvec(spacevec::X);
-    mXyz.col(spacevec::Y) += rvec(spacevec::Y);
-    mXyz.col(spacevec::Z) += rvec(spacevec::Z);
+    mXyz.col(coord::X) += rvec(coord::X);
+    mXyz.col(coord::Y) += rvec(coord::Y);
+    mXyz.col(coord::Z) += rvec(coord::Z);
     
     return *this;
 }
@@ -234,7 +234,7 @@ AtomicStruct AtomicStruct::operator ()(const ucol& index) const{
     //get only the atoms we are interested in
     icol atomId = mia.elem(index);   
     ucol cols;
-    cols << spacevec::X << spacevec::Y << spacevec::Z;
+    cols << coord::X << coord::Y << coord::Z;
     mat coordinate = mXyz(index,cols);        
 
     return AtomicStruct(atomId, coordinate, mlv, mpt);
@@ -244,7 +244,7 @@ AtomicStruct AtomicStruct::operator ()(const ucol& index) const{
  * Callable operators to extract a subset of atoms defined by a span.
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
-AtomicStruct AtomicStruct::operator ()(span s) const{
+AtomicStruct AtomicStruct::operator ()(maths::armadillo::span s) const{
     
     //get only the atoms we are interested in
     icol atomId = mia(s);   
@@ -252,6 +252,7 @@ AtomicStruct AtomicStruct::operator ()(span s) const{
 
     return AtomicStruct(atomId, coordinate, mlv, mpt);
 }
+
 
 /*
  * Callable operators to extract a one atom with index i.
@@ -268,12 +269,6 @@ AtomicStruct AtomicStruct::operator ()(uint i) const{
 Atom AtomicStruct::AtomAt(uint i) const{
     return mpt[mia[i]];
 }
-
-/* Dump the data to the stream */
-//ostream& operator << (ostream & out, const AtomicStruct &b){
-//    out << b.toString();
-//	return out;
-//}
 
 string AtomicStruct::toString() const{
     
@@ -387,9 +382,9 @@ void AtomicStruct::genKpAtoms(uint nl, uint nw, double ax, double ay,
     // calculate x, y and z coordinates of the atoms
     mNa = xy.Nx()*xy.Ny();            // total number of atoms
     mXyz.set_size(mNa, 3);            // xyz coordinate of atoms
-    mXyz.col(spacevec::X) = xy.X();
-    mXyz.col(spacevec::Y) = xy.Y();
-    mXyz.col(spacevec::Z).zeros();
+    mXyz.col(coord::X) = xy.X();
+    mXyz.col(coord::Y) = xy.Y();
+    mXyz.col(coord::Z).zeros();
     
     // prepare atomId list containing atomic number of a fake atom 'D'.
     mia.set_size(mNa);
@@ -397,8 +392,8 @@ void AtomicStruct::genKpAtoms(uint nl, uint nw, double ax, double ay,
     mia.fill(mpt[0].ia);
     
     // lattice vector
-    mlv.a1(spacevec::X) = xy.maxx()-xy.minx() + ax;
-    mlv.a2(spacevec::Y) = xy.maxy()-xy.miny() + ay;  
+    mlv.a1(coord::X) = xy.maxx()-xy.minx() + ax;
+    mlv.a2(coord::Y) = xy.maxy()-xy.miny() + ay;  
     
     // calculate number of orbitals and electrons.
     mNo = computeNumOfOrbitals();
@@ -428,6 +423,10 @@ void AtomicStruct::PeriodicTable(const ptable& periodicTable){
     mpt = periodicTable; 
     mNo = computeNumOfOrbitals();
     mNe = computeNumOfElectrons();
+}
+
+AtomicStruct AtomicStruct::span(uint start, uint end) const{
+    return this->operator()(maths::armadillo::span(start, end));
 }
 
 }

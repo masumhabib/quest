@@ -12,12 +12,14 @@
 
 #include "../string/stringutils.h"
 #include "../maths/geometry.hpp"
+#include "../maths/svec.h"
 #include "../atoms/AtomicStruct.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
 namespace qmicad{
+using namespace maths::spvec;
 using utils::itos;
 using boost::shared_ptr;
 using boost::make_shared;
@@ -44,6 +46,7 @@ public:
     Potential(const AtomicStruct &atoms, const string &prefix = "");
     //!< Convert atomic potential to orbital potential.
     shared_ptr<vec> toOrbPot(span s = span::all);
+    shared_ptr<vec> toOrbPot(uint start, uint end);
     //!< Calculate electrostatic potential.
     virtual void compute(){};
     //!< Convert to string for cout.

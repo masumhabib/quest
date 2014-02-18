@@ -61,32 +61,6 @@
         <itemPath>src/potential/terminal.h</itemPath>
       </logicalFolder>
       <logicalFolder name="python" displayName="python" projectFiles="true">
-        <itemPath>src/python/PyAtomicStruct.cpp</itemPath>
-        <itemPath>src/python/PyAtomicStruct.h</itemPath>
-        <itemPath>src/python/PyBandStruct.cpp</itemPath>
-        <itemPath>src/python/PyBandStruct.h</itemPath>
-        <itemPath>src/python/PyEnums.cpp</itemPath>
-        <itemPath>src/python/PyEnums.h</itemPath>
-        <itemPath>src/python/PyGeometry.cpp</itemPath>
-        <itemPath>src/python/PyGeometry.h</itemPath>
-        <itemPath>src/python/PyGrapheneKpHam.cpp</itemPath>
-        <itemPath>src/python/PyGrapheneKpHam.h</itemPath>
-        <itemPath>src/python/PyLinearPot.cpp</itemPath>
-        <itemPath>src/python/PyLinearPot.h</itemPath>
-        <itemPath>src/python/PyNegfEloop.cpp</itemPath>
-        <itemPath>src/python/PyNegfEloop.h</itemPath>
-        <itemPath>src/python/PyNegfParams.cpp</itemPath>
-        <itemPath>src/python/PyNegfParams.h</itemPath>
-        <itemPath>src/python/PySvec.cpp</itemPath>
-        <itemPath>src/python/PySvec.h</itemPath>
-        <itemPath>src/python/PyTISurfKpHam.cpp</itemPath>
-        <itemPath>src/python/PyTISurfKpHam.h</itemPath>
-        <itemPath>src/python/PyTimer.cpp</itemPath>
-        <itemPath>src/python/PyTimer.h</itemPath>
-        <itemPath>src/python/PyVecGrid.cpp</itemPath>
-        <itemPath>src/python/PyVecGrid.h</itemPath>
-        <itemPath>src/python/PyWorkers.cpp</itemPath>
-        <itemPath>src/python/PyWorkers.h</itemPath>
         <itemPath>src/python/pyqmicad.cpp</itemPath>
         <itemPath>src/python/pyqmicad.h</itemPath>
       </logicalFolder>
@@ -112,6 +86,8 @@
         <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
         <itemPath>src/utils/Exception.h</itemPath>
         <itemPath>src/utils/Printable.hpp</itemPath>
+        <itemPath>src/utils/Timer.cpp</itemPath>
+        <itemPath>src/utils/Timer.h</itemPath>
         <itemPath>src/utils/myenums.hpp</itemPath>
         <itemPath>src/utils/serialize.hpp</itemPath>
         <itemPath>src/utils/std.hpp</itemPath>
@@ -261,58 +237,6 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/python/PyAtomicStruct.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyAtomicStruct.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyBandStruct.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyBandStruct.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyEnums.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyEnums.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyGeometry.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyGeometry.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyGrapheneKpHam.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyGrapheneKpHam.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyLinearPot.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyLinearPot.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfEloop.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfParams.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PySvec.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PySvec.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyTISurfKpHam.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyTISurfKpHam.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyTimer.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyTimer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyVecGrid.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyVecGrid.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyWorkers.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyWorkers.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
@@ -342,6 +266,10 @@
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/Timer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/Timer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -480,58 +408,6 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/python/PyAtomicStruct.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyAtomicStruct.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyBandStruct.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyBandStruct.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyEnums.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyEnums.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyGeometry.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyGeometry.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyGrapheneKpHam.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyGrapheneKpHam.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyLinearPot.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyLinearPot.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfEloop.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfEloop.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfParams.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyNegfParams.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PySvec.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PySvec.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyTISurfKpHam.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyTISurfKpHam.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyTimer.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyTimer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyVecGrid.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyVecGrid.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/python/PyWorkers.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/python/PyWorkers.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
@@ -561,6 +437,10 @@
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/Timer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/Timer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>
