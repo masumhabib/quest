@@ -14,16 +14,10 @@ namespace qmicad{
 
 /* Lattice coordinate */
 
-LatticeCoordinate::LatticeCoordinate(){
-}
 
-LatticeCoordinate::LatticeCoordinate(int n1, int n2, int n3){
-        this->n1 = n1;
-        this->n2 = n2;
-        this->n3 = n3;
-}
-
-LatticeCoordinate::~LatticeCoordinate(){
+LatticeCoordinate::LatticeCoordinate(int n1, int n2, int n3, const string &prefix)
+    :Printable(" " + prefix), n1(n1), n2(n2), n3(n3)
+{
 }
 
 LatticeCoordinate operator+ (LatticeCoordinate lhs, const LatticeCoordinate& rhs){
@@ -54,28 +48,32 @@ LatticeCoordinate& LatticeCoordinate::operator-= (const LatticeCoordinate& rhs){
     return *this;
 }
 
-ostream& operator << (ostream& out, const LatticeCoordinate& lc){
+string LatticeCoordinate::toString() const{
+    stringstream out;
     
     out << "[";
     out.width(3);
-    out << lc.n1; 
+    out << n1; 
     out << ", ";
     out.width(3);
-    out << lc.n2; 
+    out << n2; 
     out << ", ";
     out.width(3);
-    out << lc.n3;
+    out << n3;
     out << "]";
 
+    return out.str();
 }
 
-/* Lattice vector */
-LatticeVector::LatticeVector() {
+/** 
+ * Lattice vector.
+ */
+LatticeVector::LatticeVector(const string &prefix):
+    Printable(" " + prefix)
+{
     zeros();
 }
 
-LatticeVector::~LatticeVector() {
-}
 
 void LatticeVector::zeros(){
     a1.zeros();
@@ -111,21 +109,27 @@ LatticeVector& LatticeVector::operator-= (const LatticeVector& rhs){
     return *this;
 }
 
-ostream& operator << (ostream& out, const LatticeVector& lv){
-        
-    out.precision(4);
-    out << " a1 = [" << std::fixed << lv.a1(coord::X) << " " 
-                     << std::fixed << lv.a1(coord::Y) << " " 
-                     << std::fixed << lv.a1(coord::Z) << "]" << endl;
-    out << " a2 = [" << std::fixed << lv.a2(coord::X) << " " 
-                     << std::fixed << lv.a2(coord::Y) << " " 
-                     << std::fixed << lv.a2(coord::Z) << "]" << endl;
-    out << " a3 = [" << std::fixed << lv.a3(coord::X) << " " 
-                     << std::fixed << lv.a3(coord::Y) << " " 
-                     << std::fixed << lv.a3(coord::Z) << "]";
-    
-    return out;
 
+svec operator*(const LatticeVector &lv, const LatticeCoordinate& lc){
+    svec sv = lv.a1*lc.n1 + lv.a2*lc.n2 + lv.a3*lc.n3;
+    return sv;
+}
+
+string LatticeVector::toString() const{
+        
+    stringstream out;
+    out.precision(4);
+    out << " a1 = [" << std::fixed << a1(coord::X) << " " 
+                     << std::fixed << a1(coord::Y) << " " 
+                     << std::fixed << a1(coord::Z) << "]" << endl;
+    out << " a2 = [" << std::fixed << a2(coord::X) << " " 
+                     << std::fixed << a2(coord::Y) << " " 
+                     << std::fixed << a2(coord::Z) << "]" << endl;
+    out << " a3 = [" << std::fixed << a3(coord::X) << " " 
+                     << std::fixed << a3(coord::Y) << " " 
+                     << std::fixed << a3(coord::Z) << "]";
+    
+    return out.str();
 }
 
 }

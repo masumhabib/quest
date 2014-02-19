@@ -25,8 +25,8 @@
         <itemPath>src/include/qmicad.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="kpoints" projectFiles="true">
-        <itemPath>src/kpoints/Kpoints.cpp</itemPath>
-        <itemPath>src/kpoints/Kpoints.h</itemPath>
+        <itemPath>src/kpoints/KPoints.cpp</itemPath>
+        <itemPath>src/kpoints/KPoints.h</itemPath>
       </logicalFolder>
       <logicalFolder name="maths" displayName="maths" projectFiles="true">
         <itemPath>src/maths/arma.hpp</itemPath>
@@ -85,6 +85,7 @@
         <itemPath>src/utils/ConsoleProgressBar.cpp</itemPath>
         <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
         <itemPath>src/utils/Exception.h</itemPath>
+        <itemPath>src/utils/NullDeleter.hpp</itemPath>
         <itemPath>src/utils/Printable.hpp</itemPath>
         <itemPath>src/utils/Timer.cpp</itemPath>
         <itemPath>src/utils/Timer.h</itemPath>
@@ -185,9 +186,9 @@
       </item>
       <item path="src/include/qmicad.hpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/kpoints/Kpoints.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/kpoints/KPoints.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/kpoints/Kpoints.h" ex="false" tool="3" flavor2="0">
+      <item path="src/kpoints/KPoints.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/arma.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -264,6 +265,8 @@
       <item path="src/utils/ConsoleProgressBar.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/NullDeleter.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -356,9 +359,9 @@
       </item>
       <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/kpoints/Kpoints.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/kpoints/KPoints.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/kpoints/Kpoints.h" ex="false" tool="3" flavor2="0">
+      <item path="src/kpoints/KPoints.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/arma.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -435,6 +438,8 @@
       <item path="src/utils/ConsoleProgressBar.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Exception.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/NullDeleter.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
       </item>

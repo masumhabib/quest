@@ -24,7 +24,7 @@ public:
         mIAmMaster = (mMasterId == mMyCpuId);
 
         stds::vout.printersId(mMasterId);
-        stds::vout.myId(mMyCpuId);
+        stds::vout.myId(mMyCpuId);        
     }    
 
     int     MyId()          const {return mMyCpuId; };

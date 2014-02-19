@@ -61,7 +61,7 @@ struct GrapheneTbParams: public HamParams{
 /** 
  * Tight binding Hamiltonian and m for graphene.
  */
-class GrapheneTbHam: public Hamiltonian<mat>{
+class GrapheneTbHam: public ham{
 // Methods
 public:
     GrapheneTbHam(const GrapheneTbParams& p){

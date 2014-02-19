@@ -234,7 +234,7 @@ public:
     int         NumOfAtoms() const { return mNa; };
     int         NumOfOrbitals() const { return mNo; };
     int         NumOfElectrons() const { return mNe; };
-    const lvec& LatticeVector() const { return mlv; };
+    lvec        LatticeVector() const { return mlv; };
     void        LatticeVector(const lvec& a) { this->mlv = a; };
     void        PeriodicTable(const ptable &periodicTable);
     double      xmin() {return min(mXyz.col(coord::X)); };

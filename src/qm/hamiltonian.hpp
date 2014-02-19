@@ -154,10 +154,10 @@ public:
 protected:    
     //!< Generate Hamiltonian between two atoms.
     virtual T genTwoAtomHam(const AtomicStruct& atomi, 
-                            const AtomicStruct& atomj) = 0;
+                            const AtomicStruct& atomj){};
     //!< Generate Overlap matrix between two atoms.
     virtual T genTwoAtomOvl(const AtomicStruct& atomi, 
-                            const AtomicStruct& atomj) = 0;
+                            const AtomicStruct& atomj){};
 
     //!< Generates the hamiltonaina and overlap matrices between atomc block
     //!< i and atomic block j. 
@@ -201,6 +201,9 @@ protected:
     field<shared_ptr<T> >  mH;        //!< Block matrices of H: H_i,j.
     field<shared_ptr<T> >  mS;        //!< Block matrices of S: S_i,j.
 };
+
+typedef Hamiltonian<cxmat>  cxham;
+typedef Hamiltonian<mat>    ham;
 
 }
 #endif	/* HAMILTONIAN_H */

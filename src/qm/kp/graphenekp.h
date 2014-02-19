@@ -82,7 +82,7 @@ protected:
  * Tight binding Hamiltonian and overlap matrix for graphene using 
  *  method k.p.
  */
-class GrapheneKpHam: public Hamiltonian<cxmat>{
+class GrapheneKpHam: public cxham{
 protected:    
 public:
     GrapheneKpHam(const GrapheneKpParams& p){

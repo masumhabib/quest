@@ -85,7 +85,7 @@ protected:
  * Tight binding Hamiltonian and overlap matrix for TI surface using 
  *  method k.p.
  */
-class TISurfKpHam: public Hamiltonian<cxmat>{
+class TISurfKpHam: public cxham{
 protected:    
 public:
     TISurfKpHam(const TISurfKpParams& p){

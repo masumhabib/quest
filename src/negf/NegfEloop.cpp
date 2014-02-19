@@ -15,7 +15,7 @@ NegfEloop::NegfEloop(const VecGrid &E, const NegfParams &np,
         ParLoop(workers, E.N()), mnp(np), 
         mTE("TE", 0, saveAscii), mE(E),
         mI1op("I1", 0, saveAscii), mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0),
-        mbar("  NEGF: ")
+        mbar("  NEGF: ",  E.N())
 {
 }
     
@@ -67,7 +67,7 @@ void NegfEloop::collect(){
 }
 
 void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
-    
+
     if(!mWorkers.IAmMaster()){    
         // slaves send their local data
         mpi::gather(mWorkers.Comm(), thisR, mWorkers.MasterId());
@@ -89,7 +89,7 @@ void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
 }
 
 void NegfEloop::save(string fileName){
-    if(mWorkers.MasterId()){
+    if(mWorkers.IAmMaster()){
         // Transmission 
         if (mTE.isEnabled()){
             mTE.save(fileName);

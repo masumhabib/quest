@@ -28,9 +28,13 @@ struct verbosity{
     friend bool operator == (const verbosity &lhs, const verbosity &rhs){
         return lhs.verb == rhs.verb;
     }
+    
+    friend bool operator >= (const verbosity &lhs, const verbosity &rhs){
+        return lhs.verb >= rhs.verb;
+    }
 
-    friend bool operator != (const verbosity &lhs, const verbosity &rhs){
-        return !operator == (lhs, rhs);
+    friend bool operator <= (const verbosity &lhs, const verbosity &rhs){
+        return !operator <= (lhs, rhs);
     }
 
     int verb;
@@ -61,7 +65,7 @@ public:
     
     template<typename T>
     vostream& operator<<(const T& v) {
-        if (mAppVerb == mCurrVerb && mPrintersId == mMyId){
+        if (mAppVerb >= mCurrVerb && mPrintersId == mMyId){
             mout << v;
         }
         return *this;
@@ -74,7 +78,11 @@ public:
 
     // For endl and such to work.
     ostream& operator<< ( ostream& (*pf)(ostream&)) {
-        return pf(this->mout);
+        if (mAppVerb >= mCurrVerb && mPrintersId == mMyId){
+            return pf(this->mout);
+        }
+        
+        return this->mout;
     };
     
     void myId(int id){

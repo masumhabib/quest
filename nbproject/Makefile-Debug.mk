@@ -38,7 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/atoms/AtomicStruct.o \
 	${OBJECTDIR}/src/atoms/Lattice.o \
 	${OBJECTDIR}/src/band/BandStruct.o \
-	${OBJECTDIR}/src/kpoints/Kpoints.o \
+	${OBJECTDIR}/src/kpoints/KPoints.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/NegfResult.o \
@@ -106,10 +106,10 @@ ${OBJECTDIR}/src/include/qmicad.hpp.gch: src/include/qmicad.hpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o "$@" src/include/qmicad.hpp
 
-${OBJECTDIR}/src/kpoints/Kpoints.o: src/kpoints/Kpoints.cpp 
+${OBJECTDIR}/src/kpoints/KPoints.o: src/kpoints/KPoints.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/kpoints
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/kpoints/Kpoints.o src/kpoints/Kpoints.cpp
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/kpoints/KPoints.o src/kpoints/KPoints.cpp
 
 ${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf

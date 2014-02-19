@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <functional>
+#include <cmath>
 
 namespace utils{
 namespace stds{
@@ -40,6 +41,8 @@ using std::vector;
 using std::list;
 using std::pair;
 using std::map;
+
+using std::abs;
 
 using std::invalid_argument;
 using std::runtime_error;

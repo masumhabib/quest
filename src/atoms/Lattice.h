@@ -11,29 +11,25 @@
 #ifndef LATTICE_H
 #define	LATTICE_H
 
-#include <iostream>
-#include <armadillo>
-#include <boost/serialization/access.hpp>
-
 #include "../maths/svec.h"
+#include "../utils/std.hpp"
 #include "../utils/serialize.hpp"
+#include "../utils/Printable.hpp"
 
 namespace qmicad{
-using std::ostream;
-using std::endl;
+using namespace utils::stds;
+using utils::Printable;
 using namespace maths::armadillo;
 using namespace maths::spvec;
 
 /* Lattice coordinates */
-struct LatticeCoordinate{
+struct LatticeCoordinate: public Printable{
     //fields
     int n1;
     int n2;
     int n3;
 
-    LatticeCoordinate();
-    virtual ~LatticeCoordinate();
-    LatticeCoordinate(int n1, int n2, int n3);
+    LatticeCoordinate(int n1 = 0, int n2 = 0, int n3 = 0, const string &prefix = "");
 
     //operators
     LatticeCoordinate& operator+= (const LatticeCoordinate& rhs);
@@ -41,19 +37,22 @@ struct LatticeCoordinate{
     LatticeCoordinate& operator-= (const LatticeCoordinate& rhs);
     friend LatticeCoordinate operator- (LatticeCoordinate lhs, const LatticeCoordinate& rhs);
     
-    friend ostream& operator << (ostream & out, const LatticeCoordinate & lc);
+    virtual string toString() const; 
 };
 
 /* Lattice vector */
-struct LatticeVector {
+struct LatticeVector: public Printable {
     // three vectors. format: a = a0 x + a1 y + a2 z
     svec a1;    // Vector 1
     svec a2;    // Vector 2
     svec a3;    // Vector 3
     
-    LatticeVector();
-    virtual ~LatticeVector();
+    LatticeVector(const string &prefix = "");
     void zeros();
+    
+    double la1(){return sqrt(sum(square(a1))); }
+    double la2(){return sqrt(sum(square(a2))); }
+    double la3(){return sqrt(sum(square(a3))); }
     
     //operators
     LatticeVector& operator+= (const LatticeVector& rhs);
@@ -61,7 +60,9 @@ struct LatticeVector {
     LatticeVector& operator-= (const LatticeVector& rhs);
     friend LatticeVector operator- (LatticeVector lhs, const LatticeVector& rhs);    
     
-    friend ostream& operator << (ostream & out, const LatticeVector& lv);
+    friend svec operator* (const LatticeVector &lv, const LatticeCoordinate& lc);    
+    
+    virtual string toString() const; 
     
     // For MPI send/receive
     private:

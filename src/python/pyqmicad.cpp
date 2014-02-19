@@ -52,6 +52,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sx, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sy, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sz, enableI1, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxham_H, H, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxham_S, S, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
 {
     using namespace boost::python;
@@ -84,6 +86,7 @@ BOOST_PYTHON_MODULE(qmicad)
     class_<vec, shared_ptr<vec> >("vecp", no_init)
     ;
 
+    
     class_<Printable, shared_ptr<Printable> >("Printable", 
             init<optional<const string&> >())
         .def(self_ns::str(self_ns::self))
@@ -92,12 +95,42 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * Spatial vector/position vector.
      */
-    class_<PyVec, shared_ptr<PyVec> >("svec", 
+    class_<svec, shared_ptr<svec> >("svec")
+    ;
+
+    /**
+     * Position vector. Just a wrapper of svec.
+     */
+    class_<PyVec, bases<svec>, shared_ptr<PyVec> >("pvec", 
             init<optional<double, double, double> >())
+        .def(init<const svec&>())    
         .add_property("X", &PyVec::getx, &PyVec::setx)
         .add_property("Y", &PyVec::gety, &PyVec::sety)
         .add_property("Z", &PyVec::getz, &PyVec::setz)
     ;
+    
+    /**
+     * Lattice vector.
+     */
+    class_<lvec, bases<Printable>, shared_ptr<lvec> >("lvec", 
+            init<optional<const string&> >())
+        .def_readwrite("a1", &lvec::a1)
+        .def_readwrite("a2", &lvec::a2)
+        .def_readwrite("a3", &lvec::a3)
+        .def("la1", &lvec::la1)
+        .def("la2", &lvec::la2)
+        .def("la3", &lvec::la3)
+    ;
+    /**
+     * Lattice coordinate.
+     */
+    class_<lcoord, bases<Printable>, shared_ptr<lcoord> >("lcoord", 
+            init<int, int, int, optional<const string&> >())
+        .def_readwrite("n1", &lcoord::n1)
+        .def_readwrite("n2", &lcoord::n2)
+        .def_readwrite("n3", &lcoord::n3)
+    ;
+    
     
     /**
      * MPI communicator wrapper.
@@ -156,6 +189,7 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * Atomistic geometry of the device.
      */
+    lvec (AtomicStruct::*AtomicStruct_LatticeVector1)() const = &AtomicStruct::LatticeVector;
     class_<AtomicStruct, bases<Printable>, shared_ptr<AtomicStruct> >("AtomicStruct", 
             init<const string&>())
         .def(init<const string&, const PeriodicTable>())
@@ -166,7 +200,10 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("ymax", &AtomicStruct::ymax)
         .def("ymin", &AtomicStruct::ymin)    
         .def("zmax", &AtomicStruct::zmax)
-        .def("zmin", &AtomicStruct::zmin)    
+        .def("zmin", &AtomicStruct::zmin) 
+        .def("LatticeVector", AtomicStruct_LatticeVector1) 
+        .def("NumOfElectrons", &AtomicStruct::NumOfElectrons) 
+        .def(self + svec())
     ;
     
     /**
@@ -174,6 +211,27 @@ BOOST_PYTHON_MODULE(qmicad)
      */
     class_<HamParams, bases<Printable>, shared_ptr<HamParams> >("HamParams", 
             init<const string&>())
+    ;
+    
+    /**
+     * Hamiltonian base.
+     */
+    void (cxham::*cxham_generate1)(const AtomicStruct&, 
+            const AtomicStruct&, uint, uint) = &cxham::generate;
+    class_<cxham, shared_ptr<cxham > >("Hamiltonian", no_init)
+        .def("setSize", &cxham::setSize)
+        .def("setSizeForNegf", &cxham::setSizeForNegf)
+        .def("setSizeForBand", &cxham::setSizeForBand)
+        .def("H0", &cxham::H0)
+        .def("Hl", &cxham::Hl)
+        .def("H", &cxham::H, cxham_H())  
+        .def("Sl", &cxham::Sl)
+        .def("S0", &cxham::S0)
+        .def("S", &cxham::S, cxham_S())  
+        .def("genDiagBlock", &cxham::genDiagBlock)
+        .def("genLowDiagBlock", &cxham::genLowDiagBlock)
+        .def("genNearestNeigh", &cxham::genNearestNeigh)
+        .def("generate", cxham_generate1)
     ;
     
     /**
@@ -191,23 +249,8 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * Graphene Hamiltonian.
      */
-    void (GrapheneKpHam::*GrapheneKpHam_generate1)(const AtomicStruct&, 
-            const AtomicStruct&, uint, uint) = &GrapheneKpHam::generate;
-    class_<GrapheneKpHam, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
+    class_<GrapheneKpHam, bases<cxham >, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
             init<const GrapheneKpParams& >())
-        .def("setSize", &GrapheneKpHam::setSize)
-        .def("setSizeForNegf", &GrapheneKpHam::setSizeForNegf)
-        .def("setSizeForBand", &GrapheneKpHam::setSizeForBand)
-        .def("H0", &GrapheneKpHam::H0)
-        .def("Hl", &GrapheneKpHam::Hl)
-        .def("H", &GrapheneKpHam::H)  
-        .def("Sl", &GrapheneKpHam::Sl)
-        .def("S0", &GrapheneKpHam::S0)
-        .def("S", &GrapheneKpHam::S)  
-        .def("genDiagBlock", &GrapheneKpHam::genDiagBlock)
-        .def("genLowDiagBlock", &GrapheneKpHam::genLowDiagBlock)
-        .def("genNearestNeigh", &GrapheneKpHam::genNearestNeigh)
-        .def("generate", GrapheneKpHam_generate1)
     ;
     
     /**
@@ -226,23 +269,8 @@ BOOST_PYTHON_MODULE(qmicad)
     /**
      * TI Surface Hamiltonian.
      */
-    void (TISurfKpHam::*TISurfKpHam_generate1)(const AtomicStruct&, 
-            const AtomicStruct&, uint, uint) = &TISurfKpHam::generate;    
-    class_<TISurfKpHam, shared_ptr<TISurfKpHam> >("TISurfKpHam",
+    class_<TISurfKpHam, bases<cxham>, shared_ptr<TISurfKpHam> >("TISurfKpHam",
             init<const TISurfKpParams& >())
-        .def("setSize", &TISurfKpHam::setSize)
-        .def("setSizeForNegf", &TISurfKpHam::setSizeForNegf)
-        .def("setSizeForBand", &TISurfKpHam::setSizeForBand)
-        .def("H0", &TISurfKpHam::H0)
-        .def("Hl", &TISurfKpHam::Hl)
-        .def("H", &TISurfKpHam::H)  
-        .def("Sl", &TISurfKpHam::Sl)
-        .def("S0", &TISurfKpHam::S0)
-        .def("S", &TISurfKpHam::S)  
-        .def("genDiagBlock", &TISurfKpHam::genDiagBlock)
-        .def("genLowDiagBlock", &TISurfKpHam::genLowDiagBlock)
-        .def("genNearestNeigh", &TISurfKpHam::genNearestNeigh)
-        .def("generate", TISurfKpHam_generate1)
     ;
     
     /**
@@ -325,10 +353,32 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("enableI1sz", &NegfEloop::enableTE, NegfEloop_enableI1sz())
     ;
 
-//    class_<BandStruct, shared_ptr<BandStruct>, noncopyable>("BandStruct",
-//            init<shared_ptr<mat>, const BandStructParams, 
-//            const Workers&>()) 
-//    ;
+    class_<KPoints, bases<Printable>, shared_ptr<KPoints>, noncopyable>("KPoints",
+            init<optional<const string&> >()) 
+        .def("addKPoint", &KPoints::addKPoint)
+        .def("addKLine", &KPoints::addKLine)
+        .def("addKRect", &KPoints::addKRect)
+        .def("kp", &KPoints::kp)
+        .def("N", &KPoints::N)
+    ;
+
+    class_<BandStructParams, bases<Printable>, shared_ptr<BandStructParams>, noncopyable>("BandStructParams",
+        init<uint, optional<const string&> >()) 
+        .def("H", &BandStructParams::setH)
+        .def("S", &BandStructParams::setS)
+        .def("lc", &BandStructParams::setLattCoord)
+        .def_readwrite("nb", &BandStructParams::nb)
+        .def_readwrite("ne", &BandStructParams::ne)
+        .def_readwrite("lv", &BandStructParams::lv)
+        .def_readwrite("isOrthogonal", &BandStructParams::isOrthogonal)
+    ;
+
+    class_<BandStruct, shared_ptr<BandStruct>, noncopyable>("BandStruct",
+            init<shared_ptr<mat>, const BandStructParams, 
+            const Workers&>())
+        .def("run", &BandStruct::run)
+        .def("save", &BandStruct::save)
+    ;
     
 }
 

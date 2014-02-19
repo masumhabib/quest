@@ -35,6 +35,7 @@ namespace qmicad{
 #include "../utils/ConsoleProgressBar.h"
 #include "../utils/Exception.h"
 #include "../utils/Timer.h"
+#include "../utils/NullDeleter.hpp"
 
 #include "../string/stringutils.h"
 
@@ -51,6 +52,8 @@ namespace qmicad{
 
 #include "../parallel/parloop.h"
 #include "../parallel/Workers.h"
+
+#include "../kpoints/KPoints.h"
 
 #include "../qm/hamiltonian.hpp"
 #include "../qm/tb/graphenetb.h"
