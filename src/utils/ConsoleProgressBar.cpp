@@ -14,67 +14,25 @@ ConsoleProgressBar::ConsoleProgressBar(string prefix, unsigned long expectedCoun
     unsigned long count, bool livePercent):
     mExpectedCount(expectedCount),
     mCount(count < expectedCount ? count:expectedCount),
-    mPrefix(prefix), mLivePercent(livePercent)
+    mPrefix(prefix)
 {
     mSuffix = "%";
     mSpace = ' ';
     mDot   = '=';
     mEnds  = '|';
-
-    mnDots = convertCountToDots();
-}
-
-ConsoleProgressBar::~ConsoleProgressBar() {
-}
-
-void ConsoleProgressBar::draw(){
-    // Updates live progress percentage.
-    if(mLivePercent){
-        string bar;
-        stringstream ssbar;
-
-        bar.insert(bar.length(), mnDots, mDot);
-        bar.insert(bar.length(), mnTotalDots - mnDots, mSpace);
-
-        ssbar << mPrefix << "[";
-        ssbar.width(3);
-        ssbar << int(mnDots*mPercentPerDot);
-        ssbar << mSuffix;
-        ssbar << "] " << mEnds;
-        ssbar << bar << mEnds;
-
-        vout << ssbar.str() << endl;
-        vout << "\033[F";
-    // Does not show the live progress percentage.
-    }else{
-        if (mnDots == 0){
-            vout << vnormal << mPrefix << mEnds;
-        }else if(mnDots == mnTotalDots){
-            vout << vnormal << mEnds;
-        }else{
-            vout << vnormal << mDot;
-        }
-        
-        
-    }
 }
 
 void ConsoleProgressBar::step(unsigned long count){
     
     mCount += count;
-    if(mCount > mExpectedCount){
-        mCount = mExpectedCount;
-    }
-    
-    unsigned int newDots = convertCountToDots();
-    if (newDots > mnDots){
-        mnDots = newDots;
-        draw();
+    int nDots = (mCount*mnTotalDots)/mExpectedCount;
+    if(nDots >= 1){
+        int tmp = vout.myId();
+        vout.myId(0);
+        vout << vnormal << mDot;
+        vout.myId(tmp);
+        mCount = 0;
     }    
-}
-
-unsigned long ConsoleProgressBar::convertCountToDots(){
-    return (mCount*mnTotalDots)/mExpectedCount;
 }
 
 ConsoleProgressBar& ConsoleProgressBar::operator+= (unsigned long newCount){
@@ -101,11 +59,11 @@ ConsoleProgressBar ConsoleProgressBar::operator++(int){
 }
 
 void ConsoleProgressBar::complete(){
-    step(mExpectedCount - mCount);
+    vout << vnormal << mEnds;
 }
 
 void ConsoleProgressBar::start(){
-    draw();
+    vout << vnormal << mPrefix << mEnds;
 }
 
 }

@@ -20,10 +20,7 @@ using namespace stds;
 class ConsoleProgressBar {
 protected:
     static const unsigned int mnTotalDots       = 60;
-    static const float        mPercentPerDot    = 100.0/mnTotalDots;
     
-    bool            mLivePercent;
-    unsigned int    mnDots;
     unsigned long   mCount;
     unsigned long   mExpectedCount;
     
@@ -38,8 +35,6 @@ public:
     ConsoleProgressBar(string prefix = "", unsigned long expectedCount = 100,
                        unsigned long count = 0, bool livePercent = false);
     
-    virtual ~ConsoleProgressBar();
-    
     ConsoleProgressBar& operator+= (unsigned long newCount);
     friend ConsoleProgressBar operator+ (ConsoleProgressBar lhs, unsigned long newCount);
     ConsoleProgressBar& operator++();
@@ -50,8 +45,6 @@ public:
     
        
 protected:
-    inline unsigned long convertCountToDots();
-    virtual void draw();
     virtual void step(unsigned long count);
 private:
 

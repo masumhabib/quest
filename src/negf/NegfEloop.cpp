@@ -14,13 +14,15 @@ NegfEloop::NegfEloop(const VecGrid &E, const NegfParams &np,
         const Workers &workers, bool saveAscii):
         ParLoop(workers, E.N()), mnp(np), 
         mTE("TE", 0, saveAscii), mE(E),
-        mI1op("I1", 0, saveAscii), mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0),
+        mI1op("I1", 0, saveAscii), 
+        mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0),
         mbar("  NEGF: ",  E.N())
 {
 }
     
 
 void NegfEloop::prepare() {
+    mWorkers.Comm().barrier();
     mbar.start();
 }
 
@@ -50,6 +52,9 @@ void NegfEloop::postCompute(int il){
 }
 
 void NegfEloop::collect(){
+    // Update the progress bar.
+    mWorkers.Comm().barrier();
+    mbar.complete();
     
     // Transmission
     if(mTE.isEnabled()){
@@ -60,10 +65,6 @@ void NegfEloop::collect(){
     if(mI1op.isEnabled()){
         gather(mThisI1op, mI1op);
     }
-
-    // Update the progress bar.
-    mbar.complete();
-    
 }
 
 void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
@@ -101,7 +102,7 @@ void NegfEloop::save(string fileName){
             NegfResultList  I1sx("I1sx", mI1sxN, mI1op.saveAscii);
             NegfResultList  I1sy("I1sy", mI1syN, mI1op.saveAscii);
             NegfResultList  I1sz("I1sz", mI1szN, mI1op.saveAscii);
-            
+                        
             list<negfresult> &R = mI1op.R;
             list<negfresult>::iterator it;
             for (it = R.begin(); it != R.end(); ++it){

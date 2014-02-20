@@ -44,10 +44,10 @@ struct verbosity{
 /**
  * Static verbosity levels.
  */
-static const verbosity  vquiet(0);
-static const verbosity  vnormal(1);
-static const verbosity  vdebug(10);
-static const verbosity  vdump(100);
+extern const verbosity  vquiet;
+extern const verbosity  vnormal;
+extern const verbosity  vdebug;
+extern const verbosity  vdump;
 
 
 /*
@@ -60,7 +60,6 @@ public:
     {
         mMyId = 0;
         mPrintersId = 0;
-        
     };
     
     template<typename T>
@@ -85,21 +84,11 @@ public:
         return this->mout;
     };
     
-    void myId(int id){
-        mMyId = id;
-    }
+    void myId(int id){ mMyId = id; };
+    int  myId() const { return mMyId; };
+    void printersId(int id){ mPrintersId = id; };
+    void appVerbosity(const verbosity &verb){ mAppVerb = verb; };
     
-    void printersId(int id){
-        mPrintersId = id;
-    }
-    
-    void appVerbosity(const verbosity &verb){
-        mAppVerb = verb;
-    }
-    
-protected:
-    virtual void prefix(){};
-
 protected:
     ostream                   &mout;
     verbosity                 mAppVerb;         //!< Verbosity level of this program.
@@ -108,10 +97,10 @@ protected:
     int                       mPrintersId;      //!< ID of the printer process.
 };
 
-static vostream         dout(cerr);
-static vostream         vout(cout);
+extern vostream         dout;
+extern vostream         vout;
 
-static const string     dbg = "  DBG: ";
+extern const string     dbg;
 
 }
 }

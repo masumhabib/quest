@@ -70,17 +70,5 @@ namespace qmicad{
 
 #include "../band/BandStruct.h"
 
-//#include "../python/PyWorkers.h"
-//#include "../python/PyGrapheneKpHam.h"
-//#include "../python/PyTISurfKpHam.h"
-//#include "../python/PyNegfParams.h"
-//#include "../python/PyLinearPot.h"
-//#include "../python/PyTimer.h"
-//#include "../python/PyVecGrid.h"
-//#include "../python/PyNegfEloop.h"
-//#include "../python/PyGeometry.h"
-//#include "../python/PyEnums.h"
-//#include "../python/PyBandStruct.h"
-
 
 #endif /* QMICAD_HPP */

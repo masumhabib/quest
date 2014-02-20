@@ -79,8 +79,8 @@ cxmat CohRgfa::I1Op(uint traceOverN){
     // Current operator
     I1op = Gn11*trans(Sigl11) - Sigl11*Gn11 
           +G11*Gaml11*mf0 - Gaml11*trans(G11)*mf0;
-    
-    return trace<cxmat>(I1op, traceOverN);
+
+    return trace<cxmat>(i*I1op, traceOverN);    
 }
 
 /*

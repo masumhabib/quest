@@ -23,7 +23,7 @@ public:
         mNcpu = mWorkers.size();
         mIAmMaster = (mMasterId == mMyCpuId);
 
-        stds::vout.printersId(mMasterId);
+        stds::vout.printersId(mMasterId);        
         stds::vout.myId(mMyCpuId);        
     }    
 

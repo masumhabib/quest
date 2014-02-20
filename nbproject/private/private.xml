@@ -7,16 +7,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/pyqmicad.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyBandStruct.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/parallel/Workers.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/band/BandStruct.cpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyBandStruct.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/parallel/Workers.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/band/BandStruct.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/include/qmicad.hpp</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyAtomicStruct.h</file>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/PyWorkers.h</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/utils/vout.h</file>
         </group>
     </open-files>
 </project-private>

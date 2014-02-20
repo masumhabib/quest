@@ -24,6 +24,7 @@
 #include <boost/geometry/geometries/ring.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/index/rtree.hpp>
+#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -42,6 +43,7 @@ typedef bg::model::box<point> box;
 typedef bg::model::ring<point> ring;
 typedef bg::model::polygon<point, false, false> polygon; // ccw, open polygon
 typedef polygon::ring_type polyring;
+typedef bg::strategy::within::franklin<point, point, double> stwithin;
 
 /*
  * Quadrilateral for python guys

@@ -42,7 +42,7 @@ string Terminal::toString() const {
 
 bool Terminal::contains(double x, double y){
     point p(x,y);
-    return bg::within(p, geom);
+    return bg::within(p, geom, stwithin());
 }
 
 /*

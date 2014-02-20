@@ -7,4 +7,22 @@
 
 #include "vout.h"
 
+namespace utils{
+namespace stds{
 
+/**
+ * Global variables.
+ */
+
+const verbosity  vquiet(0);
+const verbosity  vnormal(1);
+const verbosity  vdebug(10);
+const verbosity  vdump(100);
+
+vostream         dout(cerr);
+vostream         vout(cout);
+
+const string     dbg = "  DBG: ";
+
+}
+}
