@@ -25,7 +25,8 @@ struct GrapheneKpParams: public HamParams{
     double ax;           // discretization length in x direction
     double ay;           // discretization length in y direction
     double gamma;        // h_bar*v_F for graphene
-    double K;            // parameter to avoid fermion doubling
+    double Rx;           // parameter to avoid fermion doubling
+    double Ry;           // parameter to avoid fermion doubling
 
     //!< tight binding parameters
     cxmat22 I;
@@ -45,7 +46,7 @@ struct GrapheneKpParams: public HamParams{
     // k.p model. Call it after changing any of the k.p parameters.
     virtual void update(){
         if(!(is_finite(dtol) && is_finite(gamma) && is_finite(ax) 
-                && is_finite(ay) && is_finite(K))){
+                && is_finite(ay) && is_finite(Rx) && is_finite(Ry))){
             throw runtime_error("TISufrParams: invalid TI parameters.");    
         }
 
@@ -58,7 +59,8 @@ struct GrapheneKpParams: public HamParams{
         ss << mPrefix << " dtol = " << dtol << endl;
         ss << mPrefix << " ax = " << ax << endl;
         ss << mPrefix << " ay = " << ay << endl;
-        ss << mPrefix << " K = " << K << endl;
+        ss << mPrefix << " Rx = " << Rx << endl;
+        ss << mPrefix << " Ry = " << Rx << endl;
         ss << mPrefix << " gamma = " << gamma << endl;
         ss << mPrefix << " eps: " << endl << eps << endl;
         ss << mPrefix << " t01x: " << endl << t01x << endl;
@@ -69,10 +71,10 @@ struct GrapheneKpParams: public HamParams{
     
 protected:
     void computeTBParams(){
-        eps = (K*gamma/ax + K*gamma/ay)*sz();
-        t01x = (gamma/(2*ax))*sx()*i - (K*gamma/(2*ax))*sz();
+        eps = -2*gamma*(Rx/(ax*ax) + Ry/(ay*ay))*sz();
+        t01x = (gamma/(2*ax))*sx()*i + (Rx*gamma/(ax*ax))*sz();
         t10x = trans(t01x);
-        t01y = (gamma/(2*ay))*sy()*i - (K*gamma/(2*ay))*sz();
+        t01y = (gamma/(2*ay))*sy()*i + (Ry*gamma/(ay*ay))*sz();
         t10y = trans(t01y);
     };
 

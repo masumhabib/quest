@@ -40,16 +40,13 @@ void BandStruct::compute(int il){
     // loop over half the nearest neighbors
     for (int ih = 0; ih < mp.H.n_elem; ++ih){
         lcoord lc = mp.lc(ih);
-        dout << endl << dbg << " lc " << lc << endl;
         
         if (lc.n1 == 0 && lc.n2 == 0 && lc.n3 ==0){
             Hk += *mp.H(ih);
         }else{
             double th = dot(k, mp.lv*lc);    // th = k.*(R*n)
-            Hk += (*mp.H(ih))*exp(th) + trans(*mp.H(ih))*exp(-th);
-        }
-        
-        dout << endl << dbg << " sum = " << sum(sum(Hk - trans(Hk))) << endl;
+            Hk += (*mp.H(ih))*exp(i*th) + trans(*mp.H(ih))*exp(-i*th);
+        } 
     }
     
     if (mCalcEigV){

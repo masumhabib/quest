@@ -26,7 +26,8 @@ struct TISurfKpParams: public HamParams{
     double ay;           // discretization length in y direction
     double C;            // C parameter, see Rev. Mod. Phys. 83, 1057 (2011)
     double A2;           // A2 parameter, see Rev. Mod. Phys. 83, 1057 (2011)
-    double K;            // parameter to avoid fermion doubling
+    double Rx;           // parameter to avoid fermion doubling
+    double Ry;           // parameter to avoid fermion doubling
     
     //!< tight binding parameters
     cxmat22 I;
@@ -47,7 +48,7 @@ struct TISurfKpParams: public HamParams{
     virtual void update(){
         
         if(!(is_finite(dtol) && is_finite(C) && is_finite(A2) && is_finite(ax)
-                && is_finite(ay) && is_finite(K))){
+                && is_finite(ay) && is_finite(Rx) && is_finite(Ry))){
             throw runtime_error("TISufrParams: invalid TI parameters.");
             
         }
@@ -59,7 +60,8 @@ struct TISurfKpParams: public HamParams{
         stringstream ss;
         ss << mPrefix << " dtol = " << dtol << endl;
         ss << mPrefix << " ax = " << ax << ", ay = " << ay << endl;
-        ss << mPrefix << " K = " << K << endl;
+        ss << mPrefix << " Rx = " << Rx << endl;
+        ss << mPrefix << " Ry = " << Ry << endl;
         ss << mPrefix << " C = " << C << " A2 = " << A2 << endl;
         ss << mPrefix << " eps = " << endl << eps << endl;
         ss << mPrefix << " t01x " << endl << t01x << endl;
@@ -72,10 +74,10 @@ struct TISurfKpParams: public HamParams{
         
 protected:
     void computeTBParams(){
-        eps = C*I + (K*A2/ax + K*A2/ay)*sz();
-        t01x =  (A2/(2*ax))*sy()*i - (K*A2/(2*ax))*sz();
+        eps = C*I - 2*A2*(Rx/(ax*ax) + Ry/(ay*ay))*sz();
+        t01x =  (A2/(2*ax))*sy()*i + (Rx*A2/(ax*ax))*sz();
         t10x = trans(t01x);
-        t01y = (-A2/(2*ay))*sx()*i - (K*A2/(2*ay))*sz();
+        t01y = (-A2/(2*ay))*sx()*i + (Ry*A2/(ay*ay))*sz();
         t10y = trans(t01y);
     };
 
