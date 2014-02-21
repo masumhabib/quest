@@ -14,13 +14,38 @@ BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp,
         mSaveAscii(saveAscii), mp(bp), mk(pk) , mbar("  NEGF: ",  pk->n_rows),
         mCalcEigV(false)
 {    
+    
     mlb = mp.ne/2 - mp.nb/2;     // lowest band to calculate
-    mub = mp.ne/2 + mp.nb/2-1;   // highest band to calculate    
+    mub = mp.ne/2 + mp.nb/2-1;   // highest band to calculate  
+
+    if (mub < mlb){
+        mub = mlb;
+    }
+    
+    if (mlb < 0){
+        mlb = 0;
+    }
+    
+    if (mub > mp.no){
+        mub = mp.no;
+    }
 }
 
 void BandStruct::prepare(){
     
+    //Runtime checks.
+    if (mp.no != mp.H(0)->n_rows){
+        stringstream out;
+        out << "Size of Hamiltonian matrix does not match with number "
+            << "of orbitals: no = " << mp.no << " size(H) = " << mp.H(0)->n_rows
+            << "x" << mp.H(0)->n_cols << "";
+        throw runtime_error(out.str());
+    }
+        
+    // Setup
     mThisE.set_size(mMyN, mk->n_cols + mp.nb);     // Eigen energy: (# of kpoints)  x  (# of bands + size of k vector).
+    
+    mWorkers.Comm().barrier();
     mbar.start();
 }
 
@@ -34,7 +59,7 @@ void BandStruct::postCompute(int il){
 
 void BandStruct::compute(int il){
     
-    uint    N = mp.H(0)->n_rows;
+    uint    N = mp.no;
     cxmat   Hk(N, N, fill::zeros);
     row k = mk->row(il);
     // loop over half the nearest neighbors
@@ -59,6 +84,7 @@ void BandStruct::compute(int il){
 }
 
 void BandStruct::collect(){
+    mWorkers.Comm().barrier();
     mbar.complete();
     
     if (mCalcEigV){

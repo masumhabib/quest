@@ -56,6 +56,7 @@ struct BandStructParams: public Printable{
                                 //!< H(0) is the cell # 0.
     field<lcoord>   lc;         //!< Position vectors of neighbors.
     uint            nb;         //!< Number of bands to be saved.
+    uint            no;         //!< Number of orbitals.
     uint            ne;         //!< Number of electrons in the super cell.
     uint            nn;         //!< Number of neighbors
     lvec            lv;         //!< Lattice vector.
