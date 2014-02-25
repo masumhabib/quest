@@ -12,14 +12,14 @@
 namespace qmicad{
 using namespace maths::armadillo;
 
-mat GrapheneTbHam::genTwoAtomHam(const AtomicStruct& atomi, 
+cxmat GrapheneTbHam::genTwoAtomHam(const AtomicStruct& atomi, 
         const AtomicStruct& atomj)
 {
-    float d, dx, dy, dz;
+    double d, dx, dy, dz;
     int noi = atomi.NumOfOrbitals();
     int noj = atomj.NumOfOrbitals();
 
-    mat hmat =  zeros<mat>(noi, noj);
+    cxmat hmat =  zeros<cxmat>(noi, noj);
     shared_ptr<GrapheneTbParams> p = static_pointer_cast<GrapheneTbParams>(mhp);
 
     // calculate distance between atom i and atom j
@@ -55,16 +55,18 @@ mat GrapheneTbHam::genTwoAtomHam(const AtomicStruct& atomi,
             hmat(0,0) = -p->to0*exp(-(d - p->do0)/p->lmdz)*exp(-pow(dxy/p->lmdxy, p->alpha));
         }
     }
+    
+    return hmat;
 };
 
-mat GrapheneTbHam::genTwoAtomOvl(const AtomicStruct& atomi, 
+cxmat GrapheneTbHam::genTwoAtomOvl(const AtomicStruct& atomi, 
         const AtomicStruct& atomj)
 {
     float d, dx, dy, dz;
     int noi = atomi.NumOfOrbitals();
     int noj = atomj.NumOfOrbitals();
 
-    mat smat =  zeros<mat>(noi, noj);
+    cxmat smat =  zeros<cxmat>(noi, noj);
     shared_ptr<GrapheneTbParams> p = static_pointer_cast<GrapheneTbParams>(mhp);
 
     // calculate distance between atom i and atom j
@@ -80,9 +82,10 @@ mat GrapheneTbHam::genTwoAtomOvl(const AtomicStruct& atomi,
         dz = abs(dz); // inter-plane distance
         // site energy
         if (d <= p->dtol){ 
-            smat = eye(noi, noj);
+            smat = eye<cxmat>(noi, noj);
         }
     }
+    
     return smat;
 };
 

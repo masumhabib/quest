@@ -83,6 +83,8 @@ cxmat CohRgfa::I1Op(uint traceOverN){
     return trace<cxmat>(i*I1op, traceOverN);    
 }
 
+
+
 /*
  * The Giim1 class members to compute:
  * G_i,i-1 = grc_i,i*T_i,i-1*G_i-1,i-1

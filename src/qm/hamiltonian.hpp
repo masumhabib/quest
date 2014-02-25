@@ -18,11 +18,12 @@
 #include <armadillo>
 
 #include "../atoms/AtomicStruct.h"
+#include "../utils/vout.h"
 
 namespace qmicad{
 using boost::shared_ptr;
 using boost::make_shared;
-
+using namespace utils::stds;
 struct HamParams: public Printable{
     // Parameters required for all Hamiltonin
     double dtol;         // distance tolerance    

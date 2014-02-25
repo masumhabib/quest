@@ -52,6 +52,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1, enableI1, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sx, enableI1sx, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sy, enableI1sy, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI1sz, enableI1sz, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ham_H, H, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ham_S, S, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxham_H, H, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxham_S, S, 1, 2)
 BOOST_PYTHON_MODULE(qmicad)
@@ -215,14 +217,37 @@ BOOST_PYTHON_MODULE(qmicad)
      */
     class_<HamParams, bases<Printable>, shared_ptr<HamParams> >("HamParams", 
             init<const string&>())
+        .def_readwrite("dtol", &HamParams::dtol)
+        .def("update", &HamParams::update)
+    ;
+
+    /**
+     * Real Hamiltonian base.
+     */
+    void (ham::*ham_generate1)(const AtomicStruct&, 
+            const AtomicStruct&, uint, uint) = &ham::generate;
+    class_<ham, shared_ptr<ham > >("Hamiltonian", no_init)
+        .def("setSize", &ham::setSize)
+        .def("setSizeForNegf", &ham::setSizeForNegf)
+        .def("setSizeForBand", &ham::setSizeForBand)
+        .def("H0", &ham::H0)
+        .def("Hl", &ham::Hl)
+        .def("H", &ham::H, ham_H())  
+        .def("Sl", &ham::Sl)
+        .def("S0", &ham::S0)
+        .def("S", &ham::S, ham_S())  
+        .def("genDiagBlock", &ham::genDiagBlock)
+        .def("genLowDiagBlock", &ham::genLowDiagBlock)
+        .def("genNearestNeigh", &ham::genNearestNeigh)
+        .def("generate", ham_generate1)
     ;
     
     /**
-     * Hamiltonian base.
+     * Complex Hamiltonian base.
      */
     void (cxham::*cxham_generate1)(const AtomicStruct&, 
             const AtomicStruct&, uint, uint) = &cxham::generate;
-    class_<cxham, shared_ptr<cxham > >("Hamiltonian", no_init)
+    class_<cxham, shared_ptr<cxham > >("CxHamiltonian", no_init)
         .def("setSize", &cxham::setSize)
         .def("setSizeForNegf", &cxham::setSizeForNegf)
         .def("setSizeForBand", &cxham::setSizeForBand)
@@ -237,48 +262,7 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("genNearestNeigh", &cxham::genNearestNeigh)
         .def("generate", cxham_generate1)
     ;
-    
-    /**
-     * Graphene k.p parameters.
-     */
-    class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
-        .def_readwrite("dtol", &GrapheneKpParams::dtol)
-        .def_readwrite("ax", &GrapheneKpParams::ax)
-        .def_readwrite("ay", &GrapheneKpParams::ay)
-        .def_readwrite("Rx", &GrapheneKpParams::Rx)   
-        .def_readwrite("Ry", &GrapheneKpParams::Ry)   
-        .def_readwrite("gamma", &GrapheneKpParams::gamma)
-        .def("update", &GrapheneKpParams::update)
-    ;
-
-    /**
-     * Graphene Hamiltonian.
-     */
-    class_<GrapheneKpHam, bases<cxham >, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
-            init<const GrapheneKpParams& >())
-    ;
-    
-    /**
-     * TI Surface k.p parameters.
-     */
-    class_<TISurfKpParams, bases<HamParams>, shared_ptr<TISurfKpParams> >("TISurfKpParams")
-        .def_readwrite("dtol", &TISurfKpParams::dtol)
-        .def_readwrite("ax", &TISurfKpParams::ax)
-        .def_readwrite("ay", &TISurfKpParams::ay)
-        .def_readwrite("Rx", &TISurfKpParams::Rx)   
-        .def_readwrite("Ry", &TISurfKpParams::Ry)   
-        .def_readwrite("A2", &TISurfKpParams::A2)
-        .def_readwrite("C", &TISurfKpParams::C)
-        .def("update", &TISurfKpParams::update)
-    ;
-
-    /**
-     * TI Surface Hamiltonian.
-     */
-    class_<TISurfKpHam, bases<cxham>, shared_ptr<TISurfKpHam> >("TISurfKpHam",
-            init<const TISurfKpParams& >())
-    ;
-    
+        
     /**
      * Linear potential
      */  
@@ -386,6 +370,66 @@ BOOST_PYTHON_MODULE(qmicad)
         .def("run", &BandStruct::run)
         .def("save", &BandStruct::save)
     ;
+    
+    /**
+     * Graphene TB parameters.
+     */
+    class_<GrapheneTbParams, bases<HamParams>, shared_ptr<GrapheneTbParams> >("GrapheneTbParams")
+        .def_readwrite("ec", &GrapheneTbParams::ec)
+        .def_readwrite("di0", &GrapheneTbParams::di0)
+        .def_readwrite("ti0", &GrapheneTbParams::ti0)   
+        .def_readwrite("do0", &GrapheneTbParams::do0)   
+        .def_readwrite("to0", &GrapheneTbParams::to0)
+        .def_readwrite("lmdz", &GrapheneTbParams::lmdz)
+        .def_readwrite("lmdxy", &GrapheneTbParams::lmdxy)
+        .def_readwrite("alpha", &GrapheneTbParams::alpha)    
+        .def_readwrite("doX", &GrapheneTbParams::doX)   
+    ;
+
+    /**
+     * Graphene TB Hamiltonian.
+     */
+    class_<GrapheneTbHam, bases<cxham>, shared_ptr<GrapheneTbHam> >("GrapheneTbHam",
+            init<const GrapheneTbParams& >())
+    ;
+    
+    /**
+     * Graphene k.p parameters.
+     */
+    class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
+        .def_readwrite("ax", &GrapheneKpParams::ax)
+        .def_readwrite("ay", &GrapheneKpParams::ay)
+        .def_readwrite("Rx", &GrapheneKpParams::Rx)   
+        .def_readwrite("Ry", &GrapheneKpParams::Ry)   
+        .def_readwrite("gamma", &GrapheneKpParams::gamma)
+    ;
+
+    /**
+     * Graphene k.p Hamiltonian.
+     */
+    class_<GrapheneKpHam, bases<cxham >, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
+            init<const GrapheneKpParams& >())
+    ;
+    
+    /**
+     * TI Surface k.p parameters.
+     */
+    class_<TISurfKpParams, bases<HamParams>, shared_ptr<TISurfKpParams> >("TISurfKpParams")
+        .def_readwrite("ax", &TISurfKpParams::ax)
+        .def_readwrite("ay", &TISurfKpParams::ay)
+        .def_readwrite("Rx", &TISurfKpParams::Rx)   
+        .def_readwrite("Ry", &TISurfKpParams::Ry)   
+        .def_readwrite("A2", &TISurfKpParams::A2)
+        .def_readwrite("C", &TISurfKpParams::C)
+    ;
+
+    /**
+     * TI Surface Hamiltonian.
+     */
+    class_<TISurfKpHam, bases<cxham>, shared_ptr<TISurfKpHam> >("TISurfKpHam",
+            init<const TISurfKpParams& >())
+    ;
+    
     
 }
 
