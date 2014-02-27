@@ -11,8 +11,8 @@ namespace qmicad{
 
 BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
         const Workers &workers, bool saveAscii): ParLoop(workers, pk->n_rows), 
-        mSaveAscii(saveAscii), mp(bp), mk(pk) , mbar("  NEGF: ",  pk->n_rows),
-        mCalcEigV(false)
+        mp(bp), mk(pk) , mSaveAscii(saveAscii), mCalcEigV(false),
+        mbar("  NEGF: ",  pk->n_rows)
 {    
     
     mlb = mp.ne/2 - mp.nb/2;     // lowest band to calculate
@@ -22,7 +22,7 @@ BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp,
         mub = mlb;
     }
     
-    if (mlb < 0){
+    if (mlb < 0U){
         mlb = 0;
     }
     
@@ -63,7 +63,7 @@ void BandStruct::compute(int il){
     cxmat   Hk(N, N, fill::zeros);
     row k = mk->row(il);
     // loop over half the nearest neighbors
-    for (int ih = 0; ih < mp.H.n_elem; ++ih){
+    for (uint ih = 0; ih < mp.H.n_elem; ++ih){
         lcoord lc = mp.lc(ih);
         
         if (lc.n1 == 0 && lc.n2 == 0 && lc.n3 ==0){

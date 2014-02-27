@@ -33,10 +33,6 @@ using namespace maths::armadillo;
 using namespace maths::constants;
 using namespace utils;
 using std::string;
-using myenums::Option;
-using myenums::Enabled;
-using myenums::Disabled;
-
 /*
  * Device geometry:
  *
@@ -56,17 +52,15 @@ using myenums::Disabled;
 struct NegfParams: public Printable {
     
     // Options
-    Option              DCache;
-    Option              TCache;
-    Option              grcCache;
-    Option              glcCache;
-    Option              GiiCache;
-    Option              GlCache;
-    Option              GuCache;
-    Option              Gi1Cache;
-    Option              GiNCache;
-    Option              Giip1Cache;
-    Option              Giim1Cache;
+    bool                DCacheEnabled;
+    bool                TCacheEnabled;
+    bool                grcCacheEnabled;
+    bool                glcCacheEnabled;
+    bool                GiiCacheEnabled;
+    bool                Gi1CacheEnabled;
+    bool                GiNCacheEnabled;
+    bool                Giip1CacheEnabled;
+    bool                Giim1CacheEnabled;
     
     bool                isOrthogonal;
     
@@ -80,6 +74,10 @@ struct NegfParams: public Printable {
     field<shared_ptr<cxmat> >H0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
                                 // H0(0) is on the left contact and H0(N+1) is 
                                 // on the right contact.
+
+    field<shared_ptr<cxmat> >S0;// Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
+                                // H0(0) is on the left contact and H0(N+1) is 
+                                // on the right contact.
     
     field<shared_ptr<cxmat> >Hl;// Lower diagonal blocks of Hamiltonian: 
                                 // Hl(i) = [H]_i,i-1. Hl(0) = [H]_0,-1 is the 
@@ -90,9 +88,6 @@ struct NegfParams: public Printable {
                                 // Hl(N+2) is hopping between two right contact
                                 // blocks.
     
-    field<shared_ptr<cxmat> >S0;// Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
-                                // H0(0) is on the left contact and H0(N+1) is 
-                                // on the right contact.
     
     field<shared_ptr<cxmat> >Sl;// Lower diagonal blocks of overlap matrix: 
                                 // Sl(i) = [S]_i,i-1. Sl(0) = [S]_0,-1 is the 
@@ -111,17 +106,15 @@ struct NegfParams: public Printable {
     
     NegfParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
             nb(nb), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
-        DCache = Enabled;
-        TCache = Disabled;
-        grcCache = Enabled;
-        glcCache = Disabled;
-        GiiCache = Enabled;
-        GlCache = Disabled;
-        GuCache = Disabled;
-        Gi1Cache = Disabled;
-        GiNCache = Disabled;
-        Giip1Cache = Disabled;
-        Giim1Cache = Disabled; 
+        DCacheEnabled = true;
+        TCacheEnabled = true;
+        grcCacheEnabled = true;
+        glcCacheEnabled = true;
+        GiiCacheEnabled = true;
+        Gi1CacheEnabled = true;
+        GiNCacheEnabled = true;
+        Giip1CacheEnabled = true;
+        Giim1CacheEnabled = true; 
         
         mTitle = "NEGF parameters";
     }
@@ -165,7 +158,7 @@ protected:
   */
     class NegfMatCache: public CxMatCache{
     public:
-        NegfMatCache(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        NegfMatCache(CohRgfa *negf, int begin, int end, bool cache = true):
             CxMatCache(begin, end, cache), mnegf(negf){};
         virtual const cxmat& operator ()(int ib){
             return getAt(ib);
@@ -180,7 +173,7 @@ protected:
  */
     class Di:public NegfMatCache{
     public:
-        Di(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        Di(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -193,7 +186,7 @@ protected:
  */
     class Tl:public NegfMatCache{
     public:
-        Tl(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        Tl(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -206,7 +199,7 @@ protected:
  */
     class grc:public NegfMatCache{
     public:
-        grc(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        grc(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){
             // Initally, cache is empty
             mIt = mEnd + 1;            
@@ -222,7 +215,7 @@ protected:
  */
     class glc:public NegfMatCache{
     public:
-        glc(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        glc(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -235,7 +228,7 @@ protected:
  */
     class Gii:public NegfMatCache{
     public:
-        Gii(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        Gii(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -248,7 +241,7 @@ protected:
  */
     class Gi1:public NegfMatCache{
     public:
-        Gi1(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        Gi1(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -261,7 +254,7 @@ protected:
  */
     class GiN:public NegfMatCache{
     public:
-        GiN(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        GiN(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -274,7 +267,7 @@ protected:
  */
     class Giip1:public NegfMatCache{
     public:
-        Giip1(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        Giip1(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -287,7 +280,7 @@ protected:
  */
     class Giim1:public NegfMatCache{
     public:
-        Giim1(CohRgfa *negf, int begin, int end, Option cache = Enabled):
+        Giim1(CohRgfa *negf, int begin, int end, bool cache = true):
             NegfMatCache(negf, begin, end, cache){};
         const cxmat& operator ()(int ib);
     protected:
@@ -300,12 +293,13 @@ protected:
 // Fields    
 protected:
     NegfParams         mp;      // parameters
-    uint               mN;      // number of blocks without the contacts
-    uint               miLc;    // index of left contact block
-    uint               miRc;    // index of right contact block
     double             mE;      // Energy at which calculations are pertormed.
     double             mf0;     // Fermi function at contact 1
     double             mfNp1;   // Fermi function at contact N+1
+
+    uint               mN;      // number of blocks without the contacts
+    uint               miLc;    // index of left contact block
+    uint               miRc;    // index of right contact block
     
     // Hamiltonian, Overlap and Potential matrices.
     // [U]ij = -(Vi+Vj)/2*Sij
@@ -320,32 +314,51 @@ protected:
     glc                 mglc;   // right connected Green function glc: 0 to N
     // Full Green function
     Gii                 mGii;   // Green function along the diagonal Gi,i: 1 to N
-    Giip1               mGiip1; // Green function along the upper diagonal Gi,i+1: 1 to N-1
-    Giim1               mGiim1; // Green function along the lower diagonal Gi,i-1: 2 to N
     Gi1                 mGi1;   // Green function along the column 1 Gi,1: 2 to N
     GiN                 mGiN;   // Green function along the column N Gi,N: 1 to N-1
+    Giip1               mGiip1; // Green function along the upper diagonal Gi,i+1: 1 to N-1
+    Giim1               mGiim1; // Green function along the lower diagonal Gi,i-1: 2 to N
      
+    cxmat               mSigL11; // Self energy of left contact
+    cxmat               mSigRNN; // Self energy of right contact
+    cxmat               mGamL11; // Broadening of left contact
+    cxmat               mGamRNN; // Broadening of right contact
     
 private:
 
 // Methods    
 public:
     CohRgfa(NegfParams newp, double E, string newprefix = "");
-    virtual ~CohRgfa();
     
     // Density operator
     cxmat niOp(uint N = 1);
+
+    // Generic current operator
+    cxmat Iop(uint ib = 0, uint N = 1);
     
-    // current operator
-    cxmat I1Op(uint N = 1);
+    // Current between injected from block i to block i+1
+    cxmat IiOp(uint ib, uint N = 1);
     
-    // transmission operator
+    // Current injected from device to the right terminal
+    cxmat INOp(uint N = 1);
+    
+    // Current injected from left terminal to the device.
+    cxmat I0Op(uint N = 1);
+    
+    // Transmission operator
     cxmat TEop(uint N = 1);
     
     
 protected:
-    inline cxmat Ui(int i);
-    inline cxmat Ul(int i);
+    inline cxmat          Ui(int i);
+    inline cxmat          Ul(int i);
+    
+    inline void           computeSigL(cxmat& SigLii, const cxmat& Tiim1, const cxmat& glcim1);
+    inline void           computeSigR(cxmat& SigRii, const cxmat& Tip1i, const cxmat& grcip1);
+    inline const cxmat&   SigL11();
+    inline const cxmat&   SigRNN();
+    inline const cxmat&   GamL11();
+    inline const cxmat&   GamRNN();
         
 private:
     CohRgfa();

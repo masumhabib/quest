@@ -35,15 +35,13 @@ namespace mpi = boost::mpi;
  * NegfCalculations specifies what to calculate.
  */
 class NegfEloop: public ParLoop{
+    typedef vector<negf_result> vec_result;
 public:
     NegfEloop(const VecGrid &E, const NegfParams &np, const Workers &workers, 
-              bool saveAscii = true);
+              bool isAscii = true);
     
     void            enableTE(uint N = 1);   
-    void            enableI1(uint N = 1);
-    void            enableI1sx(uint N = 1);
-    void            enableI1sy(uint N = 1);
-    void            enableI1sz(uint N = 1);
+    void            enableI(uint ib = 0, uint N = 1);
     
     virtual void    save(string fileName);
     
@@ -53,7 +51,7 @@ protected:
     virtual void    compute(int il);  
     virtual void    postCompute(int il);
     virtual void    collect();
-    virtual void    gather(vector<negfresult> &thisR, NegfResultList &all);
+    virtual void    gather(vec_result &thisR, NegfResultList &all);
 
 public:
     
@@ -63,19 +61,17 @@ protected:
     VecGrid               mE;           //!< Energy grid.
     
     // TE
-    vector<negfresult>    mThisTE;      //!< Transmission list for local process
+    vec_result            mThisTE;      //!< Transmission list for local process
     NegfResultList        mTE;          //!< Transmission list for all processes
 
-    // I1op                             //!< Current operator for terminal # 1.
-    vector<negfresult>    mThisI1op;    //!< For local process.
-    NegfResultList        mI1op;        //!< Collection of all processes.
-    uint                  mI1N;         //!< Calculate charge current?
-    uint                  mI1sxN;       //!< Calculate spin x current?                   
-    uint                  mI1syN;       //!< Calculate spin y current?
-    uint                  mI1szN;       //!< Calculate spin z current?
+    // Iop                              //!< Current operator for block # i.
+    map<uint, vec_result>  mThisIop;    //!< For local process.
+    map<uint, NegfResultList> mIop;     //!< Collection of all processes.
     
+    bool                  mIsAscii;     //!< Save as ascii/binary?
+
     // user feedback
-    ConsoleProgressBar    mbar;          //!< Shows a nice progress bar.
+    ConsoleProgressBar    mbar;         //!< Shows a nice progress bar.
     
 };
 }

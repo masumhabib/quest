@@ -63,7 +63,7 @@ struct BandStructParams: public Printable{
     bool            isOrthogonal; //!< Is this orthogonal basis set?
     
     BandStructParams(uint nn, const string &prefix = ""):
-        Printable(" " + prefix), nn(nn), H(nn), S(nn), lc(nn)
+        Printable(" " + prefix), H(nn), S(nn), lc(nn), nn(nn)
     {
         mTitle = "Band structure parameters";
     }

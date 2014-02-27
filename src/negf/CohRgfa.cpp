@@ -11,39 +11,20 @@ namespace qmicad{
 CohRgfa::CohRgfa(NegfParams newp, double E, string newprefix):
         Printable(newprefix), mp(newp), mE(E), 
         mN(newp.nb-2), miLc(0), miRc(newp.nb-1),
-        mDi(this, miLc, miRc, newp.DCache), 
-        mTl(this, miLc, miRc+1, newp.TCache),
-        mgrc(this, miLc+1, miRc, newp.grcCache),
-        mglc(this, miLc, miRc-1, newp.glcCache),
-        mGii(this, miLc+1, miRc-1, newp.GiiCache),
-        mGi1(this, miLc+2, miRc-1, newp.Gi1Cache),
-        mGiN(this, miLc+1, miRc-2, newp.GiNCache),
-        mGiip1(this, miLc+1, miRc-2, newp.Giip1Cache),
-        mGiim1(this, miLc+2, miRc-1, newp.Giim1Cache)
+        mDi(this, miLc, miRc, newp.DCacheEnabled), 
+        mTl(this, miLc, miRc+1, newp.TCacheEnabled),
+        mgrc(this, miLc+1, miRc, newp.grcCacheEnabled),
+        mglc(this, miLc, miRc-1, newp.glcCacheEnabled),
+        mGii(this, miLc+1, miRc-1, newp.GiiCacheEnabled),
+        mGi1(this, miLc+2, miRc-1, newp.Gi1CacheEnabled),
+        mGiN(this, miLc+1, miRc-2, newp.GiNCacheEnabled),
+        mGiip1(this, miLc+1, miRc-2, newp.Giip1CacheEnabled),
+        mGiim1(this, miLc+2, miRc-1, newp.Giim1CacheEnabled)
 {
     mTitle = "Transport";
     // Fermi functions
     mf0 = fermi(mE, mp.muS, mp.kT);
     mfNp1 = fermi(mE, mp.muD, mp.kT);
-}
-
-CohRgfa::~CohRgfa() {
-}
-
-/*
- * Transmission operator T(E) = tr{Gamma_1,1*[A_1,1 - G_1,1*Gamma_1,1*G_1,1']}
- */
-cxmat CohRgfa::TEop(uint traceOverN){
-    // Full Green function G_1,1
-    // G_1,1 = [D_1,1 - sig_l_1,1 - T_1,2*grc_2,2*T_2,1]^-1
-    // sig_l_1,1 = T_1,0*glc_0,0*T_0,1
-    const cxmat &glc00 = mglc(0);                    // Get or caluclate glc_0,0
-    cxmat Gaml11 = mTl(1)*glc00*trans(mTl(1)); 
-    Gaml11 = i*(Gaml11 - trans(Gaml11));
-    const cxmat &G11 = mGii(1);                       // Get or caluclate G_1,1
-    
-    cxmat TEop = Gaml11*(i*(G11 - trans(G11)) - G11*Gaml11*trans(G11));    
-    return trace<cxmat>(TEop, traceOverN);
 }
 
 /*
@@ -55,34 +36,96 @@ cxmat CohRgfa::niOp(uint traceOverN){
 }
 
 /*
- * Current operator at terminal 1.
- * I1op
+ * Current flowing from block ib to ib+1.
  */
-cxmat CohRgfa::I1Op(uint traceOverN){
+cxmat CohRgfa::Iop(uint ib, uint N){
+    if (ib == miLc){
+        return I0Op(N);
+    } else if (ib == miRc){
+        return INOp(N);
+    }else if(ib > miLc && ib < miRc){
+        return IiOp(ib, N);
+    } 
+    return cxmat();
+}
+
+/*
+ * Current between block # i and block i+1.
+ * IiOp
+ */
+cxmat CohRgfa::IiOp(uint ib, uint traceOverN){
+    cxmat Iiop;
+    cxmat &Gniip1 = Iiop;
     
-    // Full Green function G_1,1
-    // G_1,1 = [D_1,1 - sig_l_1,1 - T_1,2*grc_2,2*T_2,1]^-1
-    // sig_l_1,1 = T_1,0*glc_0,0*T_0,1
-    const cxmat &glc00 = mglc(0);                    // Get or caluclate glc_0,0
-    cxmat Sigl11 = mTl(1)*glc00*trans(mTl(1)); 
-    const cxmat &G11 = mGii(1);                       // Get or caluclate G_1,1
-    
-    cxmat Gn11;
-    cxmat I1op;
+    // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
+    Gniip1 = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(ib+1))) 
+                 + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*mGi1(ib+1));
+    //I_i,i+1 = Gn_i,i+1*H_i+1,i - H_i,i+1*Gn_i+1,i
+    Iiop = Gniip1*mTl(ib+1) - trans(mTl(ib+1))*trans(Gniip1);
+    return i*trace<cxmat>(Iiop, traceOverN);    
+}
+
+
+/*
+ * Current operator at right contact (block # N).
+ * INOp
+ */
+cxmat CohRgfa::INOp(uint traceOverN){
+
+    const cxmat &SigrNN = SigRNN();
+    const cxmat &GamrNN = GamRNN();
+    const cxmat &GNN = mGii(mN);            // Get or caluclate G_N,N
+    cxmat GNNa = trans(GNN);
+     
     // Density matrix: Gn11 = G^n_1,1
     // G^n_1,1 = Al_1,1*(f1-fN) + [A_1,1]*fN
     // Al_1,1 = G_1,1*gamma_1,1*G1,1'
     // A_1,1 = i*(G_1,1 - G_1,1')
-    // gamma_1,1 =  i*(Sigl_1,1-Sigl_1,1')    
-    cxmat Gaml11 = i*(Sigl11 - trans(Sigl11)); 
-    Gn11 = G11*Gaml11*trans(G11)*(mf0-mfNp1) + i*(G11 - trans(G11))*mfNp1;
+    cxmat GnNN = GNN*GamrNN*GNNa*(mfNp1-mf0) + i*(GNN - GNNa)*mf0;
     // Current operator
-    I1op = Gn11*trans(Sigl11) - Sigl11*Gn11 
-          +G11*Gaml11*mf0 - Gaml11*trans(G11)*mf0;
+    cxmat INop = GnNN*trans(SigrNN) - SigrNN*GnNN 
+          +GNN*GamrNN*mfNp1 - GamrNN*GNNa*mfNp1;
 
-    return trace<cxmat>(i*I1op, traceOverN);    
+    return -i*trace<cxmat>(INop, traceOverN);    
 }
 
+
+/*
+ * Current operator at terminal 1.
+ * I1op
+ */
+cxmat CohRgfa::I0Op(uint traceOverN){
+    
+    const cxmat &Sigl11 = SigL11();
+    const cxmat &Gaml11 = GamL11();
+    const cxmat &G11 = mGii(1);            // Get or caluclate G_1,1
+    cxmat G11a = trans(G11);
+    
+    // Density matrix: Gn11 = G^n_1,1
+    // G^n_1,1 = Al_1,1*(f1-fN) + [A_1,1]*fN
+    // Al_1,1 = G_1,1*gamma_1,1*G1,1'
+    // A_1,1 = i*(G_1,1 - G_1,1')
+    cxmat Gn11 = G11*Gaml11*G11a*(mf0-mfNp1) + i*(G11 - G11a)*mfNp1;
+    // Current operator
+    cxmat I1op = Gn11*trans(Sigl11) - Sigl11*Gn11 
+          +G11*Gaml11*mf0 - Gaml11*G11a*mf0;
+
+    return i*trace<cxmat>(I1op, traceOverN);    
+}
+
+/*
+ * Transmission operator T(E) = tr{Gamma_1,1*[A_1,1 - G_1,1*Gamma_1,1*G_1,1']}
+ */
+cxmat CohRgfa::TEop(uint traceOverN){
+    // Full Green function G_1,1
+    // G_1,1 = [D_1,1 - sig_l_1,1 - T_1,2*grc_2,2*T_2,1]^-1
+    // G_1,1 = [D_1,1 - sig_l_1,1 - SigL_1,1]^-1    
+    const cxmat &G11 = mGii(1);                       // Get or caluclate G_1,1
+    const cxmat &Gaml11 = GamL11();
+    cxmat G11a = trans(G11);
+    cxmat TEop = Gaml11*(i*(G11 - G11a) - G11*Gaml11*G11a);    
+    return trace<cxmat>(TEop, traceOverN);
+}
 
 
 /*
@@ -381,8 +424,20 @@ inline void CohRgfa::glc::computeglc(cxmat& glci, const cxmat& glcim1, int ib){
         computegs(glci, E+VL, *p.H0(iLc), *p.S0(iLc), Tiim1, p.ieta, p.SurfGTolX);
     // calculate glc_i,i using recursive equation:
     // glc_i = [ES_ii - H_ii - U_ii - T_ii-1*glc_i-1*T_i-1i]^-1;
+    // glc_i = [ES_ii - H_ii - U_ii - SigL_ii]^-1;
     }else{
-        glci = inv(mnegf->mDi(ib) - Tiim1*glcim1*trans(Tiim1));
+        // Calculate or load sigma_1,1
+        if (ib == (mnegf->miLc + 1)){
+            // save sigma_1,1
+            if (mnegf->mSigL11.empty()){
+                mnegf->computeSigL(mnegf->mSigL11, Tiim1, glcim1);
+            }
+            glci = mnegf->mSigL11;
+        // Calculate SigL_i,i
+        }else{
+            mnegf->computeSigL(glci, Tiim1, glcim1);
+        }
+        glci = inv(mnegf->mDi(ib) - glci);
     }    
     mIt = ib;
 }
@@ -438,10 +493,19 @@ inline void CohRgfa::grc::computegrc(cxmat& grci, const cxmat& grcip1, int ib){
 
     // Calculate grc_i,i using recursive equation:
     // grc_i = [ES_ii - H_ii - U_ii - T_ii+1*grc_i+1*T_i+1i]^-1;
+    // grc_i = [ES_ii - H_ii - U_ii - SigR_ii]^-1;
     }else{
-        grci = inv(mnegf->mDi(ib) - trans(Tip1i)*grcip1*Tip1i);        
+        if (ib == mnegf->mN){
+            // save sigma_N,N
+            if (mnegf->mSigRNN.empty()){
+                mnegf->computeSigR(mnegf->mSigRNN, Tip1i, grcip1);
+            }
+            grci = mnegf->mSigRNN;
+        }else{
+            mnegf->computeSigR(grci, Tip1i, grcip1);
+        }
+        grci = inv(mnegf->mDi(ib) - grci);        
     }
-    
     mIt = ib;
 }
 
@@ -553,6 +617,55 @@ inline cxmat CohRgfa::Ui(int i){
         }
     }
     return Ui;
+}
+
+/*
+ * SigL_i,i = T_ii-1*glc_i-1*T_i-1i
+ */
+inline void CohRgfa::computeSigL(cxmat& SigLii, const cxmat& Tiim1, const cxmat& glcim1){
+    SigLii = Tiim1*glcim1*trans(Tiim1);
+}
+
+/*
+ * SigR_i,i = T_ii+1*grc_i+1*T_i+1i 
+ */
+inline void CohRgfa::computeSigR(cxmat& SigRii, const cxmat& Tip1i, const cxmat& grcip1){
+    SigRii = trans(Tip1i)*grcip1*Tip1i;
+}
+
+/*
+ * sigL_1,1 = T_1,0*glc_0,0*T_0,1
+ */
+inline const cxmat& CohRgfa::SigL11(){
+    if (mSigL11.empty()){
+        // sigL_1,1 = T_1,0*glc_0,0*T_0,1        
+        computeSigL(mSigL11, mTl(1), mglc(0)); 
+    }
+    return mSigL11;
+}
+
+/*
+ * SigR_N,N = T_N,N+1*grc_N+1,N+1*T_N+1,N 
+ */
+inline const cxmat& CohRgfa::SigRNN(){
+    if (mSigRNN.empty()){
+        computeSigR(mSigRNN, mTl(mN+1), mgrc(mN+1));
+    }
+    return mSigRNN;
+}
+
+inline const cxmat& CohRgfa::GamL11(){
+    if (mGamL11.empty()){
+        mGamL11 = i*(SigL11() - trans(SigL11()));
+    }
+    return mGamL11;
+}
+
+inline const cxmat& CohRgfa::GamRNN(){
+    if (mGamRNN.empty()){
+        mGamRNN = i*(SigRNN() - trans(SigRNN()));
+    }
+    return mGamRNN;
 }
 
 }

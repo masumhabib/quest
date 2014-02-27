@@ -33,10 +33,10 @@ AtomicStruct::AtomicStruct(const string& gjfFileName):mpt() {
 
 /* Copy constructor */
 AtomicStruct::AtomicStruct(const AtomicStruct& orig):
-mlv(orig.mlv),
-mia(orig.mia),
 mpt(orig.mpt),
-mXyz(orig.mXyz)
+mia(orig.mia),
+mXyz(orig.mXyz),
+mlv(orig.mlv)
 {
     mNa = orig.mNa;
     mNo = orig.mNo;

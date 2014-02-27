@@ -122,13 +122,13 @@ void serialize(Archive& ar, svec& sv, const unsigned int version){
  */
 template<class Archive, class T>
 void save(Archive& ar, const Mat<T>& mat, const unsigned int version){
-    int n_rows = mat.n_rows;
-    int n_cols = mat.n_cols;
+    uint n_rows = mat.n_rows;
+    uint n_cols = mat.n_cols;
     
      ar << n_rows;
      ar << n_cols;
-    for(int ir = 0; ir < n_rows; ++ ir){
-        for(int ic = 0; ic < n_cols; ++ ic){
+    for(uint ir = 0; ir < n_rows; ++ ir){
+        for(uint ic = 0; ic < n_cols; ++ ic){
         ar << mat(ir, ic);
         }
     }
@@ -136,8 +136,8 @@ void save(Archive& ar, const Mat<T>& mat, const unsigned int version){
 
 template<class Archive, class T>
 void load(Archive& ar, Mat<T>& mat, const unsigned int version){
-    int n_rows;
-    int n_cols;
+    uint n_rows;
+    uint n_cols;
     
     ar >> n_rows;
     ar >> n_cols;
@@ -174,12 +174,12 @@ void save(Archive& ar, const Col<T>& col, const unsigned int version){
 
 template<class Archive, class T>
 void load(Archive& ar, Col<T>& col, const unsigned int version){
-    int n_rows;
+    uint n_rows;
     ar >> n_rows;
     if (n_rows != col.n_rows){
         col.set_size(n_rows);
     }
-    for(int it = 0; it < n_rows; ++ it){
+    for(uint it = 0; it < n_rows; ++ it){
         ar >> col(it);
     }
 };
@@ -196,21 +196,21 @@ inline void serialize(Archive& ar, Col<T>& col, const unsigned int file_version)
  */
 template<class Archive, class T>
 void save(Archive& ar, const Row<T>& row, const unsigned int version){
-    int n_cols = row.n_cols;
+    uint n_cols = row.n_cols;
     ar << n_cols;
-    for(int it = 0; it < n_cols; ++ it){
+    for(uint it = 0; it < n_cols; ++ it){
         ar << row(it);
     }
 };
 
 template<class Archive, class T>
 void load(Archive& ar, Row<T>& row, const unsigned int version){
-    int n_cols;
+    uint n_cols;
     ar >> n_cols;
     if (n_cols != row.n_cols){
         row.set_size(n_cols);
     }
-    for(int it = 0; it < n_cols; ++ it){
+    for(uint it = 0; it < n_cols; ++ it){
         ar >> row(it);
     }
 };

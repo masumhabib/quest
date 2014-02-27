@@ -11,13 +11,9 @@
 namespace qmicad{
 
 NegfEloop::NegfEloop(const VecGrid &E, const NegfParams &np, 
-        const Workers &workers, bool saveAscii):
-        ParLoop(workers, E.N()), mnp(np), 
-        mTE("TE", 0, saveAscii), mE(E),
-        mI1op("I1", 0, saveAscii), 
-        mI1N(0), mI1sxN(0), mI1syN(0), mI1szN(0),
-        mbar("  NEGF: ",  E.N())
-{
+        const Workers &workers, bool isAscii): ParLoop(workers, E.N()), 
+        mnp(np), mE(E), mIsAscii(isAscii), mbar("  NEGF: ",  E.N())
+{   
 }
     
 
@@ -32,17 +28,19 @@ void NegfEloop::preCompute(int il){
 };
 
 void NegfEloop::compute(int il){
-    negfresult r;
-    r.first = mE(il);               // this energy
+    negf_result r;                       // pair of energy and result
+    r.first = mE(il);                   // first => energy
     // Transmission
     if(mTE.isEnabled()){
-        r.second = mnegf->TEop(mTE.N);  // Calculate  T(E)
+        r.second = mnegf->TEop(mTE.N);  // second => T(E)
         mThisTE.push_back(r);  
     }
     // Current
-    if(mI1op.isEnabled()){
-        r.second = mnegf->I1Op(mI1op.N);
-        mThisI1op.push_back(r);
+    map<uint, vec_result>::iterator it;  // map of block # and vector of negf result
+    for (it = mThisIop.begin(); it != mThisIop.end(); ++it){
+        uint ib = it->first;
+        r.second = mnegf->Iop(ib, mIop[ib].N); // r.second => Iop (E)
+        it->second.push_back(r);           // it->second => vector of Iop()
     }
 }
 
@@ -56,18 +54,20 @@ void NegfEloop::collect(){
     mWorkers.Comm().barrier();
     mbar.complete();
     
-    // Transmission
+    // Gather transmission
     if(mTE.isEnabled()){
         gather(mThisTE, mTE);
     }
-    
-    // Current
-    if(mI1op.isEnabled()){
-        gather(mThisI1op, mI1op);
+
+    // Gather current
+    map<uint, vec_result>::iterator it;  // first => block #, second => vecresult.
+    for (it = mThisIop.begin(); it != mThisIop.end(); ++it){
+        uint ib = it->first;
+        gather(it->second, mIop[ib]);
     }
 }
 
-void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
+void NegfEloop::gather(vec_result &thisR, NegfResultList &all){
 
     if(!mWorkers.IAmMaster()){    
         // slaves send their local data
@@ -76,11 +76,11 @@ void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
     // The master collects data        
     }else{
         // Collect T(E)
-        vector<vector<negfresult> >gatheredR(mN);
+        vector<vector<negf_result> >gatheredR(mN);
         mpi::gather(mWorkers.Comm(), thisR, gatheredR, mWorkers.MasterId());
         
         // merge and store results on mTE list.
-        vector<vector<negfresult> >::iterator it;
+        vector<vector<negf_result> >::iterator it;
         for (it = gatheredR.begin(); it != gatheredR.end(); ++it){
             all.R.insert(all.R.end(), it->begin(), it->end());
         }
@@ -91,90 +91,41 @@ void NegfEloop::gather(vector<negfresult> &thisR, NegfResultList &all){
 
 void NegfEloop::save(string fileName){
     if(mWorkers.IAmMaster()){
+        // save to a file
+        ofstream out;
+        if(mIsAscii){
+            out.open(fileName.c_str(), ostream::binary|ios::app);
+        }else{
+            out.open(fileName.c_str(), ios::app);
+        }
+        if (!out.is_open()){
+            throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
+                    + fileName + ".");
+        }
+        
         // Transmission 
         if (mTE.isEnabled()){
-            mTE.save(fileName);
+            mTE.save(out);
         }
         
         // Current
-        if (mI1op.isEnabled()){ 
-            NegfResultList  I1("I1", mI1N, mI1op.saveAscii);
-            NegfResultList  I1sx("I1sx", mI1sxN, mI1op.saveAscii);
-            NegfResultList  I1sy("I1sy", mI1syN, mI1op.saveAscii);
-            NegfResultList  I1sz("I1sz", mI1szN, mI1op.saveAscii);
-                        
-            list<negfresult> &R = mI1op.R;
-            list<negfresult>::iterator it;
-            for (it = R.begin(); it != R.end(); ++it){
-                negfresult r;
-                r.first = it->first;
-                // Charge current
-                if(mI1N){
-                    r.second = trace(it->second, mI1N);
-                    I1.R.push_back(r);
-                }
-                
-                // Spin currents
-                if(mI1sxN){
-                    r.second = trace(trace(it->second, 2)*sx());
-                    I1sx.R.push_back(r);
-                }
-                if(mI1syN){
-                    r.second = trace(trace(it->second, 2)*sy());
-                    I1sy.R.push_back(r);
-                }
-                if(mI1szN){
-                    r.second = trace(trace(it->second, 2)*sz());
-                    I1sz.R.push_back(r);
-                }
-            }
-            if(mI1N){
-                I1.save(fileName);
-            }
-            if(mI1sxN){
-                I1sx.save(fileName);
-            }
-            if(mI1syN){
-                I1sy.save(fileName);
-            }
-            if(mI1szN){
-                I1sz.save(fileName);
-            }
+        map<uint, NegfResultList>::iterator it;  // first => block #, second => NegfResultList.
+        for (it = mIop.begin(); it != mIop.end(); ++it){
+            it->second.save(out);
         }
     }
 }
 
 void NegfEloop::enableTE(uint N){
+    mTE.tag = "TE";
     mTE.N = N;
 }
 
-void NegfEloop::enableI1(uint N){
-    mI1N = N;
-    if (mI1N > mI1op.N){
-        mI1op.N = mI1N;
-    }
+void NegfEloop::enableI(uint ib, uint N){
+    stringstream out;
+    out << "Iop" << ib;
+    mIop[ib] = NegfResultList(out.str(), N);
+    mThisIop[ib] = vec_result();
 }
-
-void NegfEloop::enableI1sx(uint N){
-    mI1sxN = N;
-    if (mI1sxN > 0 && mI1op.N < 2){
-        mI1op.N = 2;
-    }    
-}
-
-void NegfEloop::enableI1sy(uint N){
-    mI1syN = N;
-    if (mI1syN > 0 && mI1op.N < 2){
-        mI1op.N = 2;
-    }    
-}
-
-void NegfEloop::enableI1sz(uint N){
-    mI1szN = N;
-    if (mI1szN > 0 && mI1op.N < 2){
-        mI1op.N = 2;
-    }    
-}
-
 
 }

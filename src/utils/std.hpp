@@ -29,6 +29,7 @@ using std::cin;
 using std::cerr;
 using std::endl;
 
+using std::ios;
 using std::ios_base;
 using std::basic_ostream;
 using std::ostream;

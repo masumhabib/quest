@@ -68,7 +68,7 @@ void KPoints::addKRect(const point& lb, const point& rt, double dk){
     newkx = linspace<row>(kxmin, kxmax, nkx);
     newky = linspace<col>(kymin, kymax, nky);
     // insert the new k-points
-    for(int ikx = 0; ikx < nkx; ++ikx){
+    for(uint ikx = 0; ikx < nkx; ++ikx){
         mat newk(nky,3);
 
         newk.col(coord::X).fill(newkx(ikx));

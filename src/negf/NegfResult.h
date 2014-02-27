@@ -15,11 +15,11 @@ namespace qmicad{
 using namespace utils::stds;
 using namespace maths::armadillo;
 
-typedef pair<double, cxmat> negfresult;     //!< Result as a function of energy.
+typedef pair<double, cxmat> negf_result;     //!< Result as a function of energy.
 
-struct ResultComparator : public binary_function<negfresult&, negfresult&, bool>{
+struct ResultComparator : public binary_function<negf_result&, negf_result&, bool>{
     ResultComparator( double tol = 1e-7 ) : epsilon(tol) {}
-    bool operator()( const negfresult &left, const negfresult &right  ) const{
+    bool operator()( const negf_result &left, const negf_result &right  ) const{
         return (abs(left.first - right.first) > epsilon) && (left.first < right.first);
     }   
     double epsilon;
@@ -27,17 +27,16 @@ struct ResultComparator : public binary_function<negfresult&, negfresult&, bool>
 
 struct NegfResultList{
 public:    
-    std::list<negfresult>R;              //!< List of results.
+    std::list<negf_result>R;              //!< List of results.
     uint            N;              //!< Size of the cxmat matrix. N == 0 means do not calculate.
-    bool            saveAscii;      //!< Save as ascii/binary?
-    string          suffix;         //!< Suffix added to the output filename.
+    string          tag;         //!< Suffix added to the output filename.
     
-    NegfResultList(string suffix, uint N = 0, bool saveAscii = true);
+    NegfResultList(string tag = "", uint N = 0);
     
     bool    isEnabled() { return N > 0; };  //!< Is calculation enabled? N = 0: no.
     void    sort();
     void    merge(NegfResultList &second);
-    void    save(string fileName);
+    void    save(ostream &out);
 };
 
 }

@@ -16,9 +16,6 @@
 namespace utils{
 using std::out_of_range;
 using namespace maths::armadillo;
-using myenums::Option;
-using myenums::Enabled;
-using myenums::Disabled;
 
 
 /*
@@ -27,8 +24,8 @@ using myenums::Disabled;
 template <class T>
 class Cache{
 public:
-    Cache(int begin, int end, Option cache = Enabled){  
-        mCache = cache;
+    Cache(int begin, int end, bool cacheEnabled = true){  
+        mCacheEnabled = cacheEnabled;
         // Forward moving or backward moving
         if (begin <= end){
             mBegin = begin;
@@ -45,7 +42,7 @@ public:
         // Size of the cache
         mLength = mEnd - mBegin + 1;
 
-        if (cache == Enabled){
+        if (cacheEnabled == true){
             mM.set_size(mLength);
         }else{
             mM.set_size(1);
@@ -71,7 +68,7 @@ protected:
     T& getAt(int it){
         // within the range
         if (it <= mEnd && it >= mBegin){             
-            if (mCache == Enabled){
+            if (mCacheEnabled == true){
                 int ii = toArrayIndx(it);
                 return mM(ii);
             }else{
@@ -91,7 +88,7 @@ protected:
     int         mEnd;
     int         mLength;
 
-    Option      mCache;
+    bool      mCacheEnabled;
 private:
     Cache();
 };
@@ -102,8 +99,8 @@ private:
 template<typename T>
 class MatCache:public Cache<Mat<T> > {
 public:
-    MatCache( int begin, int end, Option cache = Enabled):
-        Cache<Mat<T> >(begin, end, cache){
+    MatCache( int begin, int end, bool cacheEnabled = true):
+        Cache<Mat<T> >(begin, end, cacheEnabled){
     };
     // () operator is the read only access.
     /*virtual const T& operator()(int it){
@@ -114,7 +111,7 @@ protected:
         bool result;
         // within the range
         if (it <= this->mEnd && it >= this->mBegin){             
-            if (this->mCache == Enabled){
+            if (this->mCacheEnabled == true){
                 int ii = this->toArrayIndx(it);
                 if (this->mM(ii).empty()){
                     result = false;
