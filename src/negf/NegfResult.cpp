@@ -25,16 +25,10 @@ void NegfResultList::merge(NegfResultList &second){
 void NegfResultList::save(ostream &out){
     out << tag << endl;
     out << R.size() << endl;
+    out << N << endl;
     list<negf_result>::iterator it;
     for (it = R.begin(); it != R.end(); ++it){
-        if (N == 1){
-            row rvec(2); 
-            rvec(0) = it->first;                   // energy
-            rvec(1) = real((it->second)(0,0));     // result
-            out << rvec;  
-        }else{
-            out << it->first << endl << it->second << endl;
-        }
+        out << it->first << endl << it->second << endl;
     }
 }
  

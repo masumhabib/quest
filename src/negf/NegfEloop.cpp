@@ -117,13 +117,13 @@ void NegfEloop::save(string fileName){
 }
 
 void NegfEloop::enableTE(uint N){
-    mTE.tag = "TE";
+    mTE.tag = "TRANSMISSION";
     mTE.N = N;
 }
 
 void NegfEloop::enableI(uint ib, uint N){
     stringstream out;
-    out << "Iop" << ib;
+    out << "CURRENT" << ib;
     mIop[ib] = NegfResultList(out.str(), N);
     mThisIop[ib] = vec_result();
 }

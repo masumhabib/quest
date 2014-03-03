@@ -41,9 +41,9 @@ cxmat CohRgfa::niOp(uint traceOverN){
 cxmat CohRgfa::Iop(uint ib, uint N){
     if (ib == miLc){
         return I0Op(N);
-    } else if (ib == miRc){
+    } else if (ib == mN){
         return INOp(N);
-    }else if(ib > miLc && ib < miRc){
+    }else if(ib > miLc && ib < mN){
         return IiOp(ib, N);
     } 
     return cxmat();
@@ -59,9 +59,9 @@ cxmat CohRgfa::IiOp(uint ib, uint traceOverN){
     
     // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
     Gniip1 = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(ib+1))) 
-                 + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*mGi1(ib+1));
-    //I_i,i+1 = Gn_i,i+1*H_i+1,i - H_i,i+1*Gn_i+1,i
-    Iiop = Gniip1*mTl(ib+1) - trans(mTl(ib+1))*trans(Gniip1);
+                 + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib+1)));
+    //I_i,i+1 = H_i,i+1*Gn_i+1,i - Gn_i,i+1*H_i+1,i
+    Iiop = trans(mTl(ib+1))*trans(Gniip1) - Gniip1*mTl(ib+1);
     return i*trace<cxmat>(Iiop, traceOverN);    
 }
 
@@ -84,9 +84,9 @@ cxmat CohRgfa::INOp(uint traceOverN){
     cxmat GnNN = GNN*GamrNN*GNNa*(mfNp1-mf0) + i*(GNN - GNNa)*mf0;
     // Current operator
     cxmat INop = GnNN*trans(SigrNN) - SigrNN*GnNN 
-          +GNN*GamrNN*mfNp1 - GamrNN*GNNa*mfNp1;
+          + GNN*GamrNN*mfNp1 - GamrNN*GNNa*mfNp1;
 
-    return -i*trace<cxmat>(INop, traceOverN);    
+    return i*trace<cxmat>(INop, traceOverN);    
 }
 
 
