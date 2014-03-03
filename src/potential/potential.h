@@ -14,11 +14,13 @@
 #include "../maths/geometry.hpp"
 #include "../maths/svec.h"
 #include "../atoms/AtomicStruct.h"
+#include "../utils/std.hpp"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
 namespace qmicad{
+using namespace utils::stds;
 using namespace maths::spvec;
 using utils::itos;
 using boost::shared_ptr;

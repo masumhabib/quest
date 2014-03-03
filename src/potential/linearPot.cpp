@@ -82,7 +82,7 @@ void LinearPot::compute(){
                 // found inside linear region
                 if(itl  != mlr.end()){
                     // get four points: lb, rb, rt, lt
-                    vector<point>::iterator it;
+                    /*vector<point>::iterator it;
                     polyring points = itl->geom.outer();
                     double xlt, xlb, xrt, xrb;
                     double ylt, ylb, yrt, yrb;
@@ -106,13 +106,22 @@ void LinearPot::compute(){
                             xrt = xp;
                             yrt = yp;
                         }
-                    }
+                    }*/
+                    polyring points = itl->geom.outer();
+                    double xlb = points[0].get<0>();
+                    double ylb = points[0].get<1>();
+                    double xrb = points[1].get<0>();
+                    double yrb = points[1].get<1>();
+                    double xrt = points[2].get<0>();
+                    double yrt = points[2].get<1>();
+                    double xlt = points[3].get<0>();
+                    double ylt = points[3].get<1>();
                     
                     double xl = xlb + (xlt - xlb)/(ylt - ylb)*(y-ylb);
                     double xr = xrb + (xrt - xrb)/(yrt - yrb)*(y-yrb);
                     double Vlr = itl->Vl + (itl->Vr - itl->Vl)/(xr - xl)*(x - xl);
 
-                    double yb = ylb + (yrb - ylb)/(xrb - xlb)*(x-xlb);
+                    double yb = ylb + (yrb - ylb)/(xrb - xlb)*(x-xlb);                                                            
                     double yt = ylt + (yrt - ylt)/(xrt - xlt)*(x-xlt);
                     double Vbt = itl->Vb + (itl->Vt - itl->Vb)/(yt - yb)*(y - yb);
                     

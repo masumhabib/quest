@@ -17,18 +17,21 @@
 #ifndef LINEARPOT_H
 #define	LINEARPOT_H
 
+#include "terminal.h"
+#include "potential.h"
+#include "../string/stringutils.h"
+#include "../utils/vout.h"
+
 #include <vector>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
 
-#include "terminal.h"
-#include "potential.h"
-#include "../string/stringutils.h"
 
 
 namespace qmicad{
 using utils::dtos;
+using namespace utils::stds;
 /*
  * Linear terminal emulates linear voltage drop between two 
  * gates.
