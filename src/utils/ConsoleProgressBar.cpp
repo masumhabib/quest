@@ -18,7 +18,7 @@ ConsoleProgressBar::ConsoleProgressBar(string prefix, unsigned long expectedCoun
 {
     mSuffix = "%";
     mSpace = ' ';
-    mDot   = '=';
+    mDot   = '.';
     mEnds  = '|';
 }
 
@@ -26,6 +26,7 @@ void ConsoleProgressBar::step(unsigned long count){
     
     mCount += count;
     int nDots = (mCount*mnTotalDots)/mExpectedCount;
+    nDots = 1;
     if(nDots >= 1){
         int tmp = vout.myId();
         vout.myId(0);

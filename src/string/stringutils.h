@@ -48,7 +48,7 @@ inline string ttos(double sec){
     tm = tm % 3600;
 
     uint min = tm/60;
-    double second = tm%60 + (sec - tm);
+    double second = uint(tm%60) + (sec - uint(sec));
 
     stringstream times;
     times.precision(2);
