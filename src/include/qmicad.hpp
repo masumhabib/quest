@@ -55,10 +55,10 @@ namespace qmicad{
 
 #include "../kpoints/KPoints.h"
 
-#include "../qm/hamiltonian.hpp"
-#include "../qm/tb/graphenetb.h"
-#include "../qm/kp/graphenekp.h"
-#include "../qm/kp/tikp.h"
+#include "../hamiltonian/hamiltonian.hpp"
+#include "../hamiltonian/tb/graphenetb.h"
+#include "../hamiltonian/kp/graphenekp.h"
+#include "../hamiltonian/kp/tikp.h"
 
 #include "../potential/terminal.h"
 #include "../potential/potential.h"

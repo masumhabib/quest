@@ -8,6 +8,7 @@
 #include "KPoints.h"
 
 namespace qmicad{
+namespace kpoints{
 
 KPoints::KPoints(const string& prefix):Printable(" " + prefix){
     
@@ -84,4 +85,5 @@ shared_ptr<mat> KPoints::kp(){
     return k;
 }
     
+}
 }

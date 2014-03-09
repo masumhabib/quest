@@ -8,6 +8,8 @@
 #include "tikp.h"
 
 namespace qmicad{
+namespace hamiltonian{
+
 cxmat TISurfKpHam::genTwoAtomHam(const AtomicStruct& atomi, 
         const AtomicStruct& atomj)
 {
@@ -92,3 +94,5 @@ cxmat TISurfKpHam::genTwoAtomOvl(const AtomicStruct& atomi,
 };
 
 }
+}
+

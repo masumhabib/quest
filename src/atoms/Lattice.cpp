@@ -11,8 +11,7 @@
 #include "Lattice.h"
 
 namespace qmicad{
-
-/* Lattice coordinate */
+namespace atoms{
 
 
 LatticeCoordinate::LatticeCoordinate(int n1, int n2, int n3, const string &prefix)
@@ -133,4 +132,4 @@ string LatticeVector::toString() const{
 }
 
 }
-
+}

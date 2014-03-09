@@ -30,6 +30,8 @@
 
 
 namespace qmicad{
+namespace potential{
+
 using utils::dtos;
 using namespace utils::stds;
 /*
@@ -74,6 +76,7 @@ public:
     void VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0);
 };
 
+}
 }
 #endif	/* LINEARPOT_H */
 

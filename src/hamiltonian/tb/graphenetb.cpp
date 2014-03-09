@@ -10,6 +10,8 @@
 #include "graphenetb.h"
 
 namespace qmicad{
+namespace hamiltonian{
+
 using namespace maths::armadillo;
 
 cxmat GrapheneTbHam::genTwoAtomHam(const AtomicStruct& atomi, 
@@ -91,4 +93,6 @@ cxmat GrapheneTbHam::genTwoAtomOvl(const AtomicStruct& atomi,
 
 
 }
+}
+
 

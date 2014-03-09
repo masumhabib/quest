@@ -21,9 +21,15 @@
 #include "../utils/vout.h"
 
 namespace qmicad{
+namespace hamiltonian{
+
 using boost::shared_ptr;
 using boost::make_shared;
 using namespace utils::stds;
+using utils::Printable;
+using namespace maths::armadillo;
+using atoms::AtomicStruct;
+
 struct HamParams: public Printable{
     // Parameters required for all Hamiltonin
     double dtol;         // distance tolerance    
@@ -206,6 +212,7 @@ protected:
 typedef Hamiltonian<cxmat>  cxham;
 typedef Hamiltonian<mat>    ham;
 
+}
 }
 #endif	/* HAMILTONIAN_H */
 

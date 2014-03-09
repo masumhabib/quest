@@ -19,6 +19,8 @@
 #include "../hamiltonian.hpp"
 
 namespace qmicad{
+namespace hamiltonian{
+
 using boost::static_pointer_cast;
 using namespace maths::armadillo;
     
@@ -73,6 +75,7 @@ public:
     virtual cxmat genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj);    
 };
 
+}
 }
 #endif	/* GRAPHENETB_HPP */
 

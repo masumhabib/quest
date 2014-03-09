@@ -21,6 +21,19 @@
       <logicalFolder name="grid" displayName="grid" projectFiles="true">
         <itemPath>src/grid/grid.hpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="hamiltonian" displayName="hamiltonian" projectFiles="true">
+        <logicalFolder name="kp" displayName="kp" projectFiles="true">
+          <itemPath>src/hamiltonian/kp/graphenekp.cpp</itemPath>
+          <itemPath>src/hamiltonian/kp/graphenekp.h</itemPath>
+          <itemPath>src/hamiltonian/kp/tikp.cpp</itemPath>
+          <itemPath>src/hamiltonian/kp/tikp.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="tb" displayName="tb" projectFiles="true">
+          <itemPath>src/hamiltonian/tb/graphenetb.cpp</itemPath>
+          <itemPath>src/hamiltonian/tb/graphenetb.h</itemPath>
+        </logicalFolder>
+        <itemPath>src/hamiltonian/hamiltonian.hpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="include" displayName="include" projectFiles="true">
         <itemPath>src/include/qmicad.hpp</itemPath>
       </logicalFolder>
@@ -63,19 +76,6 @@
       <logicalFolder name="python" displayName="python" projectFiles="true">
         <itemPath>src/python/pyqmicad.cpp</itemPath>
         <itemPath>src/python/pyqmicad.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="qm" displayName="qm" projectFiles="true">
-        <logicalFolder name="kp" displayName="kp" projectFiles="true">
-          <itemPath>src/qm/kp/graphenekp.cpp</itemPath>
-          <itemPath>src/qm/kp/graphenekp.h</itemPath>
-          <itemPath>src/qm/kp/tikp.cpp</itemPath>
-          <itemPath>src/qm/kp/tikp.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="tb" displayName="tb" projectFiles="true">
-          <itemPath>src/qm/tb/graphenetb.cpp</itemPath>
-          <itemPath>src/qm/tb/graphenetb.h</itemPath>
-        </logicalFolder>
-        <itemPath>src/qm/hamiltonian.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="string" displayName="string" projectFiles="true">
         <itemPath>src/string/stringutils.cpp</itemPath>
@@ -184,6 +184,20 @@
       </item>
       <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/hamiltonian/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/include/qmicad.hpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/kpoints/KPoints.cpp" ex="false" tool="1" flavor2="0">
@@ -241,20 +255,6 @@
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/kp/tikp.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -357,6 +357,20 @@
       </item>
       <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/hamiltonian/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/kpoints/KPoints.cpp" ex="false" tool="1" flavor2="0">
@@ -414,20 +428,6 @@
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/kp/graphenekp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/kp/graphenekp.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/kp/tikp.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/qm/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="src/qm/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
       </item>

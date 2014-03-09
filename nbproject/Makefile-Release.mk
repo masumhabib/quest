@@ -38,6 +38,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/atoms/AtomicStruct.o \
 	${OBJECTDIR}/src/atoms/Lattice.o \
 	${OBJECTDIR}/src/band/BandStruct.o \
+	${OBJECTDIR}/src/hamiltonian/kp/graphenekp.o \
+	${OBJECTDIR}/src/hamiltonian/kp/tikp.o \
+	${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o \
 	${OBJECTDIR}/src/kpoints/KPoints.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
@@ -49,9 +52,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
-	${OBJECTDIR}/src/qm/kp/graphenekp.o \
-	${OBJECTDIR}/src/qm/kp/tikp.o \
-	${OBJECTDIR}/src/qm/tb/graphenetb.o \
 	${OBJECTDIR}/src/string/stringutils.o \
 	${OBJECTDIR}/src/utils/ConsoleProgressBar.o \
 	${OBJECTDIR}/src/utils/Timer.o \
@@ -96,6 +96,21 @@ ${OBJECTDIR}/src/band/BandStruct.o: src/band/BandStruct.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/band
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/band/BandStruct.o src/band/BandStruct.cpp
+
+${OBJECTDIR}/src/hamiltonian/kp/graphenekp.o: src/hamiltonian/kp/graphenekp.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/kp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/kp/graphenekp.o src/hamiltonian/kp/graphenekp.cpp
+
+${OBJECTDIR}/src/hamiltonian/kp/tikp.o: src/hamiltonian/kp/tikp.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/kp
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/kp/tikp.o src/hamiltonian/kp/tikp.cpp
+
+${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o: src/hamiltonian/tb/graphenetb.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/tb
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o src/hamiltonian/tb/graphenetb.cpp
 
 ${OBJECTDIR}/src/kpoints/KPoints.o: src/kpoints/KPoints.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/kpoints
@@ -151,21 +166,6 @@ ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/pyqmicad.o src/python/pyqmicad.cpp
-
-${OBJECTDIR}/src/qm/kp/graphenekp.o: src/qm/kp/graphenekp.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/graphenekp.o src/qm/kp/graphenekp.cpp
-
-${OBJECTDIR}/src/qm/kp/tikp.o: src/qm/kp/tikp.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/qm/kp
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/kp/tikp.o src/qm/kp/tikp.cpp
-
-${OBJECTDIR}/src/qm/tb/graphenetb.o: src/qm/tb/graphenetb.cpp 
-	${MKDIR} -p ${OBJECTDIR}/src/qm/tb
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qm/tb/graphenetb.o src/qm/tb/graphenetb.cpp
 
 ${OBJECTDIR}/src/string/stringutils.o: src/string/stringutils.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/string

@@ -8,6 +8,7 @@
 #include "NegfResult.h"
 
 namespace qmicad{
+namespace negf{
 
 NegfResultList::NegfResultList(string tag, uint N):
         tag(tag), N(N)
@@ -32,4 +33,5 @@ void NegfResultList::save(ostream &out){
     }
 }
  
+}
 }

@@ -18,6 +18,8 @@
 #include <boost/shared_ptr.hpp>
 
 namespace qmicad{
+namespace kpoints{
+
 using namespace utils::stds;
 using utils::NullDeleter;
 using utils::Printable;
@@ -51,6 +53,6 @@ protected:
 };
 
 }
-
+}
 #endif	/* KPOINTS_H */
 

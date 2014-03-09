@@ -12,6 +12,8 @@
 #include "AtomicStruct.h"
 
 namespace qmicad{
+namespace atoms{
+
 /* Default constructor */
 AtomicStruct::AtomicStruct():mpt() {
     init();
@@ -429,6 +431,7 @@ AtomicStruct AtomicStruct::span(uint start, uint end) const{
     return this->operator()(maths::armadillo::span(start, end));
 }
 
+}
 }
 
 

@@ -12,6 +12,8 @@
 #include "../utils/std.hpp"
 
 namespace qmicad{
+namespace negf{
+
 using namespace utils::stds;
 using namespace maths::armadillo;
 
@@ -40,5 +42,7 @@ public:
 };
 
 }
+}
+
 #endif	/* NEGFRESULT_H */
 

@@ -27,6 +27,8 @@
 namespace qmicad{
 namespace python{
 
+using namespace utils;
+
 /**
  * Prints welcome message.
  */
@@ -59,7 +61,13 @@ BOOST_PYTHON_MODULE(qmicad)
     using boost::mpi::communicator;
     using boost::shared_ptr;
     using boost::noncopyable;
-    using namespace utils::stds;
+
+    using namespace atoms;
+    using namespace hamiltonian;
+    using namespace kpoints;
+    using namespace potential;
+    using namespace band;
+    using namespace negf;
     using namespace maths::geometry;
     
     def("greet", greet);

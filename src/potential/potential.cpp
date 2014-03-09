@@ -8,6 +8,8 @@
 #include "potential.h"
 
 namespace qmicad{
+namespace potential{
+
 using namespace std;
 // Constructor
 Potential::Potential(const AtomicStruct &atoms, const contact &source, 
@@ -139,5 +141,6 @@ void Potential::VS(double VS){
     ms.V = VS;
 }
 
+}
 }
 

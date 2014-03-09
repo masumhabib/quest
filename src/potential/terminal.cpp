@@ -8,6 +8,8 @@
 #include "terminal.h"
 
 namespace qmicad{
+namespace potential{
+
 // Construct Terminal from a string containing definition of a plygon
 // "POLYGON((x1 y1, x2 y2, ...))"
 Terminal::Terminal(const string& polygon, const string &prefix): 
@@ -78,4 +80,4 @@ string Contact4::toString() const{
 }
 
 }
-
+}

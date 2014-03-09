@@ -28,6 +28,8 @@
 #include <sys/stat.h>
 
 namespace qmicad{
+namespace negf{
+
 using boost::shared_ptr;
 using namespace maths::armadillo;
 using namespace maths::constants;
@@ -365,5 +367,6 @@ private:
 
 }; // end of CohRgfa
 }  // end of namespace
+}
 #endif	/* COHRGFA_H */
 

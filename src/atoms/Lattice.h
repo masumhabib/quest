@@ -17,6 +17,8 @@
 #include "../utils/Printable.hpp"
 
 namespace qmicad{
+namespace atoms{
+
 using namespace utils::stds;
 using utils::Printable;
 using namespace maths::armadillo;
@@ -80,7 +82,7 @@ struct LatticeVector: public Printable {
 typedef struct LatticeVector lvec;
 typedef struct LatticeCoordinate lcoord;
 
-}
-
+} // namespace atoms
+} // namespace qmicad
 #endif	/* LATTICE_H */
 

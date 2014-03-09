@@ -36,6 +36,8 @@
 
 
 namespace qmicad{
+namespace atoms{
+
 using namespace boost::python;
 
 using utils::Printable;
@@ -317,6 +319,7 @@ struct AtomPickler : public pickle_suite{
 };
 
 
+}
 }
 
 #endif	/* ATOMS_H */

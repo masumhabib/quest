@@ -8,6 +8,7 @@
 #include "BandStruct.h"
 
 namespace qmicad{
+namespace band{
 
 BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
         const Workers &workers, bool saveAscii): ParLoop(workers, pk->n_rows), 
@@ -136,4 +137,5 @@ void BandStruct::save(string fileName){
 }
 
 
+}
 }

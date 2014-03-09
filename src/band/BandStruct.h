@@ -35,11 +35,14 @@
 
 
 namespace qmicad{
+namespace band{
+
 using namespace maths::armadillo;
 using namespace maths::constants;
 using namespace maths::spvec;
 using namespace utils;
 using namespace myenums;
+using namespace atoms;
 
 namespace mpi = boost::mpi;
 using boost::shared_ptr;
@@ -113,6 +116,7 @@ private:
 
 };
 
+}
 }
 #endif	/* BANDSTRUCTCALC_H */
 

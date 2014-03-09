@@ -8,7 +8,8 @@
 #include "computegs.h"
 
 namespace qmicad{
-    
+namespace negf{    
+
 /**
  * 
  */
@@ -56,4 +57,5 @@ bool computegs(cxmat& gs, double E, const cxmat& Hii, const cxmat& Sii,
     return flag;
 }
 
+}
 }

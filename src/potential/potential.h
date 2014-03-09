@@ -20,6 +20,9 @@
 #include <boost/make_shared.hpp>
 
 namespace qmicad{
+namespace potential{
+
+using namespace atoms;
 using namespace utils::stds;
 using namespace maths::spvec;
 using utils::itos;
@@ -31,6 +34,7 @@ using boost::make_shared;
  */
 
 class Potential:public Printable{
+
 public:
 protected:
     const AtomicStruct  &ma;    //!< Atomistic geometry of the device.
@@ -80,6 +84,7 @@ protected:
     
 };
 
+}
 }
 
 #endif	/* POTENTIAL_H */

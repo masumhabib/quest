@@ -8,6 +8,8 @@
 #include "linearPot.h"
 
 namespace qmicad{
+namespace potential{
+
 LinearRegion4::LinearRegion4(point lb, point rb, point rt, point lt, 
             double Vl, double Vr, double Vt, double Vb,
             const string &prefix):
@@ -228,4 +230,5 @@ void LinearPot::VLR(int ilr, double Vl, double Vr, double Vt, double Vb){
     }
     int lstart = id;                            // id of linear region # N-1*/
     
+}
 }

@@ -9,6 +9,8 @@
 #include "graphenekp.h"
 
 namespace qmicad{
+namespace hamiltonian{
+
 
 cxmat GrapheneKpHam::genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj)
 {
@@ -91,6 +93,7 @@ cxmat GrapheneKpHam::genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct
 };
 
 
+}
 }
 
 

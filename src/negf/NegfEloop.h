@@ -25,6 +25,8 @@
 #include <boost/smart_ptr.hpp>
 
 namespace qmicad{
+namespace negf{
+
 using namespace utils::stds;
 using utils::ParLoop;
 using utils::VecGrid;
@@ -74,6 +76,7 @@ protected:
     ConsoleProgressBar    mbar;         //!< Shows a nice progress bar.
     
 };
+}
 }
 #endif	/* NEGFELOOP_H */
 

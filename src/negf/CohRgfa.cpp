@@ -8,6 +8,8 @@
 #include "CohRgfa.h"
 
 namespace qmicad{
+namespace negf{
+
 CohRgfa::CohRgfa(CohRgfaParams newp, double E, string newprefix):
         Printable(newprefix), mp(newp), mE(E), 
         mN(newp.nb-2), miLc(0), miRc(newp.nb-1),
@@ -669,5 +671,5 @@ inline const cxmat& CohRgfa::GamRNN(){
 }
 
 }
-
+}
 

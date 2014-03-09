@@ -17,6 +17,7 @@
 #include "../maths/geometry.hpp"
 
 namespace qmicad{
+namespace potential{
 
 using namespace maths::geometry;
 using utils::Printable;
@@ -87,6 +88,7 @@ typedef Terminal4   terminal;
 typedef Contact4    contact;
 typedef Gate4       gate;
 
+}
 }
 
 #endif	/* TEMINAL_H */

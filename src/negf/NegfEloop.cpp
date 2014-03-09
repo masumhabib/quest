@@ -9,6 +9,7 @@
 #include "NegfResult.h"
 
 namespace qmicad{
+namespace negf{
 
 NegfEloop::NegfEloop(const VecGrid &E, const CohRgfaParams &np, 
         const Workers &workers, bool isAscii): ParLoop(workers, E.N()), 
@@ -128,4 +129,5 @@ void NegfEloop::enableI(uint ib, uint N){
     mThisIop[ib] = vec_result();
 }
 
+}
 }

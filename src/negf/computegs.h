@@ -12,6 +12,8 @@
 #include "../maths/constants.h"
 
 namespace qmicad{
+namespace negf{
+
 using namespace maths::armadillo;
 using namespace maths::constants;
 
@@ -40,6 +42,7 @@ using namespace maths::constants;
 
 bool computegs(cxmat& gs, double E, const cxmat& Hii, const cxmat& Sii, 
         const cxmat& Tij, dcmplx ieta, double TolX);
+}
 }
 #endif	/* COMPUTEGS_H */
 
