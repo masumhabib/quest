@@ -49,7 +49,7 @@ using std::string;
  * The method constructing NEGF object is responsible
  * for memory management of NEGFParams.
  */
-struct NegfParams: public Printable {
+struct CohRgfaParams: public Printable {
     
     // Options
     bool                DCacheEnabled;
@@ -104,7 +104,7 @@ struct NegfParams: public Printable {
 
     static const double SurfGTolX = 1E-8;
     
-    NegfParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
+    CohRgfaParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
             nb(nb), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
         DCacheEnabled = true;
         TCacheEnabled = true;
@@ -292,7 +292,7 @@ protected:
  */
 // Fields    
 protected:
-    NegfParams         mp;      // parameters
+    CohRgfaParams         mp;      // parameters
     double             mE;      // Energy at which calculations are pertormed.
     double             mf0;     // Fermi function at contact 1
     double             mfNp1;   // Fermi function at contact N+1
@@ -328,7 +328,7 @@ private:
 
 // Methods    
 public:
-    CohRgfa(NegfParams newp, double E, string newprefix = "");
+    CohRgfa(CohRgfaParams newp, double E, string newprefix = "");
     
     // Density operator
     cxmat niOp(uint N = 1);

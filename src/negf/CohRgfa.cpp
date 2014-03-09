@@ -8,7 +8,7 @@
 #include "CohRgfa.h"
 
 namespace qmicad{
-CohRgfa::CohRgfa(NegfParams newp, double E, string newprefix):
+CohRgfa::CohRgfa(CohRgfaParams newp, double E, string newprefix):
         Printable(newprefix), mp(newp), mE(E), 
         mN(newp.nb-2), miLc(0), miRc(newp.nb-1),
         mDi(this, miLc, miRc, newp.DCacheEnabled), 
@@ -418,7 +418,7 @@ inline void CohRgfa::glc::computeglc(cxmat& glci, const cxmat& glcim1, int ib){
     const cxmat &Tiim1 = mnegf->mTl(ib); //load T_ib,ib-1
     // If this is the left contact, calculate surface Green function.
     if(ib == iLc){
-        NegfParams &p = mnegf->mp;
+        CohRgfaParams &p = mnegf->mp;
         double E = mnegf->mE;
         double VL = (*p.V(iLc))(0); // all the atoms on a contact have the save bias
         computegs(glci, E+VL, *p.H0(iLc), *p.S0(iLc), Tiim1, p.ieta, p.SurfGTolX);
@@ -485,7 +485,7 @@ inline void CohRgfa::grc::computegrc(cxmat& grci, const cxmat& grcip1, int ib){
     const cxmat &Tip1i = mnegf->mTl(ib+1); //load T_ib+1,ib
     // If this is the right contact then calculate surface Green function.
     if(ib == iRc){
-        NegfParams &p = mnegf->mp;
+        CohRgfaParams &p = mnegf->mp;
         double E = mnegf->mE;
         double VR = (*p.V(iRc))(0); // all the atoms on a contact have the save bias
         computegs(grci, E+VR, *p.H0(iRc), *p.S0(iRc), trans(Tip1i), p.ieta, 

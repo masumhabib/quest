@@ -37,7 +37,7 @@ namespace mpi = boost::mpi;
 class NegfEloop: public ParLoop{
     typedef vector<negf_result> vec_result;
 public:
-    NegfEloop(const VecGrid &E, const NegfParams &np, const Workers &workers, 
+    NegfEloop(const VecGrid &E, const CohRgfaParams &np, const Workers &workers, 
               bool isAscii = true);
     
     void            enableTE(uint N = 1);   
@@ -56,7 +56,7 @@ protected:
 public:
     
 protected:
-    const NegfParams      &mnp;         //!< Negf parameters.
+    const CohRgfaParams   &mnp;         //!< Negf parameters.
     shared_ptr<CohRgfa>   mnegf;        //!< Current Negf calculator.
     VecGrid               mE;           //!< Energy grid.
     

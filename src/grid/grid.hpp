@@ -56,10 +56,11 @@ public:
         if (mdV == 0){
             mNV = 1;
         }else{
-            mNV = abs((mMaxV - mMinV)/mdV)+1;
+            mNV = floor(abs((mMaxV - mMinV)/mdV))+1;
+            mMaxV = mMinV + (mNV - 1)*mdV;
         }
         create();
-        mMaxV = mV(mNV-1);        
+        //mMaxV = mV(mNV-1);        
     }
 
     Grid1D(T min = 0, T max = 0, int N = 1, string prefix = ""):
