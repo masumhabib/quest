@@ -36,9 +36,6 @@
         <itemPath>src/hamiltonian/hamiltonian.cpp</itemPath>
         <itemPath>src/hamiltonian/hamiltonian.hpp</itemPath>
       </logicalFolder>
-      <logicalFolder name="include" displayName="include" projectFiles="true">
-        <itemPath>src/include/qmicad.hpp</itemPath>
-      </logicalFolder>
       <logicalFolder name="f2" displayName="kpoints" projectFiles="true">
         <itemPath>src/kpoints/KPoints.cpp</itemPath>
         <itemPath>src/kpoints/KPoints.h</itemPath>
@@ -81,6 +78,10 @@
         <itemPath>src/python/boostpython.hpp</itemPath>
         <itemPath>src/python/pyqmicad.cpp</itemPath>
         <itemPath>src/python/pyqmicad.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="include" displayName="qmicad" projectFiles="true">
+        <itemPath>src/qmicad/qmicad.cpp</itemPath>
+        <itemPath>src/qmicad/qmicad.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="string" displayName="string" projectFiles="true">
         <itemPath>src/string/stringutils.cpp</itemPath>
@@ -209,8 +210,6 @@
       </item>
       <item path="src/hamiltonian/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/include/qmicad.hpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="src/kpoints/KPoints.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/kpoints/KPoints.h" ex="false" tool="3" flavor2="0">
@@ -272,6 +271,10 @@
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qmicad/qmicad.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qmicad/qmicad.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -396,8 +399,6 @@
       </item>
       <item path="src/hamiltonian/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="src/include/qmicad.hpp" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="src/kpoints/KPoints.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/kpoints/KPoints.h" ex="false" tool="3" flavor2="0">
@@ -459,6 +460,10 @@
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/qmicad/qmicad.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/qmicad/qmicad.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/string/stringutils.cpp" ex="false" tool="1" flavor2="0">
       </item>

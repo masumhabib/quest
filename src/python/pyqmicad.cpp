@@ -10,9 +10,7 @@
 
 #include "pyqmicad.h"
 #include "../python/boostpython.hpp"
-#include "../include/qmicad.hpp"
-#include "../utils/vout.h"
-
+#include "../qmicad/qmicad.hpp"
 
 
 
@@ -29,56 +27,51 @@ using namespace band;
 using namespace negf;
 using namespace maths::geometry;
 
-/**
- * Prints welcome message.
- */
-char const* greet(){   
-    static string msg;
-    msg  = "      QMICAD: Quantum Mechanics Inspired Computer Aided Design";
-    msg += "\n                             v" + qmicad::version + "\n";
-    msg += " ------------------------------------------------------------------";
-    return msg.c_str();
-}
 
-/**
- * Sets application verbosity level.
- */
-
-void setVerbosity(int verb){
-    stds::vout.appVerbosity(verbosity(verb));
-}
-
-BOOST_PYTHON_MODULE(qmicad)
-{    
-    def("greet", greet);
-    def("setVerbosity", setVerbosity);
-   
-    export_Option();
+BOOST_PYTHON_MODULE(_utils)
+{
     export_Printable();
     
+    export_Option();
+    
+    export_Timer();
     export_cxmat();
     export_mat();
-    export_vec();
+    export_vec();  
 
     export_VecGrid();
     
+    export_Workers();
+
+    export_point();
+    export_quadrilateral();        
     
+}
+
+BOOST_PYTHON_MODULE(_atoms)
+{     
     export_svec();
     export_pvec();
     export_lvec();
     export_lcoord();
     export_Atom();
     export_PeriodicTable();
-    export_AtomicStruct();    
+    export_AtomicStruct();     
+}
 
-    export_Workers();
+BOOST_PYTHON_MODULE(_kpoints)
+{
+    export_KPoints();        
+}
 
-    export_point();
-    export_quadrilateral();
-    
-    export_Timer();
-    
-    
+BOOST_PYTHON_MODULE(_potential)
+{
+    export_Potential();
+    export_LinearPot();
+}
+
+BOOST_PYTHON_MODULE(_hamiltonian)
+{
     export_HamParams();
     export_ham();
     export_cxham();
@@ -87,20 +80,27 @@ BOOST_PYTHON_MODULE(qmicad)
     export_GrapheneKpParams();
     export_GrapheneKpHam();        
     export_TISurfKpParams();
-    export_TISurfKpHam();
+    export_TISurfKpHam();    
+}
 
-    export_Potential();
-    export_LinearPot();
-     
-    export_CohRgfaParams();    
-    export_NegfEloop();
-
-    export_KPoints();
-
+BOOST_PYTHON_MODULE(_band)
+{
     export_BandStructParams();
     export_BandStruct();    
-        
-    
+}
+
+BOOST_PYTHON_MODULE(_negf)
+{
+    export_CohRgfaParams();    
+    export_NegfEloop();    
+}
+
+BOOST_PYTHON_MODULE(_qmicad)
+{ 
+    scope().attr("version") = version;
+    def("greet", greet);
+    def("setVerbosity", setVerbosity);      
+
 }
 
 }

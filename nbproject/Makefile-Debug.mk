@@ -56,6 +56,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
+	${OBJECTDIR}/src/qmicad/qmicad.o \
 	${OBJECTDIR}/src/string/stringutils.o \
 	${OBJECTDIR}/src/utils/ConsoleProgressBar.o \
 	${OBJECTDIR}/src/utils/Printable.o \
@@ -132,11 +133,6 @@ ${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o: src/hamiltonian/tb/graphenetb.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o src/hamiltonian/tb/graphenetb.cpp
 
-${OBJECTDIR}/src/include/qmicad.hpp.gch: src/include/qmicad.hpp 
-	${MKDIR} -p ${OBJECTDIR}/src/include
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o "$@" src/include/qmicad.hpp
-
 ${OBJECTDIR}/src/kpoints/KPoints.o: src/kpoints/KPoints.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/kpoints
 	${RM} "$@.d"
@@ -201,6 +197,11 @@ ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/python
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/python/pyqmicad.o src/python/pyqmicad.cpp
+
+${OBJECTDIR}/src/qmicad/qmicad.o: src/qmicad/qmicad.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/qmicad
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/qmicad/qmicad.o src/qmicad/qmicad.cpp
 
 ${OBJECTDIR}/src/string/stringutils.o: src/string/stringutils.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/string

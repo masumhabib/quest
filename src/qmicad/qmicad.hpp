@@ -21,12 +21,6 @@
 #ifndef QMICAD_HPP
 #define QMICAD_HPP
 
-#include <string>
-
-namespace qmicad{
-    static const std::string version = "0.1";
-}
-
 #include "../utils/std.hpp"
 #include "../utils/vout.h"
 #include "../utils/myenums.hpp"
@@ -70,5 +64,14 @@ namespace qmicad{
 
 #include "../band/BandStruct.h"
 
+namespace qmicad{
+
+using utils::stds::string;
+extern const string version;
+
+char const* greet();
+void setVerbosity(int verb);
+
+}
 
 #endif /* QMICAD_HPP */

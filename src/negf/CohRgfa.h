@@ -294,7 +294,7 @@ protected:
  */
 // Fields    
 protected:
-    CohRgfaParams         mp;      // parameters
+    CohRgfaParams      mp;      // parameters
     double             mE;      // Energy at which calculations are pertormed.
     double             mf0;     // Fermi function at contact 1
     double             mfNp1;   // Fermi function at contact N+1
@@ -330,7 +330,7 @@ private:
 
 // Methods    
 public:
-    CohRgfa(CohRgfaParams newp, double E, string newprefix = "");
+    CohRgfa(const CohRgfaParams &newp, double E, string newprefix = "");
     
     // Density operator
     cxmat niOp(uint N = 1);
