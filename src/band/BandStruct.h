@@ -41,7 +41,7 @@ using namespace maths::armadillo;
 using namespace maths::constants;
 using namespace maths::spvec;
 using namespace utils;
-using namespace myenums;
+using namespace utils::enums;
 using namespace atoms;
 
 namespace mpi = boost::mpi;

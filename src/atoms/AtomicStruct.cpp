@@ -10,6 +10,7 @@
  */
 
 #include "AtomicStruct.h"
+#include "../python/boostpython.hpp"
 
 namespace qmicad{
 namespace atoms{
@@ -434,4 +435,64 @@ AtomicStruct AtomicStruct::span(uint start, uint end) const{
 }
 }
 
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace atoms;
+using namespace utils::stds;
+
+/**
+ * Atom.
+ */
+void export_Atom(){
+    class_<Atom, shared_ptr<Atom> >("Atom")
+        .def_pickle(AtomPickler())
+    ;
+}
+
+/**
+ * Periodic table.
+ */
+void (PeriodicTable::*PeriodicTable_add1)(uint, string, uint, uint) = &PeriodicTable::add;
+void (PeriodicTable::*PeriodicTable_add2)(const Atom&) = &PeriodicTable::add;
+void export_PeriodicTable(){
+    class_<PeriodicTable, shared_ptr<PeriodicTable> >("PeriodicTable")
+        .def("add", PeriodicTable_add1)
+        .def("add", PeriodicTable_add2)
+        .def_pickle(PeriodicTablePickler())
+    ;
+}
+
+/**
+ * Atomistic geometry of the device.
+ */
+
+lvec (AtomicStruct::*AtomicStruct_LatticeVector1)() const = &AtomicStruct::LatticeVector;
+void export_AtomicStruct(){
+    class_<AtomicStruct, bases<Printable>, shared_ptr<AtomicStruct> >("AtomicStruct", 
+            init<const string&>())
+        .def(init<const string&, const PeriodicTable>())
+        .def(init<uint, uint, double, double, const PeriodicTable>())
+        .def("span", &AtomicStruct::span)
+        .def("xmax", &AtomicStruct::xmax)
+        .def("xmin", &AtomicStruct::xmin)
+        .def("ymax", &AtomicStruct::ymax)
+        .def("ymin", &AtomicStruct::ymin)    
+        .def("zmax", &AtomicStruct::zmax)
+        .def("zmin", &AtomicStruct::zmin) 
+        .def("LatticeVector", AtomicStruct_LatticeVector1) 
+        .def("NumOfElectrons", &AtomicStruct::NumOfElectrons) 
+        .def("NumOfOrbitals", &AtomicStruct::NumOfOrbitals) 
+        .def(self + svec())
+        .def(self - svec())
+        .def(self + lcoord())
+        .def(self - lcoord())
+    ;
+}
+
+}
+}
 

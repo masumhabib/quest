@@ -7,6 +7,7 @@
 
 #include "NegfEloop.h"
 #include "NegfResult.h"
+#include "../python/boostpython.hpp"
 
 namespace qmicad{
 namespace negf{
@@ -131,3 +132,29 @@ void NegfEloop::enableI(uint ib, uint N){
 
 }
 }
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace negf;
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableTE, enableTE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI, enableI, 0, 2)
+void export_NegfEloop(){
+    class_<NegfEloop, shared_ptr<NegfEloop> >("NegfEloop", 
+            init<VecGrid&, const CohRgfaParams&, const Workers&, 
+            optional<bool> >())
+        .def("run", &NegfEloop::run)
+        .def("save", &NegfEloop::save)
+        .def("enableTE", &NegfEloop::enableTE, NegfEloop_enableTE())
+        .def("enableI", &NegfEloop::enableI, NegfEloop_enableI())
+    ;
+}
+
+}
+}
+
+
+

@@ -19,6 +19,7 @@
         <itemPath>src/cache/cache.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="grid" displayName="grid" projectFiles="true">
+        <itemPath>src/grid/grid.cpp</itemPath>
         <itemPath>src/grid/grid.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="hamiltonian" displayName="hamiltonian" projectFiles="true">
@@ -32,6 +33,7 @@
           <itemPath>src/hamiltonian/tb/graphenetb.cpp</itemPath>
           <itemPath>src/hamiltonian/tb/graphenetb.h</itemPath>
         </logicalFolder>
+        <itemPath>src/hamiltonian/hamiltonian.cpp</itemPath>
         <itemPath>src/hamiltonian/hamiltonian.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="include" displayName="include" projectFiles="true">
@@ -42,9 +44,11 @@
         <itemPath>src/kpoints/KPoints.h</itemPath>
       </logicalFolder>
       <logicalFolder name="maths" displayName="maths" projectFiles="true">
+        <itemPath>src/maths/arma.cpp</itemPath>
         <itemPath>src/maths/arma.hpp</itemPath>
         <itemPath>src/maths/constants.h</itemPath>
         <itemPath>src/maths/fermi.hpp</itemPath>
+        <itemPath>src/maths/geometry.cpp</itemPath>
         <itemPath>src/maths/geometry.hpp</itemPath>
         <itemPath>src/maths/svec.h</itemPath>
         <itemPath>src/maths/trace.hpp</itemPath>
@@ -74,6 +78,7 @@
         <itemPath>src/potential/terminal.h</itemPath>
       </logicalFolder>
       <logicalFolder name="python" displayName="python" projectFiles="true">
+        <itemPath>src/python/boostpython.hpp</itemPath>
         <itemPath>src/python/pyqmicad.cpp</itemPath>
         <itemPath>src/python/pyqmicad.h</itemPath>
       </logicalFolder>
@@ -86,9 +91,11 @@
         <itemPath>src/utils/ConsoleProgressBar.h</itemPath>
         <itemPath>src/utils/Exception.h</itemPath>
         <itemPath>src/utils/NullDeleter.hpp</itemPath>
+        <itemPath>src/utils/Printable.cpp</itemPath>
         <itemPath>src/utils/Printable.hpp</itemPath>
         <itemPath>src/utils/Timer.cpp</itemPath>
         <itemPath>src/utils/Timer.h</itemPath>
+        <itemPath>src/utils/myenums.cpp</itemPath>
         <itemPath>src/utils/myenums.hpp</itemPath>
         <itemPath>src/utils/serialize.hpp</itemPath>
         <itemPath>src/utils/std.hpp</itemPath>
@@ -182,7 +189,11 @@
       </item>
       <item path="src/cache/cache.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/grid/grid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/hamiltonian.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hamiltonian/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -204,11 +215,15 @@
       </item>
       <item path="src/kpoints/KPoints.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/maths/arma.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/maths/arma.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/constants.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/fermi.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/geometry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -252,6 +267,8 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/python/boostpython.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
@@ -268,11 +285,15 @@
       </item>
       <item path="src/utils/NullDeleter.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/utils/Printable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Timer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/Timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/myenums.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -355,7 +376,11 @@
       </item>
       <item path="src/cache/cache.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/grid/grid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/grid/grid.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/hamiltonian.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hamiltonian/hamiltonian.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -377,11 +402,15 @@
       </item>
       <item path="src/kpoints/KPoints.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/maths/arma.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/maths/arma.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/constants.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/fermi.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/geometry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
       </item>
@@ -425,6 +454,8 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/python/boostpython.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.h" ex="false" tool="3" flavor2="0">
@@ -441,11 +472,15 @@
       </item>
       <item path="src/utils/NullDeleter.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/utils/Printable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/utils/Printable.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/Timer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/Timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/myenums.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>

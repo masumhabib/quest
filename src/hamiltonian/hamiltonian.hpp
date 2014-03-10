@@ -1,5 +1,5 @@
 /* 
- * File:   genHam.h
+ * File:   hamiltonian.hpp
  * Author: K M Masum Habib <khabib@ee.ucr.edu>
  *
  * Created on April 6, 2013, 5:52 PM
@@ -8,8 +8,8 @@
  * 
  */
 
-#ifndef HAMILTONIAN_H
-#define	HAMILTONIAN_H
+#ifndef HAMILTONIAN_HPP
+#define	HAMILTONIAN_HPP
 
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
@@ -214,5 +214,5 @@ typedef Hamiltonian<mat>    ham;
 
 }
 }
-#endif	/* HAMILTONIAN_H */
+#endif	/* HAMILTONIAN_HPP */
 

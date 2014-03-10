@@ -6,6 +6,7 @@
  */
 
 #include "potential.h"
+#include "../python/boostpython.hpp"
 
 namespace qmicad{
 namespace potential{
@@ -143,4 +144,36 @@ void Potential::VS(double VS){
 
 }
 }
+
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace potential;
+
+/**
+ * Linear potential
+ */  
+shared_ptr<vec> (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;    
+void export_Potential(){    
+    class_<Potential, bases<Printable>, shared_ptr<Potential> >("Potential", 
+            init<const AtomicStruct&, optional<const string&> >())
+        .def("addSource", &Potential::addSource)
+        .def("addDrain", &Potential::addDrain)
+        .def("addGate", &Potential::addGate)
+        .def("compute", &Potential::compute)
+        .def("exportSvg", &Potential::exportSvg)
+        .def("exportPotential", &Potential::exportPotential)
+        .def("VD", &Potential::VD)
+        .def("VS", &Potential::VS)
+        .def("VG", &Potential::VG)
+        .def("toOrbPot", Potential_toOrbPot) 
+    ;
+}
+
+}
+}
+    
 

@@ -15,6 +15,7 @@
 
 namespace qmicad{
 namespace python{
+
 using maths::armadillo::wall_clock;
 using namespace utils::stds;
 using utils::Printable;
@@ -40,10 +41,6 @@ public:
         return " Runtime: " + ttos(interval) + ".";
     }
     
-//    friend ostream& operator << (ostream & out, const PyTimer &p){
-//        out << p.toString();
-//        return out;
-//    }
 protected:
     wall_clock clock;
     double interval;

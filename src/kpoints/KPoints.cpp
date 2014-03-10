@@ -6,6 +6,7 @@
  */
 
 #include "KPoints.h"
+#include "../python/boostpython.hpp"
 
 namespace qmicad{
 namespace kpoints{
@@ -87,3 +88,26 @@ shared_ptr<mat> KPoints::kp(){
     
 }
 }
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace kpoints;
+
+void export_KPoints(){
+    class_<KPoints, bases<Printable>, shared_ptr<KPoints>, noncopyable>("KPoints",
+            init<optional<const string&> >()) 
+        .def("addKPoint", &KPoints::addKPoint)
+        .def("addKLine", &KPoints::addKLine)
+        .def("addKRect", &KPoints::addKRect)
+        .def("kp", &KPoints::kp)
+        .def("N", &KPoints::N)
+    ;
+}
+}
+}
+
+
+

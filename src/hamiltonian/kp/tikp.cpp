@@ -6,6 +6,7 @@
  */
 
 #include "tikp.h"
+#include "../../python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{
@@ -95,4 +96,40 @@ cxmat TISurfKpHam::genTwoAtomOvl(const AtomicStruct& atomi,
 
 }
 }
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace hamiltonian;
+
+    /**
+     * TI Surface k.p parameters.
+     */
+void export_TISurfKpParams(){
+    class_<TISurfKpParams, bases<HamParams>, shared_ptr<TISurfKpParams> >("TISurfKpParams")
+        .def_readwrite("ax", &TISurfKpParams::ax)
+        .def_readwrite("ay", &TISurfKpParams::ay)
+        .def_readwrite("Rx", &TISurfKpParams::Rx)   
+        .def_readwrite("Ry", &TISurfKpParams::Ry)   
+        .def_readwrite("A2", &TISurfKpParams::A2)
+        .def_readwrite("C", &TISurfKpParams::C)
+    ;
+}
+
+    /**
+     * TI Surface Hamiltonian.
+     */
+void export_TISurfKpHam(){
+    class_<TISurfKpHam, bases<cxham>, shared_ptr<TISurfKpHam> >("TISurfKpHam",
+            init<const TISurfKpParams& >())
+    ;
+}
+
+}
+}
+
+
+
 

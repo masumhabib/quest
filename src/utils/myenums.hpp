@@ -1,6 +1,6 @@
 /* 
  * File:   myenums.hpp
- * Author: masum
+ * Author: K M Masum Habib<masum.habib@virginia.edu>
  *
  * Created on January 21, 2014, 11:42 AM
  */
@@ -8,10 +8,13 @@
 #ifndef MYENUMS_HPP
 #define	MYENUMS_HPP
 
-namespace myenums{
-    enum Option {Disabled, Enabled};
-    enum Switch {Off, On};
-}
+namespace utils{
+namespace enums{
+ 
+enum Option {Disabled, Enabled};
+enum Switch {Off, On};
 
+}
+}
 #endif	/* MYENUMS_HPP */
 

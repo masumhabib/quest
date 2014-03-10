@@ -8,6 +8,7 @@
  */
 
 #include "graphenetb.h"
+#include "../../python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{
@@ -94,5 +95,44 @@ cxmat GrapheneTbHam::genTwoAtomOvl(const AtomicStruct& atomi,
 
 }
 }
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace hamiltonian;
+
+/**
+ * Graphene TB parameters.
+ */
+void export_GrapheneTbParams(){
+    class_<GrapheneTbParams, bases<HamParams>, shared_ptr<GrapheneTbParams> >("GrapheneTbParams")
+        .def_readwrite("ec", &GrapheneTbParams::ec)
+        .def_readwrite("di0", &GrapheneTbParams::di0)
+        .def_readwrite("ti0", &GrapheneTbParams::ti0)   
+        .def_readwrite("do0", &GrapheneTbParams::do0)   
+        .def_readwrite("to0", &GrapheneTbParams::to0)
+        .def_readwrite("lmdz", &GrapheneTbParams::lmdz)
+        .def_readwrite("lmdxy", &GrapheneTbParams::lmdxy)
+        .def_readwrite("alpha", &GrapheneTbParams::alpha)    
+        .def_readwrite("doX", &GrapheneTbParams::doX)   
+    ;
+}
+
+/**
+ * Graphene TB Hamiltonian.
+ */
+void export_GrapheneTbHam(){
+    class_<GrapheneTbHam, bases<cxham>, shared_ptr<GrapheneTbHam> >("GrapheneTbHam",
+            init<const GrapheneTbParams& >())
+    ;
+}
+
+}
+}
+
+    
+
 
 

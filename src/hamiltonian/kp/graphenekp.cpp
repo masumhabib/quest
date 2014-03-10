@@ -7,6 +7,7 @@
 
 
 #include "graphenekp.h"
+#include "../../python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{
@@ -95,5 +96,38 @@ cxmat GrapheneKpHam::genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct
 
 }
 }
+
+/**
+ * Python exporters.
+ */
+namespace qmicad{
+namespace python{
+using namespace hamiltonian;
+
+/**
+ * Graphene k.p parameters.
+ */
+void export_GrapheneKpParams(){
+    class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
+        .def_readwrite("ax", &GrapheneKpParams::ax)
+        .def_readwrite("ay", &GrapheneKpParams::ay)
+        .def_readwrite("Rx", &GrapheneKpParams::Rx)   
+        .def_readwrite("Ry", &GrapheneKpParams::Ry)   
+        .def_readwrite("gamma", &GrapheneKpParams::gamma)
+    ;
+}
+
+/**
+ * Graphene k.p Hamiltonian.
+ */
+void export_GrapheneKpHam(){
+    class_<GrapheneKpHam, bases<cxham >, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
+            init<const GrapheneKpParams& >())
+    ;
+}
+
+}
+}
+
 
 

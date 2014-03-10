@@ -38,10 +38,14 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/atoms/AtomicStruct.o \
 	${OBJECTDIR}/src/atoms/Lattice.o \
 	${OBJECTDIR}/src/band/BandStruct.o \
+	${OBJECTDIR}/src/grid/grid.o \
+	${OBJECTDIR}/src/hamiltonian/hamiltonian.o \
 	${OBJECTDIR}/src/hamiltonian/kp/graphenekp.o \
 	${OBJECTDIR}/src/hamiltonian/kp/tikp.o \
 	${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o \
 	${OBJECTDIR}/src/kpoints/KPoints.o \
+	${OBJECTDIR}/src/maths/arma.o \
+	${OBJECTDIR}/src/maths/geometry.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/NegfResult.o \
@@ -54,7 +58,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/string/stringutils.o \
 	${OBJECTDIR}/src/utils/ConsoleProgressBar.o \
+	${OBJECTDIR}/src/utils/Printable.o \
 	${OBJECTDIR}/src/utils/Timer.o \
+	${OBJECTDIR}/src/utils/myenums.o \
 	${OBJECTDIR}/src/utils/vout.o
 
 
@@ -97,6 +103,16 @@ ${OBJECTDIR}/src/band/BandStruct.o: src/band/BandStruct.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/band/BandStruct.o src/band/BandStruct.cpp
 
+${OBJECTDIR}/src/grid/grid.o: src/grid/grid.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/grid
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/grid/grid.o src/grid/grid.cpp
+
+${OBJECTDIR}/src/hamiltonian/hamiltonian.o: src/hamiltonian/hamiltonian.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/hamiltonian.o src/hamiltonian/hamiltonian.cpp
+
 ${OBJECTDIR}/src/hamiltonian/kp/graphenekp.o: src/hamiltonian/kp/graphenekp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/kp
 	${RM} "$@.d"
@@ -116,6 +132,16 @@ ${OBJECTDIR}/src/kpoints/KPoints.o: src/kpoints/KPoints.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/kpoints
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/kpoints/KPoints.o src/kpoints/KPoints.cpp
+
+${OBJECTDIR}/src/maths/arma.o: src/maths/arma.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/maths
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/maths/arma.o src/maths/arma.cpp
+
+${OBJECTDIR}/src/maths/geometry.o: src/maths/geometry.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/maths
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/maths/geometry.o src/maths/geometry.cpp
 
 ${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
@@ -177,10 +203,20 @@ ${OBJECTDIR}/src/utils/ConsoleProgressBar.o: src/utils/ConsoleProgressBar.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/ConsoleProgressBar.o src/utils/ConsoleProgressBar.cpp
 
+${OBJECTDIR}/src/utils/Printable.o: src/utils/Printable.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/utils
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/Printable.o src/utils/Printable.cpp
+
 ${OBJECTDIR}/src/utils/Timer.o: src/utils/Timer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/utils
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/Timer.o src/utils/Timer.cpp
+
+${OBJECTDIR}/src/utils/myenums.o: src/utils/myenums.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/utils
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/myenums.o src/utils/myenums.cpp
 
 ${OBJECTDIR}/src/utils/vout.o: src/utils/vout.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/utils
