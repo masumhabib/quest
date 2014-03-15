@@ -34,8 +34,49 @@ CohRgfa::CohRgfa(const CohRgfaParams &newp, double E, string newprefix):
  * Electron density operator. It returns Gn_i,i or sum_j(Gn_i,j*Sj,i)
  * depending on the orthogonality of the basis set.
  */
-cxmat CohRgfa::niOp(uint traceOverN){
+cxmat CohRgfa::nop(uint N){
+    cxmat nOp(N, N, fill::zeros);
+    for (uint ib = miLc+1; ib < miRc; ++ib){
+        nOp += Gniop(ib,N);
+    }
+    return nOp;    
+}
+
+cxmat CohRgfa::Gniop(uint ib, uint N){
+    // Gn_i,i = i*[G_i,i - G_i,i']*fN + G_i,1*Gam_1,1*G_i,1'*(f1-fN)
+    if (ib == miLc + 1){
+        cxmat Gnii = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
+                     + (mf0 - mfNp1)*(mGii(ib)*GamL11()*trans(mGii(ib))); 
+
+        return trace<cxmat>(Gnii, N);
+    }else{
+        cxmat Gnii = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
+                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib))); 
+
+        return trace<cxmat>(Gnii, N);
+    }
+}
+
+
+/*
+ * Density of States. 
+ */
+cxmat CohRgfa::DOSop(uint N){
+    cxmat D(N, N, fill::zeros);
+    for (uint ib = miLc+1; ib < miRc; ++ib){
+        D += Aop(ib,N);
+    }  
+    return D/(2*pi);
+}
+
+/*
+ * Spectral function for block ib
+ */
+cxmat CohRgfa::Aop(uint ib, uint N){
+    cxmat A = mGii(ib);
+    A = i*(A - trans(A));
     
+    return trace<cxmat>(A, N);    
 }
 
 /*
@@ -43,11 +84,11 @@ cxmat CohRgfa::niOp(uint traceOverN){
  */
 cxmat CohRgfa::Iop(uint ib, uint N){
     if (ib == miLc){
-        return I0Op(N);
+        return I0op(N);
     } else if (ib == mN){
-        return INOp(N);
+        return INop(N);
     }else if(ib > miLc && ib < mN){
-        return IiOp(ib, N);
+        return Iiop(ib, N);
     } 
     return cxmat();
 }
@@ -56,7 +97,7 @@ cxmat CohRgfa::Iop(uint ib, uint N){
  * Current between block # i and block i+1.
  * IiOp
  */
-cxmat CohRgfa::IiOp(uint ib, uint traceOverN){
+cxmat CohRgfa::Iiop(uint ib, uint N){
     cxmat Iiop;
     cxmat &Gniip1 = Iiop;
     
@@ -65,7 +106,7 @@ cxmat CohRgfa::IiOp(uint ib, uint traceOverN){
                  + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib+1)));
     //I_i,i+1 = H_i,i+1*Gn_i+1,i - Gn_i,i+1*H_i+1,i
     Iiop = trans(mTl(ib+1))*trans(Gniip1) - Gniip1*mTl(ib+1);
-    return i*trace<cxmat>(Iiop, traceOverN);    
+    return i*trace<cxmat>(Iiop, N);    
 }
 
 
@@ -73,7 +114,7 @@ cxmat CohRgfa::IiOp(uint ib, uint traceOverN){
  * Current operator at right contact (block # N).
  * INOp
  */
-cxmat CohRgfa::INOp(uint traceOverN){
+cxmat CohRgfa::INop(uint N){
 
     const cxmat &SigrNN = SigRNN();
     const cxmat &GamrNN = GamRNN();
@@ -89,7 +130,7 @@ cxmat CohRgfa::INOp(uint traceOverN){
     cxmat INop = GnNN*trans(SigrNN) - SigrNN*GnNN 
           + GNN*GamrNN*mfNp1 - GamrNN*GNNa*mfNp1;
 
-    return i*trace<cxmat>(INop, traceOverN);    
+    return i*trace<cxmat>(INop, N);    
 }
 
 
@@ -97,7 +138,7 @@ cxmat CohRgfa::INOp(uint traceOverN){
  * Current operator at terminal 1.
  * I1op
  */
-cxmat CohRgfa::I0Op(uint traceOverN){
+cxmat CohRgfa::I0op(uint N){
     
     const cxmat &Sigl11 = SigL11();
     const cxmat &Gaml11 = GamL11();
@@ -113,13 +154,13 @@ cxmat CohRgfa::I0Op(uint traceOverN){
     cxmat I1op = Gn11*trans(Sigl11) - Sigl11*Gn11 
           +G11*Gaml11*mf0 - Gaml11*G11a*mf0;
 
-    return i*trace<cxmat>(I1op, traceOverN);    
+    return i*trace<cxmat>(I1op, N);    
 }
 
 /*
  * Transmission operator T(E) = tr{Gamma_1,1*[A_1,1 - G_1,1*Gamma_1,1*G_1,1']}
  */
-cxmat CohRgfa::TEop(uint traceOverN){
+cxmat CohRgfa::TEop(uint N){
     // Full Green function G_1,1
     // G_1,1 = [D_1,1 - sig_l_1,1 - T_1,2*grc_2,2*T_2,1]^-1
     // G_1,1 = [D_1,1 - sig_l_1,1 - SigL_1,1]^-1    
@@ -127,7 +168,7 @@ cxmat CohRgfa::TEop(uint traceOverN){
     const cxmat &Gaml11 = GamL11();
     cxmat G11a = trans(G11);
     cxmat TEop = Gaml11*(i*(G11 - G11a) - G11*Gaml11*G11a);    
-    return trace<cxmat>(TEop, traceOverN);
+    return trace<cxmat>(TEop, N);
 }
 
 

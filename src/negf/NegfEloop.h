@@ -44,6 +44,8 @@ public:
     
     void            enableTE(uint N = 1);   
     void            enableI(uint ib = 0, uint N = 1);
+    void            enableDOS(uint N = 1);
+    void            enablen(uint N = 1);
     
     virtual void    save(string fileName);
     
@@ -62,13 +64,21 @@ protected:
     shared_ptr<CohRgfa>   mnegf;        //!< Current Negf calculator.
     VecGrid               mE;           //!< Energy grid.
     
-    // TE
+    // TEop: Transmission operator
     vec_result            mThisTE;      //!< Transmission list for local process
     NegfResultList        mTE;          //!< Transmission list for all processes
 
-    // Iop                              //!< Current operator for block # i.
+    // Iop, Current operator for block # i.
     map<uint, vec_result>  mThisIop;    //!< For local process.
     map<uint, NegfResultList> mIop;     //!< Collection of all processes.
+    
+    // DOSop: Density of States operator
+    vec_result            mThisDOS;     //!< DOS list for local process
+    NegfResultList        mDOS;         //!< DOS list for all processes
+    
+    // Electron density operator
+    vec_result            mThisn;     //!< Density list for local process
+    NegfResultList        mn;         //!< Density list for all processes
     
     bool                  mIsAscii;     //!< Save as ascii/binary?
 

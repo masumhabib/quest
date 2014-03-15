@@ -333,19 +333,28 @@ public:
     CohRgfa(const CohRgfaParams &newp, double E, string newprefix = "");
     
     // Density operator
-    cxmat niOp(uint N = 1);
+    cxmat nop(uint N = 1);
 
+    // Correlation function
+    cxmat Gniop(uint ib, uint N = 1);
+    
+    // Density of states
+    cxmat DOSop(uint N = 1);
+    
+    // Spectral function
+    cxmat Aop(uint ib = 1, uint N = 1);
+    
     // Generic current operator
     cxmat Iop(uint ib = 0, uint N = 1);
     
     // Current between injected from block i to block i+1
-    cxmat IiOp(uint ib, uint N = 1);
+    cxmat Iiop(uint ib, uint N = 1);
     
     // Current injected from device to the right terminal
-    cxmat INOp(uint N = 1);
+    cxmat INop(uint N = 1);
     
     // Current injected from left terminal to the device.
-    cxmat I0Op(uint N = 1);
+    cxmat I0op(uint N = 1);
     
     // Transmission operator
     cxmat TEop(uint N = 1);
