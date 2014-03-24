@@ -74,6 +74,34 @@
         <itemPath>src/potential/terminal.cpp</itemPath>
         <itemPath>src/potential/terminal.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="pyqmicad" displayName="pyqmicad" projectFiles="true">
+        <logicalFolder name="atoms" displayName="atoms" projectFiles="true">
+          <itemPath>src/pyqmicad/atoms/__init__.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="band" displayName="band" projectFiles="true">
+          <itemPath>src/pyqmicad/band/__init__.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="hamiltonian" displayName="hamiltonian" projectFiles="true">
+          <itemPath>src/pyqmicad/hamiltonian/__init__.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="kpoints" displayName="kpoints" projectFiles="true">
+          <itemPath>src/pyqmicad/kpoints/__init__.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="negf" displayName="negf" projectFiles="true">
+          <itemPath>src/pyqmicad/negf/__init__.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="potential" displayName="potential" projectFiles="true">
+          <itemPath>src/pyqmicad/potential/__init__.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="simulators" displayName="simulators" projectFiles="true">
+          <itemPath>src/pyqmicad/simulators/Transport.py</itemPath>
+        </logicalFolder>
+        <logicalFolder name="utils" displayName="utils" projectFiles="true">
+          <itemPath>src/pyqmicad/utils/__init__.py</itemPath>
+          <itemPath>src/pyqmicad/utils/vprint.py</itemPath>
+        </logicalFolder>
+        <itemPath>src/pyqmicad/__init__.py</itemPath>
+      </logicalFolder>
       <logicalFolder name="python" displayName="python" projectFiles="true">
         <itemPath>src/python/boostpython.hpp</itemPath>
         <itemPath>src/python/pyqmicad.cpp</itemPath>
@@ -266,6 +294,32 @@
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/pyqmicad/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/atoms/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/band/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/hamiltonian/__init__.py"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/kpoints/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/negf/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/potential/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/Transport.py"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/utils/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/utils/vprint.py" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/python/boostpython.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/pyqmicad.cpp" ex="false" tool="1" flavor2="0">
@@ -454,6 +508,32 @@
       <item path="src/potential/terminal.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/potential/terminal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/atoms/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/band/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/hamiltonian/__init__.py"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/kpoints/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/negf/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/potential/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/Transport.py"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/utils/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/utils/vprint.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/python/boostpython.hpp" ex="false" tool="3" flavor2="0">
       </item>

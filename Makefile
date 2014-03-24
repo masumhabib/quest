@@ -48,6 +48,8 @@
 MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
+CD=cd
+LN=ln
 
 
 # build
@@ -56,9 +58,8 @@ build: .build-post
 .build-pre:
 # Add your pre 'build' code here...
 
-.build-post: .build-impl
+.build-post: .build-impl .install
 # Add your post 'build' code here...
-
 
 # clean
 clean: .clean-post
@@ -119,7 +120,20 @@ help: .help-post
 .help-post: .help-impl
 # Add your post 'help' code here...
 
-
+# install
+INSTALL_PREFIX=~/usr/local/lib
+.install:
+	@echo "Installing qmicad in ${INSTALL_PREFIX}" 
+	${CP} -r ${CND_BASEDIR}/src/pyqmicad    ${INSTALL_PREFIX}/qmicad 
+	${CP}    ${CND_BASEDIR}/lib/qmicad.so   ${INSTALL_PREFIX}/qmicad/_qmicad.so
+	${CD}    ${INSTALL_PREFIX}/qmicad/atoms && ${LN} -sf ../_qmicad.so _atoms.so 
+	${CD}    ${INSTALL_PREFIX}/qmicad/band && ${LN} -sf ../_qmicad.so _band.so 
+	${CD}    ${INSTALL_PREFIX}/qmicad/hamiltonian && ${LN} -sf ../_qmicad.so _hamiltonian.so 
+	${CD}    ${INSTALL_PREFIX}/qmicad/kpoints && ${LN} -sf ../_qmicad.so _kpoints.so 
+	${CD}    ${INSTALL_PREFIX}/qmicad/negf && ${LN} -sf ../_qmicad.so _negf.so 
+	${CD}    ${INSTALL_PREFIX}/qmicad/potential && ${LN} -sf ../_qmicad.so _potential.so 
+	${CD}    ${INSTALL_PREFIX}/qmicad/utils && ${LN} -sf ../_qmicad.so _utils.so 
+	${CD}    ${CND_BASEDIR}
 
 # include project implementation makefile
 include nbproject/Makefile-impl.mk
