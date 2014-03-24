@@ -6,7 +6,6 @@
 """
 
 import os
-import sys
 import numpy as np
 
 import qmicad
@@ -14,7 +13,7 @@ from qmicad.atoms import AtomicStruct
 from qmicad.hamiltonian import TISurfKpParams, TISurfKpHam
 from qmicad.negf import CohRgfaParams, NegfEloop
 from qmicad.potential import LinearPot
-from qmicad.utils import VecGrid
+from qmicad.utils import VecGrid, Timer, Workers, vprint
 from qmicad.utils.vprint import nprint, dprint, eprint
 
 """
@@ -37,12 +36,13 @@ class Transport(object):
 
         # output path settings
         self.OutPath    = "./out/"    # Output path
+        self.OutFileName = "TR"
         
         # Bias
-        self.VDD        = np.zeros((1,1)) # Drain bias
+        self.VDD        = np.zeros(1)  # Drain bias
         self.rVS        =-0.5          # Fraction of voltage to be applied to drain
         self.rVD        = 0.5          # Fraction of voltage to be applied to drain
-        self.VGG        = np.zeros((1,1)) # Gate bias
+        self.VGG        = np.zeros(1) # Gate bias
         self.rVG        = []           # Gate voltage ratios
         self.Vo         = 0.0          # Built in potential
         
@@ -50,9 +50,9 @@ class Transport(object):
         self.nb         = 11           # Length of the device+contacts
         self.nw         = 5            # Width of the device
 
-#         # Hamiltonian type
-#         self.HAM_TI_SURF_KP = 10       # TI surface k.p hamiltonian
-#         self.HamType        = self.HAM_TI_SURF_KP 
+        # Hamiltonian type
+        self.HAM_TI_SURF_KP = 10       # TI surface k.p hamiltonian
+        self.HamType        = self.HAM_TI_SURF_KP 
         
         # Device types
         self.COH_RGF_UNI    = 10       # Coherent Uniform RGF type device
@@ -63,10 +63,12 @@ class Transport(object):
         self.PotType        = self.POT_LINEAR  
         
         # Calculations
+        self.Calculations = {}
         self.Calculations["TE"] = 1
         
         # MPI stuff
         self.workers = Workers(workers)
+        vprint.IAmMaster = self.workers.IAmMaster()
 
         # Debug stuffs
         self.DebugPotFile   = "dbg_pot.dat"
@@ -76,6 +78,10 @@ class Transport(object):
         self.hp             = None
         self.ham            = None
         self.geom           = None
+
+        # Gate lists
+        self.gql = []
+        self.lql = []
 
 
     @property 
@@ -88,12 +94,13 @@ class Transport(object):
         qmicad.setVerbosity(self._verbosity)
    
     # Source fermi energy
-    def muS(self):
-        return self.np.mu - self.VDD*self.rVS
+    def muS(self, VDD):
+        nprint("DBG: " + str(VDD))
+        return self.np.mu - VDD*self.rVS
     
     # Drain fermi energy
-    def muD(self):
-        return self.np.mu - self.VDD*self.rVD
+    def muD(self, VDD):
+        return self.np.mu - VDD*self.rVD
  
     # Gate voltage of gate #ig
     def VG(self, VGG, Vo, ig):
@@ -114,30 +121,26 @@ class Transport(object):
 
     def addLinearRegion(self, lql):
         self.V.addLinearRegion(lql)
-            
-            
-    ## 
-    # Prepares the sumulation.
-    #
-    def prepare(self):
-
-        # Atomistic geometry
-        #  
+    
+    # Atomistic geometry            
+    def createAtomicGeom(self):
         # TI k.p surface      
         if (self.HamType == self.HAM_TI_SURF_KP):    
             # Hamiltonian parameter
             self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
-            # Create Hamiltonian
-            self.ham = TISurfKpHam(self.hp)
-        
-        # Generate hamiltonian and overlap matrices.
-        #
+
+
+    # Generate hamiltonian and overlap matrices.
+    def generateHamiltonian(self):
+        # Create Hamiltonian generator
+        self.ham = TISurfKpHam(self.hp)        
+
         # For uniform RGF blocks
         if (self.DevType == self.COH_RGF_UNI):            
-            lyr0 = self.geom.span(0, self.sp.nw-1);               # extract block # 0
-            lyr1 = self.geom.span(self.sp.nw, 2*self.sp.nw-1);    # extract block # 1
+            lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
+            lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
             # Block hamiltonian.
             self.ham.setSizeForNegf(2)                            # uniform device, only need H_0,0 and H_1,0
             self.ham.genDiagBlock(lyr0, lyr0, 0)                  # generate H_0,0 and S_0,0
@@ -150,42 +153,30 @@ class Transport(object):
                     self.np.S0(self.ham.S0(0), ib)          # S0: 0 to N+1
                 self.np.Hl(self.ham.Hl(0), ib)              # Hl: 0 to N+2
 
-        # Potential profile
-        #
+    # Potential profile        
+    def setupPotential(self):
         # Linear
         if (self.PotType == self.POT_LINEAR):
             self.V = LinearPot(self.geom)
-        
 
-    
-    ## 
-    # Runs the sumulation.
-    #
-    def run(self):
-        self.clock.tic()
 
-        if (self.verbosity >= qmicad.MSG_DEBUG):
-            self.V.exportSvg(self.sp.OutPath + self.DebugGeomFile)
-        
-        # Debug print
-        dprint(self.VDD)
-        dprint(self.VGG)
+    # Prepare simulation
+    def prepare(self):
+        self.createAtomicGeom()
+        self.generateHamiltonian()
+        self.setupPotential()
 
-        # Loop over drain bias
-        for VDD in self.VDD:
-            for VGG in self.VGG:
-                runBiasStep(VGG, self.Vo, self.VDD)
+    # 
+    def check(self):
+        return True
 
-        self.clock.toc()           
-        nprint("\n" + str(clock))
-    
     ## 
     # Runs the sumulation.
     #
     def runBiasStep(self, VGG, Vo, VDD):            
         # Set drain and Fermi levels
-        self.np.muS = self.muS()
-        self.np.muD = self.muD()
+        self.np.muS = self.muS(VDD)
+        self.np.muD = self.muD(VDD)
 
         dprint(self.np)
             
@@ -228,7 +219,7 @@ class Transport(object):
 
 
         # Create energy grid
-        if (self.AutoGenE):
+        if (self.np.AutoGenE):
             Emin = self.np.muD - 10*self.np.kT
             Emax = self.np.muS + 10*self.np.kT
         else:
@@ -239,7 +230,7 @@ class Transport(object):
 
         
         nprint("\n Energy grid:\n   Minmum " + str(Emin) + ", maximum " 
-                    + str(Emax) + ", interval " + str(self.dE)
+                    + str(Emax) + ", interval " + str(self.np.dE)
                     + ".")
         nprint("\n Total " + str(EE.N()) + " energy point(s) " 
                     + "running on " + str(self.workers.N()) + " CPU(s)...\n")
@@ -278,6 +269,32 @@ class Transport(object):
             Eloop.save(self.OutPath + fileName)
             
         nprint(" done.")
+    
+    ## 
+    # Runs the sumulation.
+    #
+    def run(self):
+        self.clock.tic()
+        
+        if (self.check() == False):
+            raise error(" ERROR: Check failed !!!")
+            
+
+        if (self.verbosity >= vprint.MSG_DEBUG):
+            self.V.exportSvg(self.sp.OutPath + self.DebugGeomFile)
+        
+        # Debug print
+        dprint(self.VDD)
+        dprint(self.VGG)
+
+        # Loop over drain bias
+        for VDD in self.VDD:
+            for VGG in self.VGG:
+                self.runBiasStep(VGG, self.Vo, VDD)
+
+        self.clock.toc()           
+        nprint("\n" + str(self.clock))
+    
 
 
 

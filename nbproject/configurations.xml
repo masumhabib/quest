@@ -95,6 +95,7 @@
         </logicalFolder>
         <logicalFolder name="simulators" displayName="simulators" projectFiles="true">
           <itemPath>src/pyqmicad/simulators/Transport.py</itemPath>
+          <itemPath>src/pyqmicad/simulators/__init__.py</itemPath>
         </logicalFolder>
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <itemPath>src/pyqmicad/utils/__init__.py</itemPath>
@@ -316,6 +317,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="src/pyqmicad/simulators/__init__.py"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="src/pyqmicad/utils/__init__.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/pyqmicad/utils/vprint.py" ex="false" tool="3" flavor2="0">
@@ -527,6 +533,11 @@
       <item path="src/pyqmicad/potential/__init__.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/pyqmicad/simulators/Transport.py"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/__init__.py"
             ex="false"
             tool="3"
             flavor2="0">

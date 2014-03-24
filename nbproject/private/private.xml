@@ -7,8 +7,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/shome/masum/NetBeansProjects/qmicad/src/python/pyqmicad.cpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/pyqmicad/atoms/__init__.py</file>
             <file>file:/shome/masum/NetBeansProjects/qmicad/src/qmicad/qmicad.hpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/pyqmicad/hamiltonian/__init__.py</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/atoms/AtomicStruct.cpp</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/atoms/AtomicStruct.h</file>
+            <file>file:/shome/masum/NetBeansProjects/qmicad/src/pyqmicad/simulators/Transport.py</file>
             <file>file:/shome/masum/NetBeansProjects/qmicad/src/qmicad/qmicad.cpp</file>
         </group>
     </open-files>

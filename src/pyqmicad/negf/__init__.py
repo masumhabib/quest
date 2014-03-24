@@ -12,9 +12,9 @@ from _negf import CohRgfaParams
 from _negf import NegfEloop
 
 # Coherent RGFA default parameters
-_CohRgfaParamsOrgInit =  CohRgfaParamsParams.__init__
-def _CohRgfaParamsParamsInit(self):
-    _CohRgfaParamsOrgInit(self)
+_CohRgfaParamsOrgInit =  CohRgfaParams.__init__
+def _CohRgfaParamsInit(self, nb):
+    _CohRgfaParamsOrgInit(self, nb)
     self.kT             = 0.0259        # Temperature in eV (300 K)
     self.eta            = 1E-3          # Contact imaginary potential
     self.mu             = 0.0           # Device Fermi level
@@ -24,4 +24,6 @@ def _CohRgfaParamsParamsInit(self):
     self.dE             = 0.005         # Energy step
     self.AutoGenE       = False         # Generate grid automatically?
     self.AdaptiveGrid   = False         # Adaptive E grid?
+    
+CohRgfaParams.__init__ = _CohRgfaParamsInit
     

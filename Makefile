@@ -124,7 +124,7 @@ help: .help-post
 INSTALL_PREFIX=~/usr/local/lib
 .install:
 	@echo "Installing qmicad in ${INSTALL_PREFIX}" 
-	${CP} -r ${CND_BASEDIR}/src/pyqmicad    ${INSTALL_PREFIX}/qmicad 
+	${CP} -r ${CND_BASEDIR}/src/pyqmicad/*    ${INSTALL_PREFIX}/qmicad/ 
 	${CP}    ${CND_BASEDIR}/lib/qmicad.so   ${INSTALL_PREFIX}/qmicad/_qmicad.so
 	${CD}    ${INSTALL_PREFIX}/qmicad/atoms && ${LN} -sf ../_qmicad.so _atoms.so 
 	${CD}    ${INSTALL_PREFIX}/qmicad/band && ${LN} -sf ../_qmicad.so _band.so 

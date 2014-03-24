@@ -13,8 +13,8 @@ def mpiprint(msg):
 """
     Vetobosity print: prints according to verbosity level.
 """
-def vprint(msg, verbosity):
-    if (verbosity >= verbosity):
+def vprint(msg, verb):
+    if (verb >= verbosity):
         mpiprint(msg)
 
 """ 
