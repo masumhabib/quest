@@ -41,18 +41,22 @@ struct GrapheneTbParams: public HamParams{
     
     // Constructor
     GrapheneTbParams(string prefix = ""):HamParams(prefix){
-        mTitle = "Graphene";
+        mTitle = "Graphene tight binding parameters";
     }
         
     string toString() const { 
         stringstream ss;
-        ss << mPrefix << " dtol = " << dtol << endl;
-        ss << mPrefix << " ec = " << ec << endl;
-        ss << mPrefix << " di0 = " << di0 << ", ti0 = " << ti0 << endl;
-        ss << mPrefix << " do0 = " << do0 << ", to0 = " << to0 
-                      << ", doX = " << doX << endl;
-        ss << mPrefix << " lmdz = " << lmdz << ", lmdxy = " << lmdxy 
-                      << ", alpha = " << alpha << endl;
+        ss << HamParams::toString() << ": " << endl;
+        ss << mPrefix << " dtol  = " << dtol << endl;
+        ss << mPrefix << " ec    = " << ec << endl;
+        ss << mPrefix << " di0   = " << di0 << endl;
+        ss << mPrefix << " ti0   = " << ti0 << endl;
+        ss << mPrefix << " do0   = " << do0 << endl;
+        ss << mPrefix << " to0   = " << to0 << endl;
+        ss << mPrefix << " doX   = " << doX << endl;
+        ss << mPrefix << " lmdz  = " << lmdz << endl;
+        ss << mPrefix << " lmdxy = " << lmdxy << endl; 
+        ss << mPrefix << " alpha = " << alpha << endl;
 
         return ss.str(); 
     };   

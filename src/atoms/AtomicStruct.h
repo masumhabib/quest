@@ -241,10 +241,13 @@ public:
     void        PeriodicTable(const ptable &periodicTable);
     double      xmin() {return min(mXyz.col(coord::X)); };
     double      xmax() {return max(mXyz.col(coord::X)); };
+    double      xl(){ return abs(xmax() - xmin()); };
     double      ymin() {return min(mXyz.col(coord::Y)); };
     double      ymax() {return max(mXyz.col(coord::Y)); };
+    double      yl(){ return abs(ymax() - ymin()); };
     double      zmin() {return min(mXyz.col(coord::Z)); };
     double      zmax() {return max(mXyz.col(coord::Z)); };
+    double      zl(){ return abs(zmax() - zmin()); };
     
     AtomicStruct span(uint start, uint end) const;
 

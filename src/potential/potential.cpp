@@ -13,17 +13,22 @@ namespace potential{
 
 using namespace std;
 // Constructor
-Potential::Potential(const AtomicStruct &atoms, const contact &source, 
-        const contact &drain, const vector<gate> &gates, const string &prefix):
+Potential::Potential(const AtomicStruct &atoms, const vector<contact> &source, 
+        const vector<contact> &drain, const vector<gate> &gates, const string &prefix):
         Printable(" " + prefix), ma(atoms), ms(source), md(drain), mg(gates)
 {
     mV.set_size(ma.NumOfAtoms());
     mV.zeros();
-    ms.Title("Source");
-    md.Title("Drain");
-    
-    ms.Prefix(ms.Prefix() + mPrefix);
-    md.Prefix(md.Prefix() + mPrefix);
+
+    for (int it = 0; it < ms.size(); ++it){
+        ms[it].Title("Source");
+        ms[it].Prefix(ms[it].Prefix() + mPrefix);
+    }    
+
+    for (int it = 0; it < md.size(); ++it){
+        md[it].Title("Drain");
+        md[it].Prefix(md[it].Prefix() + mPrefix);
+    }    
     
     for (int it = 0; it < mg.size(); ++it){
         mg[it].Title("Gate # " + itos(it));
@@ -42,11 +47,17 @@ Potential::Potential(const AtomicStruct &atoms, const string &prefix):
 string Potential::toString() const{
     stringstream ss;
     ss << Printable::toString() << ":" << endl;
-    ss << mPrefix << ms << endl;
+    for (vector<contact>::const_iterator it = ms.begin(); it != ms.end(); ++it){
+        ss << mPrefix << *it << endl;
+    }
+
     for (vector<gate>::const_iterator it = mg.begin(); it != mg.end(); ++it){
         ss << mPrefix << *it << endl;
     }
-    ss << mPrefix << md << endl;
+
+    for (vector<contact>::const_iterator it = md.begin(); it != md.end(); ++it){
+        ss << mPrefix << *it;
+    }
    
     return ss.str();
 }
@@ -83,18 +94,30 @@ void Potential::exportSvg(const string& path){
     svg_mapper<point> mapper(svg, 1024, 768);
     
     // add polygons to mapper
-    mapper.add(ms.geom);
+    for (int it = 0; it < ms.size(); ++it){
+        mapper.add(ms[it].geom);
+    }
+    
     for (int it = 0; it < mg.size(); ++it){
         mapper.add(mg[it].geom);
     }
-    mapper.add(md.geom);
+    
+    for (int it = 0; it < md.size(); ++it){
+        mapper.add(md[it].geom);
+    }
     
     // draw polygons on mapper
-    mapper.map(ms.geom, "fill-opacity:0.4;fill:rgb(10,10,255);stroke:rgb(10,10,255);stroke-width:2");
+    for (int it = 0; it < ms.size(); ++it){
+        mapper.map(ms[it].geom, "fill-opacity:0.4;fill:rgb(10,10,255);stroke:rgb(10,10,255);stroke-width:2");
+    }
+    
     for (int it = 0; it < mg.size(); ++it){
         mapper.map(mg[it].geom, "fill-opacity:0.4;fill:rgb(204,10,204);stroke:rgb(204,10,204);stroke-width:2");
     }
-    mapper.map(md.geom, "fill-opacity:0.4;fill:rgb(255,10,10);stroke:rgb(255,10,10);stroke-width:2");
+    
+    for (int it = 0; it < md.size(); ++it){
+        mapper.map(md[it].geom, "fill-opacity:0.4;fill:rgb(255,10,10);stroke:rgb(255,10,10);stroke-width:2");
+    }
 
 }
 
@@ -112,16 +135,16 @@ void Potential::exportPotential(const string& path){
 
 void Potential::addSource(const squadrilateral &sq){
     // source
-    ms = contact(sq.lb, sq.rb, sq.rt, sq.lt);
-    ms.Title("Source");
-    ms.Prefix(ms.Prefix() + mPrefix);
+    ms[0] = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    ms[0].Title("Source");
+    ms[0].Prefix(ms[0].Prefix() + mPrefix);
 }
 
 void Potential::addDrain(const squadrilateral &sq) {
     // drain
-    md = contact(sq.lb, sq.rb, sq.rt, sq.lt);
-    md.Title("Drain");
-    md.Prefix(md.Prefix() + mPrefix);
+    md[0] = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    md[0].Title("Drain");
+    md[0].Prefix(md[0].Prefix() + mPrefix);
 }
 
 void Potential::addGate(const squadrilateral& sq){
@@ -136,10 +159,10 @@ void Potential::VG(int ig, double VG){
 }
 
 void Potential::VD(double VD){
-    md.V = VD;
+    md[0].V = VD;
 }
 void Potential::VS(double VS){
-    ms.V = VS;
+    ms[0].V = VS;
 }
 
 }

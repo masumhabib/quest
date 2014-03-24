@@ -14,7 +14,7 @@ namespace negf{
 
 NegfEloop::NegfEloop(const VecGrid &E, const CohRgfaParams &np, 
         const Workers &workers, bool isAscii): ParLoop(workers, E.N()), 
-        mnp(np), mE(E), mIsAscii(isAscii), mbar("  NEGF: ",  E.N())
+        mnp(np), mE(E), mIsAscii(isAscii), mbar("  NEGF: ",  E.N()/workers.N()+1)
 {   
 }
     

@@ -25,14 +25,16 @@ class Transport(object):
     # @Parameters:
     #    sp: TiSimuParams - TI simulation parameters
     #    
-    def __init__(self, workers):
+    def __init__(self, workers):        
+        # Verbosity level
         self.verbosity = vprint.MSG_NORMAL
+
+        # MPI stuff
+        self.workers = Workers(workers)
+        vprint.IAmMaster = self.workers.IAmMaster()
     
         # Timer
         self.clock = Timer()
-
-        # Print welcome message.
-        nprint(qmicad.greet())
 
         # output path settings
         self.OutPath    = "./out/"    # Output path
@@ -66,9 +68,6 @@ class Transport(object):
         self.Calculations = {}
         self.Calculations["TE"] = 1
         
-        # MPI stuff
-        self.workers = Workers(workers)
-        vprint.IAmMaster = self.workers.IAmMaster()
 
         # Debug stuffs
         self.DebugPotFile   = "dbg_pot.dat"
@@ -92,10 +91,10 @@ class Transport(object):
         self._verbosity = value
         # Set verbosity level of QMICAD library.
         qmicad.setVerbosity(self._verbosity)
+        vprint.verbosity = self._verbosity
    
     # Source fermi energy
     def muS(self, VDD):
-        nprint("DBG: " + str(VDD))
         return self.np.mu - VDD*self.rVS
     
     # Drain fermi energy
@@ -130,7 +129,6 @@ class Transport(object):
             self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
-
 
     # Generate hamiltonian and overlap matrices.
     def generateHamiltonian(self):
@@ -177,13 +175,13 @@ class Transport(object):
         # Set drain and Fermi levels
         self.np.muS = self.muS(VDD)
         self.np.muD = self.muD(VDD)
-
-        dprint(self.np)
             
-        nprint("\n\n Bias loop:")                                
+        nprint("\n Bias loop:")                                
         nprint("\n  VGG = " + str(VGG) + ", Vo = " + str(Vo) 
                     + ", VDD = " + str(VDD) + ".")
         
+        fileName = self.OutFileName + "_VGG{0:2.3f}_Vo{1:2.3f}_VDD{2:2.3f}".format(VGG, Vo, VDD)
+
         # Set gate voltages
         for ig in range(len(self.rVG)):
             VG = self.VG(VGG, Vo, ig)
@@ -217,7 +215,6 @@ class Transport(object):
                 self.np.V(self.V.toOrbPot(self.nw*ib, 
                                           self.nw*(ib+1)-1), ib)
 
-
         # Create energy grid
         if (self.np.AutoGenE):
             Emin = self.np.muD - 10*self.np.kT
@@ -229,11 +226,12 @@ class Transport(object):
         EE = VecGrid(Emin, Emax, self.np.dE)
 
         
-        nprint("\n Energy grid:\n   Minmum " + str(Emin) + ", maximum " 
+        nprint("\n Energy grid:\n  Min: " + str(Emin) + ", max: " 
                     + str(Emax) + ", interval " + str(self.np.dE)
                     + ".")
         nprint("\n Total " + str(EE.N()) + " energy point(s) " 
-                    + "running on " + str(self.workers.N()) + " CPU(s)...\n")
+                    + "running on " + str(self.workers.N()) + " CPU(s): " 
+                    + str(EE.N()/self.workers.N()) + " pts/CPU ... \n")
                         
         # create and run energy loop
         Eloop = NegfEloop(EE, self.np, self.workers) 
@@ -256,19 +254,19 @@ class Transport(object):
         Eloop.run()
         nprint("\n  done.")
         
-        nprint("\n\n Saving results to disk ...")
+        nprint("\n Saving results to disk ...")
         # save results
         if (self.workers.IAmMaster()):
             # Create directory if not exist.
             if not os.path.exists(self.OutPath):
                 os.makedirs(self.OutPath)
             # save to file.
-            fileName = self.OutFileName + "_VGG{0:2.3f}_Vo{1:2.3f}_VDD{2:2.3f}.dat".format(VGG, Vo, VDD)
-            fo = open(self.OutPath + fileName, "wt")
+            fo = open(self.OutPath + fileName + ".dat", "wt")
             fo.close()
-            Eloop.save(self.OutPath + fileName)
+            Eloop.save(self.OutPath + fileName + ".dat")
             
-        nprint(" done.")
+        nprint(" done.\n")
+        nprint(" ------------------------------------------------------------------")
     
     ## 
     # Runs the sumulation.
@@ -276,9 +274,43 @@ class Transport(object):
     def run(self):
         self.clock.tic()
         
+        # Print welcome message.
+        nprint(qmicad.greet())
+        nprint("\n Transport simulation parameters:")
+        
+        # Bias information
+        msg  = "\n Bias: "
+        msg += "\n  VDD: min " + str(min(self.VDD)) + ", max " + str(max(self.VDD)) 
+        msg += ", number " + str(len(self.VDD))
+        msg += "\n  VGG: min " + str(min(self.VGG)) + ", max " + str(max(self.VGG)) 
+        msg += ", number " + str(len(self.VGG))
+        msg += "\n  Vo: " + str(self.Vo)
+        nprint(msg)
+        
+        # Device information
+        msg  = "\n Device:"
+        msg += "\n  Lengh: " + str(self.geom.xl) + ", Width: " +  str(self.geom.yl)
+        msg += ", Height: " + str(self.geom.zl)
+        msg += "\n  Num of atoms: " + str(self.geom.NumOfAtoms) 
+        msg += ", Num of orbitals: " +  str(self.geom.NumOfOrbitals)
+        nprint(msg)  
+        
+        # Print Hamiltonian parameters.
+        nprint("\n")
+        nprint(self.hp)
+        
+        # NEGF parameters
+        nprint(self.np)
+        
+        # Electrostatics
+        nprint("\n")
+        nprint(self.V)
+        
+        # End of info section
+        nprint(" ------------------------------------------------------------------")
+     
         if (self.check() == False):
-            raise error(" ERROR: Check failed !!!")
-            
+            raise error(" ERROR: Check failed !!!")        
 
         if (self.verbosity >= vprint.MSG_DEBUG):
             self.V.exportSvg(self.sp.OutPath + self.DebugGeomFile)
@@ -291,9 +323,8 @@ class Transport(object):
         for VDD in self.VDD:
             for VGG in self.VGG:
                 self.runBiasStep(VGG, self.Vo, VDD)
-
         self.clock.toc()           
-        nprint("\n" + str(self.clock))
+        nprint("\n" + str(self.clock) + "\n")
     
 
 

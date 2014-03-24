@@ -40,7 +40,7 @@ struct TISurfKpParams: public HamParams{
     cxmat22 t10y;
     
     TISurfKpParams(const string &prefix = ""):HamParams(prefix){
-        mTitle = "Topological Insulator Surface";
+        mTitle = "Topological Insulator surface k.p parameters";
         // default parameters
         I = eye<cxmat>(2,2);    
     }
@@ -60,16 +60,17 @@ struct TISurfKpParams: public HamParams{
     
     virtual string toString() const { 
         stringstream ss;
+        ss << HamParams::toString() << ":" << endl;
         ss << mPrefix << " dtol = " << dtol << endl;
-        ss << mPrefix << " ax = " << ax << ", ay = " << ay << endl;
-        ss << mPrefix << " Rx = " << Rx << endl;
-        ss << mPrefix << " Ry = " << Ry << endl;
-        ss << mPrefix << " C = " << C << " A2 = " << A2 << endl;
-        ss << mPrefix << " eps = " << endl << eps << endl;
-        ss << mPrefix << " t01x " << endl << t01x << endl;
-        ss << mPrefix << " t10x " << endl << t10x << endl;
-        ss << mPrefix << " t01y " << endl << t01y << endl;
-        ss << mPrefix << " t10y " << endl << t10y << endl;
+        ss << mPrefix << " ax   = " << ax << endl;
+        ss << mPrefix << " ay   = " << ay << endl;
+        ss << mPrefix << " Rx   = " << Rx << endl;
+        ss << mPrefix << " Ry   = " << Ry << endl;
+        ss << mPrefix << " C    = " << C << endl;
+        ss << mPrefix << " A2   = " << A2 << endl;
+        ss << mPrefix << " eps: " << endl << eps;
+        ss << mPrefix << " t01x: " << endl << t01x;
+        ss << mPrefix << " t01y: " << endl << t01y;
 
         return ss.str(); 
     };

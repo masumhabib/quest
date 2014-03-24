@@ -38,15 +38,15 @@ class Potential:public Printable{
 public:
 protected:
     const AtomicStruct  &ma;    //!< Atomistic geometry of the device.
-    contact             ms;     //!< Source contact.
-    contact             md;     //!< Drain contact.
+    vector<contact>     ms;     //!< Source contact.
+    vector<contact>     md;     //!< Drain contact.
     vector<gate>        mg;     //!< Gates.  
     vec                 mV;     //!< Electrostatic potential.
     
 public:
     //!< Constructor.
-    Potential(const AtomicStruct &atoms, const contact &source, 
-            const contact &drain, const vector<gate> &gates, 
+    Potential(const AtomicStruct &atoms, const vector<contact> &source, 
+            const vector<contact> &drain, const vector<gate> &gates, 
             const string &prefix = "");
     //<!< Constructor.
     Potential(const AtomicStruct &atoms, const string &prefix = "");

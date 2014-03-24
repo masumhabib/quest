@@ -16,7 +16,7 @@ _CohRgfaParamsOrgInit =  CohRgfaParams.__init__
 def _CohRgfaParamsInit(self, nb):
     _CohRgfaParamsOrgInit(self, nb)
     self.kT             = 0.0259        # Temperature in eV (300 K)
-    self.eta            = 1E-3          # Contact imaginary potential
+    self.ieta           = 1E-3j         # Contact imaginary potential
     self.mu             = 0.0           # Device Fermi level
     self.isOrthogonal   = True          # Orthogonal basis?
     self.Emin           =-1.0           # Minimum energy 
@@ -26,4 +26,3 @@ def _CohRgfaParamsInit(self, nb):
     self.AdaptiveGrid   = False         # Adaptive E grid?
     
 CohRgfaParams.__init__ = _CohRgfaParamsInit
-    

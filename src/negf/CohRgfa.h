@@ -118,7 +118,7 @@ struct CohRgfaParams: public Printable {
         Giip1CacheEnabled = true;
         Giim1CacheEnabled = true; 
         
-        mTitle = "NEGF parameters";
+        mTitle = "Coherent RGF parameters";
     }
     
     // Easy access for python
@@ -131,12 +131,12 @@ struct CohRgfaParams: public Printable {
     virtual string toString() const {
         stringstream out;
         out << Printable::toString() << ":" << endl;
-        out << mPrefix << " IsOrthogonal = " << isOrthogonal << endl;
-        out << mPrefix << " nb = " << nb << endl;
-        out << mPrefix << " ieta = " << ieta << endl;
-        out << mPrefix << " kT = " << kT << endl;
-        out << mPrefix << " muS = " << muS << endl;
-        out << mPrefix << " muD = " << muD;
+        out << mPrefix << " IsOrthogonal = " << (isOrthogonal ? "Yes" : "No")  << endl;
+        out << mPrefix << " nb           = " << nb << endl;
+        out << mPrefix << " ieta         = " << ieta << endl;
+        out << mPrefix << " kT           = " << kT << endl;
+        out << mPrefix << " muS          = " << muS << endl;
+        out << mPrefix << " muD          = " << muD;
         
         return out.str();
     }

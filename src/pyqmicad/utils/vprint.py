@@ -14,7 +14,7 @@ def mpiprint(msg):
     Vetobosity print: prints according to verbosity level.
 """
 def vprint(msg, verb):
-    if (verb >= verbosity):
+    if (verbosity >= verb):
         mpiprint(msg)
 
 """ 
@@ -27,13 +27,13 @@ def nprint(msg):
     Print with debug messages.
 """
 def dprint(msg):
-    vprint(msg, MSG_NORMAL)
+    vprint(msg, MSG_DEBUG)
 
 """ 
     Print with everything.
 """
 def eprint(msg):
-    vprint(msg, MSG_NORMAL)
+    vprint(msg, MSG_DUMP)
 
 
 # Verbosity levels

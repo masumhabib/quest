@@ -29,8 +29,8 @@ string LinearRegion4::toString() const {
 };
 
 
-LinearPot::LinearPot(const AtomicStruct &atoms, const contact &source, 
-        const contact &drain, const vector<gate> &gates, 
+LinearPot::LinearPot(const AtomicStruct &atoms, const vector<contact> &source, 
+        const vector<contact> &drain, const vector<gate> &gates, 
         const vector <linear_region> &linear, const string &prefix): 
         Potential(atoms, source, drain, gates, prefix), mlr(linear)
 {
@@ -64,11 +64,11 @@ void LinearPot::compute(){
         double y = ma.Y(ia);
         
         // source
-        if(ms.contains(x, y)){
-            V = ms.V;
+        if(!ms.empty() && ms[0].contains(x, y)){
+            V = ms[0].V;
         // drain
-        }else if (md.contains(x, y)){
-            V = md.V;
+        }else if (!md.empty() && md[0].contains(x, y)){
+            V = md[0].V;
         // gates
         }else{
             // search x,y inside the gates
@@ -85,31 +85,6 @@ void LinearPot::compute(){
                 // found inside linear region
                 if(itl  != mlr.end()){
                     // get four points: lb, rb, rt, lt
-                    /*vector<point>::iterator it;
-                    polyring points = itl->geom.outer();
-                    double xlt, xlb, xrt, xrb;
-                    double ylt, ylb, yrt, yrb;
-                    for(it = points.begin(); it != points.end(); ++it){
-                        double xp = it->get<0>();
-                        double yp = it->get<1>();
-                        if(xp < x && yp < y){
-                            //plb = *it;
-                            xlb = xp;
-                            ylb = yp;
-                        }else if(xp < x && yp > y){
-                            //plt = *it;
-                            xlt = xp;
-                            ylt = yp;
-                        }else if(xp > x && yp < y){
-                            //prb = *it;
-                            xrb = xp;
-                            yrb = yp;
-                        }else{
-                            //prt = *it;
-                            xrt = xp;
-                            yrt = yp;
-                        }
-                    }*/
                     polyring points = itl->geom.outer();
                     double xlb = points[0].get<0>();
                     double ylb = points[0].get<1>();
@@ -144,39 +119,58 @@ void LinearPot::exportSvg(const string& path){
     svg_mapper<point> mapper(svg, 1024, 768);
     
     // add polygons to mapper
-    mapper.add(ms.geom);
+    for (int it = 0; it < ms.size(); ++it){
+        mapper.add(ms[it].geom);
+    }
     for (int it = 0; it < mg.size(); ++it){
         mapper.add(mg[it].geom);
     }
     for (int it = 0; it < mlr.size() ; ++it){
         mapper.add(mlr[it].geom);
-    }    
-    mapper.add(md.geom);
+    } 
+    
+    for (int it = 0; it < md.size(); ++it){
+        mapper.add(md[it].geom);
+    }
     
     // draw polygons on mapper
-    mapper.map(ms.geom, "fill-opacity:0.4;fill:rgb(10,10,255);stroke:rgb(10,10,255);stroke-width:2");
+    for (int it = 0; it < ms.size(); ++it){
+        mapper.map(ms[it].geom, "fill-opacity:0.4;fill:rgb(10,10,255);stroke:rgb(10,10,255);stroke-width:2");
+    }
+    
     for (int it = 0; it < mg.size(); ++it){
         mapper.map(mg[it].geom, "fill-opacity:0.4;fill:rgb(204,10,204);stroke:rgb(204,10,204);stroke-width:2");
     }
+    
     for (int it = 0; it < mlr.size() ; ++it){
         mapper.map(mlr[it].geom, "fill-opacity:0.4;fill:rgb(10,100,204);stroke:rgb(10,100,204);stroke-width:2");
 
-    }    
-    mapper.map(md.geom, "fill-opacity:0.4;fill:rgb(255,10,10);stroke:rgb(255,10,10);stroke-width:2");
+    }
 
+    for (int it = 0; it < md.size(); ++it){
+        mapper.map(md[it].geom, "fill-opacity:0.4;fill:rgb(255,10,10);stroke:rgb(255,10,10);stroke-width:2");
+    }
 }
 
 string LinearPot::toString() const{
     stringstream ss;
     ss << Printable::toString() << ":" << endl;
-    ss << mPrefix << ms << endl;
+
+    for (vector<contact>::const_iterator it = ms.begin(); it != ms.end(); ++it){
+        ss << mPrefix << *it << endl;
+    }
+
     for (vector<gate>::const_iterator it = mg.begin(); it != mg.end(); ++it){
         ss << mPrefix << *it << endl;
     }
     for (vector<linear_region>::const_iterator it = mlr.begin(); it != mlr.end(); ++it){
         ss << mPrefix << *it << endl;
     }
-    ss << mPrefix << md;    
+    
+    for (vector<contact>::const_iterator it = md.begin(); it != md.end(); ++it){
+        ss << mPrefix << *it << endl;
+    }
+
     return ss.str();
 }
 
