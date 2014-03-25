@@ -109,6 +109,7 @@ using namespace hamiltonian;
      */
 void export_TISurfKpParams(){
     class_<TISurfKpParams, bases<HamParams>, shared_ptr<TISurfKpParams> >("TISurfKpParams")
+        .enable_pickling()
         .def_readwrite("ax", &TISurfKpParams::ax)
         .def_readwrite("ay", &TISurfKpParams::ay)
         .def_readwrite("Rx", &TISurfKpParams::Rx)   

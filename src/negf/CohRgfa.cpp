@@ -728,11 +728,13 @@ using namespace negf;
 void export_CohRgfaParams(){
     class_<CohRgfaParams, bases<Printable>, shared_ptr<CohRgfaParams> >("CohRgfaParams", 
             init<uint>())
+        .enable_pickling()
         .def("H0", &CohRgfaParams::setH0)
         .def("S0", &CohRgfaParams::setS0)
         .def("Hl", &CohRgfaParams::setHl)
         .def("Sl", &CohRgfaParams::setSl)
         .def("V", &CohRgfaParams::setV)
+        .def_readonly("nb", &CohRgfaParams::nb)
         .def_readwrite("kT", &CohRgfaParams::kT)
         .def_readwrite("ieta", &CohRgfaParams::ieta)
         .def_readwrite("muS", &CohRgfaParams::muS)

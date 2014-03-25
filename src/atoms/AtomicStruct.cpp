@@ -473,9 +473,11 @@ void export_PeriodicTable(){
 lvec (AtomicStruct::*AtomicStruct_LatticeVector1)() const = &AtomicStruct::LatticeVector;
 void export_AtomicStruct(){
     class_<AtomicStruct, bases<Printable>, shared_ptr<AtomicStruct> >("AtomicStruct", 
-            init<const string&>())
+            init<>())
+        .def(init<const string&>())
         .def(init<const string&, const PeriodicTable>())
         .def(init<uint, uint, double, double, const PeriodicTable>())
+        .def_pickle(AtomicStructPickler())
         .def("span", &AtomicStruct::span)
         .add_property("xmax", &AtomicStruct::xmax)
         .add_property("xmin", &AtomicStruct::xmin)

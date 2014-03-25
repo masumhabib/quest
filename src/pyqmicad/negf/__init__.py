@@ -26,3 +26,34 @@ def _CohRgfaParamsInit(self, nb):
     self.AdaptiveGrid   = False         # Adaptive E grid?
     
 CohRgfaParams.__init__ = _CohRgfaParamsInit
+
+_CohRgfaParamsOrgStr =  CohRgfaParams.__str__
+def _CohRgfaParamsStr(self):
+    msg = _CohRgfaParamsOrgStr(self)
+    msg += "\n" + self.Prefix + " Emin         = " + str(self.Emin)
+    msg += "\n" + self.Prefix + " Emax         = " + str(self.Emax)
+    msg += "\n" + self.Prefix + " dE           = " + str(self.dE)
+    msg += "\n" + self.Prefix + " AutoGenE     = " + str(self.AutoGenE)
+    msg += "\n" + self.Prefix + " AdaptiveGrid = " + str(self.AdaptiveGrid)
+    
+    return msg
+CohRgfaParams.__str__ = _CohRgfaParamsStr
+
+# Pickle support
+def _CohRgfaParamsSetState(self, dct):
+    self.__dict__.update(dct)
+    
+CohRgfaParams.__setstate__ = _CohRgfaParamsSetState
+
+def _CohRgfaParamsGetState(self):
+    dct = dict(self.__dict__)
+    return dct
+
+CohRgfaParams.__getstate__ = _CohRgfaParamsGetState
+CohRgfaParams.__getstate_manages_dict__ = True
+
+
+def _CohRgfaParamsGetInitArgs(self):
+    return (self.nb,)
+
+CohRgfaParams.__getinitargs__ = _CohRgfaParamsGetInitArgs

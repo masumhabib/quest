@@ -36,6 +36,8 @@ using std::ostream;
 using std::ofstream;
 using std::ifstream;
 using std::stringstream;
+using std::ostringstream;
+using std::istringstream;
 
 using std::string;
 using std::vector;

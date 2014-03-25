@@ -12,6 +12,8 @@
 #ifndef SERIALIZE_HPP
 #define	SERIALIZE_HPP
 
+#include "../maths/svec.h"
+
 #include <string>
 #include <sstream>
 #include <armadillo>
@@ -19,7 +21,15 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/split_free.hpp>
 
-#include "../maths/svec.h"
+#include <boost/serialization/complex.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 
 
 namespace boost {
@@ -56,52 +66,6 @@ inline void serialize(Archive& ar, stringstream& ss, const unsigned int file_ver
     split_free(ar, ss, file_version); 
 };
 
-/*
- * Serialization for pair<typename T1, typename T2>.
- * =============================================================================
- */
-
-template<class Archive, class T1, class T2>
-void save(Archive& ar, const pair<T1, T2> &value, const unsigned int version){
-    ar << value.first;
-    ar << value.second;
-};
-
-template<class Archive, class T1, class T2>
-void load(Archive& ar, pair<T1, T2> &value, const unsigned int version){
-    ar >> value.first;
-    ar >> value.second;
-};
-
-template<class Archive, class T1, class T2>
-inline void serialize(Archive& ar, pair<T1, T2> &value, const unsigned int file_version){
-    split_free(ar, value, file_version); 
-};
-
-/*
- * Serialization for complex<T>.
- * =============================================================================
- */
-
-template<class Archive, class T>
-void save(Archive& ar, const complex<T> &value, const unsigned int version){
-    ar << value.real();
-    ar << value.imag();
-};
-
-template<class Archive, class T>
-void load(Archive& ar, complex<T> &value, const unsigned int version){
-    T real , imag;
-    ar >> real;
-    ar >> imag;
-    
-    value = complex<T>(real, imag);
-};
-
-template<class Archive, class T>
-inline void serialize(Archive& ar, complex<T> &value, const unsigned int file_version){
-    split_free(ar, value, file_version); 
-};
 
 /*
  * Serialization for svec.
@@ -129,7 +93,7 @@ void save(Archive& ar, const Mat<T>& mat, const unsigned int version){
      ar << n_cols;
     for(uint ir = 0; ir < n_rows; ++ ir){
         for(uint ic = 0; ic < n_cols; ++ ic){
-        ar << mat(ir, ic);
+            ar << mat(ir, ic);
         }
     }
 };
@@ -148,7 +112,7 @@ void load(Archive& ar, Mat<T>& mat, const unsigned int version){
      
     for(int ir = 0; ir < n_rows; ++ ir){
         for(int ic = 0; ic < n_cols; ++ ic){
-        ar >> mat(ir, ic);
+            ar >> mat(ir, ic);
         }
     }
 };

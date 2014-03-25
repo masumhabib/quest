@@ -6,6 +6,7 @@
 """
 
 import os
+import pickle as pk
 import numpy as np
 
 import qmicad
@@ -25,7 +26,10 @@ class Transport(object):
     # @Parameters:
     #    sp: TiSimuParams - TI simulation parameters
     #    
-    def __init__(self, workers):        
+    def __init__(self, workers):   
+        # Library version
+        self.version = qmicad.version
+        
         # Verbosity level
         self.verbosity = vprint.MSG_NORMAL
 
@@ -37,15 +41,12 @@ class Transport(object):
         self.clock = Timer()
 
         # output path settings
-        self.OutPath    = "./out/"    # Output path
-        self.OutFileName = "TR"
+        self.OutPath    = "./out/"     # Output path
+        self.OutFileName = "TR"        # Output file name prefix
         
         # Bias
         self.VDD        = np.zeros(1)  # Drain bias
-        self.rVS        =-0.5          # Fraction of voltage to be applied to drain
-        self.rVD        = 0.5          # Fraction of voltage to be applied to drain
-        self.VGG        = np.zeros(1) # Gate bias
-        self.rVG        = []           # Gate voltage ratios
+        self.VGG        = np.zeros(1)  # Gate bias
         self.Vo         = 0.0          # Built in potential
         
         # Device geometry
@@ -68,20 +69,9 @@ class Transport(object):
         self.Calculations = {}
         self.Calculations["TE"] = 1
         
-
         # Debug stuffs
         self.DebugPotFile   = "dbg_pot.dat"
         self.DebugGeomFile  = "dbg_geom.svg"
-        
-        # Other un-initialized members
-        self.hp             = None
-        self.ham            = None
-        self.geom           = None
-
-        # Gate lists
-        self.gql = []
-        self.lql = []
-
 
     @property 
     def verbosity(self):
@@ -95,31 +85,39 @@ class Transport(object):
    
     # Source fermi energy
     def muS(self, VDD):
-        return self.np.mu - VDD*self.rVS
+        return self.np.mu - VDD*self.V.rVS
     
     # Drain fermi energy
     def muD(self, VDD):
-        return self.np.mu - VDD*self.rVD
+        return self.np.mu - VDD*self.V.rVD
  
     # Gate voltage of gate #ig
     def VG(self, VGG, Vo, ig):
         # Set gate voltages
-        return VGG + Vo*self.rVG[ig]
+        return VGG + Vo*self.V.rVG[ig]
       
     def addSource(self, sql, rVS = -0.5):
-        self.V.addSource(self.sql)
-        self.rVS = rVS
+        self.V.addSource(sql)
+        self.V.rVS = rVS
+        # just for pickling
+        self.V.sql = sql    
     
     def addDrain(self, dql, rVD = 0.5):
         self.V.addDrain(dql)
-        self.rVD = rVD
+        self.V.rVD = rVD
+        # just for pickling
+        self.V.dql = qql 
 
     def addGate(self, gql, rVG = 1):
         self.V.addGate(gql)
-        self.rVG.append(rVG)
+        self.V.rVG.append(rVG)
+         # just for pickling
+        self.V.gql.append(gql) 
 
     def addLinearRegion(self, lql):
         self.V.addLinearRegion(lql)
+        # just for pickling
+        self.V.lql.append(lql) 
     
     # Atomistic geometry            
     def createAtomicGeom(self):
@@ -166,7 +164,7 @@ class Transport(object):
 
     # 
     def check(self):
-        return True
+        return True 
 
     ## 
     # Runs the sumulation.
@@ -183,7 +181,7 @@ class Transport(object):
         fileName = self.OutFileName + "_VGG{0:2.3f}_Vo{1:2.3f}_VDD{2:2.3f}".format(VGG, Vo, VDD)
 
         # Set gate voltages
-        for ig in range(len(self.rVG)):
+        for ig in range(self.V.NG):
             VG = self.VG(VGG, Vo, ig)
             # bias voltage for gate # ig
             self.V.VG(ig, VG)
@@ -198,7 +196,7 @@ class Transport(object):
         
         # Potential of linear region
         if (self.PotType == self.POT_LINEAR):
-            for il in range(len(self.lql)):
+            for il in range(self.V.NLR):
                 VG1 = self.VG(VGG, il)
                 VG2 = self.VG(VGG, il+1)
                 self.V.VLR(il, VG1, VG2)        
@@ -260,11 +258,17 @@ class Transport(object):
             # Create directory if not exist.
             if not os.path.exists(self.OutPath):
                 os.makedirs(self.OutPath)
-            # save to file.
+            
+            # save results to file.
             fo = open(self.OutPath + fileName + ".dat", "wt")
             fo.close()
             Eloop.save(self.OutPath + fileName + ".dat")
             
+            # save simulation parameters to a pickle file
+            fp = open(self.OutPath + fileName + ".pkl", 'wt')
+            pk.dump(self, fp)
+            fp.close()
+
         nprint(" done.\n")
         nprint(" ------------------------------------------------------------------")
     
@@ -276,39 +280,8 @@ class Transport(object):
         
         # Print welcome message.
         nprint(qmicad.greet())
-        nprint("\n Transport simulation parameters:")
-        
-        # Bias information
-        msg  = "\n Bias: "
-        msg += "\n  VDD: min " + str(min(self.VDD)) + ", max " + str(max(self.VDD)) 
-        msg += ", number " + str(len(self.VDD))
-        msg += "\n  VGG: min " + str(min(self.VGG)) + ", max " + str(max(self.VGG)) 
-        msg += ", number " + str(len(self.VGG))
-        msg += "\n  Vo: " + str(self.Vo)
-        nprint(msg)
-        
-        # Device information
-        msg  = "\n Device:"
-        msg += "\n  Lengh: " + str(self.geom.xl) + ", Width: " +  str(self.geom.yl)
-        msg += ", Height: " + str(self.geom.zl)
-        msg += "\n  Num of atoms: " + str(self.geom.NumOfAtoms) 
-        msg += ", Num of orbitals: " +  str(self.geom.NumOfOrbitals)
-        nprint(msg)  
-        
-        # Print Hamiltonian parameters.
-        nprint("\n")
-        nprint(self.hp)
-        
-        # NEGF parameters
-        nprint(self.np)
-        
-        # Electrostatics
-        nprint("\n")
-        nprint(self.V)
-        
-        # End of info section
-        nprint(" ------------------------------------------------------------------")
-     
+        nprint(self.__str__())
+             
         if (self.check() == False):
             raise error(" ERROR: Check failed !!!")        
 
@@ -325,9 +298,70 @@ class Transport(object):
                 self.runBiasStep(VGG, self.Vo, VDD)
         self.clock.toc()           
         nprint("\n" + str(self.clock) + "\n")
+ 
+    def __str__(self):
+        msg = "\n Transport simulation parameters:"
+        
+        # Bias information
+        msg += "\n Bias: "
+        msg += "\n  VDD: min " + str(min(self.VDD)) + ", max " + str(max(self.VDD)) 
+        msg += ", number " + str(len(self.VDD))
+        msg += "\n  VGG: min " + str(min(self.VGG)) + ", max " + str(max(self.VGG)) 
+        msg += ", number " + str(len(self.VGG))
+        msg += "\n  Vo: " + str(self.Vo)
+        
+        # Device information
+        msg += "\n Device:"
+        msg += "\n  Lengh: " + str(self.geom.xl) + ", Width: " +  str(self.geom.yl)
+        msg += ", Height: " + str(self.geom.zl)
+        msg += "\n  Num of atoms: " + str(self.geom.NumOfAtoms) 
+        msg += ", Num of orbitals: " +  str(self.geom.NumOfOrbitals)
+        
+        # Print Hamiltonian parameters.
+        msg += "\n"
+        msg += str(self.hp)
+        
+        # NEGF parameters
+        msg += str(self.np)
+        
+        # Electrostatics
+        msg += "\n"
+        msg += str(self.V)
+        
+        # Calculations to perform
+        msg += " Calculations:\n"
+        for type, value in self.Calculations.iteritems():
+            if (type == "TE"):
+                msg += "  Transmission.\n"
+            if (type == "I"):
+                for ib, N in self.Calculations["I"].iteritems():
+                    msg += "  Current at block #" + str(ib) + ".\n"
+        msg += "  Save output at: " + self.OutPath + self.OutFileName + "*\n"
+                    
+        # End of info section
+        msg += " ------------------------------------------------------------------"
+        
+        return msg
+        
     
-
-
+    def __getstate__(self):
+        dct = dict(self.__dict__)
+        del dct['workers']
+        del dct['clock']
+        del dct['ham']
+        return dct
+    
+    def __setstate__(self, dct):
+        self.__dict__.update(dct)
+        
+"""
+ Loads and returns a Transport object from pickle file
+"""
+def load(fileName):
+    pf = open(fileName)
+    tr = pickle.load(pf)
+    pf.close()
+    return tr
 
 
 

@@ -109,6 +109,7 @@ using namespace hamiltonian;
  */
 void export_GrapheneKpParams(){
     class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
+        .enable_pickling()
         .def_readwrite("ax", &GrapheneKpParams::ax)
         .def_readwrite("ay", &GrapheneKpParams::ay)
         .def_readwrite("Rx", &GrapheneKpParams::Rx)   

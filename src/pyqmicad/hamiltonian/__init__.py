@@ -36,6 +36,20 @@ def _TISurfKpParamsInit(self):
     
 TISurfKpParams.__init__ = _TISurfKpParamsInit
 
+# TI surface k.p pickle support
+def _TISurfKpParamsSetState(self, dct):
+    self.__dict__.update(dct)
+    self.update()
+    
+TISurfKpParams.__setstate__ = _TISurfKpParamsSetState
+
+def _TISurfKpParamsGetState(self):
+    dct = dict(self.__dict__)
+    return dct
+
+TISurfKpParams.__getstate__ = _TISurfKpParamsGetState
+TISurfKpParams.__getstate_manages_dict__ = True
+
 # Graphene k.p default parameters
 _GrapheneKpParamsOrgInit =  GrapheneKpParams.__init__
 def _GrapheneKpParamsInit(self):
@@ -49,10 +63,25 @@ def _GrapheneKpParamsInit(self):
     self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
     self.ptable = _atoms.PeriodicTable()   # Periodic table for graphene k.p
     self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
-
-    self.update()
+    
+    self.update()    
     
 GrapheneKpParams.__init__ = _GrapheneKpParamsInit
+
+# Graphene k.p pickle support
+def _GrapheneKpParamsSetState(self, dct):
+    self.__dict__.update(dct)
+    self.update()
+    
+GrapheneKpParams.__setstate__ = _GrapheneKpParamsSetState
+
+def _GrapheneKpParamsGetState(self):
+    dct = dict(self.__dict__)
+    return dct
+
+GrapheneKpParams.__getstate__ = _GrapheneKpParamsGetState
+GrapheneKpParams.__getstate_manages_dict__ = True
+
 
 # Graphene tight binding default parameters
 _GrapheneTbParamsOrgInit =  GrapheneTbParams.__init__
@@ -73,3 +102,19 @@ def _GrapheneTbParamsInit(self):
     self.update()
     
 GrapheneTbParams.__init__ = _GrapheneTbParamsInit
+
+# Graphene tight binding pickle support
+def _GrapheneTbParamsSetState(self, dct):
+    self.__dict__.update(dct)
+    self.update()
+    
+GrapheneTbParams.__setstate__ = _GrapheneTbParamsSetState
+
+def _GrapheneTbParamsGetState(self):
+    dct = dict(self.__dict__)
+    return dct
+
+GrapheneTbParams.__getstate__ = _GrapheneTbParamsGetState
+GrapheneTbParams.__getstate_manages_dict__ = True
+
+

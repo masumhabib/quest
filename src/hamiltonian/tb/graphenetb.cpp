@@ -108,6 +108,7 @@ using namespace hamiltonian;
  */
 void export_GrapheneTbParams(){
     class_<GrapheneTbParams, bases<HamParams>, shared_ptr<GrapheneTbParams> >("GrapheneTbParams")
+        .enable_pickling()
         .def_readwrite("ec", &GrapheneTbParams::ec)
         .def_readwrite("di0", &GrapheneTbParams::di0)
         .def_readwrite("ti0", &GrapheneTbParams::ti0)   

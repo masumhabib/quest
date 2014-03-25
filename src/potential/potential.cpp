@@ -12,35 +12,18 @@ namespace qmicad{
 namespace potential{
 
 using namespace std;
-// Constructor
-Potential::Potential(const AtomicStruct &atoms, const vector<contact> &source, 
-        const vector<contact> &drain, const vector<gate> &gates, const string &prefix):
-        Printable(" " + prefix), ma(atoms), ms(source), md(drain), mg(gates)
-{
-    mV.set_size(ma.NumOfAtoms());
-    mV.zeros();
 
-    for (int it = 0; it < ms.size(); ++it){
-        ms[it].Title("Source");
-        ms[it].Prefix(ms[it].Prefix() + mPrefix);
-    }    
-
-    for (int it = 0; it < md.size(); ++it){
-        md[it].Title("Drain");
-        md[it].Prefix(md[it].Prefix() + mPrefix);
-    }    
-    
-    for (int it = 0; it < mg.size(); ++it){
-        mg[it].Title("Gate # " + itos(it));
-        mg[it].Prefix(mg[it].Prefix() + mPrefix);
-    }    
-}
-
-Potential::Potential(const AtomicStruct &atoms, const string &prefix):
+Potential::Potential(AtomicStruct::ptr atoms, const string &prefix):
         Printable(" " + prefix), ma(atoms)
 {
-    mV.set_size(ma.NumOfAtoms());
-    mV.zeros();
+    if (ma){
+        mV.set_size(ma->NumOfAtoms());
+        mV.zeros();
+
+        mRho.set_size(ma->NumOfAtoms());
+        mRho.zeros();
+    }
+
 }
 
 
@@ -64,7 +47,7 @@ string Potential::toString() const{
 
 // Convert atomic potential to orbital potential
 shared_ptr<vec> Potential::toOrbPot(span s){
-    AtomicStruct a = ma(s);
+    AtomicStruct a = (*ma)(s);
     int no = a.NumOfOrbitals();
     int na = a.NumOfAtoms();
     shared_ptr<vec> pV = make_shared<vec>(no, fill::zeros);
@@ -122,11 +105,9 @@ void Potential::exportSvg(const string& path){
 }
 
 void Potential::exportPotential(const string& path){
-    int na = ma.NumOfAtoms();
+    int na = ma->NumOfAtoms();
     mat Va(na, 4);
-    Va.col(coord::X) = ma.X();
-    Va.col(coord::Y) = ma.Y();
-    Va.col(coord::Z) = ma.Z();
+    Va.cols(coord::X, coord::Z) = ma->XYZ();
     Va.col(coord::Z+1) = mV;
     
     ofstream potf(path.c_str());
@@ -135,14 +116,22 @@ void Potential::exportPotential(const string& path){
 
 void Potential::addSource(const squadrilateral &sq){
     // source
-    ms[0] = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    if (ms.empty()){
+        ms.push_back(contact(sq.lb, sq.rb, sq.rt, sq.lt));
+    }else{
+        ms[0] = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    }
     ms[0].Title("Source");
     ms[0].Prefix(ms[0].Prefix() + mPrefix);
 }
 
 void Potential::addDrain(const squadrilateral &sq) {
     // drain
-    md[0] = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    if(md.empty()){
+        md.push_back(contact(sq.lb, sq.rb, sq.rt, sq.lt));
+    }else{
+        md[0] = contact(sq.lb, sq.rb, sq.rt, sq.lt);
+    }
     md[0].Title("Drain");
     md[0].Prefix(md[0].Prefix() + mPrefix);
 }
@@ -182,7 +171,7 @@ using namespace potential;
 shared_ptr<vec> (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;    
 void export_Potential(){    
     class_<Potential, bases<Printable>, shared_ptr<Potential> >("Potential", 
-            init<const AtomicStruct&, optional<const string&> >())
+            init<optional<AtomicStruct::ptr, const string&> >())
         .def("addSource", &Potential::addSource)
         .def("addDrain", &Potential::addDrain)
         .def("addGate", &Potential::addGate)
@@ -193,6 +182,7 @@ void export_Potential(){
         .def("VS", &Potential::VS)
         .def("VG", &Potential::VG)
         .def("toOrbPot", Potential_toOrbPot) 
+        .add_property("NG", &Potential::NG)
     ;
 }
 

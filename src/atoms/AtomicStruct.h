@@ -13,27 +13,18 @@
 #ifndef ATOMS_H
 #define	ATOMS_H
 
-#include <python2.6/Python.h>
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/tuple.hpp>
-#include <boost/python/str.hpp>
-
 #include "Lattice.h"
 
+#include "../python/boostpython.hpp"
 #include "../string/stringutils.h"
 #include "../grid/grid.hpp"
 #include "../utils/Printable.hpp"
 #include "../maths/svec.h"
 #include "../maths/arma.hpp"
+#include "../utils/serialize.hpp"
 
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
-
-
-
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 namespace qmicad{
 namespace atoms{
@@ -46,7 +37,9 @@ using utils::MatGrid;
 using namespace utils::stds;
 using namespace maths::armadillo;
 using namespace maths::spvec;
-    
+
+using boost::shared_ptr;
+using boost::make_shared;  
     
         
 /**
@@ -154,6 +147,16 @@ struct PeriodicTable{
     int size() const{
         return elements.size();
     }
+    
+    //! For MPI send/receive.
+    friend class boost::serialization::access;
+
+    //! For MPI send/receive.
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version){
+        ar & elements;
+    }
+
 };
 
 typedef PeriodicTable ptable;
@@ -162,6 +165,9 @@ typedef PeriodicTable ptable;
  * All atoms in the structure.
  */
 class AtomicStruct: public Printable {
+//typedefs
+public:
+    typedef shared_ptr<AtomicStruct> ptr;
 // Fields
 protected:
     ptable mpt;         //!< Our periodic table.
@@ -233,6 +239,7 @@ public:
     vec         X() const { return mXyz.col(coord::X); };
     vec         Y() const { return mXyz.col(coord::Y); };
     vec         Z() const { return mXyz.col(coord::Z); };
+    mat         XYZ() const { return mXyz; };
     int         NumOfAtoms() const { return mNa; };
     int         NumOfOrbitals() const { return mNo; };
     int         NumOfElectrons() const { return mNe; };
@@ -275,6 +282,10 @@ private:
 };
 
 /**
+ * @TODO: Implement pickling either using boost::serialization or using python.
+ */
+
+/**
  * For python pickle.
  */
 
@@ -284,14 +295,28 @@ struct AtomPickler : public pickle_suite{
     }
 };
 
+
+struct AtomicStructPickler : public pickle_suite{
+
+    static object getstate(const AtomicStruct& as){
+        ostringstream os;
+        boost::archive::text_oarchive oa(os);
+        oa << as;
+        // Return the string to pickle for storage.
+        return str(os.str());
+    }
+
+    static void setstate(AtomicStruct& as, object state){
+        str s = extract<str> (state)();
+        string st = extract<string> (s)();
+        istringstream is (st);
+
+        boost::archive::text_iarchive ia (is);
+        ia >> as;
+    }
+};
+
  struct PeriodicTablePickler : public pickle_suite{
-//    static
-//    boost::python::tuple
-//    getinitargs(const world& w)
-//    {
-//        using namespace boost::python;
-//        return make_tuple(w.get_country());
-//    }
 
     static object getstate(const PeriodicTable& pt){
         PeriodicTable::piter it;

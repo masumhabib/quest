@@ -37,19 +37,16 @@ class Potential:public Printable{
 
 public:
 protected:
-    const AtomicStruct  &ma;    //!< Atomistic geometry of the device.
+    AtomicStruct::ptr   ma;     //!< Atomistic geometry of the device.
+    vec                 mV;     //!< Electrostatic potential.
+    vec                 mRho;   //!< Electric charge.
     vector<contact>     ms;     //!< Source contact.
     vector<contact>     md;     //!< Drain contact.
     vector<gate>        mg;     //!< Gates.  
-    vec                 mV;     //!< Electrostatic potential.
     
 public:
-    //!< Constructor.
-    Potential(const AtomicStruct &atoms, const vector<contact> &source, 
-            const vector<contact> &drain, const vector<gate> &gates, 
-            const string &prefix = "");
     //<!< Constructor.
-    Potential(const AtomicStruct &atoms, const string &prefix = "");
+    Potential(AtomicStruct::ptr atoms = AtomicStruct::ptr(), const string &prefix = "");
     //!< Convert atomic potential to orbital potential.
     shared_ptr<vec> toOrbPot(span s = span::all);
     shared_ptr<vec> toOrbPot(uint start, uint end);
@@ -72,6 +69,8 @@ public:
     void VD(double VD);
     //!< Sets electrostatic potential at the source.
     void VS(double VS);
+    
+    uint NG() const { return mg.size(); };
     
 protected:
     struct Contains{

@@ -29,20 +29,7 @@ string LinearRegion4::toString() const {
 };
 
 
-LinearPot::LinearPot(const AtomicStruct &atoms, const vector<contact> &source, 
-        const vector<contact> &drain, const vector<gate> &gates, 
-        const vector <linear_region> &linear, const string &prefix): 
-        Potential(atoms, source, drain, gates, prefix), mlr(linear)
-{
-    mTitle = "Linear Voltage Profile";
-    
-    for (int it = 0; it < mlr.size() ; ++it){
-        mlr[it].Title("Linear Region # " + dtos(it));
-        mlr[it].Prefix(mlr[it].Prefix() + mPrefix);
-    }
-}
-
-LinearPot::LinearPot(const AtomicStruct &atoms, const string &prefix): 
+LinearPot::LinearPot(AtomicStruct::ptr atoms, const string &prefix): 
         Potential(atoms, prefix)
 {
     mTitle = "Linear Voltage Profile";
@@ -57,11 +44,11 @@ void LinearPot::compute(){
     using namespace std;
     
     // loop over all the atoms
-    int na = ma.NumOfAtoms();
+    int na = ma->NumOfAtoms();
     for(int ia = 0; ia < na; ++ia){
         double V = 0;
-        double x = ma.X(ia);
-        double y = ma.Y(ia);
+        double x = ma->X(ia);
+        double y = ma->Y(ia);
         
         // source
         if(!ms.empty() && ms[0].contains(x, y)){
@@ -155,7 +142,8 @@ void LinearPot::exportSvg(const string& path){
 string LinearPot::toString() const{
     stringstream ss;
     ss << Printable::toString() << ":" << endl;
-
+    ss << mPrefix << " Number of gates: " << NG() << endl;
+    ss << mPrefix << " Number of linear regions: " << NLR() << endl;
     for (vector<contact>::const_iterator it = ms.begin(); it != ms.end(); ++it){
         ss << mPrefix << *it << endl;
     }
@@ -242,8 +230,10 @@ using namespace potential;
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LinearPot_VLR, VLR, 3, 5)
 void export_LinearPot(){
     class_<LinearPot, bases<Potential>, shared_ptr<LinearPot> >("LinearPot", 
-            init<const AtomicStruct&, optional<const string&> >())
+            init<optional<AtomicStruct::ptr, const string&> >())
+        .enable_pickling()
         .def("addLinearRegion", &LinearPot::addLinearRegion)
+        .add_property("NLR", &LinearPot::NLR) 
         .def("VLR", &LinearPot::VLR, LinearPot_VLR()) 
     ;
 }
