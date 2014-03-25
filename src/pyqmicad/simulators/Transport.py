@@ -280,7 +280,8 @@ class Transport(object):
         
         # Print welcome message.
         nprint(qmicad.greet())
-        nprint(self.__str__())
+        nprint(self.nstr())
+        dprint(self.dstr())
              
         if (self.check() == False):
             raise error(" ERROR: Check failed !!!")        
@@ -300,6 +301,9 @@ class Transport(object):
         nprint("\n" + str(self.clock) + "\n")
  
     def __str__(self):
+        return self.nstr()
+    
+    def nstr(self):
         msg = "\n Transport simulation parameters:"
         
         # Bias information
@@ -342,8 +346,14 @@ class Transport(object):
         msg += " ------------------------------------------------------------------"
         
         return msg
-        
     
+    def dstr(self):
+        msg = " Debugging information: \n"
+        msg = "  Atomic structure: \n"
+        msg += str(self.geom)
+        msg += " ------------------------------------------------------------------"
+        return msg
+        
     def __getstate__(self):
         dct = dict(self.__dict__)
         del dct['workers']

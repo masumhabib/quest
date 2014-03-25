@@ -13,6 +13,7 @@
 #define	PRINTABLE_H
 
 #include "std.hpp"
+#include "../utils/serialize.hpp"
 
 /**
  * Description: Printable class. All class that want to print itself
@@ -70,6 +71,16 @@ public:
 
     string Title(){
         return mTitle;
+    }
+    
+//!< Serialization
+protected:    
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version){
+        ar & mTitle;
+        ar & mPrefix;
     }
 
 };
