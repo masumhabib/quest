@@ -98,8 +98,8 @@ BOOST_PYTHON_MODULE(_negf)
 BOOST_PYTHON_MODULE(_qmicad)
 { 
     scope().attr("version") = version;
-    def("greet", greet);
-    def("setVerbosity", setVerbosity);      
+    def("greet", greet, " Shows the QMICAD banner.");
+    def("setVerbosity", setVerbosity, " Sets the verbosity level of C++ code.");      
 
 }
 
