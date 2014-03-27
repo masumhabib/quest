@@ -20,20 +20,6 @@ AtomicStruct::AtomicStruct():mpt() {
     init();
 }
 
-// constructs from a GaussView gjf file and a periodic table
-AtomicStruct::AtomicStruct(const string& gjfFileName, const ptable &periodicTable):
-mpt(periodicTable){    
-    init();
-    importGjf(gjfFileName);
-}
-
-/* Construct from a GaussView gjf file */
-AtomicStruct::AtomicStruct(const string& gjfFileName):mpt() {
-    init();
-    
-    importGjf(gjfFileName);
-}
-
 /* Copy constructor */
 AtomicStruct::AtomicStruct(const AtomicStruct& orig):
 mpt(orig.mpt),
@@ -44,6 +30,20 @@ mlv(orig.mlv)
     mNa = orig.mNa;
     mNo = orig.mNo;
     mNe = orig.mNe;
+}
+
+/* Construct from a GaussView gjf file */
+AtomicStruct::AtomicStruct(const string& gjfFileName):mpt() {
+    init();
+    
+    importGjf(gjfFileName);
+}
+
+// constructs from a GaussView gjf file and a periodic table
+AtomicStruct::AtomicStruct(const string& gjfFileName, const ptable &periodicTable):
+mpt(periodicTable){    
+    init();
+    importGjf(gjfFileName);
 }
 
 /* Construct from coordinates */
@@ -83,12 +83,6 @@ const ptable& periodicTable):mpt(periodicTable){
     mNe = computeNumOfElectrons();    
 }
 
-AtomicStruct::AtomicStruct(double Lx, double Ly, double ax, double ay, const ptable& 
-    periodicTable)
-{
-    init();
-    genKpAtoms(Lx, Ly, ax, ay, periodicTable);
-}
 
 /* initializer */
 void AtomicStruct::init(){
@@ -256,12 +250,10 @@ AtomicStruct AtomicStruct::operator ()(maths::armadillo::span s) const{
     return AtomicStruct(atomId, coordinate, mlv, mpt);
 }
 
-
 /*
  * Callable operators to extract a one atom with index i.
  * @FIXME: these operators does not guarantee correct lattice vector.
  */
-
 AtomicStruct AtomicStruct::operator ()(uint i) const{
     
     ucol index(1);
@@ -374,7 +366,7 @@ void AtomicStruct::exportGjf(const string& gjfFileName){
     gjf.close();
 }
 
-void AtomicStruct::genKpAtoms(uint nl, uint nw, double ax, double ay, 
+void AtomicStruct::genRectLattAtoms(uint nl, uint nw, double ax, double ay, 
         const ptable &periodicTable){
     
     double w = (nw-1)*ax;                  // width (in A)
@@ -476,9 +468,7 @@ void export_AtomicStruct(){
             init<>())
         .def(init<const string&>())
         .def(init<const string&, const PeriodicTable>())
-        .def(init<uint, uint, double, double, const PeriodicTable>())
         .def_pickle(AtomicStructPickler())
-        .def("span", &AtomicStruct::span)
         .add_property("xmax", &AtomicStruct::xmax)
         .add_property("xmin", &AtomicStruct::xmin)
         .add_property("xl", &AtomicStruct::xl)
@@ -492,6 +482,8 @@ void export_AtomicStruct(){
         .add_property("NumOfAtoms", &AtomicStruct::NumOfAtoms) 
         .add_property("NumOfOrbitals", &AtomicStruct::NumOfOrbitals) 
         .add_property("NumOfElectrons", &AtomicStruct::NumOfElectrons) 
+        .def("span", &AtomicStruct::span)
+        .def("genRectLattAtoms", &AtomicStruct::genRectLattAtoms)
         .def(self + svec())
         .def(self - svec())
         .def(self + lcoord())

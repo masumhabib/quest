@@ -96,9 +96,11 @@
         <logicalFolder name="simulators" displayName="simulators" projectFiles="true">
           <itemPath>src/pyqmicad/simulators/Transport.py</itemPath>
           <itemPath>src/pyqmicad/simulators/__init__.py</itemPath>
+          <itemPath>src/pyqmicad/simulators/importTransResult.m</itemPath>
         </logicalFolder>
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <itemPath>src/pyqmicad/utils/__init__.py</itemPath>
+          <itemPath>src/pyqmicad/utils/linspace.py</itemPath>
           <itemPath>src/pyqmicad/utils/vprint.py</itemPath>
         </logicalFolder>
         <itemPath>src/pyqmicad/__init__.py</itemPath>
@@ -322,7 +324,14 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="src/pyqmicad/simulators/importTransResult.m"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="src/pyqmicad/utils/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/utils/linspace.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/pyqmicad/utils/vprint.py" ex="false" tool="3" flavor2="0">
       </item>
@@ -542,7 +551,14 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="src/pyqmicad/simulators/importTransResult.m"
+            ex="true"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="src/pyqmicad/utils/__init__.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/pyqmicad/utils/linspace.py" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/pyqmicad/utils/vprint.py" ex="false" tool="3" flavor2="0">
       </item>

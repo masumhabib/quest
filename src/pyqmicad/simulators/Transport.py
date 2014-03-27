@@ -51,7 +51,7 @@ class Transport(object):
         
         # Device geometry
         self.nb         = 11           # Length of the device+contacts
-        self.nw         = 5            # Width of the device
+        self.nw         = 9            # Width of the device
 
         # Hamiltonian type
         self.HAM_TI_SURF_KP = 10       # TI surface k.p hamiltonian
@@ -72,6 +72,9 @@ class Transport(object):
         # Debug stuffs
         self.DebugPotFile   = "dbg_pot.dat"
         self.DebugGeomFile  = "dbg_geom.svg"
+        
+        # Dry run
+        self.DryRun         = False
 
     @property 
     def verbosity(self):
@@ -106,7 +109,7 @@ class Transport(object):
         self.V.addDrain(dql)
         self.V.rVD = rVD
         # just for pickling
-        self.V.dql = qql 
+        self.V.dql = dql 
 
     def addGate(self, gql, rVG = 1):
         self.V.addGate(gql)
@@ -126,7 +129,17 @@ class Transport(object):
             # Hamiltonian parameter
             self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            self.geom = AtomicStruct()
+            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            # Just to make sure that no point of gate regions is    
+            # at the border
+            ax = self.hp.ax
+            delta = ax*7.0/220.0  + ax*7.0/2200.0
+            self.xmn = self.geom.xmin - delta   
+            self.xmx = self.geom.xmax + delta
+            self.ymn = self.geom.ymin - delta
+            self.ymx = self.geom.ymax + delta
+
 
     # Generate hamiltonian and overlap matrices.
     def generateHamiltonian(self):
@@ -154,15 +167,7 @@ class Transport(object):
         # Linear
         if (self.PotType == self.POT_LINEAR):
             self.V = LinearPot(self.geom)
-
-
-    # Prepare simulation
-    def prepare(self):
-        self.createAtomicGeom()
-        self.generateHamiltonian()
-        self.setupPotential()
-
-    # 
+    
     def check(self):
         return True 
 
@@ -191,21 +196,27 @@ class Transport(object):
                 if (ig == 0):
                     self.V.VS(VG)
                 # set potential of drain
-                if (ig == len(self.rVG) - 1):
+                if (ig == self.V.NG - 1):
                     self.V.VD(VG)
         
         # Potential of linear region
         if (self.PotType == self.POT_LINEAR):
             for il in range(self.V.NLR):
-                VG1 = self.VG(VGG, il)
-                VG2 = self.VG(VGG, il+1)
+                VG1 = self.VG(VGG, Vo, il)
+                VG2 = self.VG(VGG, Vo, il+1)
                 self.V.VLR(il, VG1, VG2)        
 
         # Compute the electrostatic potential
         self.V.compute()
         eprint(self.V)
+        
+        # Save the calculated potential.
         if (self.verbosity >= vprint.MSG_DEBUG):
-            self.V.exportPotential(self.OutPath + self.DebugPotFile)
+            if (self.workers.IAmMaster()):
+                # Create directory if not exist.
+                if not os.path.exists(self.OutPath):
+                    os.makedirs(self.OutPath) 
+                self.V.exportPotential(self.OutPath + self.DebugPotFile)
         
         # Export potential to NEGF
         if (self.DevType == self.COH_RGF_UNI): 
@@ -230,6 +241,16 @@ class Transport(object):
         nprint("\n Total " + str(EE.N()) + " energy point(s) " 
                     + "running on " + str(self.workers.N()) + " CPU(s): " 
                     + str(EE.N()/self.workers.N()) + " pts/CPU ... \n")
+        
+        # save simulation parameters
+        if (self.workers.IAmMaster()):
+            # Create directory if not exist.
+            if not os.path.exists(self.OutPath):
+                os.makedirs(self.OutPath)            
+            # save simulation parameters to a pickle file
+            fp = open(self.OutPath + fileName + ".pkl", 'wt')
+            pk.dump(self, fp)
+            fp.close()                        
                         
         # create and run energy loop
         Eloop = NegfEloop(EE, self.np, self.workers) 
@@ -249,7 +270,8 @@ class Transport(object):
                 Eloop.enablen(value)
         
         # Run the simulation
-        Eloop.run()
+        if (self.DryRun == False):
+            Eloop.run()
         nprint("\n  done.")
         
         nprint("\n Saving results to disk ...")
@@ -257,17 +279,11 @@ class Transport(object):
         if (self.workers.IAmMaster()):
             # Create directory if not exist.
             if not os.path.exists(self.OutPath):
-                os.makedirs(self.OutPath)
-            
+                os.makedirs(self.OutPath)            
             # save results to file.
             fo = open(self.OutPath + fileName + ".dat", "wt")
             fo.close()
-            Eloop.save(self.OutPath + fileName + ".dat")
-            
-            # save simulation parameters to a pickle file
-            fp = open(self.OutPath + fileName + ".pkl", 'wt')
-            pk.dump(self, fp)
-            fp.close()
+            Eloop.save(self.OutPath + fileName + ".dat")            
 
         nprint(" done.\n")
         nprint(" ------------------------------------------------------------------")
@@ -280,19 +296,26 @@ class Transport(object):
         
         # Print welcome message.
         nprint(qmicad.greet())
+        
+        # Print simulation info
         nprint(self.nstr())
-        dprint(self.dstr())
+        eprint(self.dstr())
              
         if (self.check() == False):
             raise error(" ERROR: Check failed !!!")        
-
-        if (self.verbosity >= vprint.MSG_DEBUG):
-            self.V.exportSvg(self.sp.OutPath + self.DebugGeomFile)
         
         # Debug print
-        dprint(self.VDD)
-        dprint(self.VGG)
+        dprint("\n" + str(self.VDD))
+        dprint("\n" + str(self.VGG))
 
+        # Save electrostatic geometry
+        if (self.verbosity >= vprint.MSG_DEBUG):
+            if (self.workers.IAmMaster()):
+                # Create directory if not exist.
+                if not os.path.exists(self.OutPath):
+                    os.makedirs(self.OutPath) 
+                self.V.exportSvg(self.OutPath + self.DebugGeomFile)
+        
         # Loop over drain bias
         for VDD in self.VDD:
             for VGG in self.VGG:
@@ -316,8 +339,9 @@ class Transport(object):
         
         # Device information
         msg += "\n Device:"
-        msg += "\n  Lengh: " + str(self.geom.xl) + ", Width: " +  str(self.geom.yl)
-        msg += ", Height: " + str(self.geom.zl)
+        msg += "\n  Lengh: " + str(self.geom.xl) + "(" + str(self.geom.xl/10.0) + " nm)"
+        msg += ", Width: " +  str(self.geom.yl) + "(" + str(self.geom.yl/10.0) + " nm)"
+        msg += ", Height: " + str(self.geom.zl)+ "(" + str(self.geom.zl/10.0) + " nm)"
         msg += "\n  Num of atoms: " + str(self.geom.NumOfAtoms) 
         msg += ", Num of orbitals: " +  str(self.geom.NumOfOrbitals)
         

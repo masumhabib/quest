@@ -18,6 +18,8 @@ def _CohRgfaParamsInit(self, nb):
     self.kT             = 0.0259        # Temperature in eV (300 K)
     self.ieta           = 1E-3j         # Contact imaginary potential
     self.mu             = 0.0           # Device Fermi level
+    self.muS            = 0.0           # Source Fermi level
+    self.muD            = 0.0           # Source Fermi level
     self.isOrthogonal   = True          # Orthogonal basis?
     self.Emin           =-1.0           # Minimum energy 
     self.Emax           = 1.0           # Maximum energy

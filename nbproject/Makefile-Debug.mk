@@ -55,6 +55,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
+	${OBJECTDIR}/src/pyqmicad/simulators/importTransResult.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qmicad/qmicad.o \
 	${OBJECTDIR}/src/string/stringutils.o \
@@ -192,6 +193,11 @@ ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
+
+${OBJECTDIR}/src/pyqmicad/simulators/importTransResult.o: src/pyqmicad/simulators/importTransResult.m 
+	${MKDIR} -p ${OBJECTDIR}/src/pyqmicad/simulators
+	${RM} "$@.d"
+	$(COMPILE.c) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/pyqmicad/simulators/importTransResult.o src/pyqmicad/simulators/importTransResult.m
 
 ${OBJECTDIR}/src/python/pyqmicad.o: src/python/pyqmicad.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/python

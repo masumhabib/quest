@@ -182,25 +182,24 @@ protected:
 
 // Methods    
 public:
-    //! Constructors and destructors.
-    AtomicStruct(); // default
-    //! constructs from a GaussView GJF file.
+    //!< Default constructor.
+    AtomicStruct();
+    //!< Copy constructor.
+    AtomicStruct(const AtomicStruct& orig);
+    //!< constructs from a GaussView GJF file.
     AtomicStruct(const string& gjfFileName ); 
-    //! constructs from a GaussView GJF file and a periodic table.
+    //!< constructs from a GaussView GJF file and a periodic table.
     AtomicStruct(const string& gjfFileName, const ptable &periodicTable);
-    //! Constructor for k.p fake atoms.
-    AtomicStruct(double Lx, double Ly, double ax, double ay, const ptable &periodicTable);
-    //! Constructs from a atomic coordinates and lattice vector.
+    //!< Constructs from a atomic coordinates and lattice vector.
     AtomicStruct(const icol& atomId, const mat& coordinate, const lvec& lv);
-    //! Constructs from a atomic coordinates and lattice vector.
+    //!< Constructs from a atomic coordinates and lattice vector.
     AtomicStruct(const icol& atomId, const mat& coordinate, const lvec& lv,
     const ptable& periodicTable);
-    //! Copy constructor.
-    AtomicStruct(const AtomicStruct& orig);
+    //!< Destructor.
     virtual ~AtomicStruct(){};
     friend void swap(AtomicStruct& first, AtomicStruct& second);
     // operators
-    AtomicStruct  operator()(maths::armadillo::span s) const;// Get a sub cell 
+    AtomicStruct  operator()(span s) const;                  // Get a sub cell 
     AtomicStruct  operator()(const ucol& index) const;       // Get a sub cell
     AtomicStruct  operator()(uint i) const;                  // Get one atom cell
     
@@ -217,15 +216,14 @@ public:
     friend AtomicStruct operator+ (AtomicStruct atm, const lcoord& latticeCoord);     // atm2 = atm1 + lc;
     friend AtomicStruct operator+ (AtomicStruct atm, const svec& positionVect);       // atm2 = atm1 + r;
     friend AtomicStruct operator+ (AtomicStruct atmi, const AtomicStruct& atmj);             // concatanation
-//    friend ostream& operator<< (ostream& out, const AtomicStruct &b);
 
     // utilities
-    //! Import atoms from Gaussview file.
+    //!< Import atoms from Gaussview file.
     void importGjf(const string &gjfFileName);
-    //! Export atoms to Gaussview file.
+    //!< Export atoms to Gaussview file.
     void exportGjf(const string &gjfFileName);
-    //! Create fake k.p atoms.
-    void genKpAtoms(uint nl, uint nw, double ax, double ay, 
+    //!< Generate atoms in a rectangular lattice.
+    void genRectLattAtoms(uint nl, uint nw, double ax, double ay, 
                     const ptable& periodicTable);
     //!< String representation of Atomic structure.
     string toString() const;
