@@ -61,7 +61,7 @@ def _GrapheneKpParamsInit(self):
     self.Rx     = self.ax*self.K    
     self.Ry     = self.ay*self.K
     self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
-    self.ptable = _atoms.PeriodicTable()   # Periodic table for graphene k.p
+    self.ptable = PeriodicTable()   # Periodic table for graphene k.p
     self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
     
     self.update()    
@@ -97,7 +97,7 @@ def _GrapheneTbParamsInit(self):
     self.lmdxy      = 1.7           # See PRL 109, 236604 (2012)
     self.alpha      = 1.65
     self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
-    self.ptable = _atoms.PeriodicTable()   # Periodic table for graphene
+    self.ptable = PeriodicTable()   # Periodic table for graphene
 
     self.update()
     

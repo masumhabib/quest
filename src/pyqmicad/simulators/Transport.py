@@ -1,17 +1,40 @@
 """
     Qunantum Transport simulator using QMICAD.
-     
+
+    * Device geometry:
+        ----------------------------------------
+         ... |-1 | 0 | 1 |  ...  | N |N+1|N+2| ...
+        ----------------------------------------
+                   ^  <------^------>  ^
+                 left      Device    right
+               contact              contact
+
+    Notes:
+        1. Coherent RGF calculation for non-uniform devices requires at least 
+           5 blocks: 1 source block, 1 drain block and 3 device blocks as 
+           shown in the following fig:
+           
+           --------------------------
+             | 0 | 1 | 2 | 3 | 4 |
+           --------------------------
+               ^  <--------->  ^
+            source  Device   drain 
+            
+           Block  0 and block 1 has to be identical. 
+           Simularly, block 3 and block 4 hast to be identical.
+              
     Author: K M Masum Habib <masum.habib@virginia.edu>
-    Last update: 02/14/2014
+    Last update: 03/27/2014
 """
 
 import os
 import pickle as pk
 import numpy as np
+import random as rn
 
 import qmicad
 from qmicad.atoms import AtomicStruct
-from qmicad.hamiltonian import TISurfKpParams, TISurfKpHam
+from qmicad.hamiltonian import TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.negf import CohRgfaParams, NegfEloop
 from qmicad.potential import LinearPot
 from qmicad.utils import VecGrid, Timer, Workers, vprint
@@ -52,13 +75,16 @@ class Transport(object):
         # Device geometry
         self.nb         = 11           # Length of the device+contacts
         self.nw         = 9            # Width of the device
+        self.nbw        = []           # Width of all layers
 
         # Hamiltonian type
         self.HAM_TI_SURF_KP = 10       # TI surface k.p hamiltonian
+        self.HAM_GRAPHENE_KP= 20       # Graphene k.p Hamiltonian
         self.HamType        = self.HAM_TI_SURF_KP 
         
         # Device types
-        self.COH_RGF_UNI    = 10       # Coherent Uniform RGF type device
+        self.COH_RGF_UNI    = 10       # Coherent uniform RGF type device
+        self.COH_RGF_NON_UNI= 20       # Coherent Non-uniform RGF type device
         self.DevType        = self.COH_RGF_UNI
         
         # Potential profile type
@@ -135,16 +161,68 @@ class Transport(object):
             # at the border
             ax = self.hp.ax
             delta = ax*7.0/220.0  + ax*7.0/2200.0
-            self.xmn = self.geom.xmin - delta   
-            self.xmx = self.geom.xmax + delta
-            self.ymn = self.geom.ymin - delta
-            self.ymx = self.geom.ymax + delta
+            self.nbw = [self.nw]*self.nb
+        elif (self.HamType == self.HAM_GRAPHENE_KP):
+            # Hamiltonian parameter
+            self.hp = GrapheneKpParams()
+            # Create atomistic geometry of the device.
+            self.geom = AtomicStruct()
+            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            # Just to make sure that no point of gate regions is    
+            # at the border
+            ax = self.hp.ax
+            delta = ax*7.0/220.0  + ax*7.0/2200.0
+            self.nbw = [self.nw]*self.nb
+        else:
+            raise RuntimeError(" Unsupported Hamiltonian type. ")
+        
+        self.xmn = self.geom.xmin - delta   
+        self.xmx = self.geom.xmax + delta
+        self.ymn = self.geom.ymin - delta
+        self.ymx = self.geom.ymax + delta
 
+    def createRoughEdges(self, max):
+        # Creates rough edges. Works only for sorted lattice points.
+        # For rectangular lattice
+        if (self.HamType == self.HAM_TI_SURF_KP 
+                    or self.HamType == self.HAM_GRAPHENE_KP):
+            nw = []
+            geom = AtomicStruct()
+            beg = 0
+            # loop through the layers and 
+            # remove some atoms randomly from the edges.
+            for ib in range(0, self.nb):
+                end = beg + self.nw - 1
+                lyr = self.geom.span(beg, end)
+                beg = end + 1
+                
+                if ( ib > 1 and ib < self.nb - 2):
+                    # Remove some atoms from the bottom edge.
+                    rem = rn.randint(0, max)
+                    lyr = lyr.span(rem, lyr.NumOfAtoms - 1)
+                    # Remove some atoms from the top edge
+                    rem = rn.randint(0, max)
+                    lyr = lyr.span(0, lyr.NumOfAtoms - 1 - rem)
+                
+                # save this layer
+                geom = geom + lyr
+                nw.append(lyr.NumOfAtoms)
+                
+            # save geometry
+            self.geom = geom
+            self.nbw = nw
+            self.DevType = self.COH_RGF_NON_UNI
+        else:           
+            raise RuntimeError(" Unsupported Hamiltonian type. ")
+                
 
     # Generate hamiltonian and overlap matrices.
     def generateHamiltonian(self):
         # Create Hamiltonian generator
-        self.ham = TISurfKpHam(self.hp)        
+        if (self.HamType == self.HAM_TI_SURF_KP):
+            self.ham = TISurfKpHam(self.hp)   
+        if (self.HamType == self.HAM_GRAPHENE_KP):
+            self.ham = GrapheneKpHam(self.hp)   
 
         # For uniform RGF blocks
         if (self.DevType == self.COH_RGF_UNI):            
@@ -161,6 +239,33 @@ class Transport(object):
                     self.np.H0(self.ham.H0(0), ib)          # H0: 0 to N+1
                     self.np.S0(self.ham.S0(0), ib)          # S0: 0 to N+1
                 self.np.Hl(self.ham.Hl(0), ib)              # Hl: 0 to N+2
+        # Non-uniform RGF blocks        
+        elif (self.DevType == self.COH_RGF_NON_UNI):
+            # Set block Hamiltonian for the NEGF calculation.
+            self.ham.setSizeForNegf(self.nb)            # non-uniform device, store all H_i,i and H_i,i-1
+            self.np = CohRgfaParams(self.nb)            
+            beg = 0
+            for ib in range(0, self.nb):                    # setup the block hamiltonian
+                end = beg + self.nbw[ib] - 1
+                
+                # generate H_i,i and S_i,i
+                lyri = self.geom.span(beg, end);            # extract block # i             
+                self.ham.genDiagBlock(lyri, lyri, ib)
+                self.np.H0(self.ham.H0(ib), ib)             # H0: 0 to N+1=nb-1
+                self.np.S0(self.ham.S0(ib), ib)             # S0: 0 to N+1=nb-1
+
+                # generate H_i,i-1
+                if (ib > 0):
+                    self.ham.genLowDiagBlock(lyri, lyrim1, ib)      
+                    self.np.Hl(self.ham.Hl(ib), ib)              # Hl: 1 to N+1=nb-1                
+                
+                lyrim1 = lyri
+                beg = end + 1
+            
+            self.np.Hl(self.ham.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
+            self.np.Hl(self.ham.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N
+            #if (ib != self.nb):
+
 
     # Potential profile        
     def setupPotential(self):
@@ -169,7 +274,13 @@ class Transport(object):
             self.V = LinearPot(self.geom)
     
     def check(self):
-        return True 
+        ret = True
+        if (self.DevType == self.COH_RGF_UNI):
+            ret = ret and (self.nb >= 3)
+        if (self.DevType == self.COH_RGF_NON_UNI):
+            ret = ret and (self.nb >= 5)
+            
+        return ret
 
     ## 
     # Runs the sumulation.
@@ -220,9 +331,13 @@ class Transport(object):
         
         # Export potential to NEGF
         if (self.DevType == self.COH_RGF_UNI): 
+            beg = 0
             for ib in range(self.nb):                  # setup the block hamiltonian
-                self.np.V(self.V.toOrbPot(self.nw*ib, 
-                                          self.nw*(ib+1)-1), ib)
+                end = beg + self.nbw[ib] - 1
+                self.np.V(self.V.toOrbPot(beg, end), ib)
+                beg = end + 1
+#                self.np.V(self.V.toOrbPot(self.nw*ib, 
+#                                          self.nw*(ib+1)-1), ib)
 
         # Create energy grid
         if (self.np.AutoGenE):

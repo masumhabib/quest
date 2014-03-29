@@ -132,15 +132,8 @@ AtomicStruct operator+ (AtomicStruct atmi, const AtomicStruct& atmj){
 
 /* Concatenation: atmi += atmj */
 AtomicStruct& AtomicStruct::operator+= (const AtomicStruct& atj){
-
-    // update the periodic table
-    for(int it = 0; it != atj.mpt.size(); ++it){
-        // Update our table if we do not already have  
-        // the atoms in atj;
-        if (mpt.find(atj.mpt[it]) == -1){ // not found in our database
-            mpt.add(atj.mpt[it]);     // insert it to our database
-        }
-    }
+    // update our periodic table
+    mpt.update(atj.mpt);
     
     // concatenate the atom id's and coordinates
     mia.insert_rows(mNa,atj.mia);
@@ -484,6 +477,7 @@ void export_AtomicStruct(){
         .add_property("NumOfElectrons", &AtomicStruct::NumOfElectrons) 
         .def("span", &AtomicStruct::span)
         .def("genRectLattAtoms", &AtomicStruct::genRectLattAtoms)
+        .def(self + self)
         .def(self + svec())
         .def(self - svec())
         .def(self + lcoord())

@@ -63,13 +63,14 @@ struct Atom {
     };
     
     //! Copy constructor.
-    Atom(const Atom& orig):
-    ia(orig.ia),
-    sym(orig.sym),
-    ne(orig.ne),
-    no(orig.no){
-        
+    Atom(const Atom& orig): ia(orig.ia), sym(orig.sym), ne(orig.ne), no(orig.no){
     };
+        
+    //!< Compares everything.
+    friend bool operator == (const Atom &lhs, const Atom &rhs){
+        return (lhs.ia == rhs.ia && lhs.sym == rhs.sym &&
+                lhs.ne == rhs.ne && lhs.no == rhs.no);
+    }
     
 private:
     //! For MPI send/receive.
@@ -90,6 +91,7 @@ private:
  * Our periodic table.
  */
 struct PeriodicTable{
+    typedef map<uint, Atom>::const_iterator cpiter;
     typedef map<uint, Atom>::const_iterator piter;
     
     map<uint, Atom> elements;
@@ -119,33 +121,45 @@ struct PeriodicTable{
         elements[a.ia] = a;
     }
     
+    //!< Find atomic symbol.
     int find(const string& sym) const{
-        for (piter it = elements.begin(); it != elements.end(); ++it){
+        for (cpiter it = elements.begin(); it != elements.end(); ++it){
             if (it->second.sym == sym){
                 return it->second.ia;
             }
         }
         return -1; // not found
     }
-    
-    int find(const Atom& a) const{
-        return find(a.sym);
+
+    //!< Find atomic number
+    int find(uint ia) const {
+        cpiter it = elements.find(ia);
+        if (it == elements.end()){ 
+            return -1; // not found
+        }else{
+            return it->second.ia;
+        }       
     }
     
-    int symToAtomicNum(const string& sym) const{
-        return find(sym);
+    //!< Find atom.
+    int find(const Atom& a) const{
+        return find(a.ia);
     }
 
-    string atomicNumToSym(uint ia) const {
-        return elements.find(ia)->second.sym;
+    int size() const{
+        return elements.size();
     }
     
     Atom operator[](uint ia) const{
         return elements.find(ia)->second;
     }
-    
-    int size() const{
-        return elements.size();
+
+    void update(const PeriodicTable pt){
+        cpiter it;
+        for(it = pt.elements.begin(); it != pt.elements.end(); ++it){
+            // Copy and overwrite everything of new pt to this periodic table. 
+            add(it->second);
+        }
     }
     
     //! For MPI send/receive.
@@ -199,7 +213,7 @@ public:
     virtual ~AtomicStruct(){};
     friend void swap(AtomicStruct& first, AtomicStruct& second);
     // operators
-    AtomicStruct  operator()(span s) const;                  // Get a sub cell 
+    AtomicStruct  operator()(maths::armadillo::span s) const;// Get a sub cell 
     AtomicStruct  operator()(const ucol& index) const;       // Get a sub cell
     AtomicStruct  operator()(uint i) const;                  // Get one atom cell
     
@@ -316,7 +330,7 @@ struct AtomicStructPickler : public pickle_suite{
  struct PeriodicTablePickler : public pickle_suite{
 
     static object getstate(const PeriodicTable& pt){
-        PeriodicTable::piter it;
+        PeriodicTable::cpiter it;
         // Convert periodic table to string.
         stringstream out;
         for (it = pt.elements.begin(); it != pt.elements.end(); ++it){

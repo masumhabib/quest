@@ -58,10 +58,12 @@ struct SimpleQuadrilateral: public Printable{
     const point &lt, const string &prefix = ""):Printable(" " + prefix), 
         lb(lb), rb(rb), rt(rt), lt(lt){
         
-        correct();
+        // Commented out since it is buggy
+        // correct();
     }    
     
     // sort the points.
+    // @TODO: Does not alway work. Fix bug. 
     void correct(){
         using std::sort;
         using std::vector;

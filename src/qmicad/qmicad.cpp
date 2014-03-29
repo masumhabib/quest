@@ -21,7 +21,7 @@
 namespace qmicad{
 
 using utils::stds::string;
-const string version = "0.1";
+const string version = "0.01.2";
 
 /**
  * Prints welcome message.
