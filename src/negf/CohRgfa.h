@@ -68,6 +68,7 @@ struct CohRgfaParams: public Printable {
     
     dcmplx              ieta;   // small infinitesimal energy    
     uint                nb;     // Total number of blocks including contacts
+    uint                N;      // Number of blocks in the device.
     double              muS;    // Fermi function at the left contact
     double              muD;    // Fermi function at the right contact
     double              kT;     // k*T
@@ -107,7 +108,7 @@ struct CohRgfaParams: public Printable {
     static const double SurfGTolX = 1E-8;
     
     CohRgfaParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
-            nb(nb), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
+            nb(nb), N(nb-2), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
         DCacheEnabled = true;
         TCacheEnabled = true;
         grcCacheEnabled = true;
@@ -133,6 +134,7 @@ struct CohRgfaParams: public Printable {
         out << Printable::toString() << ":" << endl;
         out << mPrefix << " IsOrthogonal = " << (isOrthogonal ? "Yes" : "No")  << endl;
         out << mPrefix << " nb           = " << nb << endl;
+        out << mPrefix << " N            = " << N << endl;
         out << mPrefix << " ieta         = " << ieta << endl;
         out << mPrefix << " kT           = " << kT << endl;
         out << mPrefix << " muS          = " << muS << endl;

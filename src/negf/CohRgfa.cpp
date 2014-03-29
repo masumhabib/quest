@@ -11,18 +11,18 @@
 namespace qmicad{
 namespace negf{
 
-CohRgfa::CohRgfa(const CohRgfaParams &newp, double E, string newprefix):
-        Printable(newprefix), mp(newp), mE(E), 
-        mN(newp.nb-2), miLc(0), miRc(newp.nb-1),
-        mDi(this, miLc, miRc, newp.DCacheEnabled), 
-        mTl(this, miLc, miRc+1, newp.TCacheEnabled),
-        mgrc(this, miLc+1, miRc, newp.grcCacheEnabled),
-        mglc(this, miLc, miRc-1, newp.glcCacheEnabled),
-        mGii(this, miLc+1, miRc-1, newp.GiiCacheEnabled),
-        mGi1(this, miLc+2, miRc-1, newp.Gi1CacheEnabled),
-        mGiN(this, miLc+1, miRc-2, newp.GiNCacheEnabled),
-        mGiip1(this, miLc+1, miRc-2, newp.Giip1CacheEnabled),
-        mGiim1(this, miLc+2, miRc-1, newp.Giim1CacheEnabled)
+CohRgfa::CohRgfa(const CohRgfaParams &p, double E, string newprefix):
+        Printable(newprefix), mp(p), mE(E), 
+        mN(p.N), miLc(0), miRc(p.N+1),
+        mDi(this, miLc, miRc, p.DCacheEnabled), 
+        mTl(this, miLc, miRc+1, p.TCacheEnabled),
+        mgrc(this, miLc+1, miRc, p.grcCacheEnabled),
+        mglc(this, miLc, miRc-1, p.glcCacheEnabled),
+        mGii(this, miLc+1, miRc-1, p.GiiCacheEnabled),
+        mGi1(this, miLc+2, miRc-1, p.Gi1CacheEnabled),
+        mGiN(this, miLc+1, miRc-2, p.GiNCacheEnabled),
+        mGiip1(this, miLc+1, miRc-2, p.Giip1CacheEnabled),
+        mGiim1(this, miLc+2, miRc-1, p.Giim1CacheEnabled)
 {
     mTitle = "Transport";
     // Fermi functions

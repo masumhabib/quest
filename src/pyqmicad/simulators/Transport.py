@@ -252,7 +252,7 @@ class Transport(object):
                 lyri = self.geom.span(beg, end);            # extract block # i             
                 self.ham.genDiagBlock(lyri, lyri, ib)
                 self.np.H0(self.ham.H0(ib), ib)             # H0: 0 to N+1=nb-1
-                self.np.S0(self.ham.S0(ib), ib)             # S0: 0 to N+1=nb-1
+                self.np.S0(self.ham.S0(0), ib)              # S0: just the identity matrix stored in S0(0)
 
                 # generate H_i,i-1
                 if (ib > 0):
@@ -330,12 +330,13 @@ class Transport(object):
                 self.V.exportPotential(self.OutPath + self.DebugPotFile)
         
         # Export potential to NEGF
-        if (self.DevType == self.COH_RGF_UNI): 
-            beg = 0
-            for ib in range(self.nb):                  # setup the block hamiltonian
-                end = beg + self.nbw[ib] - 1
-                self.np.V(self.V.toOrbPot(beg, end), ib)
-                beg = end + 1
+#        if (self.DevType == self.COH_RGF_UNI): 
+        beg = 0
+        for ib in range(self.nb):                  # setup the block hamiltonian
+            end = beg + self.nbw[ib] - 1
+            self.np.V(self.V.toOrbPot(beg, end), ib)
+            beg = end + 1
+            
 #                self.np.V(self.V.toOrbPot(self.nw*ib, 
 #                                          self.nw*(ib+1)-1), ib)
 
