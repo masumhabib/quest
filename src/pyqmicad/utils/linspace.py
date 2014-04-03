@@ -11,5 +11,6 @@ import numpy as np
     takes minimum, maximum and delta as the arguments.
 """
 def linspace(min, max, d):
-    n = int(abs(max - min)/d + 1)
+    n = int(round(abs((max-min)/d), 2)) + 1
+    max = min + (n-1)*d
     return np.linspace(min, max, n)

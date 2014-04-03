@@ -39,7 +39,7 @@ cxmat CohRgfa::nop(uint N){
     for (uint ib = miLc+1; ib < miRc; ++ib){
         nOp += Gniop(ib,N);
     }
-    return nOp;    
+    return nOp/(2*pi);    
 }
 
 cxmat CohRgfa::Gniop(uint ib, uint N){

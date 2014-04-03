@@ -101,6 +101,9 @@ class Transport(object):
         
         # Dry run
         self.DryRun         = False
+        
+        # Skip if resulting dat file already exists?
+        self.SkipExistingSimulation = False
 
     @property 
     def verbosity(self):
@@ -296,6 +299,11 @@ class Transport(object):
         
         fileName = self.OutFileName + "_VGG{0:2.3f}_Vo{1:2.3f}_VDD{2:2.3f}".format(VGG, Vo, VDD)
 
+        # skip calculation if result file exists.
+        if self.SkipExistingSimulation == True:
+            if os.path.isfile(self.OutPath + fileName + ".dat"):
+                return
+            
         # Set gate voltages
         for ig in range(self.V.NG):
             VG = self.VG(VGG, Vo, ig)
