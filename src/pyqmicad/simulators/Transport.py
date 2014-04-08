@@ -267,7 +267,6 @@ class Transport(object):
             
             self.np.Hl(self.ham.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
             self.np.Hl(self.ham.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N
-            #if (ib != self.nb):
 
 
     # Potential profile        
@@ -302,6 +301,7 @@ class Transport(object):
         # skip calculation if result file exists.
         if self.SkipExistingSimulation == True:
             if os.path.isfile(self.OutPath + fileName + ".dat"):
+                nprint("\n  Result exists, skipping.")
                 return
             
         # Set gate voltages
@@ -515,9 +515,9 @@ class Transport(object):
 """
  Loads and returns a Transport object from pickle file
 """
-def load(fileName):
+def loadTransport(fileName):
     pf = open(fileName)
-    tr = pickle.load(pf)
+    tr = pk.load(pf)
     pf.close()
     return tr
 
