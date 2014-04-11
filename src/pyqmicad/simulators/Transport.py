@@ -156,7 +156,11 @@ class Transport(object):
         # TI k.p surface      
         if (self.HamType == self.HAM_TI_SURF_KP):    
             # Hamiltonian parameter
-            self.hp = TISurfKpParams()
+            if not hasattr(self, "hp"): # if hp does not exist, create it.
+                self.hp = TISurfKpParams()
+            else:
+                if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
+                    self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
             self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
@@ -167,7 +171,12 @@ class Transport(object):
             self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_GRAPHENE_KP):
             # Hamiltonian parameter
-            self.hp = GrapheneKpParams()
+            if not hasattr(self, "hp"): # if hp does not exist, create it.
+                self.hp = GrapheneKpParams()
+            else:
+                if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
+                    self.hp = GrapheneKpParams()
+#            self.hp = GrapheneKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
             self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)

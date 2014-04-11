@@ -69,6 +69,14 @@ shared_ptr<vec> Potential::toOrbPot(uint start, uint end){
     return toOrbPot(span(start, end));
 }
 
+double Potential::Vatom(uint ia){
+    return mV(ia);
+}
+
+void Potential::Vatom(uint ia, double V){
+    mV(ia) = V;
+}
+
 void Potential::exportSvg(const string& path){
     using namespace std;
     using namespace bg;
@@ -168,7 +176,9 @@ using namespace potential;
 /**
  * Linear potential
  */  
-shared_ptr<vec> (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;    
+shared_ptr<vec> (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;
+double (Potential::*Potential_Vatom1)(uint) = &Potential::Vatom;
+void (Potential::*Potential_Vatom2)(uint, double) = &Potential::Vatom;
 void export_Potential(){    
     class_<Potential, bases<Printable>, shared_ptr<Potential> >("Potential", 
             init<optional<AtomicStruct::ptr, const string&> >())
@@ -182,6 +192,8 @@ void export_Potential(){
         .def("VS", &Potential::VS)
         .def("VG", &Potential::VG)
         .def("toOrbPot", Potential_toOrbPot) 
+        .def("Vatom", Potential_Vatom1) 
+        .def("Vatom", Potential_Vatom2) 
         .add_property("NG", &Potential::NG)
     ;
 }
