@@ -122,17 +122,18 @@ help: .help-post
 
 # install
 INSTALL_PREFIX=~/usr/local/lib
+INSTALL_DIR=${INSTALL_PREFIX}/qmicad-dev
 .install:
 	@echo "Installing qmicad in ${INSTALL_PREFIX}" 
-	${CP} -r ${CND_BASEDIR}/src/pyqmicad/*    ${INSTALL_PREFIX}/qmicad/ 
-	${CP}    ${CND_BASEDIR}/lib/qmicad.so   ${INSTALL_PREFIX}/qmicad/_qmicad.so
-	${CD}    ${INSTALL_PREFIX}/qmicad/atoms && ${LN} -sf ../_qmicad.so _atoms.so 
-	${CD}    ${INSTALL_PREFIX}/qmicad/band && ${LN} -sf ../_qmicad.so _band.so 
-	${CD}    ${INSTALL_PREFIX}/qmicad/hamiltonian && ${LN} -sf ../_qmicad.so _hamiltonian.so 
-	${CD}    ${INSTALL_PREFIX}/qmicad/kpoints && ${LN} -sf ../_qmicad.so _kpoints.so 
-	${CD}    ${INSTALL_PREFIX}/qmicad/negf && ${LN} -sf ../_qmicad.so _negf.so 
-	${CD}    ${INSTALL_PREFIX}/qmicad/potential && ${LN} -sf ../_qmicad.so _potential.so 
-	${CD}    ${INSTALL_PREFIX}/qmicad/utils && ${LN} -sf ../_qmicad.so _utils.so 
+	${CP} -r ${CND_BASEDIR}/src/pyqmicad/*    ${INSTALL_DIR}/ 
+	${CP}    ${CND_BASEDIR}/lib/qmicad.so   ${INSTALL_DIR}/_qmicad.so
+	${CD}    ${INSTALL_DIR}/atoms && ${LN} -sf ../_qmicad.so _atoms.so 
+	${CD}    ${INSTALL_DIR}/band && ${LN} -sf ../_qmicad.so _band.so 
+	${CD}    ${INSTALL_DIR}/hamiltonian && ${LN} -sf ../_qmicad.so _hamiltonian.so 
+	${CD}    ${INSTALL_DIR}/kpoints && ${LN} -sf ../_qmicad.so _kpoints.so 
+	${CD}    ${INSTALL_DIR}/negf && ${LN} -sf ../_qmicad.so _negf.so 
+	${CD}    ${INSTALL_DIR}/potential && ${LN} -sf ../_qmicad.so _potential.so 
+	${CD}    ${INSTALL_DIR}/utils && ${LN} -sf ../_qmicad.so _utils.so 
 	${CD}    ${CND_BASEDIR}
 
 # include project implementation makefile
