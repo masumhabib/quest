@@ -8,7 +8,7 @@
  includes a generic empirical tight binding model and a k.p model which can be 
  extended for any material with known parameters.
   
- Author: K M Masum Habib <masum.habib@virginia.edu>
+ Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  Last update: 02/12/2014
 
 """

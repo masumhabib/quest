@@ -1,6 +1,6 @@
 /* 
  * File:   Lattice.h
- * Author: K M Masum Habib <khabib@ee.ucr.edu>
+ * Copyright (C) 2013-2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on April 7, 2013, 9:46 AM
  * 

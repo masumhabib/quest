@@ -1,7 +1,7 @@
 """
     Qunantum Transport simulator using QMICAD.
-              
-    Author: K M Masum Habib <masum.habib@virginia.edu>
+    Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
+
     Last update: 04/14/2014
 """
 

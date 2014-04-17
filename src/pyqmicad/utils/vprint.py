@@ -1,5 +1,6 @@
 """
     Print in MPI environment with given verbosity level.
+    Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
 """
 
 import sys

@@ -1,6 +1,6 @@
 /* 
  * File:   NegfResult.h
- * Author: K M Masum Habib <masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 13, 2014, 3:41 PM
  */

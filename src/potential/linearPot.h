@@ -1,6 +1,6 @@
 /* 
  * File:        linearPot.h
- * Author:      K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  * 
  * Description: 
  * Linear potential class generates linear potential profile

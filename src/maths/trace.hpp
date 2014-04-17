@@ -1,6 +1,6 @@
 /* 
  * File:   trace.hpp
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on January 23, 2014, 4:31 PM
  * 

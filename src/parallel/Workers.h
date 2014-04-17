@@ -1,6 +1,6 @@
 /* 
  * File:   Workers.h
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 16, 2014, 6:03 PM
  */

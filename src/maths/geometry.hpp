@@ -1,6 +1,6 @@
 /* 
  * File:   geometry.hpp
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 3, 2014, 1:45 PM
  */

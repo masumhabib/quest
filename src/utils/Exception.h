@@ -1,6 +1,6 @@
 /* 
  * File:   TwException.h
- * Author: masum
+ * Copyright (C) 2013-2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on April 7, 2013, 8:49 PM
  */

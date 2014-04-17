@@ -1,6 +1,6 @@
 /* 
  * File:   Timer.cpp
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  * 
  * Created on February 11, 2014, 12:43 AM
  */

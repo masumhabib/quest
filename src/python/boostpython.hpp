@@ -1,6 +1,6 @@
 /* 
  * File:   boostpython.hpp
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on March 9, 2014, 3:16 PM
  */

@@ -1,6 +1,6 @@
 /* 
  * File:   AtomicStruct.h
- * Author: K M Masum Habib <khabib@ee.ucr.edu>
+ * Copyright (C) 2013-2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on April 5, 2013, 1:27 PM
  * 

@@ -1,4 +1,6 @@
-
+%
+% Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
+%
 function out = importTransResult(fileName)
     fid = fopen(fileName, 'rt');
     out = [];

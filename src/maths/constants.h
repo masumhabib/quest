@@ -1,6 +1,6 @@
 /* 
  * File:   constants.h
- * Author: K M Masum Habib <khabib@ee.ucr.edu>
+ * Copyright (C) 2013  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on April 7, 2013, 10:09 PM
  * 

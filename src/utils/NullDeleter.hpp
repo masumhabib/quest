@@ -1,6 +1,6 @@
 /* 
  * File:   nullDeleter.hpp
- * Author: K M Masum Habib <khabib@ee.ucr.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 18, 2014, 4:59 PM
  */

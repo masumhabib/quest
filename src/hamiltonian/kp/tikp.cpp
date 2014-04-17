@@ -1,6 +1,6 @@
 /* 
  * File:   ti.cpp
- * Author: K M Masum Habib <khabib@ee.ucr.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on January 25, 2014, 10:16 AM
  */

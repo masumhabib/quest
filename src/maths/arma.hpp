@@ -1,6 +1,6 @@
 /* 
  * File:   arma.hpp
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 8, 2014, 8:12 PM
  */

@@ -1,6 +1,6 @@
 /* 
  * File:   qmicad.cpp
- * Author: K M Masum Habib<masum.habib@virginia.edu>
+ * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on January 28, 2014, 2:50 PM
  * 
@@ -21,7 +21,7 @@
 namespace qmicad{
 
 using utils::stds::string;
-const string version = "0.02.3";
+const string version = "0.02.4";
 
 /**
  * Prints welcome message.
