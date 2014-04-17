@@ -1,7 +1,5 @@
-qmicad
-======
-
 QMICAD: Quantum Mechanics Inspired Computer Aided Design
+=========================================================
 
 Quantum Mechanics Inspired Computer Aided Design (QMICAD) library is a 
 collection of C++ classes and functions for simulation and design of 
