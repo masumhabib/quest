@@ -1,30 +1,8 @@
 """
     Qunantum Transport simulator using QMICAD.
-
-    * Device geometry:
-        ----------------------------------------
-         ... |-1 | 0 | 1 |  ...  | N |N+1|N+2| ...
-        ----------------------------------------
-                   ^  <------^------>  ^
-                 left      Device    right
-               contact              contact
-
-    Notes:
-        1. Coherent RGF calculation for non-uniform devices requires at least 
-           5 blocks: 1 source block, 1 drain block and 3 device blocks as 
-           shown in the following fig:
-           
-           --------------------------
-             | 0 | 1 | 2 | 3 | 4 |
-           --------------------------
-               ^  <--------->  ^
-            source  Device   drain 
-            
-           Block  0 and block 1 has to be identical. 
-           Simularly, block 3 and block 4 hast to be identical.
               
     Author: K M Masum Habib <masum.habib@virginia.edu>
-    Last update: 03/27/2014
+    Last update: 04/14/2014
 """
 
 import os
@@ -40,22 +18,50 @@ from qmicad.potential import LinearPot
 from qmicad.utils import VecGrid, Timer, Workers, vprint
 from qmicad.utils.vprint import nprint, dprint, eprint
 
-"""
-    Generic transport class.
-"""
 class Transport(object):
-    ## 
-    # class initialization. 
-    # @Parameters:
-    #    sp: TiSimuParams - TI simulation parameters
-    #    
-    def __init__(self, workers):   
-        # Library version
-        self.version = qmicad.version
+    """
+    Qunantum Transport simulator using QMICAD.
         
-        # Verbosity level
-        self.verbosity = vprint.MSG_NORMAL
+    * Device geometry:
+        ----------------------------------------
+         ... |-1 | 0 | 1 |  ...  | N |N+1|N+2| ...
+        ----------------------------------------
+                   ^  <------^------>  ^
+                 left      Device    right
+               contact              contact
 
+    Notes:
+        1. Coherent RGF calculation for non-uniform devices requires at least 
+           5 blocks: 1 source block, 1 drain block and 3 device blocks as 
+           shown in the following fig:
+
+           --------------------------
+             | 0 | 1 | 2 | 3 | 4 |
+           --------------------------
+               ^  <--------->  ^
+            source  Device   drain 
+
+           Block  0 and block 1 has to be identical. 
+           Simularly, block 3 and block 4 hast to be identical.
+
+        2. Any uniform device needs atleast 3 blocks: two contact
+           blocks and one device block.
+           
+    Attributes:
+    
+        
+    """
+
+    def __init__(self, workers):   
+        """ 
+        Class constructor. 
+        param:
+          workers: mpi.world - MPI world communicator.
+        """  
+
+        self.version = qmicad.version # Library version
+        self.verbosity = vprint.MSG_NORMAL # Verbosity level
+        
         # MPI stuff
         self.workers = Workers(workers)
         vprint.IAmMaster = self.workers.IAmMaster()
@@ -115,44 +121,50 @@ class Transport(object):
         qmicad.setVerbosity(self._verbosity)
         vprint.verbosity = self._verbosity
    
-    # Source fermi energy
     def muS(self, VDD):
+        """Calculates the fermi energy level of the source."""
         return self.np.mu - VDD*self.V.rVS
     
-    # Drain fermi energy
     def muD(self, VDD):
+        """Calculates the drain energy level of the source."""
         return self.np.mu - VDD*self.V.rVD
  
-    # Gate voltage of gate #ig
+    
     def VG(self, VGG, Vo, ig):
+        """ Computes the gate voltage of gate #ig. """
         # Set gate voltages
         return VGG + Vo*self.V.rVG[ig]
       
     def addSource(self, sql, rVS = -0.5):
+        """ Adds a source contact to the device for electrostatics calculation."""
         self.V.addSource(sql)
         self.V.rVS = rVS
         # just for pickling
         self.V.sql = sql    
     
     def addDrain(self, dql, rVD = 0.5):
+        """ Adds a drain contact to the device for electrostatics calculation."""
         self.V.addDrain(dql)
         self.V.rVD = rVD
         # just for pickling
         self.V.dql = dql 
 
     def addGate(self, gql, rVG = 1):
+        """ Adds a gate to the device for electrostatics calculation."""
         self.V.addGate(gql)
         self.V.rVG.append(rVG)
          # just for pickling
         self.V.gql.append(gql) 
 
     def addLinearRegion(self, lql):
+        """ Adds a linear region to the device for electrostatics calculation."""
         self.V.addLinearRegion(lql)
         # just for pickling
         self.V.lql.append(lql) 
-    
-    # Atomistic geometry            
+               
     def createAtomicGeom(self):
+        """ Creates atomistic geometry. """
+        
         # TI k.p surface      
         if (self.HamType == self.HAM_TI_SURF_KP):    
             # Hamiltonian parameter
@@ -194,8 +206,10 @@ class Transport(object):
         self.ymx = self.geom.ymax + delta
 
     def createRoughEdges(self, max):
-        # Creates rough edges. Works only for sorted lattice points.
-        # For rectangular lattice
+        """ 
+        Creates rough edges. Works only for sorted lattice points.
+        For rectangular lattice 
+        """
         if (self.HamType == self.HAM_TI_SURF_KP 
                     or self.HamType == self.HAM_GRAPHENE_KP):
             nw = []
@@ -227,9 +241,8 @@ class Transport(object):
         else:           
             raise RuntimeError(" Unsupported Hamiltonian type. ")
                 
-
-    # Generate hamiltonian and overlap matrices.
     def generateHamiltonian(self):
+        """ Generates hamiltonian and overlap matrices. """
         # Create Hamiltonian generator
         if (self.HamType == self.HAM_TI_SURF_KP):
             self.ham = TISurfKpHam(self.hp)   
@@ -277,9 +290,9 @@ class Transport(object):
             self.np.Hl(self.ham.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
             self.np.Hl(self.ham.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N
 
-
-    # Potential profile        
+        
     def setupPotential(self):
+        """ Sets up the potential profile """
         # Linear
         if (self.PotType == self.POT_LINEAR):
             self.V = LinearPot(self.geom)
@@ -293,10 +306,9 @@ class Transport(object):
             
         return ret
 
-    ## 
-    # Runs the sumulation.
-    #
     def runBiasStep(self, VGG, Vo, VDD):            
+        """Runs the sumulation."""
+
         # Set drain and Fermi levels
         self.np.muS = self.muS(VDD)
         self.np.muD = self.muD(VDD)
@@ -373,7 +385,7 @@ class Transport(object):
                     + ".")
         nprint("\n Total " + str(EE.N()) + " energy point(s) " 
                     + "running on " + str(self.workers.N()) + " CPU(s): " 
-                    + str(EE.N()/self.workers.N()) + " pts/CPU ... \n")
+                    + str(round(EE.N()/self.workers.N())) + " pts/CPU ... \n")
         
         # save simulation parameters
         if (self.workers.IAmMaster()):
@@ -421,10 +433,9 @@ class Transport(object):
         nprint(" done.\n")
         nprint(" ------------------------------------------------------------------")
     
-    ## 
-    # Runs the sumulation.
-    #
     def run(self):
+        """Runs the sumulation."""
+
         self.clock.tic()
         
         # Print welcome message.

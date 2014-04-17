@@ -433,7 +433,7 @@ using namespace utils::stds;
  * Atom.
  */
 void export_Atom(){
-    class_<Atom, shared_ptr<Atom> >("Atom")
+    class_<Atom, shared_ptr<Atom> >("Atom", "Represents an Atom.")
         .def_pickle(AtomPickler())
     ;
 }
