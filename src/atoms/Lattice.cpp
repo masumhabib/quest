@@ -142,40 +142,13 @@ string LatticeVector::toString() const{
 namespace qmicad{
 namespace python{
 
-
-void export_svec(){
-    using namespace atoms;
-    
-    /**
-     * Spatial vector/position vector.
-     */
-    class_<svec, shared_ptr<svec> >("SVec")
-    ;
-}
-
-void export_pvec(){
-    using namespace atoms;
-    
-    /**
-     * Position vector. Just a wrapper of svec.
-     */
-    class_<PyVec, bases<svec>, shared_ptr<PyVec> >("PVec", 
-            init<optional<double, double, double> >())
-        .def(init<const svec&>())    
-        .add_property("X", &PyVec::getx, &PyVec::setx)
-        .add_property("Y", &PyVec::gety, &PyVec::sety)
-        .add_property("Z", &PyVec::getz, &PyVec::setz)
-    ;    
-}
-
-
 void export_lvec(){
     using namespace atoms;
     
     /**
      * Lattice vector.
      */
-    class_<lvec, bases<Printable>, shared_ptr<lvec> >("LVec", 
+    class_<lvec, bases<Printable>, shared_ptr<lvec> >("lvec", 
             init<optional<const string&> >())
         .def_readwrite("a1", &lvec::a1)
         .def_readwrite("a2", &lvec::a2)
@@ -192,7 +165,7 @@ void export_lcoord(){
     /**
      * Lattice coordinate.
      */
-    class_<lcoord, bases<Printable>, shared_ptr<lcoord> >("LCoord", 
+    class_<lcoord, bases<Printable>, shared_ptr<lcoord> >("lcoord", 
             init<int, int, int, optional<const string&> >())
         .def_readwrite("n1", &lcoord::n1)
         .def_readwrite("n2", &lcoord::n2)

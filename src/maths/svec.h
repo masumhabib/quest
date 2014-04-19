@@ -32,18 +32,18 @@ typedef row3     svec3;  // special vector is a three component row vector
 typedef row2     svec2; // two dimensional vector
    
 /*
- * Python wrapper for 
+ * Python wrapper for svec
  */    
-class PyVec: public svec{
+class SVec: public svec{
 public:
-    PyVec(double x = 0, double y = 0, double z = 0):svec(){
+    SVec(double x = 0, double y = 0, double z = 0):svec(){
         setx(x);
         sety(y);
         setz(z);
     }
     
     
-    PyVec(const svec & rhs):svec(){
+    SVec(const svec & rhs):svec(){
         setx(rhs(coord::X));
         sety(rhs(coord::Y));
         setz(rhs(coord::Z));

@@ -11,7 +11,7 @@ import numpy as np
 import random as rn
 
 import qmicad
-from qmicad.atoms import AtomicStruct
+from qmicad.atoms import AtomicStruct, SVec
 from qmicad.hamiltonian import TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.negf import CohRgfaParams, NegfEloop
 from qmicad.potential import LinearPot
@@ -133,7 +133,7 @@ class Transport(object):
     def VG(self, VGG, Vo, ig):
         """ Computes the gate voltage of gate #ig. """
         # Set gate voltages
-        return VGG + Vo*self.V.rVG[ig]
+        return VGG*self.V.rVG[ig] + Vo*self.V.rVo[ig]
       
     def addSource(self, sql, rVS = -0.5):
         """ Adds a source contact to the device for electrostatics calculation."""
@@ -149,10 +149,11 @@ class Transport(object):
         # just for pickling
         self.V.dql = dql 
 
-    def addGate(self, gql, rVG = 1):
+    def addGate(self, gql, rVo = 1, rVG = 1):
         """ Adds a gate to the device for electrostatics calculation."""
         self.V.addGate(gql)
         self.V.rVG.append(rVG)
+        self.V.rVo.append(rVo)
          # just for pickling
         self.V.gql.append(gql) 
 
@@ -176,10 +177,6 @@ class Transport(object):
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
             self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
-            # Just to make sure that no point of gate regions is    
-            # at the border
-            ax = self.hp.ax
-            delta = ax*7.0/220.0  + ax*7.0/2200.0
             self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_GRAPHENE_KP):
             # Hamiltonian parameter
@@ -188,24 +185,16 @@ class Transport(object):
             else:
                 if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
                     self.hp = GrapheneKpParams()
-#            self.hp = GrapheneKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
             self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
-            # Just to make sure that no point of gate regions is    
-            # at the border
-            ax = self.hp.ax
-            delta = ax*7.0/220.0  + ax*7.0/2200.0
             self.nbw = [self.nw]*self.nb
         else:
             raise RuntimeError(" Unsupported Hamiltonian type. ")
         
-        self.xmn = self.geom.xmin - delta   
-        self.xmx = self.geom.xmax + delta
-        self.ymn = self.geom.ymin - delta
-        self.ymx = self.geom.ymax + delta
+        self.updateBoundingBox()
 
-    def createRoughEdges(self, max):
+    def createRoughEdges(self, sigma):
         """ 
         Creates rough edges. Works only for sorted lattice points.
         For rectangular lattice 
@@ -223,13 +212,30 @@ class Transport(object):
                 beg = end + 1
                 
                 if ( ib > 1 and ib < self.nb - 2):
-                    # Remove some atoms from the bottom edge.
-                    rem = rn.randint(0, max)
-                    lyr = lyr.span(rem, lyr.NumOfAtoms - 1)
-                    # Remove some atoms from the top edge
-                    rem = rn.randint(0, max)
-                    lyr = lyr.span(0, lyr.NumOfAtoms - 1 - rem)
-                
+                    # Remove or add some atoms from the bottom edge.
+                    nr = int(rn.gauss(0, sigma))
+                    while abs(nr) > 3*sigma:
+                        nr = int(rn.gauss(0, sigma))
+                    if nr <= 0: 
+                        lyr = lyr.span(abs(nr), lyr.NumOfAtoms - 1)
+                    else:
+                        xtra = lyr.span(0, nr-1)
+                        lv = SVec(0, - self.hp.ay*nr, 0)
+                        xtra = xtra + lv
+                        lyr = xtra + lyr 
+                        
+                    # Remove or add some atoms from the top edge
+                    nr = int(rn.gauss(0, sigma))
+                    while abs(nr) > 3*sigma:
+                        nr = int(rn.gauss(0, sigma))
+                    if nr <= 0: 
+                        lyr = lyr.span(0, lyr.NumOfAtoms - 1 - abs(nr))
+                    else:
+                        xtra = lyr.span(lyr.NumOfAtoms - nr, lyr.NumOfAtoms - 1)
+                        lv = SVec(0, self.hp.ay*nr, 0)
+                        xtra = xtra + lv
+                        lyr = lyr + xtra
+                        
                 # save this layer
                 geom = geom + lyr
                 nw.append(lyr.NumOfAtoms)
@@ -238,6 +244,9 @@ class Transport(object):
             self.geom = geom
             self.nbw = nw
             self.DevType = self.COH_RGF_NON_UNI
+            
+            # update bounding box
+            self.updateBoundingBox()
         else:           
             raise RuntimeError(" Unsupported Hamiltonian type. ")
                 
@@ -385,7 +394,7 @@ class Transport(object):
                     + ".")
         nprint("\n Total " + str(EE.N()) + " energy point(s) " 
                     + "running on " + str(self.workers.N()) + " CPU(s): " 
-                    + str(round(EE.N()/self.workers.N())) + " pts/CPU ... \n")
+                    + str(int(round(EE.N()/self.workers.N()))) + " pts/CPU ... \n")
         
         # save simulation parameters
         if (self.workers.IAmMaster()):
@@ -467,6 +476,17 @@ class Transport(object):
         self.clock.toc()           
         nprint("\n" + str(self.clock) + "\n")
  
+    def updateBoundingBox(self):
+        """Updates the bounding box of atomistic geometry."""
+        # Just to make sure that no point of gate regions is    
+        # at the border
+        ax = self.hp.ax
+        delta = ax*7.0/220.0  + ax*7.0/2200.0
+        self.xmn = self.geom.xmin - delta   
+        self.xmx = self.geom.xmax + delta
+        self.ymn = self.geom.ymin - delta
+        self.ymx = self.geom.ymax + delta        
+        
     def __str__(self):
         return self.nstr()
     

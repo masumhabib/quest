@@ -46,6 +46,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/kpoints/KPoints.o \
 	${OBJECTDIR}/src/maths/arma.o \
 	${OBJECTDIR}/src/maths/geometry.o \
+	${OBJECTDIR}/src/maths/svec.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/NegfResult.o \
@@ -55,6 +56,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/potential/linearPot.o \
 	${OBJECTDIR}/src/potential/potential.o \
 	${OBJECTDIR}/src/potential/terminal.o \
+	${OBJECTDIR}/src/pyqmicad/simulators/importPotential.o \
 	${OBJECTDIR}/src/pyqmicad/simulators/importTransResult.o \
 	${OBJECTDIR}/src/python/pyqmicad.o \
 	${OBJECTDIR}/src/qmicad/qmicad.o \
@@ -149,6 +151,11 @@ ${OBJECTDIR}/src/maths/geometry.o: src/maths/geometry.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/maths/geometry.o src/maths/geometry.cpp
 
+${OBJECTDIR}/src/maths/svec.o: src/maths/svec.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/maths
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/maths/svec.o src/maths/svec.cpp
+
 ${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf
 	${RM} "$@.d"
@@ -193,6 +200,11 @@ ${OBJECTDIR}/src/potential/terminal.o: src/potential/terminal.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/potential
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/potential/terminal.o src/potential/terminal.cpp
+
+${OBJECTDIR}/src/pyqmicad/simulators/importPotential.o: src/pyqmicad/simulators/importPotential.m 
+	${MKDIR} -p ${OBJECTDIR}/src/pyqmicad/simulators
+	${RM} "$@.d"
+	$(COMPILE.c) -g -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/pyqmicad/simulators/importPotential.o src/pyqmicad/simulators/importPotential.m
 
 ${OBJECTDIR}/src/pyqmicad/simulators/importTransResult.o: src/pyqmicad/simulators/importTransResult.m 
 	${MKDIR} -p ${OBJECTDIR}/src/pyqmicad/simulators

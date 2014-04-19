@@ -47,6 +47,7 @@
         <itemPath>src/maths/fermi.hpp</itemPath>
         <itemPath>src/maths/geometry.cpp</itemPath>
         <itemPath>src/maths/geometry.hpp</itemPath>
+        <itemPath>src/maths/svec.cpp</itemPath>
         <itemPath>src/maths/svec.h</itemPath>
         <itemPath>src/maths/trace.hpp</itemPath>
       </logicalFolder>
@@ -96,6 +97,7 @@
         <logicalFolder name="simulators" displayName="simulators" projectFiles="true">
           <itemPath>src/pyqmicad/simulators/Transport.py</itemPath>
           <itemPath>src/pyqmicad/simulators/__init__.py</itemPath>
+          <itemPath>src/pyqmicad/simulators/importPotential.m</itemPath>
           <itemPath>src/pyqmicad/simulators/importTransResult.m</itemPath>
         </logicalFolder>
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
@@ -259,6 +261,8 @@
       </item>
       <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/maths/svec.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/maths/svec.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/trace.hpp" ex="false" tool="3" flavor2="0">
@@ -324,6 +328,11 @@
       <item path="src/pyqmicad/simulators/__init__.py"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/importPotential.m"
+            ex="false"
+            tool="0"
             flavor2="0">
       </item>
       <item path="src/pyqmicad/simulators/importTransResult.m"
@@ -486,6 +495,8 @@
       </item>
       <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/maths/svec.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/maths/svec.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/maths/trace.hpp" ex="false" tool="3" flavor2="0">
@@ -550,6 +561,11 @@
       </item>
       <item path="src/pyqmicad/simulators/__init__.py"
             ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/importPotential.m"
+            ex="true"
             tool="3"
             flavor2="0">
       </item>

@@ -11,7 +11,8 @@ def _LinearPotInit(self, atoms = None):
     _LinearPotOrgInit(self, atoms)
     self.rVS        =-0.5          # Fraction of voltage to be applied to drain
     self.rVD        = 0.5          # Fraction of voltage to be applied to drain
-    self.rVG        = []           # Gate voltage ratios
+    self.rVG        = []           # Gate voltage ratios for VGG
+    self.rVo        = []           # Gate voltage ratios for Vo
     self.gql        = []           # Gate quadrilaterals just for pickle
     self.lql        = []           # Linear region quadrilaterals just for pickle
 
