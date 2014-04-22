@@ -92,10 +92,6 @@ lib/qmicad.${CND_DLIB_EXT}: ${OBJECTFILES}
 	${MKDIR} -p lib
 	${LINK.cc} -o lib/qmicad.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
 
-: doc/qmicad.doxy 
-	@echo Performing Custom Build Step
-	doxygen
-
 ${OBJECTDIR}/src/atoms/AtomicStruct.o: src/atoms/AtomicStruct.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/atoms
 	${RM} "$@.d"
@@ -258,7 +254,6 @@ ${OBJECTDIR}/src/utils/vout.o: src/utils/vout.cpp
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
 	${RM} lib/qmicad.${CND_DLIB_EXT}
-	${RM} 
 
 # Subprojects
 .clean-subprojects:

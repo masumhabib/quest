@@ -51,6 +51,8 @@ CCADMIN=CCadmin
 CD=cd
 LN=ln
 
+GIT_VERSION=0.02.05
+
 
 # build
 build: .build-post
@@ -125,16 +127,18 @@ INSTALL_PREFIX=~/usr/local/lib
 INSTALL_DIR=${INSTALL_PREFIX}/qmicad-dev
 .install:
 	@echo "Installing qmicad in ${INSTALL_PREFIX}" 
-	${CP} -r ${CND_BASEDIR}/src/pyqmicad/*    ${INSTALL_DIR}/ 
-	${CP}    ${CND_BASEDIR}/lib/qmicad.so   ${INSTALL_DIR}/_qmicad.so
-	${CD}    ${INSTALL_DIR}/atoms && ${LN} -sf ../_qmicad.so _atoms.so 
-	${CD}    ${INSTALL_DIR}/band && ${LN} -sf ../_qmicad.so _band.so 
-	${CD}    ${INSTALL_DIR}/hamiltonian && ${LN} -sf ../_qmicad.so _hamiltonian.so 
-	${CD}    ${INSTALL_DIR}/kpoints && ${LN} -sf ../_qmicad.so _kpoints.so 
-	${CD}    ${INSTALL_DIR}/negf && ${LN} -sf ../_qmicad.so _negf.so 
-	${CD}    ${INSTALL_DIR}/potential && ${LN} -sf ../_qmicad.so _potential.so 
-	${CD}    ${INSTALL_DIR}/utils && ${LN} -sf ../_qmicad.so _utils.so 
-	${CD}    ${CND_BASEDIR}
+	${MKDIR} -p ${INSTALL_DIR}
+	${CP} -r    ${CND_BASEDIR}/src/pyqmicad/*    ${INSTALL_DIR}/ 
+	${CP}       ${CND_BASEDIR}/lib/qmicad.so   ${INSTALL_DIR}/_qmicad.so
+	${CD}       ${INSTALL_DIR}/atoms && ${LN} -sf ../_qmicad.so _atoms.so 
+	${CD}       ${INSTALL_DIR}/band && ${LN} -sf ../_qmicad.so _band.so 
+	${CD}       ${INSTALL_DIR}/hamiltonian && ${LN} -sf ../_qmicad.so _hamiltonian.so 
+	${CD}       ${INSTALL_DIR}/kpoints && ${LN} -sf ../_qmicad.so _kpoints.so 
+	${CD}       ${INSTALL_DIR}/negf && ${LN} -sf ../_qmicad.so _negf.so 
+	${CD}       ${INSTALL_DIR}/potential && ${LN} -sf ../_qmicad.so _potential.so 
+	${CD}       ${INSTALL_DIR}/utils && ${LN} -sf ../_qmicad.so _utils.so 
+	${CD}       ${CND_BASEDIR}
+	${CP}    -r ${CND_BASEDIR}/doc ${INSTALL_DIR} 
 
 # include project implementation makefile
 include nbproject/Makefile-impl.mk
