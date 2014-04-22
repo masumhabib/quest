@@ -51,7 +51,7 @@ CCADMIN=CCadmin
 CD=cd
 LN=ln
 
-GIT_VERSION=0.02.05
+GIT_VERSION=0.02.6
 
 
 # build
