@@ -25,16 +25,24 @@ def _TISurfKpParamsInit(self):
     self.ax     = 2.0               # Lattice spacing
     self.ay     = 2.0               # Lattice spacing
     self.K      = 0.57971           # Coefficient ot solve Fermion doubling
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
+#    self.Rx     = self.ax*self.K    
+#    self.Ry     = self.ay*self.K
     self.A2     = 3.33              # A2 paramter
     self.C      = 0.0               # C parameter
     self.ptable = PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 2, 2)   # Fake atom for TI k.p
-    
     self.update()
     
 TISurfKpParams.__init__ = _TISurfKpParamsInit
+
+_TISurfKpParamsOrgUpdate =  TISurfKpParams.update
+def _TISurfKpParamsUpdate(self):
+    self.Rx     = self.ax*self.K    
+    self.Ry     = self.ay*self.K
+    _TISurfKpParamsOrgUpdate(self)
+    
+TISurfKpParams.update = _TISurfKpParamsUpdate
+
 
 # TI surface k.p pickle support
 def _TISurfKpParamsSetState(self, dct):
@@ -58,15 +66,22 @@ def _GrapheneKpParamsInit(self):
     self.ax     = 4.0               # Lattice spacing
     self.ay     = 4.0               # Lattice spacing
     self.K      = 0.57971           # Coefficient ot solve Fermion doubling
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
+#    self.Rx     = self.ax*self.K    
+#    self.Ry     = self.ay*self.K
     self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
     self.ptable = PeriodicTable()   # Periodic table for graphene k.p
     self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
-    
     self.update()    
-    
+
 GrapheneKpParams.__init__ = _GrapheneKpParamsInit
+
+_GrapheneKpParamsOrgUpdate =  GrapheneKpParams.update
+def _GrapheneKpParamsUpdate(self):
+    self.Rx     = self.ax*self.K    
+    self.Ry     = self.ay*self.K
+    _GrapheneKpParamsOrgUpdate(self)
+    
+GrapheneKpParams.update = _GrapheneKpParamsUpdate
 
 # Graphene k.p pickle support
 def _GrapheneKpParamsSetState(self, dct):

@@ -254,8 +254,10 @@ class Transport(object):
         """ Generates hamiltonian and overlap matrices. """
         # Create Hamiltonian generator
         if (self.HamType == self.HAM_TI_SURF_KP):
+            self.hp.update()
             self.ham = TISurfKpHam(self.hp)   
         if (self.HamType == self.HAM_GRAPHENE_KP):
+            self.hp.update()
             self.ham = GrapheneKpHam(self.hp)   
 
         # For uniform RGF blocks
@@ -395,17 +397,7 @@ class Transport(object):
         nprint("\n Total " + str(EE.N()) + " energy point(s) " 
                     + "running on " + str(self.workers.N()) + " CPU(s): " 
                     + str(int(round(EE.N()/self.workers.N()))) + " pts/CPU ... \n")
-        
-        # save simulation parameters
-        if (self.workers.IAmMaster()):
-            # Create directory if not exist.
-            if not os.path.exists(self.OutPath):
-                os.makedirs(self.OutPath)            
-            # save simulation parameters to a pickle file
-            fp = open(self.OutPath + fileName + ".pkl", 'wt')
-            pk.dump(self, fp)
-            fp.close()                        
-                        
+                                
         # create and run energy loop
         Eloop = NegfEloop(EE, self.np, self.workers) 
 
@@ -460,6 +452,16 @@ class Transport(object):
         # Debug print
         dprint("\n" + str(self.VDD))
         dprint("\n" + str(self.VGG))
+
+        # save simulation parameters
+        if (self.workers.IAmMaster()):
+            # Create directory if not exist.
+            if not os.path.exists(self.OutPath):
+                os.makedirs(self.OutPath)            
+            # save simulation parameters to a pickle file
+            fp = open(self.OutPath + self.OutFileName + ".pkl", 'wb')
+            pk.dump(self, fp)
+            fp.close()                        
 
         # Save electrostatic geometry
         if (self.verbosity >= vprint.MSG_DEBUG):
