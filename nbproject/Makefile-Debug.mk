@@ -46,6 +46,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/kpoints/KPoints.o \
 	${OBJECTDIR}/src/maths/arma.o \
 	${OBJECTDIR}/src/maths/geometry.o \
+	${OBJECTDIR}/src/maths/svec.o \
 	${OBJECTDIR}/src/negf/CohRgfa.o \
 	${OBJECTDIR}/src/negf/NegfEloop.o \
 	${OBJECTDIR}/src/negf/NegfResult.o \
@@ -143,6 +144,11 @@ ${OBJECTDIR}/src/maths/geometry.o: src/maths/geometry.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/maths
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DVERSION=\"${GIT_VERSION}\" -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/maths/geometry.o src/maths/geometry.cpp
+
+${OBJECTDIR}/src/maths/svec.o: src/maths/svec.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/maths
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DVERSION=\"${GIT_VERSION}\" -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/maths/svec.o src/maths/svec.cpp
 
 ${OBJECTDIR}/src/negf/CohRgfa.o: src/negf/CohRgfa.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/negf

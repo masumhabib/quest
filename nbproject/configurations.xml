@@ -47,6 +47,7 @@
         <itemPath>src/maths/fermi.hpp</itemPath>
         <itemPath>src/maths/geometry.cpp</itemPath>
         <itemPath>src/maths/geometry.hpp</itemPath>
+        <itemPath>src/maths/svec.cpp</itemPath>
         <itemPath>src/maths/svec.h</itemPath>
         <itemPath>src/maths/trace.hpp</itemPath>
       </logicalFolder>
@@ -260,6 +261,8 @@
       <item path="src/maths/geometry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/svec.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/maths/svec.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -495,6 +498,8 @@
       <item path="src/maths/geometry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/maths/geometry.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/maths/svec.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/maths/svec.h" ex="false" tool="3" flavor2="0">
       </item>

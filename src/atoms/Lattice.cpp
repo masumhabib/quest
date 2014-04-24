@@ -148,7 +148,7 @@ void export_lvec(){
     /**
      * Lattice vector.
      */
-    class_<lvec, bases<Printable>, shared_ptr<lvec> >("lvec", 
+    class_<lvec, bases<Printable>, shared_ptr<lvec> >("LVec", 
             init<optional<const string&> >())
         .def_readwrite("a1", &lvec::a1)
         .def_readwrite("a2", &lvec::a2)
@@ -165,7 +165,7 @@ void export_lcoord(){
     /**
      * Lattice coordinate.
      */
-    class_<lcoord, bases<Printable>, shared_ptr<lcoord> >("lcoord", 
+    class_<lcoord, bases<Printable>, shared_ptr<lcoord> >("LCoord", 
             init<int, int, int, optional<const string&> >())
         .def_readwrite("n1", &lcoord::n1)
         .def_readwrite("n2", &lcoord::n2)

@@ -51,7 +51,7 @@ CCADMIN=CCadmin
 CD=cd
 LN=ln
 
-GIT_VERSION=0.02.05
+GIT_VERSION=0.03.1
 
 
 # build
@@ -124,7 +124,7 @@ help: .help-post
 
 # install
 INSTALL_PREFIX=~/usr/local/lib
-INSTALL_DIR=${INSTALL_PREFIX}/qmicad-dev
+INSTALL_DIR=${INSTALL_PREFIX}/qmicad-${GIT_VERSION}
 .install:
 	@echo "Installing qmicad in ${INSTALL_PREFIX}" 
 	${MKDIR} -p ${INSTALL_DIR}
