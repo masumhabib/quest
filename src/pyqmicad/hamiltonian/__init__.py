@@ -50,6 +50,39 @@ def _TISurfKpParamsGetState(self):
 TISurfKpParams.__getstate__ = _TISurfKpParamsGetState
 TISurfKpParams.__getstate_manages_dict__ = True
 
+# TI surface k.p default parameters in four spins basis set.
+_TISurfKpParams4OrgInit =  TISurfKpParams4.__init__
+def _TISurfKpParams4Init(self):
+    _TISurfKpParams4OrgInit(self)
+    self.dtol   = 1E-3              # Tolerance when considering neighbors
+    self.ax     = 2.0               # Lattice spacing
+    self.ay     = 2.0               # Lattice spacing
+    self.K      = 0.57971           # Coefficient ot solve Fermion doubling
+    self.Rx     = self.ax*self.K    
+    self.Ry     = self.ay*self.K
+    self.A2     = 3.33              # A2 paramter
+    self.C      = 0.0               # C parameter
+    self.ptable = PeriodicTable()   # Periodic table for k.p for TI
+    self.ptable.add(0, "D", 4, 4)   # Fake atom for TI k.p
+    
+    self.update()
+    
+TISurfKpParams4.__init__ = _TISurfKpParams4Init
+
+# TI surface k.p pickle support
+def _TISurfKpParams4SetState(self, dct):
+    self.__dict__.update(dct)
+    self.update()
+    
+TISurfKpParams4.__setstate__ = _TISurfKpParams4SetState
+
+def _TISurfKpParams4GetState(self):
+    dct = dict(self.__dict__)
+    return dct
+
+TISurfKpParams4.__getstate__ = _TISurfKpParams4GetState
+TISurfKpParams4.__getstate_manages_dict__ = True
+
 # Graphene k.p default parameters
 _GrapheneKpParamsOrgInit =  GrapheneKpParams.__init__
 def _GrapheneKpParamsInit(self):

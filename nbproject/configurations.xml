@@ -28,6 +28,8 @@
           <itemPath>src/hamiltonian/kp/graphenekp.h</itemPath>
           <itemPath>src/hamiltonian/kp/tikp.cpp</itemPath>
           <itemPath>src/hamiltonian/kp/tikp.h</itemPath>
+          <itemPath>src/hamiltonian/kp/tikp4.cpp</itemPath>
+          <itemPath>src/hamiltonian/kp/tikp4.h</itemPath>
         </logicalFolder>
         <logicalFolder name="tb" displayName="tb" projectFiles="true">
           <itemPath>src/hamiltonian/tb/graphenetb.cpp</itemPath>
@@ -237,6 +239,10 @@
       </item>
       <item path="src/hamiltonian/kp/tikp.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/hamiltonian/kp/tikp4.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp4.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/hamiltonian/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hamiltonian/tb/graphenetb.h" ex="false" tool="3" flavor2="0">
@@ -325,8 +331,8 @@
             flavor2="0">
       </item>
       <item path="src/pyqmicad/simulators/importTransResult.m"
-            ex="false"
-            tool="0"
+            ex="true"
+            tool="3"
             flavor2="0">
       </item>
       <item path="src/pyqmicad/utils/__init__.py" ex="false" tool="3" flavor2="0">
@@ -466,6 +472,10 @@
       <item path="src/hamiltonian/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hamiltonian/kp/tikp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp4.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp4.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/hamiltonian/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
       </item>
