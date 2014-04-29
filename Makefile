@@ -51,8 +51,7 @@ CCADMIN=CCadmin
 CD=cd
 LN=ln
 
-GIT_VERSION=0.03.1
-
+GIT_VERSION=0.03.2
 
 # build
 build: .build-post

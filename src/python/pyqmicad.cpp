@@ -81,6 +81,9 @@ BOOST_PYTHON_MODULE(_hamiltonian)
     export_GrapheneKpHam();        
     export_TISurfKpParams();
     export_TISurfKpHam();    
+    export_TISurfKpParams4();
+    export_TISurfKpHam4();    
+
 }
 
 BOOST_PYTHON_MODULE(_band)

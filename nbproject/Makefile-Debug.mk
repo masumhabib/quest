@@ -42,6 +42,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/hamiltonian/hamiltonian.o \
 	${OBJECTDIR}/src/hamiltonian/kp/graphenekp.o \
 	${OBJECTDIR}/src/hamiltonian/kp/tikp.o \
+	${OBJECTDIR}/src/hamiltonian/kp/tikp4.o \
 	${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o \
 	${OBJECTDIR}/src/kpoints/KPoints.o \
 	${OBJECTDIR}/src/maths/arma.o \
@@ -124,6 +125,11 @@ ${OBJECTDIR}/src/hamiltonian/kp/tikp.o: src/hamiltonian/kp/tikp.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/kp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DVERSION=\"${GIT_VERSION}\" -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/kp/tikp.o src/hamiltonian/kp/tikp.cpp
+
+${OBJECTDIR}/src/hamiltonian/kp/tikp4.o: src/hamiltonian/kp/tikp4.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/kp
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DVERSION=\"${GIT_VERSION}\" -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/hamiltonian/kp/tikp4.o src/hamiltonian/kp/tikp4.cpp
 
 ${OBJECTDIR}/src/hamiltonian/tb/graphenetb.o: src/hamiltonian/tb/graphenetb.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/hamiltonian/tb

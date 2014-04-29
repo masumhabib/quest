@@ -22,6 +22,17 @@ using boost::static_pointer_cast;
 using namespace maths::armadillo;
 using namespace maths::constants;
 
+/**
+ * Graphene k.p Hamiltonian parameters with two (pseudo-)spins per site.
+ * In two spin basis [z_up, z_dn], the hamiltonian 
+ * for one site has the form
+ *  H_uu  Hud
+ *  H_du  Hdd
+ * A quantity, sigma_z*(kx^2 + ky^2) is added to the hamiltonian to avoid 
+ * the fermion doubling problem. 
+ * See: Phys. Rev. B 86, 085131 (2012) and the references therein.
+ */
+
 struct GrapheneKpParams: public HamParams{
     //!< k.p parameters
     double ax;           // discretization length in x direction
@@ -31,12 +42,12 @@ struct GrapheneKpParams: public HamParams{
     double Ry;           // parameter to avoid fermion doubling
 
     //!< tight binding parameters
-    cxmat22 I;
-    cxmat22 eps;
-    cxmat22 t01x;
-    cxmat22 t10x;
-    cxmat22 t01y;
-    cxmat22 t10y;
+    cxmat I;
+    cxmat eps;
+    cxmat t01x;
+    cxmat t10x;
+    cxmat t01y;
+    cxmat t10y;
     
     GrapheneKpParams(const string &prefix = ""):HamParams(prefix){
         mTitle = "Graphene k.p parameters";

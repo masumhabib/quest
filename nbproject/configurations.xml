@@ -28,6 +28,8 @@
           <itemPath>src/hamiltonian/kp/graphenekp.h</itemPath>
           <itemPath>src/hamiltonian/kp/tikp.cpp</itemPath>
           <itemPath>src/hamiltonian/kp/tikp.h</itemPath>
+          <itemPath>src/hamiltonian/kp/tikp4.cpp</itemPath>
+          <itemPath>src/hamiltonian/kp/tikp4.h</itemPath>
         </logicalFolder>
         <logicalFolder name="tb" displayName="tb" projectFiles="true">
           <itemPath>src/hamiltonian/tb/graphenetb.cpp</itemPath>
@@ -331,6 +333,10 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="src/hamiltonian/kp/tikp4.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp4.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/pyqmicad/simulators/importPotential.m"
             ex="true"
             tool="3"
@@ -478,6 +484,10 @@
       <item path="src/hamiltonian/kp/tikp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hamiltonian/kp/tikp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp4.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/hamiltonian/kp/tikp4.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/hamiltonian/tb/graphenetb.cpp" ex="false" tool="1" flavor2="0">
       </item>

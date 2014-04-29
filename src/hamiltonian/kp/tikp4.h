@@ -1,12 +1,12 @@
 /* 
- * File:   ti.h
+ * File:   tikp4.h
  * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
- * Created on January 25, 2014, 10:16 AM
+ * Created on April 28, 2014, 08:31 PM
  */
 
-#ifndef TIKP_H
-#define	TIKP_H
+#ifndef TIKP4_H
+#define	TIKP4_H
 
 #include <armadillo>
 
@@ -23,16 +23,18 @@ using namespace maths::armadillo;
 using namespace maths::constants;
 
 /**
- * TI surface k.p Hamiltonian parameters with two spins per site.
- * In two spin basis [z_up, z_dn], the hamiltonian 
+ * TI surface k.p Hamiltonian parameters in four spins basis set.
+ * In four spin basis [z_up, z_dn, z_up, z_dn], the hamiltonian 
  * for one site has the form
- *  H_uu  Hud
- *  H_du  Hdd
- * A quantity, sigma_z*(kx^2 + ky^2) is added to the hamiltonian to avoid 
- * the fermion doubling problem. 
- * See: Phys. Rev. B 86, 085131 (2012) and the references therein.
+ *  H_uu  Hud  0    0
+ *  H_du  Hdd  0    0
+ *  0     0    Huu  Hud
+ *  0     0    Hdu  Hdd
+ * A quantity, sigma_z*(kx^2 + ky^2) is added to the upper 2x2 and subtracted 
+ * from the lowe 2x2 to avoid fermion doubling and to avoid all the side
+ * effects that can be introduced by the term sigma_z*(kx^2 + ky^2).
  */
-struct TISurfKpParams: public HamParams{
+struct TISurfKpParams4: public HamParams{
     //!< k.p parameters
     double ax;           // discretization length in x direction
     double ay;           // discretization length in y direction
@@ -49,10 +51,9 @@ struct TISurfKpParams: public HamParams{
     cxmat t01y;
     cxmat t10y;
     
-    TISurfKpParams(const string &prefix = ""):HamParams(prefix){
-        mTitle = "Topological Insulator surface k.p parameters";
-        // default parameters
-        I = eye<cxmat>(2,2);    
+    TISurfKpParams4(const string &prefix = ""):HamParams(prefix){
+        mTitle = "Topological Insulator surface k.p parameters with four spins";   
+        I = eye<cxmat>(4,4); 
     }
     
     // Updates internal tight binding parameters calculated using 
@@ -87,10 +88,30 @@ struct TISurfKpParams: public HamParams{
         
 protected:
     void computeTBParams(){
-        eps = C*I - 2*A2*(Rx/(ax*ax) + Ry/(ay*ay))*sz();
-        t01x =  (A2/(2*ax))*sy()*i + (Rx*A2/(ax*ax))*sz();
+        // To avoid the famous Fermion doubling and its side effects, we are
+        // adding sigma_z(kx^2 + ky^2) to the upper 2x2 and subtract from the 
+        // lower 2x2. 
+        cxmat I22 = eye<cxmat>(2,2); 
+        cxmat tmp1, tmp2;
+        
+        eps = zeros<cxmat>(4,4);
+        tmp1 = C*I22 - 2*A2*(Rx/(ax*ax) + Ry/(ay*ay))*sz();
+        tmp2 = C*I22 + 2*A2*(Rx/(ax*ax) + Ry/(ay*ay))*sz();
+        eps(span(0,1), span(0,1)) = tmp1;
+        eps(span(2,3), span(2,3)) = tmp2;
+        
+        t01x = zeros<cxmat>(4,4);
+        tmp1 = (A2/(2*ax))*sy()*i + (Rx*A2/(ax*ax))*sz();
+        tmp2 = (A2/(2*ax))*sy()*i - (Rx*A2/(ax*ax))*sz();
+        t01x(span(0,1), span(0,1)) = tmp1;
+        t01x(span(2,3), span(2,3)) = tmp2;
         t10x = trans(t01x);
-        t01y = (-A2/(2*ay))*sx()*i + (Ry*A2/(ay*ay))*sz();
+        
+        t01y = zeros<cxmat>(4,4);
+        tmp1 = (-A2/(2*ay))*sx()*i + (Ry*A2/(ay*ay))*sz();
+        tmp1 = (-A2/(2*ay))*sx()*i - (Ry*A2/(ay*ay))*sz();
+        t01y(span(0,1), span(0,1)) = tmp1;
+        t01y(span(2,3), span(2,3)) = tmp2;
         t10y = trans(t01y);
     };
 
@@ -100,13 +121,13 @@ protected:
  * Tight binding Hamiltonian and overlap matrix for TI surface using 
  *  method k.p.
  */
-class TISurfKpHam: public cxham{
+class TISurfKpHam4: public cxham{
 protected:    
 public:
-    TISurfKpHam(const TISurfKpParams& p){
-        mhp = shared_ptr<TISurfKpParams> (new TISurfKpParams(p));
+    TISurfKpHam4(const TISurfKpParams4& p){
+        mhp = shared_ptr<TISurfKpParams4> (new TISurfKpParams4(p));
     };
-    virtual ~TISurfKpHam(){};
+    virtual ~TISurfKpHam4(){};
 protected:
     //!< Generate Hamiltonian between two atoms.
     virtual cxmat genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj);    
@@ -117,5 +138,5 @@ protected:
 
 }
 }
-#endif	/* TIKP_H */
+#endif	/* TIKP4_H */
 
