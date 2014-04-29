@@ -15,6 +15,9 @@ from _hamiltonian import GrapheneKpHam
 from _hamiltonian import TISurfKpParams
 from _hamiltonian import TISurfKpHam
 
+from _hamiltonian import TISurfKpParams4
+from _hamiltonian import TISurfKpHam4
+
 from qmicad.atoms import PeriodicTable
 
 # TI surface k.p default parameters

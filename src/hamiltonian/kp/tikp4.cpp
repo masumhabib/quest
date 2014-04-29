@@ -107,7 +107,7 @@ using namespace hamiltonian;
     /**
      * TI Surface k.p parameters.
      */
-void export_TISurfKpParams(){
+void export_TISurfKpParams4(){
     class_<TISurfKpParams4, bases<HamParams>, shared_ptr<TISurfKpParams4> >("TISurfKpParams4")
         .enable_pickling()
         .def_readwrite("ax", &TISurfKpParams4::ax)
@@ -122,7 +122,7 @@ void export_TISurfKpParams(){
     /**
      * TI Surface Hamiltonian.
      */
-void export_TISurfKpHam(){
+void export_TISurfKpHam4(){
     class_<TISurfKpHam4, bases<cxham>, shared_ptr<TISurfKpHam4> >("TISurfKpHam4",
             init<const TISurfKpParams4& >())
     ;

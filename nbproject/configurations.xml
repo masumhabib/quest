@@ -177,6 +177,9 @@
             <pElem>/usr/include/python2.6</pElem>
             <pElem>/home/kh8hk/usr/include</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>VERSION="${GIT_VERSION}"</Elem>
+          </preprocessorList>
         </ccTool>
         <fortranCompilerTool>
           <architecture>2</architecture>

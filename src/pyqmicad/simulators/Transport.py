@@ -12,7 +12,7 @@ import random as rn
 
 import qmicad
 from qmicad.atoms import AtomicStruct
-from qmicad.hamiltonian import TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
+from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.negf import CohRgfaParams, NegfEloop
 from qmicad.potential import LinearPot
 from qmicad.utils import VecGrid, Timer, Workers, vprint
@@ -84,9 +84,10 @@ class Transport(object):
         self.nbw        = []           # Width of all layers
 
         # Hamiltonian type
-        self.HAM_TI_SURF_KP = 10       # TI surface k.p hamiltonian
-        self.HAM_GRAPHENE_KP= 20       # Graphene k.p Hamiltonian
-        self.HamType        = self.HAM_TI_SURF_KP 
+        self.HAM_TI_SURF_KP  = 10       # TI surface k.p hamiltonian
+        self.HAM_TI_SURF_KP4 = 11       # TI surface k.p hamiltonian with 4 spin basis set
+        self.HAM_GRAPHENE_KP = 20       # Graphene k.p Hamiltonian
+        self.HamType         = self.HAM_TI_SURF_KP 
         
         # Device types
         self.COH_RGF_UNI    = 10       # Coherent uniform RGF type device
@@ -181,6 +182,21 @@ class Transport(object):
             ax = self.hp.ax
             delta = ax*7.0/220.0  + ax*7.0/2200.0
             self.nbw = [self.nw]*self.nb
+        elif (self.HamType == self.HAM_TI_SURF_KP4):    
+            # Hamiltonian parameter
+            if not hasattr(self, "hp"): # if hp does not exist, create it.
+                self.hp = TISurfKpParams4()
+            else:
+                if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
+                    self.hp = TISurfKpParams4()
+            # Create atomistic geometry of the device.
+            self.geom = AtomicStruct()
+            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            # Just to make sure that no point of gate regions is    
+            # at the border
+            ax = self.hp.ax
+            delta = ax*7.0/220.0  + ax*7.0/2200.0
+            self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_GRAPHENE_KP):
             # Hamiltonian parameter
             if not hasattr(self, "hp"): # if hp does not exist, create it.
@@ -211,6 +227,7 @@ class Transport(object):
         For rectangular lattice 
         """
         if (self.HamType == self.HAM_TI_SURF_KP 
+                    or self.HamType == self.HAM_TI_SURF_KP4
                     or self.HamType == self.HAM_GRAPHENE_KP):
             nw = []
             geom = AtomicStruct()
@@ -246,6 +263,8 @@ class Transport(object):
         # Create Hamiltonian generator
         if (self.HamType == self.HAM_TI_SURF_KP):
             self.ham = TISurfKpHam(self.hp)   
+        if (self.HamType == self.HAM_TI_SURF_KP4):
+            self.ham = TISurfKpHam4(self.hp)               
         if (self.HamType == self.HAM_GRAPHENE_KP):
             self.ham = GrapheneKpHam(self.hp)   
 

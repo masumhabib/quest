@@ -48,6 +48,8 @@ void export_GrapheneKpParams();
 void export_GrapheneKpHam();
 void export_TISurfKpParams();
 void export_TISurfKpHam();
+void export_TISurfKpParams4();
+void export_TISurfKpHam4();
 
 void export_Potential();
 void export_LinearPot();
