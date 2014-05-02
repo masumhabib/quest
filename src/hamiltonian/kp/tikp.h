@@ -22,6 +22,8 @@ using boost::static_pointer_cast;
 using namespace maths::armadillo;
 using namespace maths::constants;
 
+class TISurfKpHam;
+
 /**
  * TI surface k.p Hamiltonian parameters with two spins per site.
  * In two spin basis [z_up, z_dn], the hamiltonian 
@@ -32,66 +34,68 @@ using namespace maths::constants;
  * the fermion doubling problem. 
  * See: Phys. Rev. B 86, 085131 (2012) and the references therein.
  */
-struct TISurfKpParams: public HamParams{
+class TISurfKpParams: public HamParams{
+friend class TISurfKpHam;
+protected:
     //!< k.p parameters
-    double ax;           // discretization length in x direction
-    double ay;           // discretization length in y direction
-    double C;            // C parameter, see Rev. Mod. Phys. 83, 1057 (2011)
-    double A2;           // A2 parameter, see Rev. Mod. Phys. 83, 1057 (2011)
-    double Rx;           // parameter to avoid fermion doubling
-    double Ry;           // parameter to avoid fermion doubling
+    double ma;           // discretization length in x direction
+    double mC;            // C parameter, see Rev. Mod. Phys. 83, 1057 (2011)
+    double mA2;           // A2 parameter, see Rev. Mod. Phys. 83, 1057 (2011)
+    double mK;           // parameter to avoid fermion doubling
     
     //!< tight binding parameters
-    cxmat I;
-    cxmat eps;
-    cxmat t01x;
-    cxmat t10x;
-    cxmat t01y;
-    cxmat t10y;
-    
+    cxmat mI;
+    cxmat meps;
+    cxmat mt01x;
+    cxmat mt10x;
+    cxmat mt01y;
+    cxmat mt10y;
+
+public:    
     TISurfKpParams(const string &prefix = ""):HamParams(prefix){
         mTitle = "Topological Insulator surface k.p parameters";
         // default parameters
-        I = eye<cxmat>(2,2);    
+        mI = eye<cxmat>(2,2);    
     }
     
     // Updates internal tight binding parameters calculated using 
     // k.p model. Call it after changing any of the k.p parameters.
     virtual void update(){
         
-        if(!(is_finite(dtol) && is_finite(C) && is_finite(A2) && is_finite(ax)
-                && is_finite(ay) && is_finite(Rx) && is_finite(Ry))){
-            throw runtime_error("TISufrParams: invalid TI parameters.");
-            
+        if(!(is_finite(mdtol) && is_finite(mC) && is_finite(mA2) && is_finite(ma)
+                 && is_finite(mK))){
+            throw runtime_error("TISufrParams: invalid TI parameters.");            
         }
-        
-        computeTBParams();
+        double Kx = mK, Ky = mK, ax = ma, ay = ma;
+        meps = mC*mI - mA2*(Kx/ax + Ky/ay)*sz();
+        mt01x =  (mA2/(2*ax))*sy()*i + (Kx*mA2/(2*ax))*sz();
+        mt10x = trans(mt01x);
+        mt01y = (-mA2/(2*ay))*sx()*i + (Ky*mA2/(2*ay))*sz();
+        mt10y = trans(mt01y);
     }
+    
+    double a(){return ma; }
+    void   a(double newa ){ ma = newa; update(); }
+    double C(){return mC; }
+    void   C(double newC ){ mC = newC; update(); }
+    double A2(){return mA2; }
+    void   A2(double newA2 ){ mA2 = newA2; update(); }
+    double K(){return mK; }
+    void   K(double newK ){ mK = newK; update(); }
     
     virtual string toString() const { 
         stringstream ss;
         ss << HamParams::toString() << ":" << endl;
-        ss << mPrefix << " dtol = " << dtol << endl;
-        ss << mPrefix << " ax   = " << ax << endl;
-        ss << mPrefix << " ay   = " << ay << endl;
-        ss << mPrefix << " Rx   = " << Rx << endl;
-        ss << mPrefix << " Ry   = " << Ry << endl;
-        ss << mPrefix << " C    = " << C << endl;
-        ss << mPrefix << " A2   = " << A2 << endl;
-        ss << mPrefix << " eps: " << endl << eps;
-        ss << mPrefix << " t01x: " << endl << t01x;
-        ss << mPrefix << " t01y: " << endl << t01y;
+        ss << mPrefix << " dtol = " << mdtol << endl;
+        ss << mPrefix << " a    = " << ma << endl;
+        ss << mPrefix << " K    = " << mK << endl;
+        ss << mPrefix << " C    = " << mC << endl;
+        ss << mPrefix << " A2   = " << mA2 << endl;
+        ss << mPrefix << " eps: " << endl << meps;
+        ss << mPrefix << " t01x: " << endl << mt01x;
+        ss << mPrefix << " t01y: " << endl << mt01y;
 
         return ss.str(); 
-    };
-        
-protected:
-    void computeTBParams(){
-        eps = C*I - 2*A2*(Rx/(ax*ax) + Ry/(ay*ay))*sz();
-        t01x =  (A2/(2*ax))*sy()*i + (Rx*A2/(ax*ax))*sz();
-        t10x = trans(t01x);
-        t01y = (-A2/(2*ay))*sx()*i + (Ry*A2/(ay*ay))*sz();
-        t10y = trans(t01y);
     };
 
 };

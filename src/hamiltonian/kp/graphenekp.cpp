@@ -39,21 +39,21 @@ cxmat GrapheneKpHam::genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // site energy
-        if (d <= p->dtol){
-            hmat = p->eps;
+        if (d <= p->mdtol){
+            hmat = p->meps;
         // nearest neighbor in x
-        }else if(abs(d - p->ax) <= p->dtol && abs(dx - p->ax) <= p->dtol){ 
+        }else if(abs(d - p->ma) <= p->mdtol && abs(dx - p->ma) <= p->mdtol){ 
             if (xi > xj){
-                hmat = p->t10x;
+                hmat = p->mt10x;
             }else{
-                hmat = p->t01x;
+                hmat = p->mt01x;
             }
         //nearest neighbor y
-        }else if (abs(d - p->ay) <= p->dtol && abs(dy - p->ay) <= p->dtol){
+        }else if (abs(d - p->ma) <= p->mdtol && abs(dy - p->ma) <= p->mdtol){
             if(yi > yj){
-                hmat = p->t10y;
+                hmat = p->mt10y;
             }else{
-                hmat = p->t01y;
+                hmat = p->mt01y;
             }
         }            
     }  
@@ -86,8 +86,8 @@ cxmat GrapheneKpHam::genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // overlap matrix of atom i.
-        if (d <= p->dtol){
-            smat = p->I;
+        if (d <= p->mdtol){
+            smat = p->mI;
         }
     }
     return smat;
@@ -108,13 +108,17 @@ using namespace hamiltonian;
  * Graphene k.p parameters.
  */
 void export_GrapheneKpParams(){
+    double (GrapheneKpParams::*GrapheneKpParams_geta)() = &GrapheneKpParams::a;
+    void (GrapheneKpParams::*GrapheneKpParams_seta)(double) = &GrapheneKpParams::a;
+    double (GrapheneKpParams::*GrapheneKpParams_getgamma)() = &GrapheneKpParams::gamma;
+    void (GrapheneKpParams::*GrapheneKpParams_setgamma)(double) = &GrapheneKpParams::gamma;
+    double (GrapheneKpParams::*GrapheneKpParams_getK)() = &GrapheneKpParams::K;
+    void (GrapheneKpParams::*GrapheneKpParams_setK)(double) = &GrapheneKpParams::K;    
     class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
         .enable_pickling()
-        .def_readwrite("ax", &GrapheneKpParams::ax)
-        .def_readwrite("ay", &GrapheneKpParams::ay)
-        .def_readwrite("Rx", &GrapheneKpParams::Rx)   
-        .def_readwrite("Ry", &GrapheneKpParams::Ry)   
-        .def_readwrite("gamma", &GrapheneKpParams::gamma)
+        .add_property("a", GrapheneKpParams_geta, GrapheneKpParams_seta)
+        .add_property("K", GrapheneKpParams_getK, GrapheneKpParams_setK)   
+        .add_property("gamma", GrapheneKpParams_getgamma, GrapheneKpParams_setgamma)
     ;
 }
 

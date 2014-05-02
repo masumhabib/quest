@@ -23,8 +23,11 @@ namespace hamiltonian{
 
 using boost::static_pointer_cast;
 using namespace maths::armadillo;
-    
+
+class GrapheneTbHam;
+
 struct GrapheneTbParams: public HamParams{
+    friend class GrapheneTbHam;
     // Tight binding parameters
     double ec;            // onside energy
     double di0;           // in-plane C-C bond length
@@ -47,7 +50,7 @@ struct GrapheneTbParams: public HamParams{
     string toString() const { 
         stringstream ss;
         ss << HamParams::toString() << ": " << endl;
-        ss << mPrefix << " dtol  = " << dtol << endl;
+        ss << mPrefix << " dtol  = " << mdtol << endl;
         ss << mPrefix << " ec    = " << ec << endl;
         ss << mPrefix << " di0   = " << di0 << endl;
         ss << mPrefix << " ti0   = " << ti0 << endl;

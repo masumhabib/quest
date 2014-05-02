@@ -30,14 +30,19 @@ using utils::Printable;
 using namespace maths::armadillo;
 using atoms::AtomicStruct;
 
-struct HamParams: public Printable{
+class HamParams: public Printable{
+protected:
     // Parameters required for all Hamiltonin
-    double dtol;         // distance tolerance    
+    double mdtol;         // distance tolerance    
     
+public:    
     HamParams(const string &prefix = ""):Printable(" " + prefix){
         mTitle = "Hamiltonian paramters";
         // default parameters          
     }
+    
+    void dtol(double v){ mdtol = v; update(); }
+    double dtol(){ return mdtol; }
     
     // Updates internal parameters. Call it after changing any of the 
     // public parameters.
