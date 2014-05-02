@@ -38,21 +38,21 @@ cxmat TISurfKpHam4::genTwoAtomHam(const AtomicStruct& atomi,
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // site energy
-        if (d <= p->dtol){
-            hmat = p->eps;
+        if (d <= p->mdtol){
+            hmat = p->meps;
         // nearest neighbor in x
-        }else if(abs(d - p->ax) <= p->dtol && abs(dx - p->ax) <= p->dtol){ 
+        }else if(abs(d - p->ma) <= p->mdtol && abs(dx - p->ma) <= p->mdtol){ 
             if (xi > xj){
-                hmat = p->t10x;
+                hmat = p->mt10x;
             }else{
-                hmat = p->t01x;
+                hmat = p->mt01x;
             }
         //nearest neighbor y
-        }else if (abs(d - p->ay) <= p->dtol && abs(dy - p->ay) <= p->dtol){
+        }else if (abs(d - p->ma) <= p->mdtol && abs(dy - p->ma) <= p->mdtol){
             if(yi > yj){
-                hmat = p->t10y;
+                hmat = p->mt10y;
             }else{
-                hmat = p->t01y;
+                hmat = p->mt01y;
             }
         }            
     }
@@ -87,8 +87,8 @@ cxmat TISurfKpHam4::genTwoAtomOvl(const AtomicStruct& atomi,
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // site energy
-        if (d <= p->dtol){
-            smat = p->I;
+        if (d <= p->mdtol){
+            smat = p->mI;
         }
     }   
     return smat;
@@ -108,14 +108,20 @@ using namespace hamiltonian;
      * TI Surface k.p parameters.
      */
 void export_TISurfKpParams4(){
+    double (TISurfKpParams4::*TISurfKpParams4_geta)() = &TISurfKpParams4::a;
+    void (TISurfKpParams4::*TISurfKpParams4_seta)(double) = &TISurfKpParams4::a;
+    double (TISurfKpParams4::*TISurfKpParams4_getC)() = &TISurfKpParams4::C;
+    void (TISurfKpParams4::*TISurfKpParams4_setC)(double) = &TISurfKpParams4::C;
+    double (TISurfKpParams4::*TISurfKpParams4_getA2)() = &TISurfKpParams4::A2;
+    void (TISurfKpParams4::*TISurfKpParams4_setA2)(double) = &TISurfKpParams4::A2;
+    double (TISurfKpParams4::*TISurfKpParams4_getK)() = &TISurfKpParams4::K;
+    void (TISurfKpParams4::*TISurfKpParams4_setK)(double) = &TISurfKpParams4::K;
     class_<TISurfKpParams4, bases<HamParams>, shared_ptr<TISurfKpParams4> >("TISurfKpParams4")
         .enable_pickling()
-        .def_readwrite("ax", &TISurfKpParams4::ax)
-        .def_readwrite("ay", &TISurfKpParams4::ay)
-        .def_readwrite("Rx", &TISurfKpParams4::Rx)   
-        .def_readwrite("Ry", &TISurfKpParams4::Ry)   
-        .def_readwrite("A2", &TISurfKpParams4::A2)
-        .def_readwrite("C", &TISurfKpParams4::C)
+        .add_property("a", TISurfKpParams4_geta, TISurfKpParams4_seta)
+        .add_property("K", TISurfKpParams4_getK, TISurfKpParams4_setK)   
+        .add_property("A2", TISurfKpParams4_getA2, TISurfKpParams4_setA2)
+        .add_property("C", TISurfKpParams4_getC, TISurfKpParams4_setC)
     ;
 }
 

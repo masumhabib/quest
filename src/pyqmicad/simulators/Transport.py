@@ -176,11 +176,11 @@ class Transport(object):
                     self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             # Just to make sure that no point of gate regions is    
             # at the border
-            ax = self.hp.ax
-            delta = ax*7.0/220.0  + ax*7.0/2200.0
+            a = self.hp.a
+            delta = a*7.0/220.0
             self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_TI_SURF_KP4):    
             # Hamiltonian parameter
@@ -191,11 +191,11 @@ class Transport(object):
                     self.hp = TISurfKpParams4()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             # Just to make sure that no point of gate regions is    
             # at the border
-            ax = self.hp.ax
-            delta = ax*7.0/220.0  + ax*7.0/2200.0
+            a = self.hp.a
+            delta = a*7.0/220.0  + a*7.0/2200.0
             self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_GRAPHENE_KP):
             # Hamiltonian parameter
@@ -207,11 +207,11 @@ class Transport(object):
 #            self.hp = GrapheneKpParams()
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.ax, self.hp.ay, self.hp.ptable)
+            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             # Just to make sure that no point of gate regions is    
             # at the border
-            ax = self.hp.ax
-            delta = ax*7.0/220.0  + ax*7.0/2200.0
+            a = self.hp.a
+            delta = a*7.0/220.0
             self.nbw = [self.nw]*self.nb
         else:
             raise RuntimeError(" Unsupported Hamiltonian type. ")

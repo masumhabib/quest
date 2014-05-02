@@ -25,24 +25,19 @@ _TISurfKpParamsOrgInit =  TISurfKpParams.__init__
 def _TISurfKpParamsInit(self):
     _TISurfKpParamsOrgInit(self)
     self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.ax     = 2.0               # Lattice spacing
-    self.ay     = 2.0               # Lattice spacing
-    self.K      = 0.57971           # Coefficient ot solve Fermion doubling
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
+    self.a      = 2.0               # Lattice spacing
+    self.K      = 1.165             # Coefficient ot solve Fermion doubling
     self.A2     = 3.33              # A2 paramter
     self.C      = 0.0               # C parameter
     self.ptable = PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 2, 2)   # Fake atom for TI k.p
-    
-    self.update()
     
 TISurfKpParams.__init__ = _TISurfKpParamsInit
 
 # TI surface k.p pickle support
 def _TISurfKpParamsSetState(self, dct):
     self.__dict__.update(dct)
-    self.update()
+#    self.update()
     
 TISurfKpParams.__setstate__ = _TISurfKpParamsSetState
 
@@ -58,24 +53,19 @@ _TISurfKpParams4OrgInit =  TISurfKpParams4.__init__
 def _TISurfKpParams4Init(self):
     _TISurfKpParams4OrgInit(self)
     self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.ax     = 2.0               # Lattice spacing
-    self.ay     = 2.0               # Lattice spacing
-    self.K      = 0.57971           # Coefficient ot solve Fermion doubling
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
+    self.a      = 2.0               # Lattice spacing
+    self.K      = 1.165             # Coefficient ot solve Fermion doubling
     self.A2     = 3.33              # A2 paramter
     self.C      = 0.0               # C parameter
     self.ptable = PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 4, 4)   # Fake atom for TI k.p
-    
-    self.update()
     
 TISurfKpParams4.__init__ = _TISurfKpParams4Init
 
 # TI surface k.p pickle support
 def _TISurfKpParams4SetState(self, dct):
     self.__dict__.update(dct)
-    self.update()
+#    self.update()
     
 TISurfKpParams4.__setstate__ = _TISurfKpParams4SetState
 
@@ -91,23 +81,18 @@ _GrapheneKpParamsOrgInit =  GrapheneKpParams.__init__
 def _GrapheneKpParamsInit(self):
     _GrapheneKpParamsOrgInit(self)
     self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.ax     = 4.0               # Lattice spacing
-    self.ay     = 4.0               # Lattice spacing
-    self.K      = 0.57971           # Coefficient ot solve Fermion doubling
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
+    self.a      = 4.0               # Lattice spacing
+    self.K      = 1.165             # Coefficient ot solve Fermion doubling
     self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
     self.ptable = PeriodicTable()   # Periodic table for graphene k.p
     self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
-    
-    self.update()    
     
 GrapheneKpParams.__init__ = _GrapheneKpParamsInit
 
 # Graphene k.p pickle support
 def _GrapheneKpParamsSetState(self, dct):
     self.__dict__.update(dct)
-    self.update()
+#    self.update()
     
 GrapheneKpParams.__setstate__ = _GrapheneKpParamsSetState
 
@@ -134,15 +119,13 @@ def _GrapheneTbParamsInit(self):
     self.alpha      = 1.65
     self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
     self.ptable = PeriodicTable()   # Periodic table for graphene
-
-    self.update()
     
 GrapheneTbParams.__init__ = _GrapheneTbParamsInit
 
 # Graphene tight binding pickle support
 def _GrapheneTbParamsSetState(self, dct):
     self.__dict__.update(dct)
-    self.update()
+#    self.update()
     
 GrapheneTbParams.__setstate__ = _GrapheneTbParamsSetState
 

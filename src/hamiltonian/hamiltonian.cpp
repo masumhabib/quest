@@ -24,9 +24,11 @@ using namespace utils::stds;
  * Hamiltonian parameters.
  */
 void export_HamParams(){    
+    double (HamParams::*HamParams_getdtol)() = &HamParams::dtol;
+    void (HamParams::*HamParams_setdtol)(double) = &HamParams::dtol;
     class_<HamParams, bases<Printable>, shared_ptr<HamParams> >("HamiltonianParams", 
             init<const string&>())
-        .def_readwrite("dtol", &HamParams::dtol)
+        .add_property("dtol", HamParams_getdtol, HamParams_setdtol)
         .def("update", &HamParams::update)
     ;
 }

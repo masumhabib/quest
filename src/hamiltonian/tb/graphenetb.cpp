@@ -39,17 +39,17 @@ cxmat GrapheneTbHam::genTwoAtomHam(const AtomicStruct& atomi,
         dz = abs(dz); // inter-plane distance
 
         // site energy
-        if (d <= p->dtol){ 
+        if (d <= p->mdtol){ 
             hmat(0,0) = p->ec;
         // in-plane first nearest neighbor
-        }else if (dz <= p->dtol && abs(d - p->di0) <= p->dtol){
+        }else if (dz <= p->mdtol && abs(d - p->di0) <= p->mdtol){
             hmat(0,0) = -p->ti0;
         /*// out-of-plane first nearest neighbors
         }else if (abs(delz - do0cc) <= dtol && abs(d - do0cc) <= dtol){
             hmat(ia,ja) = -to0cc;
         }*/
         // out-of-plane some nearest neighbors
-        }else if (abs(dz - p->do0) <= p->dtol && abs(d - p->do0) <= (p->doX*p->di0 + p->dtol)){
+        }else if (abs(dz - p->do0) <= p->mdtol && abs(d - p->do0) <= (p->doX*p->di0 + p->mdtol)){
             // PRB 84, 195421 (2011)
             // DBG hmat(ia,ja) = -to0cc*exp(-3.0*(d - do0cc));
 
@@ -84,7 +84,7 @@ cxmat GrapheneTbHam::genTwoAtomOvl(const AtomicStruct& atomi,
     if (atomi.Symbol(0) == "C" && atomj.Symbol(0) == "C"){
         dz = abs(dz); // inter-plane distance
         // site energy
-        if (d <= p->dtol){ 
+        if (d <= p->mdtol){ 
             smat = eye<cxmat>(noi, noj);
         }
     }
