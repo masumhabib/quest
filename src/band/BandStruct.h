@@ -102,7 +102,7 @@ public:
             const Workers &workers, bool saveAscii = true);
    
     int     NumOfKpoints() const { return mN; };
-    void    EnableEigVec() { mCalcEigV = true; };
+    void    enableEigVec() { mCalcEigV = true; };
     void    save(string fileName);    
 
 protected:

@@ -115,25 +115,22 @@ void BandStruct::collect(){
 void BandStruct::save(string fileName){
     if(mWorkers.IAmMaster()){
         if (mCalcEigV){
-        }else{
-            fileName = fileName + "EK" + ".dat";
-            
-            // open file.
-            ofstream outFile;
-            if(mSaveAscii){
-                outFile.open(fileName.c_str(), ostream::binary);
-            }else{
-                outFile.open(fileName.c_str());
-            }
-            if (!outFile.is_open()){
-                throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
-                        + fileName + ".");
-            }
-            
-            // save to the file
-            outFile << mE;
-            outFile.close();
         }
+        // open file.
+        ofstream outFile;
+        if(mSaveAscii){
+            outFile.open(fileName.c_str(), ostream::binary);
+        }else{
+            outFile.open(fileName.c_str());
+        }
+        if (!outFile.is_open()){
+            throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
+                    + fileName + ".");
+        }
+
+        // save to the file
+        outFile << mE;
+        outFile.close();
     }
 }
 
@@ -168,6 +165,7 @@ void export_BandStruct(){
             const Workers&>())
         .def("run", &BandStruct::run)
         .def("save", &BandStruct::save)
+        .def("enableEigVec", &BandStruct::enableEigVec)
     ;
 }
 
