@@ -54,7 +54,8 @@ class Band(object):
         # Band structure simulation parameters
         self.Dim        = 1            # Cell dimension
         self.nb         = 2            # Number of bands to be saved
-        self.dk         = 0.01         # del k     
+        self.nk1        = 100          # number of k points along a1
+        self.nk2        = 100          # number of k points along a2
         
         self.lc         = []           # Neighbor list
         self.kp         = KPoints()    # K point generator
@@ -180,7 +181,7 @@ class Band(object):
     def generateKPoints(self):
         if (self.Dim == 1):
             la1 = self.lv.la1()
-            self.kp.addKLine(Point(-pi/la1, 0), Point(pi/la1, 0), self.dk)
+            self.kp.addKLine(Point(-pi/la1, 0), Point(pi/la1, 0), self.nk1)
         elif (self.Dim == 2):
             # For rectangular lattice.
             if (self.HamType == self.HAM_TI_SURF_KP or 
@@ -188,7 +189,7 @@ class Band(object):
                 self.HamType == self.HAM_GRAPHENE_KP):
                 la1 = self.lv.la1()
                 la2 = self.lv.la2();
-                self.kp.addKRect(Point(-pi/la1, -pi/la2), Point(pi/la1, pi/la2), self.dk)                
+                self.kp.addKRect(Point(-pi/la1, -pi/la2), Point(pi/la1, pi/la2), self.nk1, self.nk2)                
             else:
                 raise RuntimeError(" Unsupported lattice type. ")
 
@@ -220,13 +221,13 @@ class Band(object):
 #            pk.dump(self, fp)
             fp.close()
             
-        bs = BandStruct(self.kp.kp(), self.bp, self.workers)
+        bs = BandStruct(self.kp.kp, self.bp, self.workers)
 
         # Calculate eigen vectors?
         if self.EnableEigVec == True:
             bs.enableEigVec()
                 
-        nprint("\n Total " + str(self.kp.N()) + " k point(s) " 
+        nprint("\n Total " + str(self.kp.N) + " k point(s) " 
             + "running on " + str(self.workers.N()) + " CPU(s)...\n")
 
         # skip calculation if result file exists.

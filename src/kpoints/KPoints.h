@@ -36,8 +36,10 @@ public:
     KPoints(const string& prefix = "");
     
     void            addKPoint(const point &p);
-    void            addKLine(const point &start, const point &end, double dk);
-    void            addKRect(const point &lb, const point &rt, double dk);
+    void            addKLine(const point& start, const point& end, double dk);
+    void            addKLine(const point& start, const point& end, uint nk);
+    void            addKRect(const point& lb, const point& rt, double dkx, double dky);
+    void            addKRect(const point& lb, const point& rt, uint nkx, uint nky);
     
     shared_ptr<mat> kp();
     uint            N() {return mk.n_rows; }
