@@ -14,23 +14,23 @@ namespace band{
 BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
         const Workers &workers, bool saveAscii): ParLoop(workers, pk->n_rows), 
         mp(bp), mk(pk) , mSaveAscii(saveAscii), mCalcEigV(false),
-        mbar("  NEGF: ",  pk->n_rows)
+        mbar("  EK: ",  pk->n_rows)
 {    
     
     mlb = mp.ne/2 - mp.nb/2;     // lowest band to calculate
     mub = mp.ne/2 + mp.nb/2-1;   // highest band to calculate  
 
     if (mub < mlb){
-        mub = mlb;
+        swap(mub, mlb);
     }
     
-    if (mlb < 0U){
+    if (mlb < 0L){
         mlb = 0;
     }
     
-    if (mub > mp.no){
-        mub = mp.no;
-    }
+    if (mub >= mp.no){
+        mub = mp.no-1;
+    }    
 }
 
 void BandStruct::prepare(){
@@ -45,7 +45,7 @@ void BandStruct::prepare(){
     }
         
     // Setup
-    mThisE.set_size(mMyN, mk->n_cols + mp.nb);     // Eigen energy: (# of kpoints)  x  (# of bands + size of k vector).
+    mThisE.set_size(mMyN, mub - mlb + 1);     // Eigen energy: (# of kpoints)  x  (# of bands + size of k vector).
     
     mWorkers.Comm().barrier();
     mbar.start();
@@ -67,7 +67,6 @@ void BandStruct::compute(int il){
     // loop over half the nearest neighbors
     for (uint ih = 0; ih < mp.H.n_elem; ++ih){
         lcoord lc = mp.lc(ih);
-        
         if (lc.n1 == 0 && lc.n2 == 0 && lc.n3 ==0){
             Hk += *mp.H(ih);
         }else{
@@ -81,7 +80,7 @@ void BandStruct::compute(int il){
     }else{
         col E = eig_sym(Hk);
         int ik = il - mMyStart;
-        mThisE.row(ik) = join_rows(k, sort(trans(E.rows(mlb, mub))));
+        mThisE.row(ik) = trans(sort(E.rows(mlb, mub)));
     }
 }
 
@@ -114,23 +113,32 @@ void BandStruct::collect(){
 
 void BandStruct::save(string fileName){
     if(mWorkers.IAmMaster()){
-        if (mCalcEigV){
-        }
         // open file.
-        ofstream outFile;
+        ofstream out;
         if(mSaveAscii){
-            outFile.open(fileName.c_str(), ostream::binary);
+            out.open(fileName.c_str(), ostream::binary);
         }else{
-            outFile.open(fileName.c_str());
+            out.open(fileName.c_str());
         }
-        if (!outFile.is_open()){
+        if (!out.is_open()){
             throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
                     + fileName + ".");
         }
+        
+        out << "EK" << endl;    // tag
+        out << mk->n_rows << endl; // # of k points
+        out << 1 << " " << mE.n_cols << endl; // 1xnb matrix; nb = number of bands
 
-        // save to the file
-        outFile << mE;
-        outFile.close();
+        for (int ik = 0; ik < mk->n_rows; ++ik){
+            out << mk->row(ik);
+            out << mE.row(ik);
+        }
+
+        out.close();
+        
+        if (mCalcEigV){
+        }
+
     }
 }
 

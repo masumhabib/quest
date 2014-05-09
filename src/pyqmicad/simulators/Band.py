@@ -9,11 +9,14 @@
 import os
 import pickle as pk
 import numpy as np
+from   math import pi
 
 import qmicad
-from qmicad.atoms import AtomicStruct, SVec
+from qmicad.atoms import AtomicStruct, LCoord
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
-from qmicad.utils import VecGrid, Timer, Workers, vprint
+from qmicad.kpoints import KPoints
+from qmicad.band import BandStructParams, BandStruct
+from qmicad.utils import Timer, Workers, vprint, Point
 from qmicad.utils.vprint import nprint, dprint, eprint
 
 
@@ -119,14 +122,15 @@ class Band(object):
             raise RuntimeError(" Unsupported Hamiltonian type. ")
         
         # Save lattice vector
-        self.lv = self.geom.LatticeVector()                  
+        self.lv = self.geom.LatticeVector                  
 
     def addNeighbor(self, n1 = 0, n2 = 0, n3 = 0, AutoGen = True):
         if AutoGen == True:
             if (self.Dim == 1):
                 # The nearest neighbor on the right,
                 # need H_0,0 and H_0,1 only.
-                lc.append(LCoord(1, 0, 0))
+                self.lc.append(LCoord(0, 0, 0))
+                self.lc.append(LCoord(1, 0, 0))
 
             elif (self.Dim == 2):
                 # For rectangular lattice.
@@ -134,10 +138,11 @@ class Band(object):
                     self.HamType == self.HAM_TI_SURF_KP4 or 
                     self.HamType == self.HAM_GRAPHENE_KP):
                     # The nearest neighbors
-                    lc.append(LCoord(1, 0, 0))                     # neighbor on the right      
-                    lc.append(LCoord(1, 1, 0))                     # neighbor on the right-top      
-                    lc.append(LCoord(0, 1, 0))                     # neighbor on the top      
-                    lc.append(LCoord(-1, 1, 0))                    # neighbor on the top-left                       
+                    self.lc.append(LCoord(0, 0, 0))                     # main cell
+                    self.lc.append(LCoord(1, 0, 0))                     # neighbor on the right      
+                    self.lc.append(LCoord(1, 1, 0))                     # neighbor on the right-top      
+                    self.lc.append(LCoord(0, 1, 0))                     # neighbor on the top      
+                    self.lc.append(LCoord(-1, 1, 0))                    # neighbor on the top-left                       
                 else:
                     raise RuntimeError(" Unsupported lattice type. ")
             
@@ -162,27 +167,27 @@ class Band(object):
         self.bp = BandStructParams(nn)                  # Band structure parameterrs.
         # generate H_0,i and S_0,i
         for inn in range(nn):
-            neigh = self.geom + lc[inn]                  # extract block # 1
+            neigh = self.geom + self.lc[inn]                  # extract block # 1
             self.ham.genNearestNeigh(self.geom, neigh, inn)        
             self.bp.H(self.ham.H(inn), inn)
-            self.bp.lc(lc[inn], inn)
+            self.bp.lc(self.lc[inn], inn)
 
         self.bp.lv = self.lv                            # Lattice vector.
         self.bp.nb = self.nb                            # number of bands
-        self.bp.ne = self.geom.NumOfElectrons()         # number of bands
-        self.bp.no = self.geom.NumOfOrbitals()          # Number of orbitals
+        self.bp.ne = self.geom.NumOfElectrons           # number of bands
+        self.bp.no = self.geom.NumOfOrbitals            # Number of orbitals
       
-    def gennerateKPoints(self):
+    def generateKPoints(self):
         if (self.Dim == 1):
-            la1 = lv.la1()
+            la1 = self.lv.la1()
             self.kp.addKLine(Point(-pi/la1, 0), Point(pi/la1, 0), self.dk)
         elif (self.Dim == 2):
             # For rectangular lattice.
             if (self.HamType == self.HAM_TI_SURF_KP or 
                 self.HamType == self.HAM_TI_SURF_KP4 or 
                 self.HamType == self.HAM_GRAPHENE_KP):
-                la1 = lv.la1()
-                la2 = lv.la2();
+                la1 = self.lv.la1()
+                la2 = self.lv.la2();
                 self.kp.addKRect(Point(-pi/la1, -pi/la2), Point(pi/la1, pi/la2), self.dk)                
             else:
                 raise RuntimeError(" Unsupported lattice type. ")
@@ -212,7 +217,7 @@ class Band(object):
                 os.makedirs(self.OutPath)            
             # save simulation parameters to a pickle file
             fp = open(self.OutPath + self.OutFileName + ".pkl", 'wb')
-            pk.dump(self, fp)
+#            pk.dump(self, fp)
             fp.close()
             
         bs = BandStruct(self.kp.kp(), self.bp, self.workers)
@@ -224,20 +229,30 @@ class Band(object):
         nprint("\n Total " + str(self.kp.N()) + " k point(s) " 
             + "running on " + str(self.workers.N()) + " CPU(s)...\n")
 
-        bs.run()
+        # skip calculation if result file exists.
+        if self.SkipExistingSimulation == True:
+            fileName = self.OutFileName + ".dat"
+            if os.path.isfile(self.OutPath + fileName):
+                nprint("\n  Result exists, skipping.")
+                return
+            
+        # Run the simulation
+        if (self.DryRun == False):
+            bs.run()
         nprint("\n  done.")
          
-        nprint("\n\n Saving results to disk ...")
+        nprint("\n Saving results to disk ...")
         # save results
         if (self.workers.IAmMaster()):
             # Create directory if not exist.
             if not os.path.exists(self.OutPath):
-                os.makedirs(self.sp.OutPath)
+                os.makedirs(self.OutPath)
             # save to file.
-            fileName = self.sp.OutFileName + "_"
-            bs.save(self.sp.OutPath + fileName)
+            fileName = self.OutFileName + ".dat"
+            bs.save(self.OutPath + fileName)
              
         nprint(" done.")
+        nprint("\n ------------------------------------------------------------------")
         
         self.clock.toc()           
         nprint("\n" + str(self.clock) + "\n")
@@ -289,6 +304,8 @@ class Band(object):
         del dct['workers']
         del dct['clock']
         del dct['ham']
+        del dct['kp']
+        del dct['bp']
         return dct
     
     def __setstate__(self, dct):

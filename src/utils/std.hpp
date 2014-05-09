@@ -47,6 +47,8 @@ using std::map;
 
 using std::abs;
 
+using std::swap;
+
 using std::invalid_argument;
 using std::runtime_error;
 

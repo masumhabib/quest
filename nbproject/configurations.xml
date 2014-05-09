@@ -100,6 +100,7 @@
           <itemPath>src/pyqmicad/simulators/Band.py</itemPath>
           <itemPath>src/pyqmicad/simulators/Transport.py</itemPath>
           <itemPath>src/pyqmicad/simulators/__init__.py</itemPath>
+          <itemPath>src/pyqmicad/simulators/importBandResult.m</itemPath>
           <itemPath>src/pyqmicad/simulators/importPotential.m</itemPath>
           <itemPath>src/pyqmicad/simulators/importTransResult.m</itemPath>
         </logicalFolder>
@@ -338,6 +339,11 @@
       <item path="src/pyqmicad/simulators/__init__.py"
             ex="false"
             tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/importBandResult.m"
+            ex="false"
+            tool="0"
             flavor2="0">
       </item>
       <item path="src/pyqmicad/simulators/importPotential.m"
@@ -580,6 +586,11 @@
       </item>
       <item path="src/pyqmicad/simulators/__init__.py"
             ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/pyqmicad/simulators/importBandResult.m"
+            ex="true"
             tool="3"
             flavor2="0">
       </item>
