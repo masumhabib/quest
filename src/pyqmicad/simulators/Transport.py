@@ -509,8 +509,8 @@ class Transport(object):
         """Updates the bounding box of atomistic geometry."""
         # Just to make sure that no point of gate regions is    
         # at the border
-        ax = self.hp.ax
-        delta = ax*7.0/220.0  + ax*7.0/2200.0
+        a = self.hp.a
+        delta = a*7.0/220.0
         self.xmn = self.geom.xmin - delta   
         self.xmx = self.geom.xmax + delta
         self.ymn = self.geom.ymin - delta

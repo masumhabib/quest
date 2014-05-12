@@ -10,8 +10,8 @@
 namespace qmicad{
 namespace negf{
 
-NegfResultList::NegfResultList(string tag, uint N):
-        tag(tag), N(N)
+NegfResultList::NegfResultList(string tag, uint N, int ib, int jb):
+        tag(tag), N(N), ib(ib), jb(jb)
 {
 }
 
@@ -25,11 +25,12 @@ void NegfResultList::merge(NegfResultList &second){
 
 void NegfResultList::save(ostream &out){
     out << tag << endl;
+    out << ib << " " << jb << endl;
     out << R.size() << endl;
     out << N << endl;
-    list<negf_result>::iterator it;
+    iter it;
     for (it = R.begin(); it != R.end(); ++it){
-        out << it->first << endl << it->second << endl;
+        out << it->E << endl << it->M << endl;
     }
 }
  

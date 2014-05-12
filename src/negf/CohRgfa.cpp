@@ -37,26 +37,10 @@ CohRgfa::CohRgfa(const CohRgfaParams &p, double E, string newprefix):
 cxmat CohRgfa::nop(uint N){
     cxmat nOp(N, N, fill::zeros);
     for (uint ib = miLc+1; ib < miRc; ++ib){
-        nOp += Gniop(ib,N);
+        nOp += trace<cxmat>(Gn(ib, ib), N);
     }
     return nOp/(2*pi);    
 }
-
-cxmat CohRgfa::Gniop(uint ib, uint N){
-    // Gn_i,i = i*[G_i,i - G_i,i']*fN + G_i,1*Gam_1,1*G_i,1'*(f1-fN)
-    if (ib == miLc + 1){
-        cxmat Gnii = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
-                     + (mf0 - mfNp1)*(mGii(ib)*GamL11()*trans(mGii(ib))); 
-
-        return trace<cxmat>(Gnii, N);
-    }else{
-        cxmat Gnii = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
-                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib))); 
-
-        return trace<cxmat>(Gnii, N);
-    }
-}
-
 
 /*
  * Density of States. 
@@ -72,7 +56,7 @@ cxmat CohRgfa::DOSop(uint N){
 /*
  * Spectral function for block ib
  */
-cxmat CohRgfa::Aop(uint ib, uint N){
+cxmat CohRgfa::Aop(uint N, uint ib){
     cxmat A = mGii(ib);
     A = i*(A - trans(A));
     
@@ -82,39 +66,96 @@ cxmat CohRgfa::Aop(uint ib, uint N){
 /*
  * Current flowing from block ib to ib+1.
  */
-cxmat CohRgfa::Iop(uint ib, uint N){
-    if (ib == miLc){
+//cxmat CohRgfa::Iop(uint ib, uint N){
+//    if (ib == miLc){
+//        return I0op(N);
+//    } else if (ib == mN){
+//        return INop(N);
+//    }else if(ib > miLc && ib < mN){
+//        return Iiop(ib, N);
+//    } 
+//    return cxmat();
+//}
+
+/*
+ * Generic current operators: current from block i to block j.
+ * -----------------------------------------------------------------------------
+ */
+cxmat CohRgfa::Iop(uint N, uint ib, uint jb){
+    
+    if(abs(int(ib) - int (jb)) > 1 || ib < miLc || jb < miLc || ib > miRc || jb > miRc){
+        stringstream error;
+        error << "ERROR: Iop(i, j) only works for |i-j| <= 1 and  0<= i,j <= N+1."
+              << endl << "\nBut we've got, i = " << ib << ", j = " << jb 
+              << " and N = " << mN << ".";
+        throw invalid_argument(error.str());
+    }
+    
+    if (ib == miLc && jb == miLc + 1){
+        // current from contact 0 to device.
         return I0op(N);
-    } else if (ib == mN){
+    }else if (ib == miLc + 1 && jb == miLc){
+        // current from device to contact 0.
+        return -I0op(N);
+    } else if (ib == miRc && jb == miRc-1){
+        // current from contact N to device.
         return INop(N);
-    }else if(ib > miLc && ib < mN){
-        return Iiop(ib, N);
-    } 
-    return cxmat();
+    } else if (ib == miRc-1 && jb == miRc){
+        // current from device to contact N.
+        return -INop(N);
+    } else{
+        return Iijop(ib, jb, N);
+    }
 }
 
 /*
- * Current between block # i and block i+1.
- * IiOp
+ * Current from block # i and block j where i and j are neighbors.
+ * -----------------------------------------------------------------------------
  */
-cxmat CohRgfa::Iiop(uint ib, uint N){
-    cxmat Iiop;
-    cxmat &Gniip1 = Iiop;
+inline cxmat CohRgfa::Iijop(uint N, uint ib, uint jb){
+    cxmat Iijop;
+    cxmat &Gnij = Iijop;
     
-    // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
-    Gniip1 = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(ib+1))) 
-                 + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib+1)));
-    //I_i,i+1 = H_i,i+1*Gn_i+1,i - Gn_i,i+1*H_i+1,i
-    Iiop = trans(mTl(ib+1))*trans(Gniip1) - Gniip1*mTl(ib+1);
-    return i*trace<cxmat>(Iiop, N);    
+    Gnij = Gn(ib, jb);
+    //I_i,j = H_i,j*Gn_j,i - Gn_i,j*H_j,i; Gn_i,j = Gn_j,i.
+    Iijop = trans(mTl(ib))*Gnij - Gnij*mTl(ib);
+
+    
+//    if (ib + 1 == jb){
+//        cxmat &Gnij = Iijop;
+//        // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
+//        // Gn_i,j = i*[G_i,j - G_j,i']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
+//        Gnij = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(jb))) 
+//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));
+//        //I_i,i+1 = H_i,i+1*Gn_i+1,i - Gn_i,i+1*H_i+1,i
+//        //I_i,j = H_i,j*Gn_j,i - Gn_i,j*H_j,i
+//        Iijop = trans(mTl(ib))*trans(Gnij) - Gnij*mTl(ib);
+//
+//    }else if (ib == jb + 1){
+//        cxmat &Gnij = Iijop;
+//        // Gn_i+1,i = i*[G_i+1,i - G_i,i+1']*fN + G_i+1,1*Gam_1,1*G_i,1'*(f1-fN)
+//        // Gn_i,j = i*[G_i,j - G_i,j']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
+//        Gnij = (i*mfNp1)*(mGiim1(ib) - trans(mGiip1(jb))) 
+//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));        
+//        
+//        //I_i+1,i = H_i+1,i*Gn_i,i+1 - Gn_i+1,i*H_i,i+1
+//        //I_j,i = H_j,i*Gn_i,j - Gn_j,i*H_i,j
+//        Iijop = mTl(ib)*trans(Gnij) - Gnij*trans(mTl(ib));
+//
+//    }else if(ib == jb){
+//        
+//    }
+    
+    return i*trace<cxmat>(Iijop, N);    
 }
 
 
 /*
  * Current operator at right contact (block # N).
  * INOp
+ * -----------------------------------------------------------------------------
  */
-cxmat CohRgfa::INop(uint N){
+inline cxmat CohRgfa::INop(uint N){
 
     const cxmat &SigrNN = SigRNN();
     const cxmat &GamrNN = GamRNN();
@@ -137,8 +178,9 @@ cxmat CohRgfa::INop(uint N){
 /*
  * Current operator at terminal 1.
  * I1op
+ * -----------------------------------------------------------------------------
  */
-cxmat CohRgfa::I0op(uint N){
+inline cxmat CohRgfa::I0op(uint N){
     
     const cxmat &Sigl11 = SigL11();
     const cxmat &Gaml11 = GamL11();
@@ -159,6 +201,7 @@ cxmat CohRgfa::I0op(uint N){
 
 /*
  * Transmission operator T(E) = tr{Gamma_1,1*[A_1,1 - G_1,1*Gamma_1,1*G_1,1']}
+ * -----------------------------------------------------------------------------
  */
 cxmat CohRgfa::TEop(uint N){
     // Full Green function G_1,1
@@ -171,13 +214,72 @@ cxmat CohRgfa::TEop(uint N){
     return trace<cxmat>(TEop, N);
 }
 
+/**
+ * Correlation function.
+ * ----------------------------------------------------------------------------- 
+ */
+inline cxmat CohRgfa::Gn(uint ib, uint jb){
+    cxmat Gnij;
+
+    // Gn_i,j = i*[G_i,j - G_j,i']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)    
+    Gnij = (i*mfNp1)*(G(ib, jb) - trans(G(jb, ib))) 
+              + (mf0 - mfNp1)*(G(ib,1)*GamL11()*trans(G(jb,1)));
+   
+//    if (ib + 1 == jb){
+//        // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
+//        // Gn_i,j = i*[G_i,j - G_j,i']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
+//        Gnij = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(ib))) 
+//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));
+// 
+//    }else if (ib == jb + 1){
+//        // Gn_i+1,i = i*[G_i+1,i - G_i,i+1']*fN + G_i+1,1*Gam_1,1*G_i,1'*(f1-fN)
+//        // Gn_i,j = i*[G_i,j - G_i,j']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
+//        Gnij = (i*mfNp1)*(mGiim1(ib) - trans(mGiip1(jb))) 
+//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));        
+//
+//    }else if(ib == jb){
+//        // Gn_i,i = i*[G_i,i - G_i,i']*fN + G_i,1*Gam_1,1*G_i,1'*(f1-fN)
+//        if (ib == miLc + 1){
+//            Gnij = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
+//                    + (mf0 - mfNp1)*(mGii(ib)*GamL11()*trans(mGii(ib))); 
+//        }else if(ib == miRc - 1){ 
+//            
+//        }else{
+//            Gnij = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
+//                    + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib)));         
+//        }
+//    }
+    
+    return Gnij;
+}
+
+/*
+ * Full retarded green function.
+ * -----------------------------------------------------------------------------
+ */
+inline const cxmat& CohRgfa::G(uint ib, uint jb){
+    if (ib == jb){
+        return mGii(ib);
+    }else if (ib + 1 == jb){
+        return mGiip1(ib);
+    }else if (ib == jb + 1){
+        return mGiim1(ib);
+    }else if(jb == miLc + 1){
+        return mGi1(ib);
+    }else if (jb == miRc - 1){
+        return mGiN(ib);
+    }else{
+        stringstream error;
+        error << "ERROR: G( " << ib << ", " << jb << ") is not implemented";
+        throw runtime_error(error.str());
+    }
+}
 
 /*
  * The Giim1 class members to compute:
  * G_i,i-1 = grc_i,i*T_i,i-1*G_i-1,i-1
  * =============================================================================
  */
-
 
 /* 
  * This function calculates full Green function G along the diagonal,

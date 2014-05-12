@@ -12,17 +12,20 @@
 
 #include "../utils/Printable.hpp"
 #include "../utils/myenums.hpp"
+#include "../utils/std.hpp"
 #include "../string/stringutils.h"
 #include "../maths/constants.h"
 #include "../maths/trace.hpp"
 #include "../maths/fermi.hpp"
+#include "../maths/arma.hpp"
 #include "../cache/cache.hpp"
+
 
 #include <boost/smart_ptr.hpp>
 
-#include <string>
-#include <armadillo>
-#include <vector>
+//#include <string>
+//#include <armadillo>
+//#include <vector>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -34,7 +37,8 @@ using boost::shared_ptr;
 using namespace maths::armadillo;
 using namespace maths::constants;
 using namespace utils;
-using std::string;
+using namespace utils::stds;
+
 /*
  * Device geometry:
  *
@@ -336,30 +340,16 @@ public:
     
     // Density operator
     cxmat nop(uint N = 1);
-
-    // Correlation function
-    cxmat Gniop(uint ib, uint N = 1);
     
     // Density of states
     cxmat DOSop(uint N = 1);
     
     // Spectral function
-    cxmat Aop(uint ib = 1, uint N = 1);
+    cxmat Aop(uint N = 1, uint ib = 1);
     
-    // Generic current operator
-    cxmat Iop(uint ib = 0, uint N = 1);
+    cxmat Iop(uint N = 1, uint ib = 0, uint jb = 0); //!< Generic current operators: current from block i to block j.
     
-    // Current between injected from block i to block i+1
-    cxmat Iiop(uint ib, uint N = 1);
-    
-    // Current injected from device to the right terminal
-    cxmat INop(uint N = 1);
-    
-    // Current injected from left terminal to the device.
-    cxmat I0op(uint N = 1);
-    
-    // Transmission operator
-    cxmat TEop(uint N = 1);
+    cxmat TEop(uint N = 1); //!< Transmission operator
     
     
 protected:
@@ -372,6 +362,13 @@ protected:
     inline const cxmat&   SigRNN();
     inline const cxmat&   GamL11();
     inline const cxmat&   GamRNN();
+    
+    inline cxmat Iijop(uint N, uint ib, uint jb); //!< Current from block i to block j.
+    inline cxmat INop(uint N); //!< Current injected from terminal # N to device.
+    inline cxmat I0op(uint N); //!< Current injected from terminal # 0 to device.
+
+    inline cxmat Gn(uint ib, uint jb); //!< Correlation function.
+    inline const cxmat& G(uint ib, uint jb); //!< Retarded green function.
         
 private:
     CohRgfa();

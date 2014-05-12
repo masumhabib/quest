@@ -30,28 +30,26 @@ void NegfEloop::preCompute(int il){
 };
 
 void NegfEloop::compute(int il){
-    negf_result r;                       // pair of energy and result
-    r.first = mE(il);                   // first => energy
+    negf_result r;                       // result as a function of energy
+    r.E = mE(il);                  
     // Transmission
     if(mTE.isEnabled()){
-        r.second = mnegf->TEop(mTE.N);  // second => T(E)
+        r.M = mnegf->TEop(mTE.N);  // M => T(E)
         mThisTE.push_back(r);  
     }
     // Current
-    map<uint, vec_result>::iterator it;  // map of block # and vector of negf result
-    for (it = mThisIop.begin(); it != mThisIop.end(); ++it){
-        uint ib = it->first;
-        r.second = mnegf->Iop(ib, mIop[ib].N); // r.second => Iop (E)
-        it->second.push_back(r);           // it->second => vector of Iop()
+    for (int it = 0; it < mIop.size(); ++it){
+        r.M = mnegf->Iop(mIop[it].N,  mIop[it].ib, mIop[it].jb); 
+        mThisIop[it].push_back(r);           // ThisIop[it] => vector of Iop()
     }
     // Density of States
     if(mDOS.isEnabled()){
-        r.second = mnegf->DOSop(mDOS.N);  // second => DOS(E)
+        r.M = mnegf->DOSop(mDOS.N);  // M => DOS(E)
         mThisDOS.push_back(r);  
     }
     // Electron density
     if(mn.isEnabled()){
-        r.second = mnegf->nop(mn.N);  // second => n(E)
+        r.M = mnegf->nop(mn.N);  // M => n(E)
         mThisn.push_back(r);  
     }
 
@@ -73,10 +71,8 @@ void NegfEloop::collect(){
     }
 
     // Gather current
-    map<uint, vec_result>::iterator it;  // first => block #, second => vecresult.
-    for (it = mThisIop.begin(); it != mThisIop.end(); ++it){
-        uint ib = it->first;
-        gather(it->second, mIop[ib]);
+    for (int it = 0; it < mIop.size(); ++it){
+        gather(mThisIop[it], mIop[it]);
     }
 
     // Gather Density of States
@@ -133,9 +129,8 @@ void NegfEloop::save(string fileName){
         }
         
         // Current
-        map<uint, NegfResultList>::iterator it;  // first => block #, second => NegfResultList.
-        for (it = mIop.begin(); it != mIop.end(); ++it){
-            it->second.save(out);
+        for (int it = 0; it < mIop.size(); ++it){
+            mIop[it].save(out);
         }
 
         // Density of States
@@ -156,11 +151,11 @@ void NegfEloop::enableTE(uint N){
     mTE.N = N;
 }
 
-void NegfEloop::enableI(uint ib, uint N){
+void NegfEloop::enableI(uint N, uint ib, uint jb){
     stringstream out;
-    out << "CURRENT" << ib;
-    mIop[ib] = NegfResultList(out.str(), N);
-    mThisIop[ib] = vec_result();
+    out << "CURRENT";
+    mIop.push_back(NegfResultList(out.str(), N, ib, jb));
+    mThisIop.push_back(vec_result());
 }
 
 void NegfEloop::enableDOS(uint N){

@@ -43,7 +43,7 @@ public:
               bool isAscii = true);
     
     void            enableTE(uint N = 1);   
-    void            enableI(uint ib = 0, uint N = 1);
+    void            enableI(uint N = 1, uint ib = 0, uint jb = 0);
     void            enableDOS(uint N = 1);
     void            enablen(uint N = 1);
     
@@ -69,8 +69,8 @@ protected:
     NegfResultList        mTE;          //!< Transmission list for all processes
 
     // Iop, Current operator for block # i.
-    map<uint, vec_result>  mThisIop;    //!< For local process.
-    map<uint, NegfResultList> mIop;     //!< Collection of all processes.
+    vector<vec_result>  mThisIop;       //!< For local process.
+    vector<NegfResultList> mIop;        //!< Collection of all processes.
     
     // DOSop: Density of States operator
     vec_result            mThisDOS;     //!< DOS list for local process
