@@ -1,6 +1,6 @@
 """
     Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
-    Last update: 02/12/2014
+    Last update: 05/12/2014
 """ 
 from _hamiltonian import HamiltonianParams
 from _hamiltonian import Hamiltonian
@@ -34,19 +34,10 @@ def _TISurfKpParamsInit(self):
     
 TISurfKpParams.__init__ = _TISurfKpParamsInit
 
-_TISurfKpParamsOrgUpdate =  TISurfKpParams.update
-def _TISurfKpParamsUpdate(self):
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
-    _TISurfKpParamsOrgUpdate(self)
-    
-TISurfKpParams.update = _TISurfKpParamsUpdate
-
 
 # TI surface k.p pickle support
 def _TISurfKpParamsSetState(self, dct):
     self.__dict__.update(dct)
-#    self.update()
     
 TISurfKpParams.__setstate__ = _TISurfKpParamsSetState
 
@@ -74,7 +65,6 @@ TISurfKpParams4.__init__ = _TISurfKpParams4Init
 # TI surface k.p pickle support
 def _TISurfKpParams4SetState(self, dct):
     self.__dict__.update(dct)
-#    self.update()
     
 TISurfKpParams4.__setstate__ = _TISurfKpParams4SetState
 
@@ -98,18 +88,9 @@ def _GrapheneKpParamsInit(self):
     
 GrapheneKpParams.__init__ = _GrapheneKpParamsInit
 
-_GrapheneKpParamsOrgUpdate =  GrapheneKpParams.update
-def _GrapheneKpParamsUpdate(self):
-    self.Rx     = self.ax*self.K    
-    self.Ry     = self.ay*self.K
-    _GrapheneKpParamsOrgUpdate(self)
-    
-GrapheneKpParams.update = _GrapheneKpParamsUpdate
-
 # Graphene k.p pickle support
 def _GrapheneKpParamsSetState(self, dct):
     self.__dict__.update(dct)
-#    self.update()
     
 GrapheneKpParams.__setstate__ = _GrapheneKpParamsSetState
 
@@ -142,7 +123,6 @@ GrapheneTbParams.__init__ = _GrapheneTbParamsInit
 # Graphene tight binding pickle support
 def _GrapheneTbParamsSetState(self, dct):
     self.__dict__.update(dct)
-#    self.update()
     
 GrapheneTbParams.__setstate__ = _GrapheneTbParamsSetState
 

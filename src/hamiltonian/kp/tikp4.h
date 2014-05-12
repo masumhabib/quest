@@ -58,7 +58,31 @@ public:
         mTitle = "Topological Insulator surface k.p parameters with four spins";   
         mI = eye<cxmat>(4,4); 
     }
+    double a(){return ma; }
+    void   a(double newa ){ ma = newa; update(); }
+    double C(){return mC; }
+    void   C(double newC ){ mC = newC; update(); }
+    double A2(){return mA2; }
+    void   A2(double newA2 ){ mA2 = newA2; update(); }
+    double K(){return mK; }
+    void   K(double newK ){ mK = newK; update(); }
     
+    virtual string toString() const { 
+        stringstream ss;
+        ss << HamParams::toString() << ":" << endl;
+        ss << mPrefix << " dtol = " << mdtol << endl;
+        ss << mPrefix << " a    = " << ma << endl;
+        ss << mPrefix << " K    = " << mK << endl;
+        ss << mPrefix << " C    = " << mC << endl;
+        ss << mPrefix << " A2   = " << mA2 << endl;
+        ss << mPrefix << " eps: " << endl << meps;
+        ss << mPrefix << " t01x: " << endl << mt01x;
+        ss << mPrefix << " t01y: " << endl << mt01y;
+
+        return ss.str(); 
+    };
+    
+protected:
     // Updates internal tight binding parameters calculated using 
     // k.p model. Call it after changing any of the k.p parameters.
     virtual void update(){
@@ -93,31 +117,7 @@ public:
         mt01y(span(0,1), span(0,1)) = tmp1;
         mt01y(span(2,3), span(2,3)) = tmp2;
         mt10y = trans(mt01y);
-    }
-
-    double a(){return ma; }
-    void   a(double newa ){ ma = newa; update(); }
-    double C(){return mC; }
-    void   C(double newC ){ mC = newC; update(); }
-    double A2(){return mA2; }
-    void   A2(double newA2 ){ mA2 = newA2; update(); }
-    double K(){return mK; }
-    void   K(double newK ){ mK = newK; update(); }
-    
-    virtual string toString() const { 
-        stringstream ss;
-        ss << HamParams::toString() << ":" << endl;
-        ss << mPrefix << " dtol = " << mdtol << endl;
-        ss << mPrefix << " a    = " << ma << endl;
-        ss << mPrefix << " K    = " << mK << endl;
-        ss << mPrefix << " C    = " << mC << endl;
-        ss << mPrefix << " A2   = " << mA2 << endl;
-        ss << mPrefix << " eps: " << endl << meps;
-        ss << mPrefix << " t01x: " << endl << mt01x;
-        ss << mPrefix << " t01y: " << endl << mt01y;
-
-        return ss.str(); 
-    };
+    }    
 };
 
 /** 
