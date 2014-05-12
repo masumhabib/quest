@@ -2,7 +2,7 @@
     Qunantum Transport simulator using QMICAD.
     Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
 
-    Last update: 04/14/2014
+    Last update: 05/12/2014
 """
 
 import os
@@ -279,12 +279,10 @@ class Transport(object):
         """ Generates hamiltonian and overlap matrices. """
         # Create Hamiltonian generator
         if (self.HamType == self.HAM_TI_SURF_KP):
-            self.hp.update()
             self.ham = TISurfKpHam(self.hp)   
         if (self.HamType == self.HAM_TI_SURF_KP4):
             self.ham = TISurfKpHam4(self.hp)               
         if (self.HamType == self.HAM_GRAPHENE_KP):
-            self.hp.update()
             self.ham = GrapheneKpHam(self.hp)   
 
         # For uniform RGF blocks

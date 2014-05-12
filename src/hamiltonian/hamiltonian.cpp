@@ -29,7 +29,6 @@ void export_HamParams(){
     class_<HamParams, bases<Printable>, shared_ptr<HamParams> >("HamiltonianParams", 
             init<const string&>())
         .add_property("dtol", HamParams_getdtol, HamParams_setdtol)
-        .def("update", &HamParams::update)
     ;
 }
 

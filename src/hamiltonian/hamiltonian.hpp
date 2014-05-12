@@ -43,12 +43,11 @@ public:
     
     void dtol(double v){ mdtol = v; update(); }
     double dtol(){ return mdtol; }
-    
+            
+protected:
     // Updates internal parameters. Call it after changing any of the 
     // public parameters.
     virtual void update(){}; 
-        
-protected:
 
 };
 

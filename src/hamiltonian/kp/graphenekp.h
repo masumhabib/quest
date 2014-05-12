@@ -55,22 +55,7 @@ public:
         // default parameters          
         mI = eye<cxmat>(2,2);    
     }
-    
-    // Updates internal tight binding parameters calculated using 
-    // k.p model. Call it after changing any of the k.p parameters.
-    virtual void update(){
-        if(!(is_finite(mdtol) && is_finite(mgamma) && is_finite(ma) 
-                && is_finite(mK))){
-            throw runtime_error("TISufrParams: invalid TI parameters.");    
-        }
-        double Kx = mK, Ky = mK, ax = ma, ay = ma;
-        meps = -mgamma*(Kx/ax + Ky/ay)*sz();
-        mt01x = (mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
-        mt10x = trans(mt01x);
-        mt01y = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
-        mt10y = trans(mt01y);                
-    }
-    
+        
     double a(){return ma; }
     void   a(double newa ){ ma = newa; update(); }
     double gamma(){return mgamma; }
@@ -91,7 +76,23 @@ public:
         ss << mPrefix << " t01y: " << endl << mt01y;
 
         return ss.str(); 
-    };  
+    };
+    
+protected:
+    // Updates internal tight binding parameters calculated using 
+    // k.p model. Call it after changing any of the k.p parameters.
+    virtual void update(){
+        if(!(is_finite(mdtol) && is_finite(mgamma) && is_finite(ma) 
+                && is_finite(mK))){
+            throw runtime_error("TISufrParams: invalid TI parameters.");    
+        }
+        double Kx = mK, Ky = mK, ax = ma, ay = ma;
+        meps = -mgamma*(Kx/ax + Ky/ay)*sz();
+        mt01x = (mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
+        mt10x = trans(mt01x);
+        mt01y = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+        mt10y = trans(mt01y);                
+    }    
 };
 
 /** 
