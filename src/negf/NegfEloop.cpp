@@ -179,7 +179,7 @@ namespace python{
 using namespace negf;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableTE, enableTE, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI, enableI, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI, enableI, 0, 3)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableDOS, enableDOS, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enablen, enablen, 0, 1)
 void export_NegfEloop(){

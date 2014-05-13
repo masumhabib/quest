@@ -13,6 +13,7 @@
 #include "../utils/Printable.hpp"
 #include "../utils/myenums.hpp"
 #include "../utils/std.hpp"
+#include "../utils/vout.h"
 #include "../string/stringutils.h"
 #include "../maths/constants.h"
 #include "../maths/trace.hpp"

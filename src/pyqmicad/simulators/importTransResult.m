@@ -4,13 +4,14 @@
 function out = importTransResult(fileName)
     fid = fopen(fileName, 'rt');
     out = [];
+    ibIE = 1;
     while (~feof(fid))
         type = fscanf(fid, '%s[^\n]');
         if strfind(type, 'TRANSMISSION') == 1
             out.TE = scan();
         elseif strfind(type, 'CURRENT') == 1
-            ib = sscanf(type, 'CURRENT%d');
-            out.IE{ib+1} = scan();
+            out.IE{ibIE} = scan();
+            ibIE = ibIE + 1;
         elseif strfind(type, 'DOS') == 1
             out.DOS = scan();
         elseif strfind(type, 'n') == 1
@@ -22,7 +23,11 @@ function out = importTransResult(fileName)
     
     function M = scan()
         NE = fscanf(fid, '%d[^\n]');
+        M.NE = NE;
+        tmp = fscanf(fid, '%d %d[^\n]');
+        M.ib = tmp(1); M.jb = tmp(2);
         N = fscanf(fid, '%d[^\n]');
+        M.N = N;
         for iE = 1:NE
             M.E(iE) = fscanf(fid, '%f[^\n]');
             M.M{iE} = zeros(N,N);

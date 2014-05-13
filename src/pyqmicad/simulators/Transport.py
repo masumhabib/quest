@@ -433,8 +433,8 @@ class Transport(object):
                 Eloop.enableTE(value)
             # current
             if (type == "I"):
-                for ib, N in self.Calculations["I"].iteritems():
-                    Eloop.enableI(ib, N)
+                for I in self.Calculations["I"]:
+                    Eloop.enableI(I["N"], I["From"], I["To"])
             if (type == "DOS"):
                 Eloop.enableDOS(value)
             if (type == "n"):
@@ -520,6 +520,14 @@ class Transport(object):
     def nstr(self):
         msg = "\n Transport simulation parameters:"
         
+        msg += "\n  Device geometry:"
+        msg += "\n  ---------------------------------------------"
+        msg += "\n  ... |-1 | 0 | 1 |   ...  | " + str(self.np.nb-2) + " | " + str(self.np.nb-1) + " | " + str(self.np.nb) + " | ..."
+        msg += "\n  ---------------------------------------------"
+        msg += "\n            ^  <-------^------->  ^"
+        msg += "\n          left       Device     right"
+        msg += "\n        contact                contact"
+        
         # Bias information
         msg += "\n Bias: "
         msg += "\n  VDD: min " + str(min(self.VDD)) + ", max " + str(max(self.VDD)) 
@@ -553,8 +561,10 @@ class Transport(object):
             if (type == "TE"):
                 msg += "  Transmission.\n"
             if (type == "I"):
-                for ib, N in self.Calculations["I"].iteritems():
-                    msg += "  Current at block #" + str(ib) + ".\n"
+                for I in self.Calculations["I"]:
+                    msg += "  Current from block # " + str(I["From"])
+                    msg += " to block # " + str(I["To"]) 
+                    msg += " (" + str(I["N"]) + ").\n"
         msg += "  Save output at: " + self.OutPath + self.OutFileName + "*\n"
                     
         # End of info section

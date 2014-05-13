@@ -25,8 +25,8 @@ void NegfResultList::merge(NegfResultList &second){
 
 void NegfResultList::save(ostream &out){
     out << tag << endl;
-    out << ib << " " << jb << endl;
     out << R.size() << endl;
+    out << ib << " " << jb << endl;
     out << N << endl;
     iter it;
     for (it = R.begin(); it != R.end(); ++it){

@@ -82,15 +82,7 @@ cxmat CohRgfa::Aop(uint N, uint ib){
  * -----------------------------------------------------------------------------
  */
 cxmat CohRgfa::Iop(uint N, uint ib, uint jb){
-    
-    if(abs(int(ib) - int (jb)) > 1 || ib < miLc || jb < miLc || ib > miRc || jb > miRc){
-        stringstream error;
-        error << "ERROR: Iop(i, j) only works for |i-j| <= 1 and  0<= i,j <= N+1."
-              << endl << "\nBut we've got, i = " << ib << ", j = " << jb 
-              << " and N = " << mN << ".";
-        throw invalid_argument(error.str());
-    }
-    
+        
     if (ib == miLc && jb == miLc + 1){
         // current from contact 0 to device.
         return I0op(N);
@@ -103,8 +95,14 @@ cxmat CohRgfa::Iop(uint N, uint ib, uint jb){
     } else if (ib == miRc-1 && jb == miRc){
         // current from device to contact N.
         return -INop(N);
-    } else{
-        return Iijop(ib, jb, N);
+    } else if (abs(int(ib) - int (jb)) <= 1 && ib > miLc && ib < miRc && jb > miLc && jb < miRc) {
+        return Iijop(N, ib, jb);
+    }else{
+        stringstream error;
+        error << "ERROR: Iop(i, j) only works for |i-j| <= 1 and  0<= i,j <= N+1."
+              << endl << "But we've got, i = " << ib << ", j = " << jb 
+              << " and N = " << N << ".";
+        throw invalid_argument(error.str());        
     }
 }
 
@@ -117,8 +115,16 @@ inline cxmat CohRgfa::Iijop(uint N, uint ib, uint jb){
     cxmat &Gnij = Iijop;
     
     Gnij = Gn(ib, jb);
-    //I_i,j = H_i,j*Gn_j,i - Gn_i,j*H_j,i; Gn_i,j = Gn_j,i.
-    Iijop = trans(mTl(ib))*Gnij - Gnij*mTl(ib);
+    //I_i,j = H_i,j*Gn_j,i - Gn_i,j*H_j,i; 
+    if (ib < jb){
+        //I_i,i+1 = H_i,i+1*Gn_i+1,i - Gn_i,i+1*H_i+1,i
+        Iijop = trans(mTl(jb))*trans(Gnij) - Gnij*mTl(jb);
+    }else if (ib > jb){
+        //I_i+1,i = H_i+1,i*Gn_i,i+1 - Gn_i+1,i*H_i,i+1
+        Iijop = mTl(ib)*trans(Gnij) - Gnij*trans(mTl(ib));
+    }else{
+        Iijop = mDi(ib)*Gnij - Gnij*mDi(ib);
+    }
 
     
 //    if (ib + 1 == jb){
@@ -161,7 +167,7 @@ inline cxmat CohRgfa::INop(uint N){
     const cxmat &GamrNN = GamRNN();
     const cxmat &GNN = mGii(mN);            // Get or caluclate G_N,N
     cxmat GNNa = trans(GNN);
-     
+    
     // Density matrix: Gn11 = G^n_1,1
     // G^n_1,1 = Al_1,1*(f1-fN) + [A_1,1]*fN
     // Al_1,1 = G_1,1*gamma_1,1*G1,1'
