@@ -65,6 +65,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/utils/Printable.o \
 	${OBJECTDIR}/src/utils/Timer.o \
 	${OBJECTDIR}/src/utils/myenums.o \
+	${OBJECTDIR}/src/utils/property.o \
 	${OBJECTDIR}/src/utils/vout.o
 
 
@@ -241,6 +242,11 @@ ${OBJECTDIR}/src/utils/myenums.o: src/utils/myenums.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/utils
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DVERSION=\"${GIT_VERSION}\" -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/myenums.o src/utils/myenums.cpp
+
+${OBJECTDIR}/src/utils/property.o: src/utils/property.cpp 
+	${MKDIR} -p ${OBJECTDIR}/src/utils
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DVERSION=\"${GIT_VERSION}\" -I/usr/include/python2.6 -I/home/kh8hk/usr/include -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/utils/property.o src/utils/property.cpp
 
 ${OBJECTDIR}/src/utils/vout.o: src/utils/vout.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src/utils

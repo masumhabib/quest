@@ -135,6 +135,8 @@
         <itemPath>src/utils/Timer.h</itemPath>
         <itemPath>src/utils/myenums.cpp</itemPath>
         <itemPath>src/utils/myenums.hpp</itemPath>
+        <itemPath>src/utils/property.cpp</itemPath>
+        <itemPath>src/utils/property.hpp</itemPath>
         <itemPath>src/utils/serialize.hpp</itemPath>
         <itemPath>src/utils/std.hpp</itemPath>
         <itemPath>src/utils/vout.cpp</itemPath>
@@ -396,6 +398,10 @@
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/utils/property.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/property.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/std.hpp" ex="false" tool="3" flavor2="0">
@@ -643,6 +649,10 @@
       <item path="src/utils/myenums.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/utils/myenums.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/utils/property.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/utils/property.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/utils/serialize.hpp" ex="false" tool="3" flavor2="0">
       </item>
