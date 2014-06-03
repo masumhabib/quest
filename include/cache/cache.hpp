@@ -10,8 +10,8 @@
 
 #include <armadillo>
 #include <stdexcept>
-#include "../maths/constants.h"
-#include "../utils/myenums.hpp"
+#include "maths/constants.h"
+#include "utils/myenums.hpp"
 
 namespace utils{
 using std::out_of_range;

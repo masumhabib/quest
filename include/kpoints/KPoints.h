@@ -8,12 +8,12 @@
 #ifndef KPOINTS_H
 #define	KPOINTS_H
 
-#include "../maths/arma.hpp"
-#include "../maths/svec.h"
-#include "../maths/geometry.hpp"
-#include "../utils/NullDeleter.hpp"
-#include "../utils/vout.h"
-#include "../utils/Printable.hpp"
+#include "maths/arma.hpp"
+#include "maths/svec.h"
+#include "maths/geometry.hpp"
+#include "utils/NullDeleter.hpp"
+#include "utils/vout.h"
+#include "utils/Printable.hpp"
 
 #include <boost/shared_ptr.hpp>
 

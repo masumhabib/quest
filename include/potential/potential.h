@@ -8,13 +8,13 @@
 #ifndef POTENTIAL_H
 #define	POTENTIAL_H
 
-#include "terminal.h"
+#include "potential/terminal.h"
 
-#include "../string/stringutils.h"
-#include "../maths/geometry.hpp"
-#include "../maths/svec.h"
-#include "../atoms/AtomicStruct.h"
-#include "../utils/std.hpp"
+#include "string/stringutils.h"
+#include "maths/geometry.hpp"
+#include "maths/svec.h"
+#include "atoms/AtomicStruct.h"
+#include "utils/std.hpp"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>

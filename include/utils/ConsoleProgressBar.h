@@ -8,7 +8,7 @@
 #ifndef CONSOLEPROGRESSBAR_H
 #define	CONSOLEPROGRESSBAR_H
 
-#include "vout.h"
+#include "utils/vout.h"
 
 #include <iostream>
 #include <string>

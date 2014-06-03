@@ -8,15 +8,15 @@
 #ifndef NEGFELOOP_H
 #define	NEGFELOOP_H
 
-#include "CohRgfa.h"
-#include "NegfResult.h"
+#include "negf/CohRgfa.h"
+#include "negf/NegfResult.h"
 
-#include "../utils/ConsoleProgressBar.h"
-#include "../utils/std.hpp"
-#include "../utils/vout.h"
-#include "../utils/serialize.hpp"
-#include "../maths/fermi.hpp"
-#include "../parallel/parloop.h"
+#include "utils/ConsoleProgressBar.h"
+#include "utils/std.hpp"
+#include "utils/vout.h"
+#include "utils/serialize.hpp"
+#include "maths/fermi.hpp"
+#include "parallel/parloop.h"
 
 
 #include <boost/mpi.hpp>

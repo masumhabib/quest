@@ -12,11 +12,10 @@
 
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
-#include <armadillo>
 
-#include "../../maths/arma.hpp"
-#include "../../atoms/AtomicStruct.h"
-#include "../hamiltonian.hpp"
+#include "maths/arma.hpp"
+#include "atoms/AtomicStruct.h"
+#include "hamiltonian/hamiltonian.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

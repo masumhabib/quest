@@ -9,8 +9,8 @@
  * 
  */
 
-#include "AtomicStruct.h"
-#include "../python/boostpython.hpp"
+#include "atoms/AtomicStruct.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace atoms{

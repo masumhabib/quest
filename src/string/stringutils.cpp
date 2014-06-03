@@ -8,7 +8,7 @@
  * 
  */
 
-#include "stringutils.h"
+#include "string/stringutils.h"
 
 /**
  * trim:

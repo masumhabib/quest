@@ -13,8 +13,8 @@
 #define	TEMINAL_H
 
 #include <vector>
-#include "../utils/Printable.hpp"
-#include "../maths/geometry.hpp"
+#include "utils/Printable.hpp"
+#include "maths/geometry.hpp"
 
 namespace qmicad{
 namespace potential{

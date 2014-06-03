@@ -11,20 +11,20 @@
 #ifndef BANDSTRUCT_H
 #define	BANDSTRUCT_H
 
-#include "../parallel/parloop.h"
+#include "parallel/parloop.h"
 
-#include "../utils/ConsoleProgressBar.h"
-#include "../utils/Printable.hpp"
-#include "../utils/myenums.hpp"
-#include "../utils/NullDeleter.hpp"
+#include "utils/ConsoleProgressBar.h"
+#include "utils/Printable.hpp"
+#include "utils/myenums.hpp"
+#include "utils/NullDeleter.hpp"
 
-#include "../grid/grid.hpp"
-#include "../string/stringutils.h"
-#include "../maths/constants.h"
-#include "../maths/svec.h"
-#include "../maths/arma.hpp"
+#include "grid/grid.hpp"
+#include "string/stringutils.h"
+#include "maths/constants.h"
+#include "maths/svec.h"
+#include "maths/arma.hpp"
 
-#include "../atoms/Lattice.h"
+#include "atoms/Lattice.h"
 
 #include <boost/smart_ptr.hpp>
 

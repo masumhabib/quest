@@ -5,8 +5,8 @@
  * Created on February 16, 2014, 6:04 PM
  */
 
-#include "Workers.h"
-#include "../python/boostpython.hpp"
+#include "parallel/Workers.h"
+#include "python/boostpython.hpp"
 
 
 namespace qmicad{

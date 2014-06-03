@@ -8,8 +8,8 @@
 #ifndef PARFOR_H
 #define	PARFOR_H
 
-#include "../grid/grid.hpp"
-#include "../utils/vout.h"
+#include "grid/grid.hpp"
+#include "utils/vout.h"
 #include "Workers.h"
 
 

@@ -10,10 +10,10 @@
 
 #include <armadillo>
 
-#include "../../maths/constants.h"
-#include "../../atoms/AtomicStruct.h"
-#include "../../utils/Printable.hpp"
-#include "../hamiltonian.hpp"
+#include "maths/constants.h"
+#include "atoms/AtomicStruct.h"
+#include "utils/Printable.hpp"
+#include "hamiltonian/hamiltonian.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

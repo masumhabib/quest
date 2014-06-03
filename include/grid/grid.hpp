@@ -8,8 +8,8 @@
 #ifndef GRID_HPP
 #define	GRID_HPP
 
-#include "../utils/Printable.hpp"
-#include "../maths/svec.h"
+#include "utils/Printable.hpp"
+#include "maths/svec.h"
 #include <armadillo>
 #include <iostream>
 

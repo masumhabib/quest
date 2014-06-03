@@ -5,7 +5,7 @@
  * Created on January 27, 2014, 4:02 PM
  */
 
-#include "terminal.h"
+#include "potential/terminal.h"
 
 namespace qmicad{
 namespace potential{

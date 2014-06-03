@@ -5,8 +5,8 @@
  * Created on January 27, 2014, 5:19 PM
  */
 
-#include "linearPot.h"
-#include "../python/boostpython.hpp"
+#include "potential/linearPot.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace potential{

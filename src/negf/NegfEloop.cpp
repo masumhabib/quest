@@ -5,9 +5,9 @@
  * Created on January 28, 2014, 7:20 PM
  */
 
-#include "NegfEloop.h"
-#include "NegfResult.h"
-#include "../python/boostpython.hpp"
+#include "negf/NegfEloop.h"
+#include "negf/NegfResult.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace negf{

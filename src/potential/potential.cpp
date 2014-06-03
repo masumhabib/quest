@@ -5,8 +5,8 @@
  * Created on January 27, 2014, 3:47 PM
  */
 
-#include "potential.h"
-#include "../python/boostpython.hpp"
+#include "potential/potential.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace potential{

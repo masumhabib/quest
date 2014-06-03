@@ -8,7 +8,7 @@
 #ifndef FERMI_HPP
 #define	FERMI_HPP
 
-#include <armadillo>
+#include "maths/arma.hpp"
 using arma::exp;
 
 template<typename T>

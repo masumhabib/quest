@@ -17,10 +17,10 @@
 #ifndef LINEARPOT_H
 #define	LINEARPOT_H
 
-#include "terminal.h"
-#include "potential.h"
-#include "../string/stringutils.h"
-#include "../utils/vout.h"
+#include "potential/terminal.h"
+#include "potential/potential.h"
+#include "string/stringutils.h"
+#include "utils/vout.h"
 
 #include <vector>
 #include <boost/geometry.hpp>

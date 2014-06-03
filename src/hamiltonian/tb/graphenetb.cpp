@@ -7,8 +7,8 @@
  * Tight binding parameters for graphene.
  */
 
-#include "graphenetb.h"
-#include "../../python/boostpython.hpp"
+#include "hamiltonian/tb/graphenetb.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

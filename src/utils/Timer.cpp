@@ -5,9 +5,9 @@
  * Created on February 11, 2014, 12:43 AM
  */
 
-#include "Timer.h"
-#include "../maths/geometry.hpp"
-#include "../python/boostpython.hpp"
+#include "utils/Timer.h"
+#include "maths/geometry.hpp"
+#include "python/boostpython.hpp"
 
 
 namespace qmicad{

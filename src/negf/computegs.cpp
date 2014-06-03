@@ -5,7 +5,7 @@
  * Created on January 22, 2014, 10:42 AM
  */
 
-#include "computegs.h"
+#include "negf/computegs.h"
 
 namespace qmicad{
 namespace negf{    

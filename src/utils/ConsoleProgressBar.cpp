@@ -5,7 +5,7 @@
  * Created on April 8, 2013, 11:35 AM
  */
 
-#include "ConsoleProgressBar.h"    
+#include "utils/ConsoleProgressBar.h"    
 
 namespace utils{
     

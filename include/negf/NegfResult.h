@@ -8,9 +8,9 @@
 #ifndef NEGFRESULT_H
 #define	NEGFRESULT_H
 
-#include "../maths/arma.hpp"
-#include "../utils/std.hpp"
-#include "../utils/serialize.hpp"
+#include "maths/arma.hpp"
+#include "utils/std.hpp"
+#include "utils/serialize.hpp"
 
 namespace qmicad{
 namespace negf{

@@ -5,8 +5,8 @@
  * Created on April 6, 2013, 9:25 AM
  */
 
-#include "BandStruct.h"
-#include "../python/boostpython.hpp"
+#include "band/BandStruct.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace band{

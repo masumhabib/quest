@@ -11,7 +11,7 @@
 #ifndef TRACE_HPP
 #define	TRACE_HPP
 
-#include "arma.hpp"
+#include "maths/arma.hpp"
 #include <stdexcept>
 
 using namespace maths::armadillo;

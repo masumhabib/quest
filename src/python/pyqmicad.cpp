@@ -8,9 +8,9 @@
  * 
  */
 
-#include "pyqmicad.h"
-#include "../python/boostpython.hpp"
-#include "../qmicad/qmicad.hpp"
+#include "python/pyqmicad.h"
+#include "python/boostpython.hpp"
+#include "qmicad.hpp"
 
 
 

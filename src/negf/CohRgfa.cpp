@@ -5,8 +5,8 @@
  * Created on April 22, 2013, 8:05 PM
  */
 
-#include "CohRgfa.h"
-#include "../python/boostpython.hpp"
+#include "negf/CohRgfa.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace negf{

@@ -8,18 +8,18 @@
 #ifndef COHRGFA_H
 #define	COHRGFA_H
 
-#include "computegs.h"
+#include "negf/computegs.h"
 
-#include "../utils/Printable.hpp"
-#include "../utils/myenums.hpp"
-#include "../utils/std.hpp"
-#include "../utils/vout.h"
-#include "../string/stringutils.h"
-#include "../maths/constants.h"
-#include "../maths/trace.hpp"
-#include "../maths/fermi.hpp"
-#include "../maths/arma.hpp"
-#include "../cache/cache.hpp"
+#include "utils/Printable.hpp"
+#include "utils/myenums.hpp"
+#include "utils/std.hpp"
+#include "utils/vout.h"
+#include "string/stringutils.h"
+#include "maths/constants.h"
+#include "maths/trace.hpp"
+#include "maths/fermi.hpp"
+#include "maths/arma.hpp"
+#include "cache/cache.hpp"
 
 
 #include <boost/smart_ptr.hpp>

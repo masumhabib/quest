@@ -12,7 +12,7 @@
 #ifndef SERIALIZE_HPP
 #define	SERIALIZE_HPP
 
-#include "../maths/svec.h"
+#include "maths/svec.h"
 
 #include <string>
 #include <sstream>

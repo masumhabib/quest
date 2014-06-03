@@ -11,10 +11,10 @@
 #ifndef LATTICE_H
 #define	LATTICE_H
 
-#include "../maths/svec.h"
-#include "../utils/std.hpp"
-#include "../utils/serialize.hpp"
-#include "../utils/Printable.hpp"
+#include "maths/svec.h"
+#include "utils/std.hpp"
+#include "utils/serialize.hpp"
+#include "utils/Printable.hpp"
 
 namespace qmicad{
 namespace atoms{

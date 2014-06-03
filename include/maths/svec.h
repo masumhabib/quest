@@ -11,7 +11,7 @@
 #ifndef SVECT_H
 #define	SVECT_H
 
-#include "arma.hpp"
+#include "maths/arma.hpp"
 
 
 namespace maths{

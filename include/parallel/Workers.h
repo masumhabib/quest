@@ -8,7 +8,7 @@
 #ifndef WORKERS_H
 #define	WORKERS_H
 
-#include "../utils/vout.h"
+#include "utils/vout.h"
 #include <boost/mpi.hpp>
 
 namespace utils{

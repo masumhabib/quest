@@ -11,7 +11,7 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
-#include "arma.hpp"
+#include "maths/arma.hpp"
 
 namespace maths{
 namespace constants{

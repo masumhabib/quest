@@ -5,7 +5,7 @@
  * Created on February 13, 2014, 3:41 PM
  */
 
-#include "NegfResult.h"
+#include "negf/NegfResult.h"
 
 namespace qmicad{
 namespace negf{

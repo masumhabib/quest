@@ -12,8 +12,8 @@
 #ifndef PRINTABLE_H
 #define	PRINTABLE_H
 
-#include "std.hpp"
-#include "../utils/serialize.hpp"
+#include "utils/std.hpp"
+#include "utils/serialize.hpp"
 
 /**
  * Description: Printable class. All class that want to print itself

@@ -5,8 +5,8 @@
  * Created on January 25, 2014, 10:16 AM
  */
 
-#include "tikp.h"
-#include "../../python/boostpython.hpp"
+#include "hamiltonian/kp/tikp.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

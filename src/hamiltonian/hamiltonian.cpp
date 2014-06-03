@@ -8,8 +8,8 @@
  * 
  */
 
-#include "hamiltonian.hpp"
-#include "../python/boostpython.hpp"
+#include "hamiltonian/hamiltonian.hpp"
+#include "python/boostpython.hpp"
 
 /**
  * Python exporters.

@@ -8,8 +8,8 @@
 #ifndef COMPUTEGS_H
 #define	COMPUTEGS_H
 
-#include "../maths/arma.hpp"
-#include "../maths/constants.h"
+#include "maths/arma.hpp"
+#include "maths/constants.h"
 
 namespace qmicad{
 namespace negf{

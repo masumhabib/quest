@@ -5,8 +5,8 @@
  * Created on February 17, 2014, 12:21 AM
  */
 
-#include "KPoints.h"
-#include "../python/boostpython.hpp"
+#include "kpoints/KPoints.h"
+#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace kpoints{

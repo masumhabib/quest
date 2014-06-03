@@ -5,8 +5,8 @@
  * Created on March 9, 2014, 4:15 PM
  */
 
-#include "arma.hpp"
-#include "../python/boostpython.hpp"
+#include "maths/arma.hpp"
+#include "python/boostpython.hpp"
 
 
 /**

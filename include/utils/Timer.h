@@ -8,10 +8,10 @@
 #ifndef PYTIMER_H
 #define	PYTIMER_H
 
-#include "../maths/arma.hpp"
-#include "../utils/std.hpp"
-#include "../string/stringutils.h"
-#include "Printable.hpp"
+#include "maths/arma.hpp"
+#include "utils/std.hpp"
+#include "string/stringutils.h"
+#include "utils/Printable.hpp"
 
 namespace qmicad{
 namespace python{

@@ -5,8 +5,8 @@
  * Created on January 26, 2014, 10:08 AM
  */
 
-#include "grid.hpp"
-#include "../python/boostpython.hpp"
+#include "grid/grid.hpp"
+#include "python/boostpython.hpp"
 
 
 /**

@@ -8,8 +8,8 @@
 #ifndef GEOMETRY_HPP
 #define	GEOMETRY_HPP
 
-#include "../utils/std.hpp"
-#include "../utils/Printable.hpp"
+#include "utils/std.hpp"
+#include "utils/Printable.hpp"
 
 #include <python2.6/Python.h>
 #include <boost/python/module.hpp>

@@ -15,13 +15,13 @@
 
 #include "Lattice.h"
 
-#include "../python/boostpython.hpp"
-#include "../string/stringutils.h"
-#include "../grid/grid.hpp"
-#include "../utils/Printable.hpp"
-#include "../maths/svec.h"
-#include "../maths/arma.hpp"
-#include "../utils/serialize.hpp"
+#include "python/boostpython.hpp"
+#include "string/stringutils.h"
+#include "grid/grid.hpp"
+#include "utils/Printable.hpp"
+#include "maths/svec.h"
+#include "maths/arma.hpp"
+#include "utils/serialize.hpp"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
