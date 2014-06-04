@@ -11,13 +11,13 @@ import pickle as pk
 import numpy as np
 from   math import pi
 
-import qmicad
+#import qmicad
 from qmicad.atoms import AtomicStruct, LCoord
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.kpoints import KPoints
 from qmicad.band import BandStructParams, BandStruct
 from qmicad.utils import Timer, Workers, vprint, Point
-from qmicad.utils.vprint import nprint, dprint, eprint
+from qmicad._utils.vprint import nprint, dprint, eprint
 
 
 class Band(object):

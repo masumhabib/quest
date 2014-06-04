@@ -23,7 +23,6 @@ message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
 project(qmicad CXX)
 message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 
-
 # Options
 # -----------------------------------------------------------------------------
 set(CMAKE_VERBOSE_MAKEFILE      off)
@@ -44,6 +43,8 @@ endif()
 # Compiler flags
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # optimization
+
+
 # Libraries
 # -----------------------------------------------------------------------------
 # Armadillo
@@ -60,6 +61,9 @@ find_package(PythonLibs REQUIRED)
 
 # MKL
 find_package(MKL REQUIRED)
+
+# doxygen
+find_package(Doxygen)
 
 # Sources and headers
 # -----------------------------------------------------------------------------
@@ -97,18 +101,28 @@ target_link_libraries (qmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${MKL_LIBRARIES})
 
+# doxygen
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/qmicad.in.doxy ${CMAKE_CURRENT_BINARY_DIR}/doc/qmicad.doxy @ONLY)
+
+    add_custom_target(doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/qmicad.doxy
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif(DOXYGEN_FOUND)
+
 # Prepare python package
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND cp ${CMAKE_BINARY_DIR}/lib${PROJECT_NAME}.so ${QMICAD_DIST_DIR}/lib 
-    COMMAND cd ${QMICAD_DIST_DIR} && ln -sf lib/lib${PROJECT_NAME}.so _qmicad.so
-    COMMAND cd ${QMICAD_DIST_DIR}/atoms && ln -sf ../lib/lib${PROJECT_NAME}.so _atoms.so
-    COMMAND cd ${QMICAD_DIST_DIR}/band && ln -sf ../lib/lib${PROJECT_NAME}.so _band.so
-    COMMAND cd ${QMICAD_DIST_DIR}/hamiltonian && ln -sf ../lib/lib${PROJECT_NAME}.so _hamiltonian.so
-    COMMAND cd ${QMICAD_DIST_DIR}/kpoints && ln -sf ../lib/lib${PROJECT_NAME}.so _kpoints.so
-    COMMAND cd ${QMICAD_DIST_DIR}/negf && ln -sf ../lib/lib${PROJECT_NAME}.so _negf.so
-    COMMAND cd ${QMICAD_DIST_DIR}/potential && ln -sf ../lib/lib${PROJECT_NAME}.so _potential.so
-    COMMAND cd ${QMICAD_DIST_DIR}/utils && ln -sf ../lib/lib${PROJECT_NAME}.so _utils.so
+    COMMAND cd ${QMICAD_DIST_DIR} && ln -sf lib/lib${PROJECT_NAME}.so qmicad.so
+)
+
+add_custom_command(
+    TARGET doc  POST_BUILD
+    COMMAND mkdir -p ${QMICAD_DIST_DIR}/doc
+    COMMAND cp -rf ${CMAKE_BINARY_DIR}/doc/html/* ${QMICAD_DIST_DIR}/doc/ 
 )
 
 # installation

@@ -27,9 +27,19 @@ using namespace band;
 using namespace negf;
 using namespace maths::geometry;
 
+using namespace boost::python;
 
-BOOST_PYTHON_MODULE(_utils)
-{
+
+void export_utils(){
+
+    //map the utils namespace to a sub-module
+    // make "from qmicad.utils import <whatever>" work
+    object utilsModule(handle<>(borrowed(PyImport_AddModule("qmicad.utils"))));
+    // make "from qmicad import utils" work
+    scope().attr("utils") = utilsModule;
+    //set the current scope to the new sub-module
+    scope utils_scope = utilsModule;
+
     export_Printable();
     
     export_Option();
@@ -48,8 +58,12 @@ BOOST_PYTHON_MODULE(_utils)
     
 }
 
-BOOST_PYTHON_MODULE(_atoms)
+void export_atoms()
 {     
+    object atomsModule(handle<>(borrowed(PyImport_AddModule("qmicad.atoms"))));
+    scope().attr("atoms") = atomsModule;
+    scope atoms_scope = atomsModule;
+
     export_svec();
     export_pvec();
     export_lvec();
@@ -59,19 +73,31 @@ BOOST_PYTHON_MODULE(_atoms)
     export_AtomicStruct();     
 }
 
-BOOST_PYTHON_MODULE(_kpoints)
+void export_kpoints()
 {
+    object kpointsModule(handle<>(borrowed(PyImport_AddModule("qmicad.kpoints"))));
+    scope().attr("kpoints") = kpointsModule;
+    scope kpoints_scope = kpointsModule;
+
     export_KPoints();        
 }
 
-BOOST_PYTHON_MODULE(_potential)
-{
+void export_potential()
+{    
+    object potentialModule(handle<>(borrowed(PyImport_AddModule("qmicad.potential"))));
+    scope().attr("potential") = potentialModule;
+    scope potential_scope = potentialModule;
+
     export_Potential();
     export_LinearPot();
 }
 
-BOOST_PYTHON_MODULE(_hamiltonian)
+void export_hamiltonian()
 {
+    object hamiltonianModule(handle<>(borrowed(PyImport_AddModule("qmicad.hamiltonian"))));
+    scope().attr("hamiltonian") = hamiltonianModule;
+    scope hamiltonian_scope = hamiltonianModule;
+
     export_HamParams();
     export_ham();
     export_cxham();
@@ -86,24 +112,43 @@ BOOST_PYTHON_MODULE(_hamiltonian)
 
 }
 
-BOOST_PYTHON_MODULE(_band)
+void export_band()
 {
+    object bandModule(handle<>(borrowed(PyImport_AddModule("qmicad.band"))));
+    scope().attr("band") = bandModule;
+    scope band_scope = bandModule;
+
     export_BandStructParams();
     export_BandStruct();    
 }
 
-BOOST_PYTHON_MODULE(_negf)
+void export_negf()
 {
+    object negfModule(handle<>(borrowed(PyImport_AddModule("qmicad.negf"))));
+    scope().attr("negf") = negfModule;
+    scope negf_scope = negfModule;
+
     export_CohRgfaParams();    
     export_NegfEloop();    
 }
 
-BOOST_PYTHON_MODULE(_qmicad)
+BOOST_PYTHON_MODULE(qmicad)
 { 
-    scope().attr("version") = version;
-    def("greet", greet, " Shows the QMICAD banner.");
-    def("setVerbosity", setVerbosity, " Sets the verbosity level of C++ code.");      
+    // create qmicad package
+    object package = scope();
+    package.attr("__path__") = "qmicad";
+    package.attr("version") = version;
 
+    def("greet", greet, " Shows the QMICAD banner.");
+    def("setVerbosity", setVerbosity, " Sets the verbosity level of C++ code.");
+
+    export_utils();
+    export_atoms();
+    export_kpoints();
+    export_potential();
+    export_hamiltonian();
+    export_band();
+    export_negf();
 }
 
 }

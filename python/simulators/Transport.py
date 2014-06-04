@@ -10,13 +10,13 @@ import pickle as pk
 import numpy as np
 import random as rn
 
-import qmicad
+#import qmicad
 from qmicad.atoms import AtomicStruct, SVec
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.negf import CohRgfaParams, NegfEloop
 from qmicad.potential import LinearPot
 from qmicad.utils import VecGrid, Timer, Workers, vprint
-from qmicad.utils.vprint import nprint, dprint, eprint
+from qmicad._utils.vprint import nprint, dprint, eprint
 
 class Transport(object):
     """
