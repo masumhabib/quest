@@ -4,11 +4,25 @@ QMICAD
 Quantum Mechanics Inspired Computer Aided Design (QMICAD) library is a 
 collection of C++ classes and functions for simulation and design of 
 nano-scaled devices using quantum mechanical tools such as Non-equilibrium 
-Green's Function (NEGF) formalism. This library provides a common framework 
+Green Function (NEGF) formalism. This library provides a common framework 
 for NEGF so that it can be used with any empirical tight binding, k.p model, 
 extended Huckel method and density functional theory codes. This library also
 includes a generic empirical tight binding model and a k.p model which can be 
 extended for any material with known parameters.
+
+Installation
+-------------
+Download and unzip source. Create a folder named 'build':
+$ mkdir build
+$ cd build
+Then configure using cmake:
+$ cmake ../
+Make and install using:
+$ make
+$ make install DESTDIR=~/ 
+To change installation directory, change DESTDIR option.
+To create documentation do:
+$ make doc
 
 Copyright Notice
 ----------------
