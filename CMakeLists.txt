@@ -20,7 +20,9 @@ set(Boost_LIBRARY_DIR $ENV{HOME}/usr/lib)
 # Start configuration
 set(QMICAD_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
 message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
-project(qmicad)
+project(qmicad CXX)
+message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
+
 
 # Options
 # -----------------------------------------------------------------------------
@@ -31,14 +33,17 @@ set(LINK_SEARCH_START_STATIC    on)
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE, Release)
-    message(STATUS "Selecting Release build type by default. You might change it by using -DCMAKE_BUILD_TYPE=Release or -DCMAKE_BUILD_TYPE=Debug on your cmake command line.")
-endif ()
+#Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'Release' as none was specified.")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"x )
+endif()
 
 # Compiler flags
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
+# optimization
 # Libraries
 # -----------------------------------------------------------------------------
 # Armadillo
@@ -58,16 +63,23 @@ find_package(MKL REQUIRED)
 
 # Sources and headers
 # -----------------------------------------------------------------------------
-file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
-file(GLOB_RECURSE QMICAD_HEADERS "include/*.h*")
-set (QMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
+# Prepare distribution directory
+set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
+message(STATUS "Preparing distribution directory: ${QMICAD_DIST_DIR}")
+file(COPY ${CMAKE_SOURCE_DIR}/python/ DESTINATION ${QMICAD_DIST_DIR}/)
+file(COPY ${CMAKE_SOURCE_DIR}/include DESTINATION ${QMICAD_DIST_DIR})
+file(REMOVE "${QMICAD_DIST_DIR}/include/config.h.in")
+file(MAKE_DIRECTORY "${QMICAD_DIST_DIR}/lib")
 
-#set (QMICAD_INCLUDE_DIRS "")
-#foreach (_headerFile ${QMICAD_HEADERS})
-#    get_filename_component(_dir ${_headerFile} PATH)
-#    list (APPEND HEADER_INCLUDE_DIRS ${_dir})
-#endforeach()
-#list(REMOVE_DUPLICATES QMICAD_INCLUDE_DIRS)
+# version header
+configure_file (
+    "${CMAKE_SOURCE_DIR}/include/config.h.in"
+    "${QMICAD_DIST_DIR}/include/config.h"
+)
+
+file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
+set (QMICAD_INCLUDE_DIRS ${QMICAD_DIST_DIR}/include)
+list(REMOVE_DUPLICATES QMICAD_INCLUDE_DIRS)
 
 # includes
 include_directories(${QMICAD_INCLUDE_DIRS})
@@ -85,5 +97,43 @@ target_link_libraries (qmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${MKL_LIBRARIES})
 
-#install(TARGETS qmicad DESTINATION lib/qmicad)
-#install(FILES test.h DESTINATION include)
+# Prepare python package
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND cp ${CMAKE_BINARY_DIR}/lib${PROJECT_NAME}.so ${QMICAD_DIST_DIR}/lib 
+    COMMAND cd ${QMICAD_DIST_DIR} && ln -sf lib/lib${PROJECT_NAME}.so _qmicad.so
+    COMMAND cd ${QMICAD_DIST_DIR}/atoms && ln -sf ../lib/lib${PROJECT_NAME}.so _atoms.so
+    COMMAND cd ${QMICAD_DIST_DIR}/band && ln -sf ../lib/lib${PROJECT_NAME}.so _band.so
+    COMMAND cd ${QMICAD_DIST_DIR}/hamiltonian && ln -sf ../lib/lib${PROJECT_NAME}.so _hamiltonian.so
+    COMMAND cd ${QMICAD_DIST_DIR}/kpoints && ln -sf ../lib/lib${PROJECT_NAME}.so _kpoints.so
+    COMMAND cd ${QMICAD_DIST_DIR}/negf && ln -sf ../lib/lib${PROJECT_NAME}.so _negf.so
+    COMMAND cd ${QMICAD_DIST_DIR}/potential && ln -sf ../lib/lib${PROJECT_NAME}.so _potential.so
+    COMMAND cd ${QMICAD_DIST_DIR}/utils && ln -sf ../lib/lib${PROJECT_NAME}.so _utils.so
+)
+
+# installation
+install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION lib)
+
+# Symbolic links in python lib
+#set(legacy_link   ${CMAKE_INSTALL_PREFIX}/lib/qmicad)
+#set(legacy_target ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR})
+#add_custom_command( OUTPUT ${legacy_link}
+#    COMMAND ln -s ${legacy_target} ${legacy_link}
+#    DEPENDS install ${legacy_target} 
+#    COMMENT "Generating legacy symbolic link"
+#)
+#add_custom_target(install_legacy DEPENDS ${legacy_link} )
+
+if(${CMAKE_BUILD_TYPE} MATCHES "Release")
+    set(QMICAD_FLAGS ${CMAKE_CXX_FLAGS_RELEASE})
+endif(${CMAKE_BUILD_TYPE} MATCHES "Release")
+
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    set(QMICAD_FLAGS ${CMAKE_CXX_FLAGS_DEBUG})
+endif(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+
+message(STATUS "Compiler flags: ${QMICAD_FLAGS}")
+
+message(STATUS "Installation location: ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR}")
+
+

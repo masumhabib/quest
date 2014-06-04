@@ -65,6 +65,8 @@
 
 #include "band/BandStruct.h"
 
+#include "config.h"
+
 namespace qmicad{
 
 using utils::stds::string;
