@@ -122,7 +122,8 @@ add_custom_command(
 add_custom_command(
     TARGET doc  POST_BUILD
     COMMAND mkdir -p ${QMICAD_DIST_DIR}/doc
-    COMMAND cp -rf ${CMAKE_BINARY_DIR}/doc/html/* ${QMICAD_DIST_DIR}/doc/ 
+    COMMAND cp -rf ${CMAKE_BINARY_DIR}/doc/html ${QMICAD_DIST_DIR}/doc 
+    COMMAND cd ${QMICAD_DIST_DIR}/doc && ln -sf html/index.html index.html
 )
 
 # installation
