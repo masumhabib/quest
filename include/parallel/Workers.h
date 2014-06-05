@@ -10,14 +10,16 @@
 
 #include "utils/vout.h"
 #include <boost/mpi.hpp>
+#include <boost/mpi/environment.hpp>
+#include <boost/mpi/communicator.hpp>
 
 namespace utils{
 using namespace boost::mpi;
 
 class Workers {
 public:
-    Workers(const communicator &workers):
-            mWorkers(workers), mMasterId(0)
+    Workers( const communicator &workers):
+           mWorkers(workers), mMasterId(0)
     {
         mMyCpuId = mWorkers.rank();
         mNcpu = mWorkers.size();

@@ -18,8 +18,8 @@ namespace python{
 void export_Workers(){
     using namespace utils;
     
-    class_<Workers, shared_ptr<Workers>, noncopyable>("Workers", 
-            init<const communicator&>())
+   class_<Workers, shared_ptr<Workers>, noncopyable>("Workers", 
+          init<const communicator&>())
         .def("MyId", &Workers::MyId)
         .def("MasterId", &Workers::MasterId)
         .def("N", &Workers::N)

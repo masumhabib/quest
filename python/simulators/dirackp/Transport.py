@@ -10,13 +10,14 @@ import pickle as pk
 import numpy as np
 import random as rn
 
-#import qmicad
+from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, SVec
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.negf import CohRgfaParams, NegfEloop
 from qmicad.potential import LinearPot
-from qmicad.utils import VecGrid, Timer, Workers, vprint
-from qmicad._utils.vprint import nprint, dprint, eprint
+from qmicad.utils import VecGrid, Timer, Workers, Quadrilateral, Point
+from qmicad.simulators.utils import vprint
+from qmicad.simulators.utils.vprint import nprint, dprint, eprint
 
 class Transport(object):
     """
@@ -59,7 +60,6 @@ class Transport(object):
           workers: mpi.world - MPI world communicator.
         """  
 
-        self.version = qmicad.version # Library version
         self.verbosity = vprint.MSG_NORMAL # Verbosity level
         
         # MPI stuff
@@ -119,7 +119,7 @@ class Transport(object):
     def verbosity(self, value):
         self._verbosity = value
         # Set verbosity level of QMICAD library.
-        qmicad.setVerbosity(self._verbosity)
+        setVerbosity(self._verbosity)
         vprint.verbosity = self._verbosity
    
     def muS(self, VDD):
@@ -465,7 +465,7 @@ class Transport(object):
         self.clock.tic()
         
         # Print welcome message.
-        nprint(qmicad.greet())
+        nprint(greet())
         
         # Print simulation info
         nprint(self.nstr())

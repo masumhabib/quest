@@ -8,14 +8,14 @@ cmake_minimum_required(VERSION 2.8)
 
 # Version
 set(QMICAD_MAJOR 0)
-set(QMICAD_MINOR 05)
+set(QMICAD_MINOR 06)
 set(QMICAD_PATCH 0)
 
 
 # Add local usr path for locally compiled libraries
 set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
-set(Boost_INCLUDE_DIR $ENV{HOME}/usr/include)
-set(Boost_LIBRARY_DIR $ENV{HOME}/usr/lib)
+#set(Boost_INCLUDE_DIR $ENV{HOME}/usr/include)
+#set(Boost_LIBRARY_DIR $ENV{HOME}/usr/lib)
 
 # Start configuration
 set(QMICAD_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
@@ -26,7 +26,6 @@ message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 # Options
 # -----------------------------------------------------------------------------
 set(CMAKE_VERBOSE_MAKEFILE      off)
-set(Boost_USE_STATIC_LIBS       on)
 set(LINK_SEARCH_START_STATIC    on)
 
 # For custom cmake scripts
@@ -43,15 +42,12 @@ endif()
 # Compiler flags
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # optimization
-
+#set(CMAKE_CXX_FLAGS_RELEASE " -m64 -O2 -MMD -MP -MF ")
 
 # Libraries
 # -----------------------------------------------------------------------------
 # Armadillo
 find_package(Armadillo REQUIRED)
-
-# Boost
-find_package(Boost 1.55 REQUIRED serialization python mpi mpi_python)
 
 # MPI mpich2
 find_package(MPI REQUIRED)
@@ -64,6 +60,18 @@ find_package(MKL REQUIRED)
 
 # doxygen
 find_package(Doxygen)
+
+# Boost
+# Shared linking of libboost_python is required for mpi::communicator
+# to work both in python and C++.
+set(Boost_USE_MULTITHREADED     off)
+set(Boost_USE_STATIC_LIBS       off)
+find_package(Boost 1.55 REQUIRED python)
+set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
+unset(Boost_LIBRARIES)
+unset(Boost_PYTHON_LIBRARIES)
+set(Boost_USE_STATIC_LIBS       on)
+find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
 
 # Sources and headers
 # -----------------------------------------------------------------------------
@@ -93,13 +101,17 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${MPI_INCLUDE_PATH})
 
 # linking
+
 add_library(qmicad SHARED ${QMICAD_SOURCES})
-target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
-target_link_libraries (qmicad ${Boost_PYTHON_LIBRARIES})
-target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
+#target_link_libraries (qmicad ${Boost_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_PYTHON_LIBRARIES})
+target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
+target_link_libraries (qmicad ${Boost_PYTHON_LIBRARIES})
+target_link_libraries (qmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
+target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
 target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${MKL_LIBRARIES})
+set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # doxygen
 if(DOXYGEN_FOUND)
@@ -148,7 +160,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
 endif(${CMAKE_BUILD_TYPE} MATCHES "Debug")
 
 message(STATUS "Compiler flags: ${QMICAD_FLAGS}")
+message(STATUS "Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
 
 message(STATUS "Installation location: ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR}")
-
 

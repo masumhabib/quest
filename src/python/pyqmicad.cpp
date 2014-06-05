@@ -17,8 +17,7 @@
 namespace qmicad{
 namespace python{
 
-using boost::mpi::communicator;
-using namespace utils;
+/* using namespace utils;
 using namespace atoms;
 using namespace hamiltonian;
 using namespace kpoints;
@@ -26,7 +25,7 @@ using namespace potential;
 using namespace band;
 using namespace negf;
 using namespace maths::geometry;
-
+*/
 using namespace boost::python;
 
 

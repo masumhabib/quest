@@ -16,6 +16,7 @@
 #include <boost/python/tuple.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/detail/wrap_python.hpp>
+#include <boost/mpi/python.hpp>
 
 namespace qmicad{
 namespace python{

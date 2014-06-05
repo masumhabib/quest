@@ -11,13 +11,14 @@ import pickle as pk
 import numpy as np
 from   math import pi
 
-#import qmicad
+from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, LCoord
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
 from qmicad.kpoints import KPoints
 from qmicad.band import BandStructParams, BandStruct
-from qmicad.utils import Timer, Workers, vprint, Point
-from qmicad._utils.vprint import nprint, dprint, eprint
+from qmicad.utils import Timer, Workers, Point
+from qmicad.simulators.utils import vprint
+from qmicad.simulators.utils.vprint import nprint, dprint, eprint
 
 
 class Band(object):
@@ -32,7 +33,6 @@ class Band(object):
           workers: mpi.world - MPI world communicator.
         """  
 
-        self.version = qmicad.version # Library version
         self.verbosity = vprint.MSG_NORMAL # Verbosity level
         
         # MPI stuff
@@ -82,7 +82,7 @@ class Band(object):
     def verbosity(self, value):
         self._verbosity = value
         # Set verbosity level of QMICAD library.
-        qmicad.setVerbosity(self._verbosity)
+        setVerbosity(self._verbosity)
         vprint.verbosity = self._verbosity
 
     def createAtomicGeom(self):
@@ -202,7 +202,7 @@ class Band(object):
         self.clock.tic()
         
         # Print welcome message.
-        nprint(qmicad.greet())
+        nprint(greet())
         
         # Print simulation info
         nprint(self.nstr())
@@ -317,9 +317,9 @@ class Band(object):
 """
 def loadBand(fileName):
     pf = open(fileName)
-    tr = pk.load(pf)
+    bd = pk.load(pf)
     pf.close()
-    return tr
+    return bd
 
 
 

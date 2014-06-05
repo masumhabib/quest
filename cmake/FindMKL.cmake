@@ -8,6 +8,7 @@ SET(MKL_NAMES ${MKL_NAMES} mkl_intel_thread)
 SET(MKL_NAMES ${MKL_NAMES} mkl_core)
 SET(MKL_NAMES ${MKL_NAMES} guide)
 SET(MKL_NAMES ${MKL_NAMES} mkl)
+SET(MKL_NAMES ${MKL_NAMES} mkl_rt)
 SET(MKL_NAMES ${MKL_NAMES} iomp5)
 #SET(MKL_NAMES ${MKL_NAMES} pthread)
 
