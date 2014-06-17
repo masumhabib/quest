@@ -112,6 +112,9 @@ class Transport(object):
         # Skip if resulting dat file already exists?
         self.SkipExistingSimulation = False
 
+        # Print welcome message.
+        nprint(greet())
+
     @property 
     def verbosity(self):
         return self._verbosity  
@@ -166,7 +169,9 @@ class Transport(object):
                
     def createAtomicGeom(self):
         """ Creates atomistic geometry. """
-        
+
+        nprint("\n Creating atomistic geometry ...")
+
         # TI k.p surface      
         if (self.HamType == self.HAM_TI_SURF_KP):    
             # Hamiltonian parameter
@@ -218,11 +223,16 @@ class Transport(object):
         
         self.updateBoundingBox()
 
+        nprint(" done.")
+
     def createRoughEdges(self, sigma):
         """ 
         Creates rough edges. Works only for sorted lattice points.
         For rectangular lattice 
         """
+
+        nprint("\n Creating rough edges ...")
+
         if (self.HamType == self.HAM_TI_SURF_KP 
                     or self.HamType == self.HAM_TI_SURF_KP4
                     or self.HamType == self.HAM_GRAPHENE_KP):
@@ -272,11 +282,17 @@ class Transport(object):
             
             # update bounding box
             self.updateBoundingBox()
+
         else:           
             raise RuntimeError(" Unsupported Hamiltonian type. ")
+
+        nprint(" done.")
                 
     def generateHamiltonian(self):
         """ Generates hamiltonian and overlap matrices. """
+
+        nprint("\n Generating Hamiltonian matrix ...")
+
         # Create Hamiltonian generator
         if (self.HamType == self.HAM_TI_SURF_KP):
             self.ham = TISurfKpHam(self.hp)   
@@ -326,12 +342,16 @@ class Transport(object):
             self.np.Hl(self.ham.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
             self.np.Hl(self.ham.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N
 
+        nprint(" done.")
         
     def setupPotential(self):
         """ Sets up the potential profile """
+
+        nprint("\n Setting up potential ...")
         # Linear
         if (self.PotType == self.POT_LINEAR):
             self.V = LinearPot(self.geom)
+        nprint(" done.")
     
     def check(self):
         ret = True
@@ -382,6 +402,10 @@ class Transport(object):
                 VG2 = self.VG(VGG, Vo, il+1)
                 self.V.VLR(il, VG1, VG2)        
 
+        # Print some useful information
+        nprint("\n")
+        nprint(self.dynamicnstr())
+ 
         # Compute the electrostatic potential
         self.V.compute()
         eprint(self.V)
@@ -452,9 +476,10 @@ class Transport(object):
             if not os.path.exists(self.OutPath):
                 os.makedirs(self.OutPath)            
             # save results to file.
-            fo = open(self.OutPath + fileName + ".dat", "wt")
-            fo.close()
-            Eloop.save(self.OutPath + fileName + ".dat")            
+            if (self.DryRun == False):
+                fo = open(self.OutPath + fileName + ".dat", "wt")
+                fo.close()
+                Eloop.save(self.OutPath + fileName + ".dat")            
 
         nprint(" done.\n")
         nprint(" ------------------------------------------------------------------")
@@ -464,12 +489,14 @@ class Transport(object):
 
         self.clock.tic()
         
-        # Print welcome message.
-        nprint(greet())
+#        # Print welcome message.
+#        nprint(greet())
         
+        nprint("\n\n Starting simulation ...")
+
         # Print simulation info
-        nprint(self.nstr())
-        eprint(self.dstr())
+        nprint(self.staticnstr())
+        eprint(self.debugstr())
              
         if (self.check() == False):
             raise error(" ERROR: Check failed !!!")        
@@ -515,9 +542,11 @@ class Transport(object):
         self.ymx = self.geom.ymax + delta        
         
     def __str__(self):
-        return self.nstr()
+        msg = self.staticnstr()
+        msg += self.dynamicnstr()
+        return msg
     
-    def nstr(self):
+    def staticnstr(self):
         msg = "\n Transport simulation parameters:"
         
         msg += "\n  Device geometry:"
@@ -547,14 +576,7 @@ class Transport(object):
         # Print Hamiltonian parameters.
         msg += "\n"
         msg += str(self.hp)
-        
-        # NEGF parameters
-        msg += str(self.np)
-        
-        # Electrostatics
-        msg += "\n"
-        msg += str(self.V)
-        
+       
         # Calculations to perform
         msg += " Calculations:\n"
         for type, value in self.Calculations.iteritems():
@@ -572,7 +594,17 @@ class Transport(object):
         
         return msg
     
-    def dstr(self):
+    def dynamicnstr(self):
+        # NEGF parameters
+        msg = str(self.np)
+        # Electrostatics
+        msg += "\n"
+        msg += str(self.V)
+
+        return msg
+ 
+
+    def debugstr(self):
         msg = " Debugging information: \n"
         msg = "  Atomic structure: \n"
         msg += str(self.geom)
