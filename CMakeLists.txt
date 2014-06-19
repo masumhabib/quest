@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # Version
 set(QMICAD_MAJOR 0)
-set(QMICAD_MINOR 06)
+set(QMICAD_MINOR 08)
 set(QMICAD_PATCH 0)
 
 
