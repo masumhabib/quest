@@ -16,16 +16,25 @@ function usage(){
     echo "    install [path]: installs qmicad."
 }
 
-if [[ $# -eq 0 ]]; then
-    # No argument, run cmake
+function doconfig(){
     mkdir -p build
     cd build
     cmake28 ../
+}
+
+if [[ $# -eq 0 ]]; then
+    # No argument, run cmake
+    doconfig
 elif [[ $# -ge 1 ]]; then
     opt=$1
     if [[ $opt == "help" ]]; then
         usage
     elif [[ $opt == "build" ]]; then
+        if [[ ! -d "build/" ]]; then
+            doconfig
+            cd ../
+        fi
+
         if [[ $# == 2 ]]; then
             mkopt=$2
             cd build && make $mkopt

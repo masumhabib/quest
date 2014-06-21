@@ -75,35 +75,35 @@ find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
 
 # Sources and headers
 # -----------------------------------------------------------------------------
+
 # Prepare distribution directory
 set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
-message(STATUS "Preparing distribution directory: ${QMICAD_DIST_DIR}")
-file(COPY ${CMAKE_SOURCE_DIR}/python/ DESTINATION ${QMICAD_DIST_DIR}/)
-file(COPY ${CMAKE_SOURCE_DIR}/include DESTINATION ${QMICAD_DIST_DIR})
-file(REMOVE "${QMICAD_DIST_DIR}/include/config.h.in")
-file(MAKE_DIRECTORY "${QMICAD_DIST_DIR}/lib")
+set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 
 # version header
 configure_file (
-    "${CMAKE_SOURCE_DIR}/include/config.h.in"
-    "${QMICAD_DIST_DIR}/include/config.h"
+    "${CMAKE_SOURCE_DIR}/include/config.in.h"
+    "${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h"
 )
 
-file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
-set (QMICAD_INCLUDE_DIRS ${QMICAD_DIST_DIR}/include)
-list(REMOVE_DUPLICATES QMICAD_INCLUDE_DIRS)
-
 # includes
+set(QMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
+list(REMOVE_DUPLICATES QMICAD_INCLUDE_DIRS)
+list(APPEND QMICAD_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include)
+
 include_directories(${QMICAD_INCLUDE_DIRS})
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${MPI_INCLUDE_PATH})
 
-# linking
+# sources
+file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
+file(GLOB_RECURSE QMICAD_HEADERS "include/*.h*")
+add_library(qmicad SHARED ${QMICAD_SOURCES} ${QMICAD_HEADERS})
 
-add_library(qmicad SHARED ${QMICAD_SOURCES})
-#target_link_libraries (qmicad ${Boost_LIBRARIES})
+
+# linking
 target_link_libraries (qmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_PYTHON_LIBRARIES})
@@ -113,43 +113,37 @@ target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${MKL_LIBRARIES})
 set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
+# Prepare qmicad package
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND cp -rp ${CMAKE_SOURCE_DIR}/include ${QMICAD_DIST_DIR}
+    COMMAND cp -rp ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h ${QMICAD_DIST_DIR}/include
+    COMMAND rm -f ${QMICAD_DIST_DIR}/include/config.in.h
+    COMMAND cp -rp ${CMAKE_SOURCE_DIR}/python ${QMICAD_DIST_DIR}
+    COMMAND ln -s ${QMICAD_DIST_DIR}/python ${QMICAD_DIST_DIR}/qmicad
+    COMMAND cd ${QMICAD_DIST_DIR}/python && ln -sf ../lib/lib${PROJECT_NAME}.so qmicad.so
+)
+
 # doxygen
 if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/qmicad.in.doxy ${CMAKE_CURRENT_BINARY_DIR}/doc/qmicad.doxy @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/qmicad.in.doxy ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy @ONLY)
 
     add_custom_target(doc
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/qmicad.doxy
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir
         COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+
+    add_custom_command(
+        TARGET doc  POST_BUILD
+        COMMAND mkdir -p ${QMICAD_DIST_DIR}/doc
+        COMMAND cp -rf ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/html ${QMICAD_DIST_DIR}/doc 
+        COMMAND cd ${QMICAD_DIST_DIR}/doc && ln -sf html/index.html index.html
     )
 endif(DOXYGEN_FOUND)
 
-# Prepare python package
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND cp ${CMAKE_BINARY_DIR}/lib${PROJECT_NAME}.so ${QMICAD_DIST_DIR}/lib 
-    COMMAND cd ${QMICAD_DIST_DIR} && ln -sf lib/lib${PROJECT_NAME}.so qmicad.so
-)
-
-add_custom_command(
-    TARGET doc  POST_BUILD
-    COMMAND mkdir -p ${QMICAD_DIST_DIR}/doc
-    COMMAND cp -rf ${CMAKE_BINARY_DIR}/doc/html ${QMICAD_DIST_DIR}/doc 
-    COMMAND cd ${QMICAD_DIST_DIR}/doc && ln -sf html/index.html index.html
-)
-
 # installation
-install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION lib)
-
-# Symbolic links in python lib
-#set(legacy_link   ${CMAKE_INSTALL_PREFIX}/lib/qmicad)
-#set(legacy_target ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR})
-#add_custom_command( OUTPUT ${legacy_link}
-#    COMMAND ln -s ${legacy_target} ${legacy_link}
-#    DEPENDS install ${legacy_target} 
-#    COMMENT "Generating legacy symbolic link"
-#)
-#add_custom_target(install_legacy DEPENDS ${legacy_link} )
+install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Release")
     set(QMICAD_FLAGS ${CMAKE_CXX_FLAGS_RELEASE})
