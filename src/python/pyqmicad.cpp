@@ -148,6 +148,8 @@ BOOST_PYTHON_MODULE(qmicad)
     export_hamiltonian();
     export_band();
     export_negf();
+
+    export_armanpy();
 }
 
 }

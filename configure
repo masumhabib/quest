@@ -22,6 +22,8 @@ function doconfig(){
     cmake28 ../
 }
 
+parflag="-j 4"
+
 if [[ $# -eq 0 ]]; then
     # No argument, run cmake
     doconfig
@@ -37,9 +39,9 @@ elif [[ $# -ge 1 ]]; then
 
         if [[ $# == 2 ]]; then
             mkopt=$2
-            cd build && make $mkopt
+            cd build && make $parflag $mkopt
         else
-            cd build && make
+            cd build && make $parflag
         fi
     elif [[ $opt == "superclean" ]]; then
         rm -rf build

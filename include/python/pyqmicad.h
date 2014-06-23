@@ -62,6 +62,7 @@ void export_KPoints();
 void export_BandStructParams();
 void export_BandStruct();
 
+void export_armanpy();
 
 
 }

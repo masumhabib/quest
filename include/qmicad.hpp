@@ -65,6 +65,8 @@
 
 #include "band/BandStruct.h"
 
+#include "armanpy/armanpy.h"
+
 #include "config.h"
 
 namespace qmicad{
