@@ -22,8 +22,7 @@ function doconfig(){
     cmake28 ../
 }
 
-parflag="-j 4"
-
+ncpu="4"
 if [[ $# -eq 0 ]]; then
     # No argument, run cmake
     doconfig
@@ -39,9 +38,9 @@ elif [[ $# -ge 1 ]]; then
 
         if [[ $# == 2 ]]; then
             mkopt=$2
-            cd build && make $parflag $mkopt
+            cd build && make -j $ncpu $mkopt
         else
-            cd build && make $parflag
+            cd build && make -j $ncpu
         fi
     elif [[ $opt == "superclean" ]]; then
         rm -rf build
