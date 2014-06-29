@@ -65,7 +65,7 @@
 
 #include "band/BandStruct.h"
 
-#include "armanpy/armanpy.h"
+#include "npyarma/npyarma.h"
 
 #include "config.h"
 

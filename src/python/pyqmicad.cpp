@@ -17,15 +17,6 @@
 namespace qmicad{
 namespace python{
 
-/* using namespace utils;
-using namespace atoms;
-using namespace hamiltonian;
-using namespace kpoints;
-using namespace potential;
-using namespace band;
-using namespace negf;
-using namespace maths::geometry;
-*/
 using namespace boost::python;
 
 
@@ -149,7 +140,7 @@ BOOST_PYTHON_MODULE(qmicad)
     export_band();
     export_negf();
 
-    export_armanpy();
+    export_npyarma();
 }
 
 }
