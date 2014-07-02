@@ -10,14 +10,41 @@
 
 #include "npyarma/npyarma.h"
 #include "utils/std.hpp"
-//#include "include/ndarray.h"
+
 
 
 namespace qmicad{ namespace python{
 
 namespace bp = boost::python;
 using namespace utils::stds;
-using namespace arma;
+namespace ar = arma;
+
+template <typename T> int ctype_to_npytype() {
+    throw runtime_error("Type not supported in C++");
+    // throw error
+    //PYTHON_ERROR(TypeError, "unsupported C/C++ type (%s)", stringize<T>());
+}
+
+template <> int ctype_to_npytype<bool>() { return NPY_BOOL; }
+
+template <> int ctype_to_npytype<int8_t>() { return NPY_INT8; }
+template <> int ctype_to_npytype<uint8_t>() { return NPY_UINT8; }
+template <> int ctype_to_npytype<int16_t>() { return NPY_INT16; }
+template <> int ctype_to_npytype<uint16_t>() { return NPY_UINT16; }
+template <> int ctype_to_npytype<int32_t>() { return NPY_INT32; }
+template <> int ctype_to_npytype<uint32_t>() { return NPY_UINT32; }
+template <> int ctype_to_npytype<int64_t>() { return NPY_INT64; }
+template <> int ctype_to_npytype<uint64_t>() { return NPY_UINT64; }
+template <> int ctype_to_npytype<float>() { return NPY_FLOAT32; }
+template <> int ctype_to_npytype<double>() { return NPY_FLOAT64; }
+#ifdef NPY_FLOAT128
+template <> int ctype_to_npytype<long double>() { return NPY_FLOAT128; }
+#endif
+template <> int ctype_to_npytype<std::complex<float> >() { return NPY_COMPLEX64; }
+template <> int ctype_to_npytype<std::complex<double> >() { return NPY_COMPLEX128; }
+#ifdef NPY_COMPLEX256
+template <> int ctype_to_npytype<std::complex<long double> >() { return NPY_COMPLEX256; }
+#endif
 
 //template<typename T, int N>
 //void npy_copy_cast(blitz::Array<T,N>& bz, PyArrayObject* arrobj) {
@@ -67,123 +94,222 @@ using namespace arma;
  * gigantic mess. If you want to make something close to pass-by-value, just
  * pass by non-const reference instead.
  */
-//template <typename T> struct mat_from_npy {
-//   
-//    typedef typename ar::Mat<T> mat_type;
-//    static const N = 2;
-//
-//  /**
-//   * Registers converter from numpy array into a blitz::Array<T,N>
-//   */
-//  mat_from_npy() {
-//    bp::converter::registry::push_back(&convertible, &construct, 
-//        bp::type_id<mat_type>());
-//  }
-//
-//  /**
-//   * This method will determine if the input python object is convertible into
-//   * a Mat<T>
-//   */
-//  static void* convertible(PyObject* obj_ptr) {
-//    bp::handle<> hdl(bp::borrowed(bp::allow_null(obj_ptr)));
-//    bp::object obj(hdl);
-//
-//    typeinfo tinfo(getElementType<T>(), N);
-//
-//    convert_t result = convertible_to(obj, tinfo, false, true);
-//
-//    // we cannot afford copying, only referencing.
-//    if (result == BYREFERENCE) return obj_ptr;
-//
-//    // but, if the user passed an array of the right type, but we still need to
-//    // copy, warn the user as this is a tricky case to debug.
-//    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(obj_ptr);
-//    if (result == WITHARRAYCOPY && 
-//        ctype_to_num<T>() == PyArray_DESCR(arr)->type_num) {
-//      PYTHON_ERROR(RuntimeError, "The bindings you are trying to use to this C++ method require a numpy.ndarray -> blitz::Array<%s,%d> conversion, but the array you passed, despite the correct type, is not C-style contiguous and/or properly aligned, so I cannot automatically wrap it. You can check this by yourself by printing the flags on such a variable with the command 'print(<varname>.flags)'. The only way to circumvent this problem, from python, is to create a copy the variable by issuing '<varname>.copy()' before calling the bound method. Otherwise, if you wish the copy to be executed automatically, you have to re-bind the method to use our custom 'const_ndarray' type.", stringize<T>(), N);
-//    }
-//
-//    return 0;
-//  }
-//
-//  /**
-//   * This method will finally construct the C++ element out of the python
-//   * object that was input. Please note that when bp reaches this
-//   * method, the object has already been checked for convertibility.
-//   */
-//  static void construct(PyObject* obj_ptr,
-//      bp::converter::rvalue_from_python_stage1_data* data) {
-//
-//    //black-magic required to setup the blitz::Array<> storage area
-//    void* storage = ((bp::converter::rvalue_from_python_storage<mat_type>*)data)->storage.bytes;
-//
-//    PyArrayObject *arr = reinterpret_cast<PyArrayObject*>(obj_ptr);
-//    
-//    //mounts the numpy memory at the "newly allocated" blitz::Array
-//    shape_type shape;
-//    shape_type stride;
-//    
-//    for (int k=0; k<N; ++k) {
-//      shape[k] = PyArray_DIMS(arr)[k];
-//      stride[k] = (PyArray_STRIDES(arr)[k]/sizeof(T));
-//    }
-//    new (storage) mat_type((T*)PyArray_DATA(arr), shape[0], shape[1], false, true); //place operator
-//    data->convertible = storage;
-//
-//  }
-//
-//};
-//
-/////**
-//// * Avoids the big number of warnings...
-//// */
-////static PyArrayObject* make_pyarray(int nd, npy_intp* dims, int type) {
-////  return (PyArrayObject*)PyArray_SimpleNew(nd, dims, type);
-////}
-////
-///**
-// * Objects of this type bind blitz::Array<T,N> to numpy arrays. Your method
-// * generates as output an object of this type and the object will be
-// * automatically converted into a Numpy array.
-// */
-//template <typename T> struct mat_to_npy {
-//
-//    
-//  typedef typename ar::Mat<T> mat_type;
-//  typedef typename npy_intp shape_type[N];
-//
-//  static const int N = 2;
-//  
-//  static PyObject* convert(const mat_type& tv) {
-//    npy_intp dims[N];
-//    for (int i=0; i<N; ++i) dims[i] = tv.extent(i);
-//
-//    PyArrayObject* retval = make_pyarray(N, dims, ctype_to_num<T>());
-//
-//    //wrap new PyArray in a blitz layer and then copy the data
-//    shape_type shape=0;
-//    for (int k=0; k<PyArray_NDIM(retval); ++k) shape[k] = PyArray_DIMS(retval)[k];
-//    shape_type stride=0;
-//    for (int k=0; k<PyArray_NDIM(retval); ++k) stride[k] = (PyArray_STRIDES(retval)[k]/sizeof(T));
-//    mat_type bzdest((T*)PyArray_DATA(retval), shape, stride, blitz::neverDeleteData);
-//    bzdest = tv;
-//
-//    return reinterpret_cast<PyObject*>(retval);
-//  }
-//
-//  static const PyTypeObject* get_pytype() { return &PyArray_Type; }
-//
-//};
+template <typename T> struct col_from_npy {
+   
+    typedef typename ar::Col<T> col_type;
+    static const int N = 1;
 
-//template <typename T, int N>
-//void register_bz_to_npy() {
-//  bp::to_python_converter<typename blitz::Array<T,N>, bz_to_npy<T,N>
-//#if defined BOOST_PYTHON_SUPPORTS_PY_SIGNATURES
-//                          ,true
-//#endif
-//              >();
-//}
-//
+    /**
+     * Registers converter from numpy array into a ar::Col<T>
+     */
+    col_from_npy() {
+      bp::converter::registry::push_back(&convertible, &construct, 
+          bp::type_id<col_type>());
+    }
+
+    /**
+     * This method will determine if the input python object is convertible into
+     * a Col<T>
+     */
+    static void* convertible(PyObject* obj_ptr) {
+        PyObject *out = 0;
+        if(PyArray_Check(obj_ptr)){ // if this is a PyArray
+            PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(obj_ptr);            
+            if(ctype_to_npytype<T>() == PyArray_DESCR(arr)->type_num){ // if array has the same type
+                if(arr->nd == 1){ // if array is 1 dimensional
+                    if(arr->flags &  NPY_F_CONTIGUOUS || arr->flags &  NPY_C_CONTIGUOUS){
+                        return obj_ptr;
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+  /**
+   * This method will finally construct the C++ element out of the python
+   * object that was input. Please note that when bp reaches this
+   * method, the object has already been checked for convertibility.
+   */
+static void construct(PyObject* obj_ptr,
+        bp::converter::rvalue_from_python_stage1_data* data) {
+    assert(obj_ptr);
+    
+    if (obj_ptr == 0){
+        cout << "ERROR" << endl;
+    }
+      
+    //black-magic required to setup the blitz::Array<> storage area
+    void* storage = ((bp::converter::rvalue_from_python_storage<col_type>*)data)->storage.bytes;
+    
+    PyArrayObject *arr = reinterpret_cast<PyArrayObject*>(obj_ptr);
+    
+    //mounts the numpy memory at the "newly allocated" blitz::Array
+    npy_intp shape[N];
+    shape[0] = PyArray_DIMS(arr)[0];
+
+    new (storage) col_type((T*)PyArray_DATA(arr), shape[0], false, true); //place operator
+    data->convertible = storage;
+}
+
+};
+
+/**
+ * Avoids the big number of warnings...
+ */
+static PyArrayObject* make_pyarray(int nd, npy_intp* dims, int type) {
+  return (PyArrayObject*)PyArray_SimpleNew(nd, dims, type);
+}
+
+/**
+ * Objects of this type bind blitz::Array<T,N> to numpy arrays. Your method
+ * generates as output an object of this type and the object will be
+ * automatically converted into a Numpy array.
+ */
+template <typename T> struct col_to_npy {
+    
+  static const int N = 1;
+  typedef typename ar::Col<T> col_type;
+  
+  static PyObject* convert(const col_type& tv) {
+    npy_intp dims[N];
+    dims[0] = tv.n_elem;
+
+    PyArrayObject* retval = make_pyarray(N, dims, ctype_to_npytype<T>());
+
+    //wrap new PyArray in a blitz layer and then copy the data
+    col_type coldest((T*)PyArray_DATA(retval), dims[0], false, true);
+    coldest = tv;
+
+    return reinterpret_cast<PyObject*>(retval);
+  }
+
+  static const PyTypeObject* get_pytype() { return &PyArray_Type; }
+
+};
+
+template <typename T>
+void register_col_to_npy() {
+  bp::to_python_converter<typename ar::Col<T>, col_to_npy<T>
+#if defined BOOST_PYTHON_SUPPORTS_PY_SIGNATURES
+                          ,true
+#endif
+              >();
+}
+
+
+bp::object construct(bp::object obj){
+    using namespace ar;
+    
+    cout << "got it" << endl;
+    
+    PyObject *objp = obj.ptr();
+    PyArrayObject* a = (PyArrayObject*)objp; //extract<PyArrayObject*>(obj);
+    
+    if (a == 0){
+        cout << "NULL" << endl;
+    }else{        
+        cout << "Not NULL" << endl;
+        cout << "DIM: " << a->nd << endl;
+        cout << "FLAGS: " << a->flags << endl;
+        cout << "Size: " << a->dimensions[0] << endl;
+        
+    }
+    
+    vec v((double*)a->data,  a->dimensions[0], false, true);
+    cout << "vec: " << endl << v << endl; 
+    v(0) = 5.0;
+    cout << "vec: " << endl << v << endl; 
+    
+//    vec v2 = zeros<vec>(5);
+//    v2(0) = 10;
+//    cout << "vec2: " << endl << v2 << endl; 
+//    npy_intp size[1] = {v2.n_elem};
+//    PyObject * pyObj = PyArray_SimpleNewFromData(1, size, NPY_DOUBLE, (void*)v2.memptr());
+    npy_intp size[1] = {v.n_elem};
+    PyObject * pyObj = PyArray_SimpleNewFromData(1, size, NPY_DOUBLE, (void*)v.memptr());
+//    PyObject * pyObj = (PyObject*)PyArray_SimpleNew(1, size, NPY_DOUBLE);
+    boost::python::handle<> handle( pyObj );
+    return bp::object(handle);
+    
+}
+
+void test(/*const*/ ar::vec &v){
+    cout << "vec: " << endl << v;
+    
+    v(0) = 10;
+    
+    cout << "vec: " << endl << v;
+}
+
+
+void export_npyarma(){
+    import_array();
+    def("construct", construct, " Converts numpy.array to mat");
+
+  /**
+   * The following struct constructors will make sure we can input
+   * arma::Col<T> in our bound C++ routines w/o needing to specify
+   * special converters each time. The rvalue converters allow bp to
+   * automatically map the following inputs:
+   *
+   * a) const arma::Col<T>& (pass by const reference)
+   * b) arma::Col<T><T> (pass by value -- DO NEVER DO THIS!!!)
+   *
+   * Please note that the last case:
+   * 
+   * c) arma::Col<T>& (pass by non-const reference)
+   *
+   * is NOT covered by these converters. The reason being that because the
+   * object may be changed, there is no way for bp to update the
+   * original python object, in a sensible manner, at the return of the method.
+   *
+   * Avoid passing by non-const reference in your methods.
+   */
+    
+   //col_from_npy<bool>();
+   //col_from_npy<int8_t>();
+   col_from_npy<int16_t>();
+   col_from_npy<int32_t>();
+   col_from_npy<int64_t>();
+   col_from_npy<uint8_t>();
+   col_from_npy<uint16_t>();
+   col_from_npy<uint32_t>();
+   col_from_npy<uint64_t>();
+   col_from_npy<float>();
+   col_from_npy<double>();
+   //col_from_npy<long double>();
+   col_from_npy<std::complex<float> >();
+   col_from_npy<std::complex<double> >();
+   //col_from_npy<std::complex<long double> >();
+
+  
+  /**
+   * The following struct constructors will make C++ return values of type
+   * arma::Col<T> to show up in the python side as numpy arrays.
+   */
+   //register_col_to_npy<bool>();
+   //register_col_to_npy<int8_t>();
+   register_col_to_npy<int16_t>();
+   register_col_to_npy<int32_t>();
+   register_col_to_npy<int64_t>();
+   register_col_to_npy<uint8_t>();
+   register_col_to_npy<uint16_t>();
+   register_col_to_npy<uint32_t>();
+   register_col_to_npy<uint64_t>();
+   register_col_to_npy<float>();
+   register_col_to_npy<double>();
+   //register_col_to_npy<long double>();
+   register_col_to_npy<std::complex<float> >();
+   register_col_to_npy<std::complex<double> >();
+   //register_col_to_npy<std::complex<long double> >();
+   
+   def("test", test, " Converts numpy.array to mat");
+
+}
+
+
 //void bind_core_bz_numpy () {
 //  /**
 //   * The following struct constructors will make sure we can input
@@ -248,66 +374,6 @@ using namespace arma;
 //}
 
 
-bp::object construct(bp::object obj){
-
-    cout << "got it" << endl;
-    
-    PyObject *objp = obj.ptr();
-    PyArrayObject* a = (PyArrayObject*)objp; //extract<PyArrayObject*>(obj);
-    
-    if (a == 0){
-        cout << "NULL" << endl;
-    }else{        
-        cout << "Not NULL" << endl;
-        cout << "DIM: " << a->nd << endl;
-        cout << "FLAGS: " << a->flags << endl;
-        cout << "Size: " << a->dimensions[0] << endl;
-        
-    }
-    
-    vec v((double*)a->data,  a->dimensions[0], false, true);
-    cout << "vec: " << endl << v << endl; 
-    v(0) = 5.0;
-    cout << "vec: " << endl << v << endl; 
-    
-    vec v2 = zeros<vec>(5);
-    v2(0) = 10;
-    cout << "vec2: " << endl << v2 << endl; 
-//     Py_Initialize();
-    npy_intp size[1] = {v2.n_elem};
-//    int *data = new int[3];
-    PyObject * pyObj = PyArray_SimpleNewFromData(1, size, NPY_DOUBLE, (void*)v2.memptr());
-//    PyObject * pyObj = (PyObject*)PyArray_SimpleNew(1, size, NPY_DOUBLE);
-    boost::python::handle<> handle( pyObj );
-    //int n;
-    //cout << "Hey";
-    //cin >> n; 
-    return bp::object(handle);
-    //return bp::object();
-//    cout  << obj.attr("dtype") << endl;
-//  //black-magic required to setup the blitz::Array<> storage area
-//  void* storage = ((bp::converter::rvalue_from_python_storage<mat_type>*)data)->storage.bytes;
-//
-//  PyArrayObject *arr = reinterpret_cast<PyArrayObject*>(obj_ptr);
-//
-//  //mounts the numpy memory at the "newly allocated" blitz::Array
-//  shape_type shape;
-//  shape_type stride;
-//
-//  for (int k=0; k<N; ++k) {
-//    shape[k] = PyArray_DIMS(arr)[k];
-//    stride[k] = (PyArray_STRIDES(arr)[k]/sizeof(T));
-//  }
-//  new (storage) mat_type((T*)PyArray_DATA(arr), shape[0], shape[1], false, true); //place operator
-//  data->convertible = storage;
-
-}
-
-
-void export_npyarma(){
-    import_array();
-    def("construct", construct, " Converts numpy.array to mat");
-}
 
 }}
 

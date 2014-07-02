@@ -15,4 +15,5 @@
 #include <numpy/arrayobject.h>
 #include <armadillo>
 
-#endif /* BOB_PYTHON_NDARRAY_H */
+
+#endif /* NPYARMA_H */
