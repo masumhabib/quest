@@ -132,6 +132,8 @@ BOOST_PYTHON_MODULE(qmicad)
     def("greet", greet, " Shows the QMICAD banner.");
     def("setVerbosity", setVerbosity, " Sets the verbosity level of C++ code.");
 
+    export_npyarma();
+    
     export_utils();
     export_atoms();
     export_kpoints();
@@ -139,8 +141,6 @@ BOOST_PYTHON_MODULE(qmicad)
     export_hamiltonian();
     export_band();
     export_negf();
-
-    export_npyarma();
 }
 
 }
