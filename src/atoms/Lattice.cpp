@@ -69,7 +69,7 @@ string LatticeCoordinate::toString() const{
  * Lattice vector.
  */
 LatticeVector::LatticeVector(const string &prefix):
-    Printable(" " + prefix)
+    Printable(" " + prefix), a1(3), a2(3), a3(3)
 {
     zeros();
 }

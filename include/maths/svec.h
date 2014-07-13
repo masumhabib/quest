@@ -17,8 +17,9 @@
 namespace maths{
 namespace spvec{
 
-using armadillo::row3;
-using armadillo::row2;
+//using armadillo::row3;
+//using armadillo::row2;
+using armadillo::row;
 
 namespace coord{
     // index definition
@@ -27,9 +28,9 @@ namespace coord{
     static const int Z = 2;  
 }
  
-typedef row3     svec;  // special vector is a three component row vector
-typedef row3     svec3;  // special vector is a three component row vector
-typedef row2     svec2; // two dimensional vector
+typedef row     svec;  // special vector is a three component row vector
+typedef row     svec3;  // special vector is a three component row vector
+typedef row     svec2; // two dimensional vector
    
 /*
  * Python wrapper for svec

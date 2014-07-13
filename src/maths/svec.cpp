@@ -22,8 +22,8 @@ void export_svec(){
     /**
      * Spatial vector/position vector.
      */
-    class_<svec, shared_ptr<svec> >("svec")
-    ;
+    //class_<svec, shared_ptr<svec> >("svec")
+    //;
 }
 
 void export_pvec(){
@@ -32,7 +32,7 @@ void export_pvec(){
     /**
      * Position vector. Just a wrapper of svec.
      */
-    class_<SVec, bases<svec>, shared_ptr<SVec> >("SVec", 
+    class_<SVec, /*bases<svec>,*/ shared_ptr<SVec> >("SVec", 
             init<optional<double, double, double> >())
         .def(init<const svec&>())    
         .add_property("X", &SVec::getx, &SVec::setx)
