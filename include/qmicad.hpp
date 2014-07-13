@@ -65,6 +65,8 @@
 
 #include "band/BandStruct.h"
 
+#include "npyarma/npyarma.h"
+
 #include "config.h"
 
 namespace qmicad{
