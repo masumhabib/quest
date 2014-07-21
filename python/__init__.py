@@ -27,11 +27,11 @@ band.BandStructParams.__init__ = _BandStructParamsInit
 _TISurfKpParamsOrgInit =  hamiltonian.TISurfKpParams.__init__
 def _TISurfKpParamsInit(self):
     _TISurfKpParamsOrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.a      = 2.0               # Lattice spacing
-    self.K      = 1.0               # Coefficient ot solve Fermion doubling
-    self.A2     = 3.33              # A2 paramter
-    self.C      = 0.0               # C parameter
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.a      = 2.0               # Lattice spacing
+#    self.K      = 1.0               # Coefficient ot solve Fermion doubling
+#    self.A2     = 3.33              # A2 paramter
+#    self.C      = 0.0               # C parameter
     self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 2, 2)   # Fake atom for TI k.p
     
@@ -55,11 +55,11 @@ hamiltonian.TISurfKpParams.__getstate_manages_dict__ = True
 _TISurfKpParams4OrgInit =  hamiltonian.TISurfKpParams4.__init__
 def _TISurfKpParams4Init(self):
     _TISurfKpParams4OrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.a      = 2.0               # Lattice spacing
-    self.K      = 1.165             # Coefficient ot solve Fermion doubling
-    self.A2     = 3.33              # A2 paramter
-    self.C      = 0.0               # C parameter
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.a      = 2.0               # Lattice spacing
+#    self.K      = 1.165             # Coefficient ot solve Fermion doubling
+#    self.A2     = 3.33              # A2 paramter
+#    self.C      = 0.0               # C parameter
     self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 4, 4)   # Fake atom for TI k.p
     
@@ -82,10 +82,10 @@ hamiltonian.TISurfKpParams4.__getstate_manages_dict__ = True
 _GrapheneKpParamsOrgInit =  hamiltonian.GrapheneKpParams.__init__
 def _GrapheneKpParamsInit(self):
     _GrapheneKpParamsOrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.a      = 4.0               # Lattice spacing
-    self.K      = 1.165             # Coefficient ot solve Fermion doubling
-    self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.a      = 4.0               # Lattice spacing
+#    self.K      = 1.165             # Coefficient ot solve Fermion doubling
+#    self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
     self.ptable = atoms.PeriodicTable()   # Periodic table for graphene k.p
     self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
     
@@ -109,16 +109,16 @@ hamiltonian.GrapheneKpParams.__getstate_manages_dict__ = True
 _GrapheneTbParamsOrgInit =  hamiltonian.GrapheneTbParams.__init__
 def _GrapheneTbParamsInit(self):
     _GrapheneTbParamsOrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.ec         = 0             # Site energy of C
-    self.di0        = 1.42          # In-plane C-C bond length 
-    self.ti0        = 3.16          # In plane C-C hopping parameter
-    self.do0        = 3.35          # Out-of-plane C-C distance
-    self.to0        = 0.39          # Out-of-pane C-C hopping parameter
-    self.lmdz       = 0.6           # For interlayer all nearest neighbors
-    self.lmdxy      = 1.7           # See PRL 109, 236604 (2012)
-    self.alpha      = 1.65
-    self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.ec         = 0             # Site energy of C
+#    self.di0        = 1.42          # In-plane C-C bond length 
+#    self.ti0        = 3.16          # In plane C-C hopping parameter
+#    self.do0        = 3.35          # Out-of-plane C-C distance
+#    self.to0        = 0.39          # Out-of-pane C-C hopping parameter
+#    self.lmdz       = 0.6           # For interlayer all nearest neighbors
+#    self.lmdxy      = 1.7           # See PRL 109, 236604 (2012)
+#    self.alpha      = 1.65
+#    self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
     self.ptable = atoms.PeriodicTable()   # Periodic table for graphene
     
 hamiltonian.GrapheneTbParams.__init__ = _GrapheneTbParamsInit

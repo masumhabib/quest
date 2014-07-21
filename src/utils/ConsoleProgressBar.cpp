@@ -56,6 +56,10 @@ ConsoleProgressBar ConsoleProgressBar::operator++(int){
     return tmp;
 }
 
+void ConsoleProgressBar::expectedCount(unsigned long expectedCount){
+    mExpectedCount = expectedCount;
+}
+
 void ConsoleProgressBar::complete(){
     vout << vnormal << mEnds;
 }

@@ -88,17 +88,11 @@ void export_hamiltonian()
     scope().attr("hamiltonian") = hamiltonianModule;
     scope hamiltonian_scope = hamiltonianModule;
 
-    export_HamParams();
-    export_ham();
-    export_cxham();
+    export_cxhamparams();
     export_GrapheneTbParams();
-    export_GrapheneTbHam();
     export_GrapheneKpParams();
-    export_GrapheneKpHam();        
     export_TISurfKpParams();
-    export_TISurfKpHam();    
     export_TISurfKpParams4();
-    export_TISurfKpHam4();    
 
 }
 

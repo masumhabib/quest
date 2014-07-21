@@ -56,99 +56,98 @@ using namespace utils::stds;
  * The method constructing NEGF object is responsible
  * for memory management of NEGFParams.
  */
-struct CohRgfaParams: public Printable {
-    
-    // Options
-    bool                DCacheEnabled;
-    bool                TCacheEnabled;
-    bool                grcCacheEnabled;
-    bool                glcCacheEnabled;
-    bool                GiiCacheEnabled;
-    bool                Gi1CacheEnabled;
-    bool                GiNCacheEnabled;
-    bool                Giip1CacheEnabled;
-    bool                Giim1CacheEnabled;
-    
-    bool                isOrthogonal;
-    
-    dcmplx              ieta;   // small infinitesimal energy    
-    uint                nb;     // Total number of blocks including contacts
-    uint                N;      // Number of blocks in the device.
-    double              muS;    // Fermi function at the left contact
-    double              muD;    // Fermi function at the right contact
-    double              kT;     // k*T
-    
-    // Hamiltonian , overlap and potential
-    field<shared_ptr<cxmat> >H0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
-                                // H0(0) is on the left contact and H0(N+1) is 
-                                // on the right contact.
-
-    field<shared_ptr<cxmat> >S0;// Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
-                                // H0(0) is on the left contact and H0(N+1) is 
-                                // on the right contact.
-    
-    field<shared_ptr<cxmat> >Hl;// Lower diagonal blocks of Hamiltonian: 
-                                // Hl(i) = [H]_i,i-1. Hl(0) = [H]_0,-1 is the 
-                                // hopping between two left contact blocks.
-                                // H(1) = [H]_1,0 is the hopping 
-                                // between block # 1 and left contact. Hl(N+1) is
-                                // hopping between right contact and block # N.
-                                // Hl(N+2) is hopping between two right contact
-                                // blocks.
-    
-    
-    field<shared_ptr<cxmat> >Sl;// Lower diagonal blocks of overlap matrix: 
-                                // Sl(i) = [S]_i,i-1. Sl(0) = [S]_0,-1 is the 
-                                // overlap between two left contact blocks.
-                                // S(1) = [S]_1,0 is the overlap between 
-                                // block # 1 and left contact. Hl(N+1) is
-                                // overlap between right contact and block # N.
-                                // Sl(N+2) is hopping between two right contact
-                                // blocks.
-    
-    field<shared_ptr<vec> >   V;// Electrostatic potential of all the orbitals
-                                // for the entire device: from block#0 
-                                // to block#N+1.
-
-    static const double SurfGTolX = 1E-8;
-    
-    CohRgfaParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
-            nb(nb), N(nb-2), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
-        DCacheEnabled = true;
-        TCacheEnabled = true;
-        grcCacheEnabled = true;
-        glcCacheEnabled = true;
-        GiiCacheEnabled = true;
-        Gi1CacheEnabled = true;
-        GiNCacheEnabled = true;
-        Giip1CacheEnabled = true;
-        Giim1CacheEnabled = true; 
-        
-        mTitle = "Coherent RGF parameters";
-    }
-    
-    // Easy access for python
-    void setH0(shared_ptr<cxmat> H0, uint it){ this->H0(it) = H0; }
-    void setS0(shared_ptr<cxmat> S0, uint it){ this->S0(it) = S0; }
-    void setHl(shared_ptr<cxmat> Hl, uint it){ this->Hl(it) = Hl; }
-    void setSl(shared_ptr<cxmat> Sl, uint it){ this->Sl(it) = Sl; }
-    void setV(shared_ptr<vec> V, uint it){ this->V(it) = V; }
-    
-    virtual string toString() const {
-        stringstream out;
-        out << Printable::toString() << ":" << endl;
-        out << mPrefix << " IsOrthogonal = " << (isOrthogonal ? "Yes" : "No")  << endl;
-        out << mPrefix << " nb           = " << nb << endl;
-        out << mPrefix << " N            = " << N << endl;
-        out << mPrefix << " ieta         = " << ieta << endl;
-        out << mPrefix << " kT           = " << kT << endl;
-        out << mPrefix << " muS          = " << muS << endl;
-        out << mPrefix << " muD          = " << muD;
-        
-        return out.str();
-    }
-};
-
+//struct CohRgfaParams: public Printable {
+//    
+//    // Options
+//    bool                DCacheEnabled;
+//    bool                TCacheEnabled;
+//    bool                grcCacheEnabled;
+//    bool                glcCacheEnabled;
+//    bool                GiiCacheEnabled;
+//    bool                Gi1CacheEnabled;
+//    bool                GiNCacheEnabled;
+//    bool                Giip1CacheEnabled;
+//    bool                Giim1CacheEnabled;
+//    
+//    bool                isOrthogonal;
+//    
+//    dcmplx              ieta;   // small infinitesimal energy    
+//    uint                nb;     // Total number of blocks including contacts
+//    uint                N;      // Number of blocks in the device.
+//    double              muS;    // Fermi function at the left contact
+//    double              muD;    // Fermi function at the right contact
+//    double              kT;     // k*T
+//    
+//    // Hamiltonian , overlap and potential
+//    field<shared_ptr<cxmat> >H0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
+//                                // H0(0) is on the left contact and H0(N+1) is 
+//                                // on the right contact.
+//
+//    field<shared_ptr<cxmat> >S0;// Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
+//                                // H0(0) is on the left contact and H0(N+1) is 
+//                                // on the right contact.
+//    
+//    field<shared_ptr<cxmat> >Hl;// Lower diagonal blocks of Hamiltonian: 
+//                                // Hl(i) = [H]_i,i-1. Hl(0) = [H]_0,-1 is the 
+//                                // hopping between two left contact blocks.
+//                                // H(1) = [H]_1,0 is the hopping 
+//                                // between block # 1 and left contact. Hl(N+1) is
+//                                // hopping between right contact and block # N.
+//                                // Hl(N+2) is hopping between two right contact
+//                                // blocks.
+//    
+//    field<shared_ptr<cxmat> >Sl;// Lower diagonal blocks of overlap matrix: 
+//                                // Sl(i) = [S]_i,i-1. Sl(0) = [S]_0,-1 is the 
+//                                // overlap between two left contact blocks.
+//                                // S(1) = [S]_1,0 is the overlap between 
+//                                // block # 1 and left contact. Hl(N+1) is
+//                                // overlap between right contact and block # N.
+//                                // Sl(N+2) is hopping between two right contact
+//                                // blocks.
+//    
+//    field<shared_ptr<vec> >   V;// Electrostatic potential of all the orbitals
+//                                // for the entire device: from block#0 
+//                                // to block#N+1.
+//
+//    static const double SurfGTolX = 1E-8;
+//    
+//    CohRgfaParams(uint nb, const string &prefix = ""):Printable(" " + prefix),
+//            nb(nb), N(nb-2), H0(nb), S0(nb), Hl(nb+1), Sl(nb+1), V(nb){
+//        DCacheEnabled = true;
+//        TCacheEnabled = true;
+//        grcCacheEnabled = true;
+//        glcCacheEnabled = true;
+//        GiiCacheEnabled = true;
+//        Gi1CacheEnabled = true;
+//        GiNCacheEnabled = true;
+//        Giip1CacheEnabled = true;
+//        Giim1CacheEnabled = true; 
+//        
+//        mTitle = "Coherent RGF parameters";
+//    }
+//    
+//    // Easy access for python
+//    void setH0(shared_ptr<cxmat> H0, uint it){ this->H0(it) = H0; }
+//    void setS0(shared_ptr<cxmat> S0, uint it){ this->S0(it) = S0; }
+//    void setHl(shared_ptr<cxmat> Hl, uint it){ this->Hl(it) = Hl; }
+//    void setSl(shared_ptr<cxmat> Sl, uint it){ this->Sl(it) = Sl; }
+//    void setV(shared_ptr<vec> V, uint it){ this->V(it) = V; }
+//    
+//    virtual string toString() const {
+//        stringstream out;
+//        out << Printable::toString() << ":" << endl;
+//        out << mPrefix << " IsOrthogonal = " << (isOrthogonal ? "Yes" : "No")  << endl;
+//        out << mPrefix << " nb           = " << nb << endl;
+//        out << mPrefix << " N            = " << N << endl;
+//        out << mPrefix << " ieta         = " << ieta << endl;
+//        out << mPrefix << " kT           = " << kT << endl;
+//        out << mPrefix << " muS          = " << muS << endl;
+//        out << mPrefix << " muD          = " << muD;
+//        
+//        return out.str();
+//    }
+//};
+//
 
 /**
  * CohRgfa - Coherent RGF algorithm class. 
@@ -156,6 +155,7 @@ struct CohRgfaParams: public Printable {
  * It only works for coherent transport. It is not parallel right now.
  */
 class CohRgfa: public Printable {
+
 /*
  * Helper classes for the potential, Hamiltonian
  * and Green functions.
@@ -294,50 +294,24 @@ protected:
         const cxmat& operator ()(int ib);
     protected:
         inline void computeGiim1(cxmat& Giim1, const cxmat& Gim1im1, int ib);    
-    }; // end of Giim1
+    }; // end of Giim1    
 
+//------------------------------------------------------------------------------    
 /*
  * NEGF class members
  */
-// Fields    
-protected:
-    CohRgfaParams      mp;      // parameters
-    double             mE;      // Energy at which calculations are pertormed.
-    double             mf0;     // Fermi function at contact 1
-    double             mfNp1;   // Fermi function at contact N+1
-
-    uint               mN;      // number of blocks without the contacts
-    uint               miLc;    // index of left contact block
-    uint               miRc;    // index of right contact block
-    
-    // Hamiltonian, Overlap and Potential matrices.
-    // [U]ij = -(Vi+Vj)/2*Sij
-    // Dii = ESii - Uii - Hii; 
-    // Tij = Hij + Uij - ESij;          
-    // Di(i) = Dii = D_i,i. Dii(0) and Dii(N+1) hold H for left and right contacts
-    // Tl(i) = T_ij = T_i,i-1.
-    Di                  mDi;   // block Hamiltonian: 0 to N+1
-    Tl                  mTl;   // coupling matrix: T_i,i-1. e.g., T10. 0 to N+2
-    // Bare Green functions
-    grc                 mgrc;   // left connected Green function  grc: 1 to N+1
-    glc                 mglc;   // right connected Green function glc: 0 to N
-    // Full Green function
-    Gii                 mGii;   // Green function along the diagonal Gi,i: 1 to N
-    Gi1                 mGi1;   // Green function along the column 1 Gi,1: 2 to N
-    GiN                 mGiN;   // Green function along the column N Gi,N: 1 to N-1
-    Giip1               mGiip1; // Green function along the upper diagonal Gi,i+1: 1 to N-1
-    Giim1               mGiim1; // Green function along the lower diagonal Gi,i-1: 2 to N
-     
-    cxmat               mSigL11; // Self energy of left contact
-    cxmat               mSigRNN; // Self energy of right contact
-    cxmat               mGamL11; // Broadening of left contact
-    cxmat               mGamRNN; // Broadening of right contact
-    
-private:
 
 // Methods    
 public:
-    CohRgfa(const CohRgfaParams &newp, double E, string newprefix = "");
+    CohRgfa(uint nb, double kT = 0.0259, dcmplx ieta = dcmplx(0,1E-3), bool orthogonal = true, string newprefix = "");
+    
+    void mu(double muD = 0.0, double muS = 0.0);
+    void E(double E);
+    void H(const field<shared_ptr<cxmat> > &H0, const field<shared_ptr<cxmat> > &Hl);
+    void S(const field<shared_ptr<cxmat> > &S0, const field<shared_ptr<cxmat> > &Sl);
+    void V(const field<shared_ptr<vec> >  &V);
+    
+    
     
     // Density operator
     cxmat nop(uint N = 1);
@@ -374,6 +348,81 @@ protected:
 private:
     CohRgfa();
 
+// Fields    
+private:
+    uint                mnb;     // Total number of blocks including contacts
+    double              mkT;     // k*T
+    dcmplx              mieta;   // small infinitesimal energy    
+    bool                morthogonal;
+    
+    double              mmuS;     // Fermi function at the left contact
+    double              mmuD;     // Fermi function at the right contact
+
+    double              mE;      // Energy at which calculations are performed.
+    double              mf0;     // Fermi function at contact 1
+    double              mfNp1;   // Fermi function at contact N+1
+
+    uint                mN;      // number of blocks without the contacts
+    uint                miLc;    // index of left contact block
+    uint                miRc;    // index of right contact block
+    
+    static const double SurfGTolX = 1E-8;
+    
+    // Hamiltonian , overlap and potential
+    field<shared_ptr<cxmat> >mH0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
+                                 // H0(0) is on the left contact and H0(N+1) is 
+                                 // on the right contact.
+
+    field<shared_ptr<cxmat> >mS0;// Diagonal blocks of overlap matrix: S0(i) = [S]_i,i
+                                 // H0(0) is on the left contact and H0(N+1) is 
+                                 // on the right contact.
+    
+    field<shared_ptr<cxmat> >mHl;// Lower diagonal blocks of Hamiltonian: 
+                                 // Hl(i) = [H]_i,i-1. Hl(0) = [H]_0,-1 is the 
+                                 // hopping between two left contact blocks.
+                                 // H(1) = [H]_1,0 is the hopping 
+                                 // between block # 1 and left contact. Hl(N+1) is
+                                 // hopping between right contact and block # N.
+                                 // Hl(N+2) is hopping between two right contact
+                                 // blocks.
+    
+    field<shared_ptr<cxmat> >mSl;// Lower diagonal blocks of overlap matrix: 
+                                 // Sl(i) = [S]_i,i-1. Sl(0) = [S]_0,-1 is the 
+                                 // overlap between two left contact blocks.
+                                 // S(1) = [S]_1,0 is the overlap between 
+                                 // block # 1 and left contact. Hl(N+1) is
+                                 // overlap between right contact and block # N.
+                                 // Sl(N+2) is hopping between two right contact
+                                 // blocks.
+    
+    field<shared_ptr<vec> >   mV;// Electrostatic potential of all the orbitals
+                                 // for the entire device: from block#0 
+                                 // to block#N+1.
+
+    // Hamiltonian, Overlap and Potential matrices.
+    // [U]ij = -(Vi+Vj)/2*Sij
+    // Dii = ESii - Uii - Hii; 
+    // Tij = Hij + Uij - ESij;          
+    // Di(i) = Dii = D_i,i. Dii(0) and Dii(N+1) hold H for left and right contacts
+    // Tl(i) = T_ij = T_i,i-1.
+    Di                  mDi;   // block Hamiltonian: 0 to N+1
+    Tl                  mTl;   // coupling matrix: T_i,i-1. e.g., T10. 0 to N+2
+    // Bare Green functions
+    grc                 mgrc;   // left connected Green function  grc: 1 to N+1
+    glc                 mglc;   // right connected Green function glc: 0 to N
+    // Full Green function
+    Gii                 mGii;   // Green function along the diagonal Gi,i: 1 to N
+    Gi1                 mGi1;   // Green function along the column 1 Gi,1: 2 to N
+    GiN                 mGiN;   // Green function along the column N Gi,N: 1 to N-1
+    Giip1               mGiip1; // Green function along the upper diagonal Gi,i+1: 1 to N-1
+    Giim1               mGiim1; // Green function along the lower diagonal Gi,i-1: 2 to N
+     
+    cxmat               mSigL11; // Self energy of left contact
+    cxmat               mSigRNN; // Self energy of right contact
+    cxmat               mGamL11; // Broadening of left contact
+    cxmat               mGamRNN; // Broadening of right contact
+    
+    
 }; // end of CohRgfa
 }  // end of namespace
 }

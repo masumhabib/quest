@@ -12,6 +12,25 @@
 namespace qmicad{
 namespace python{
 
+Workers::Workers( const communicator &workers):mWorkers(workers), mMasterId(0)
+{
+    mMyCpuId = mWorkers.rank();
+    mNcpu = mWorkers.size();
+    mIAmMaster = (mMasterId == mMyCpuId);
+
+    stds::vout.printersId(mMasterId);        
+    stds::vout.myId(mMyCpuId);        
+}
+
+void Workers::assignCpus(long& myStart, long& myEnd, long& myN, long N){
+    
+    long quo = N/mNcpu;
+    long rem = N%mNcpu;
+    myStart = mMyCpuId*quo + (mMyCpuId < rem ? mMyCpuId:rem);
+    myEnd = myStart + quo + (mMyCpuId < rem ? 1:0) - 1;        
+    myN = myEnd - myStart + 1;
+}
+
 /**
  * MPI communicator wrapper.
  */

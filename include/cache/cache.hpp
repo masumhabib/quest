@@ -49,6 +49,18 @@ public:
         }
     };
 
+    // resets the cache.
+    void reset(){
+        // reset iterator
+        mIt = mBegin - 1;
+        // reset members.
+        if (mCacheEnabled == true){
+            mM.set_size(mLength);
+        }else{
+            mM.set_size(1);
+        }        
+    }
+
     // () operator is the read only access.
     virtual const T& operator()(int it){
         return getAt(it);
@@ -59,6 +71,13 @@ public:
         return it - mBegin;
     };
 
+    void enableCache(bool enable = false){
+        if (mCacheEnabled != enable){        
+            mCacheEnabled = enable;
+            reset();
+        }
+    }
+    
     int begin(){ return mBegin; };
     int end(){ return mEnd; };
     int length(){ return mLength; };
@@ -102,10 +121,8 @@ public:
     MatCache( int begin, int end, bool cacheEnabled = true):
         Cache<Mat<T> >(begin, end, cacheEnabled){
     };
-    // () operator is the read only access.
-    /*virtual const T& operator()(int it){
-        return getAt(it);
-    };*/
+    
+    
 protected:
     bool isStored(int it){
         bool result;

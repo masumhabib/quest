@@ -11,23 +11,82 @@
 namespace qmicad{
 namespace negf{
 
-CohRgfa::CohRgfa(const CohRgfaParams &p, double E, string newprefix):
-        Printable(newprefix), mp(p), mE(E), 
-        mN(p.N), miLc(0), miRc(p.N+1),
-        mDi(this, miLc, miRc, p.DCacheEnabled), 
-        mTl(this, miLc, miRc+1, p.TCacheEnabled),
-        mgrc(this, miLc+1, miRc, p.grcCacheEnabled),
-        mglc(this, miLc, miRc-1, p.glcCacheEnabled),
-        mGii(this, miLc+1, miRc-1, p.GiiCacheEnabled),
-        mGi1(this, miLc+2, miRc-1, p.Gi1CacheEnabled),
-        mGiN(this, miLc+1, miRc-2, p.GiNCacheEnabled),
-        mGiip1(this, miLc+1, miRc-2, p.Giip1CacheEnabled),
-        mGiim1(this, miLc+2, miRc-1, p.Giim1CacheEnabled)
+CohRgfa::CohRgfa(uint nb, double kT, dcmplx ieta, bool orthogonal, string newprefix):
+        Printable(newprefix),
+        mnb(nb), mkT(kT), mieta(ieta), morthogonal(orthogonal),
+        mH0(nb), mS0(nb), mHl(nb+1), mSl(nb+1), mV(nb),
+        mN(nb-2), miLc(0), miRc(nb-1),
+        mDi(this, miLc, miRc), 
+        mTl(this, miLc, miRc+1),
+        mgrc(this, miLc+1, miRc),
+        mglc(this, miLc, miRc-1),
+        mGii(this, miLc+1, miRc-1),
+        mGi1(this, miLc+2, miRc-1),
+        mGiN(this, miLc+1, miRc-2),
+        mGiip1(this, miLc+1, miRc-2),
+        mGiim1(this, miLc+2, miRc-1)
 {
     mTitle = "Transport";
-    // Fermi functions
-    mf0 = fermi(mE, mp.muS, mp.kT);
-    mfNp1 = fermi(mE, mp.muD, mp.kT);
+}
+
+// set chemical potential
+void CohRgfa::mu(double muD, double muS){
+    mmuS = muS;
+    mmuD = muD;
+    mf0 = fermi(mE, mmuS, mkT);
+    mfNp1 = fermi(mE, mmuD, mkT);
+}
+
+
+void CohRgfa::E(double E){
+    mE = E;
+    mDi.reset();
+    mTl.reset();
+    mgrc.reset();
+    mglc.reset();
+    mGii.reset();
+    mGi1.reset();
+    mGiN.reset();
+    mGiip1.reset();
+    mGiim1.reset();
+
+    mf0 = fermi(mE, mmuS, mkT);
+    mfNp1 = fermi(mE, mmuD, mkT);    
+}
+
+
+void CohRgfa::H(const field<shared_ptr<cxmat> > &H0, const field<shared_ptr<cxmat> > &Hl){
+    if (H0.n_elem != mnb){
+        throw runtime_error("In CohRgfa::H(): size of H0 should be equal to number of blocks.");
+    }
+
+    if (Hl.n_elem != mnb+1){
+        throw runtime_error("In CohRgfa::H(): size of Hl should be equal to number of blocks + 1.");
+    }
+    
+    mH0 = H0;
+    mHl = Hl;
+}
+
+void CohRgfa::S(const field<shared_ptr<cxmat> > &S0, const field<shared_ptr<cxmat> > &Sl){
+    if (S0.n_elem != mnb){
+        throw runtime_error("In CohRgfa::S(): size of S0 should be equal to number of blocks.");
+    }
+
+    if (Sl.n_elem != mnb+1){
+        throw runtime_error("In CohRgfa::S(): size of Sl should be equal to number of blocks + 1.");
+    }
+
+    mS0 = S0;
+    mSl = Sl;
+}
+
+void CohRgfa::V(const field<shared_ptr<vec> > &V){
+    if (V.n_elem != mnb){
+        throw runtime_error("In CohRgfa::V(): size of V should be equal to number of blocks.");
+    }
+    
+    mV = V;
 }
 
 /*
@@ -570,10 +629,9 @@ inline void CohRgfa::glc::computeglc(cxmat& glci, const cxmat& glcim1, int ib){
     const cxmat &Tiim1 = mnegf->mTl(ib); //load T_ib,ib-1
     // If this is the left contact, calculate surface Green function.
     if(ib == iLc){
-        CohRgfaParams &p = mnegf->mp;
         double E = mnegf->mE;
-        double VL = (*p.V(iLc))(0); // all the atoms on a contact have the save bias
-        computegs(glci, E+VL, *p.H0(iLc), *p.S0(iLc), Tiim1, p.ieta, p.SurfGTolX);
+        double VL = (*mnegf->mV(iLc))(0); // all the atoms on a contact have the save bias
+        computegs(glci, E+VL, *mnegf->mH0(iLc), *mnegf->mS0(iLc), Tiim1, mnegf->mieta, mnegf->SurfGTolX);
     // calculate glc_i,i using recursive equation:
     // glc_i = [ES_ii - H_ii - U_ii - T_ii-1*glc_i-1*T_i-1i]^-1;
     // glc_i = [ES_ii - H_ii - U_ii - SigL_ii]^-1;
@@ -637,11 +695,10 @@ inline void CohRgfa::grc::computegrc(cxmat& grci, const cxmat& grcip1, int ib){
     const cxmat &Tip1i = mnegf->mTl(ib+1); //load T_ib+1,ib
     // If this is the right contact then calculate surface Green function.
     if(ib == iRc){
-        CohRgfaParams &p = mnegf->mp;
         double E = mnegf->mE;
-        double VR = (*p.V(iRc))(0); // all the atoms on a contact have the save bias
-        computegs(grci, E+VR, *p.H0(iRc), *p.S0(iRc), trans(Tip1i), p.ieta, 
-                  p.SurfGTolX);
+        double VR = (*mnegf->mV(iRc))(0); // all the atoms on a contact have the save bias
+        computegs(grci, E+VR, *mnegf->mH0(iRc), *mnegf->mS0(iRc), trans(Tip1i), mnegf->mieta, 
+                  mnegf->SurfGTolX);
 
     // Calculate grc_i,i using recursive equation:
     // grc_i = [ES_ii - H_ii - U_ii - T_ii+1*grc_i+1*T_i+1i]^-1;
@@ -678,14 +735,14 @@ const cxmat& CohRgfa::Tl::operator ()(int ib){
 inline void CohRgfa::Tl::computeTl(cxmat& Tl, int ib){
     int ii = toArrayIndx(ib);
     double E = mnegf->mE;
-    cxmat& Hl = *(mnegf->mp.Hl(ii));
+    cxmat& Hl = *(mnegf->mHl(ii));
     
     // for orthogonal basis
-    if (mnegf->mp.isOrthogonal){
+    if (mnegf->morthogonal){
         Tl = Hl;
     // for non-orthogonal basisi
     }else{
-        cxmat& Sl = *(mnegf->mp.Sl(ii));
+        cxmat& Sl = *(mnegf->mSl(ii));
         cxmat Ul = mnegf->Ul(ii);
         Tl = Hl + Ul - E*Sl;
     }
@@ -709,12 +766,12 @@ const cxmat& CohRgfa::Di::operator ()(int ib){
 inline void CohRgfa::Di::computeDi(cxmat& Dii, int ib){
     int ii = toArrayIndx(ib);
     double E = mnegf->mE;
-    cxmat &Hii = *(mnegf->mp.H0(ii));
+    cxmat &Hii = *(mnegf->mH0(ii));
     
     // for orthogonal basis
-    if (mnegf->mp.isOrthogonal){
+    if (mnegf->morthogonal){
         cxmat EIii = eye<cxmat>(Hii.n_rows, Hii.n_cols);
-        vec &Vii = *(mnegf->mp.V(ii));
+        vec &Vii = *(mnegf->mV(ii));
         EIii.diag().fill(E);    // E*I
         cxmat UIii(Hii.n_rows, Hii.n_cols, fill::zeros);
         UIii.diag() = dcmplx(-1, 0)*Vii;
@@ -722,7 +779,7 @@ inline void CohRgfa::Di::computeDi(cxmat& Dii, int ib){
         
     // for non-orthogonal basis
     }else{
-        cxmat& Sii = *(mnegf->mp.S0(ii));
+        cxmat& Sii = *(mnegf->mS0(ii));
         cxmat USii = mnegf->Ui(ii);
         Dii = E*Sii - USii - Hii;
     }
@@ -736,18 +793,18 @@ inline void CohRgfa::Di::computeDi(cxmat& Dii, int ib){
  */
 inline cxmat CohRgfa::Ul(int i){
     cxmat Ul;
-    cxmat &Sl = *(mp.Sl(i));
+    cxmat &Sl = *(mSl(i));
     Ul.copy_size( Sl);
     for(int m = 0; m < Ul.n_rows; ++m){
         for(int n = 0; n < Ul.n_cols; ++n){
             // if we are at the contacts: U_0,-1 and U_N+2,N+1
             // then use potential of the contacts V(0) and V(N+1) respectively.
             if (i == miLc || i == miRc+1){
-                vec &Vi = *(mp.V(i));
+                vec &Vi = *(mV(i));
                 Ul(m, n) = -(Vi(m) + Vi(n))/2* Sl(m,n);
             }else{
-                vec &Vi = *(mp.V(i));
-                vec &Vim1 = *(mp.V(i-1));
+                vec &Vi = *(mV(i));
+                vec &Vim1 = *(mV(i-1));
                 Ul(m, n) = -(Vi(m) + Vim1(n))/2* Sl(m,n);
             }
         }
@@ -759,12 +816,12 @@ inline cxmat CohRgfa::Ul(int i){
  */
 inline cxmat CohRgfa::Ui(int i){
     cxmat Ui;
-    cxmat &Si = *(mp.S0(i));
+    cxmat &Si = *(mS0(i));
     Ui.copy_size(Si);
     for(int m = 0; m < Ui.n_rows; ++m){
         for(int n = 0; n < Ui.n_cols; ++n){
             //[Uij]m,n = - (V_im+V_in)/2*[Sij]_m,n
-            vec &Vi = *(mp.V(i));
+            vec &Vi = *(mV(i));
             Ui(m, n) = -(Vi(m) + Vi(n))/2*Si(m,n);
         }
     }
@@ -830,35 +887,35 @@ inline const cxmat& CohRgfa::GamRNN(){
 namespace qmicad{
 namespace python{
 using namespace negf;
-/**
- * NEGF parameters.
- */
-void export_CohRgfaParams(){
-    class_<CohRgfaParams, bases<Printable>, shared_ptr<CohRgfaParams> >("CohRgfaParams", 
-            init<uint>())
-        .enable_pickling()
-        .def("H0", &CohRgfaParams::setH0)
-        .def("S0", &CohRgfaParams::setS0)
-        .def("Hl", &CohRgfaParams::setHl)
-        .def("Sl", &CohRgfaParams::setSl)
-        .def("V", &CohRgfaParams::setV)
-        .def_readonly("nb", &CohRgfaParams::nb)
-        .def_readwrite("kT", &CohRgfaParams::kT)
-        .def_readwrite("ieta", &CohRgfaParams::ieta)
-        .def_readwrite("muS", &CohRgfaParams::muS)
-        .def_readwrite("muD", &CohRgfaParams::muD)
-        .def_readwrite("isOrthogonal", &CohRgfaParams::isOrthogonal)
-        .def_readwrite("DCacheEnabled", &CohRgfaParams::DCacheEnabled)
-        .def_readwrite("TCacheEnabled", &CohRgfaParams::TCacheEnabled)
-        .def_readwrite("grcCacheEnabled", &CohRgfaParams::grcCacheEnabled)
-        .def_readwrite("glcCacheEnabled", &CohRgfaParams::glcCacheEnabled)
-        .def_readwrite("GiiCacheEnabled", &CohRgfaParams::GiiCacheEnabled)
-        .def_readwrite("Gi1CacheEnabled", &CohRgfaParams::Gi1CacheEnabled)
-        .def_readwrite("GiNCacheEnabled", &CohRgfaParams::GiNCacheEnabled)
-        .def_readwrite("Giip1CacheEnabled", &CohRgfaParams::Giip1CacheEnabled)
-        .def_readwrite("Giim1CacheEnabled", &CohRgfaParams::Giim1CacheEnabled)
-    ;
-}
+///**
+// * NEGF parameters.
+// */
+//void export_CohRgfaParams(){
+//    class_<CohRgfaParams, bases<Printable>, shared_ptr<CohRgfaParams> >("CohRgfaParams", 
+//            init<uint>())
+//        .enable_pickling()
+//        .def("H0", &CohRgfaParams::setH0)
+//        .def("S0", &CohRgfaParams::setS0)
+//        .def("Hl", &CohRgfaParams::setHl)
+//        .def("Sl", &CohRgfaParams::setSl)
+//        .def("V", &CohRgfaParams::setV)
+//        .def_readonly("nb", &CohRgfaParams::nb)
+//        .def_readwrite("kT", &CohRgfaParams::kT)
+//        .def_readwrite("ieta", &CohRgfaParams::ieta)
+//        .def_readwrite("muS", &CohRgfaParams::muS)
+//        .def_readwrite("muD", &CohRgfaParams::muD)
+//        .def_readwrite("isOrthogonal", &CohRgfaParams::isOrthogonal)
+//        .def_readwrite("DCacheEnabled", &CohRgfaParams::DCacheEnabled)
+//        .def_readwrite("TCacheEnabled", &CohRgfaParams::TCacheEnabled)
+//        .def_readwrite("grcCacheEnabled", &CohRgfaParams::grcCacheEnabled)
+//        .def_readwrite("glcCacheEnabled", &CohRgfaParams::glcCacheEnabled)
+//        .def_readwrite("GiiCacheEnabled", &CohRgfaParams::GiiCacheEnabled)
+//        .def_readwrite("Gi1CacheEnabled", &CohRgfaParams::Gi1CacheEnabled)
+//        .def_readwrite("GiNCacheEnabled", &CohRgfaParams::GiNCacheEnabled)
+//        .def_readwrite("Giip1CacheEnabled", &CohRgfaParams::Giip1CacheEnabled)
+//        .def_readwrite("Giim1CacheEnabled", &CohRgfaParams::Giim1CacheEnabled)
+//    ;
+//}
 
 }
 }

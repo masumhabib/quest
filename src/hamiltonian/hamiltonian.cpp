@@ -19,67 +19,30 @@ namespace python{
 using namespace hamiltonian;
 using namespace atoms;
 using namespace utils::stds;
+namespace bp = boost::python;
+
+bp::tuple generateHamOvl(const HamParams<cxmat> &p, const AtomicStruct &bi, 
+        const AtomicStruct &bj)
+{
+    cxmat H, S;
+    generateHamOvl(H, S, p, bi, bj);
+    
+    return bp::make_tuple(H, S);
+}
 
 /**
  * Hamiltonian parameters.
  */
-void export_HamParams(){    
-    double (HamParams::*HamParams_getdtol)() = &HamParams::dtol;
-    void (HamParams::*HamParams_setdtol)(double) = &HamParams::dtol;
-    class_<HamParams, bases<Printable>, shared_ptr<HamParams> >("HamiltonianParams", 
-            init<const string&>())
-        .add_property("dtol", HamParams_getdtol, HamParams_setdtol)
+void export_cxhamparams(){    
+    double (cxhamparams::*cxhamparams_getdtol)() = &cxhamparams::dtol;
+    void (cxhamparams::*cxhamparams_setdtol)(double) = &cxhamparams::dtol;
+    class_<cxhamparams, bases<Printable>, shared_ptr<cxhamparams> >("HamiltonianParams", 
+            no_init)
+        .add_property("dtol", cxhamparams_getdtol, cxhamparams_setdtol)
     ;
-}
-
-/**
- * Real Hamiltonian base.
- */
-void (ham::*ham_generate1)(const AtomicStruct&, 
-        const AtomicStruct&, uint, uint) = &ham::generate;
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ham_H, H, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ham_S, S, 1, 2)
-void export_ham(){    
-    class_<ham, shared_ptr<ham > >("Hamiltonian", no_init)
-        .def("setSize", &ham::setSize)
-        .def("setSizeForNegf", &ham::setSizeForNegf)
-        .def("setSizeForBand", &ham::setSizeForBand)
-        .def("H0", &ham::H0)
-        .def("Hl", &ham::Hl)
-        .def("H", &ham::H, ham_H())  
-        .def("Sl", &ham::Sl)
-        .def("S0", &ham::S0)
-        .def("S", &ham::S, ham_S())  
-        .def("genDiagBlock", &ham::genDiagBlock)
-        .def("genLowDiagBlock", &ham::genLowDiagBlock)
-        .def("genNearestNeigh", &ham::genNearestNeigh)
-        .def("generate", ham_generate1)
-    ;
-}
     
-/**
- * Complex Hamiltonian base.
- */
-void (cxham::*cxham_generate1)(const AtomicStruct&, 
-        const AtomicStruct&, uint, uint) = &cxham::generate;
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxham_H, H, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxham_S, S, 1, 2)
-void export_cxham(){    
-    class_<cxham, shared_ptr<cxham > >("CxHamiltonian", no_init)
-        .def("setSize", &cxham::setSize)
-        .def("setSizeForNegf", &cxham::setSizeForNegf)
-        .def("setSizeForBand", &cxham::setSizeForBand)
-        .def("H0", &cxham::H0)
-        .def("Hl", &cxham::Hl)
-        .def("H", &cxham::H, cxham_H())  
-        .def("Sl", &cxham::Sl)
-        .def("S0", &cxham::S0)
-        .def("S", &cxham::S, cxham_S())  
-        .def("genDiagBlock", &cxham::genDiagBlock)
-        .def("genLowDiagBlock", &cxham::genLowDiagBlock)
-        .def("genNearestNeigh", &cxham::genNearestNeigh)
-        .def("generate", cxham_generate1)
-    ;
+    def("generateHamOvl", generateHamOvl, " Generates Hamiltonian and Overlap matrices.");
+    
 }
 
 }

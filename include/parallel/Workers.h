@@ -18,16 +18,7 @@ using namespace boost::mpi;
 
 class Workers {
 public:
-    Workers( const communicator &workers):
-           mWorkers(workers), mMasterId(0)
-    {
-        mMyCpuId = mWorkers.rank();
-        mNcpu = mWorkers.size();
-        mIAmMaster = (mMasterId == mMyCpuId);
-
-        stds::vout.printersId(mMasterId);        
-        stds::vout.myId(mMyCpuId);        
-    }    
+    Workers( const communicator &workers);    
 
     int     MyId()          const {return mMyCpuId; };
     int     MasterId()      const { return mMasterId; };
@@ -35,9 +26,11 @@ public:
     bool    AmIMaster()     const { return mIAmMaster; };
     bool    IAmMaster()     const { return mIAmMaster; };
     
+    void    assignCpus(long &myStart, long &myEnd, long &myN, long N);
+    
     const communicator& Comm() const {return mWorkers; };
     
-protected:
+private:
     const communicator      &mWorkers;      //!< MPI worker processes 
     int                     mMyCpuId;       //!< This process ID
     int                     mNcpu;          //!< Total number of processes

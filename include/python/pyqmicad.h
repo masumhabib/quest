@@ -39,9 +39,7 @@ void export_quadrilateral();
 
 void export_Timer();
 
-void export_HamParams();
-void export_ham();
-void export_cxham();
+void export_cxhamparams();
 void export_GrapheneTbParams();
 void export_GrapheneTbHam();
 void export_GrapheneKpParams();
