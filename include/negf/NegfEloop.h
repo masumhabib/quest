@@ -40,12 +40,13 @@ class NegfEloop: public ParLoop{
     typedef vector<negf_result> vec_result;
 public:
     NegfEloop(const VecGrid &E, const CohRgfaParams &np, const Workers &workers, 
-              bool isAscii = true);
+              bool isText = true);
     
     void            enableTE(uint N = 1);   
     void            enableI(uint N = 1, uint ib = 0, uint jb = 0);
     void            enableDOS(uint N = 1);
-    void            enablen(uint N = 1);
+    void            enablen(uint N = 1, int ib = -1); //!< Electron density.
+    void            enablep(uint N = 1, int ib = -1); //!< Hole density.
     
     virtual void    save(string fileName);
     
@@ -77,10 +78,14 @@ protected:
     NegfResultList        mDOS;         //!< DOS list for all processes
     
     // Electron density operator
-    vec_result            mThisn;     //!< Density list for local process
-    NegfResultList        mn;         //!< Density list for all processes
+    vector<vec_result>    mThisnOp;     //!< Density list for local process
+    vector<NegfResultList>mnOp;         //!< Density list for all processes
+
+    // Hole density operator
+    vector<vec_result>    mThispOp;     //!< Density list for local process
+    vector<NegfResultList>mpOp;         //!< Density list for all processes    
     
-    bool                  mIsAscii;     //!< Save as ascii/binary?
+    bool                  mIsText;     //!< Save as ascii/binary?
 
     // user feedback
     ConsoleProgressBar    mbar;         //!< Shows a nice progress bar.

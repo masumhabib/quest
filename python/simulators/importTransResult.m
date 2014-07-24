@@ -5,6 +5,8 @@ function out = importTransResult(fileName)
     fid = fopen(fileName, 'rt');
     out = [];
     ibIE = 1;
+    ibn = 1;
+    ibneq = 1;
     while (~feof(fid))
         type = fscanf(fid, '%s[^\n]');
         if strfind(type, 'TRANSMISSION') == 1
@@ -15,7 +17,11 @@ function out = importTransResult(fileName)
         elseif strfind(type, 'DOS') == 1
             out.DOS = scan();
         elseif strfind(type, 'n') == 1
-            out.n = scan();
+            out.n{ibn} = scan();
+            ibn = ibn + 1;
+        elseif strfind(type, 'neq') == 1
+            out.neq{ibneq} = scan();
+            ibneq = ibneq + 1;
         end
     end
     

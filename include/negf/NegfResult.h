@@ -61,7 +61,7 @@ public:
     bool    isEnabled() { return N > 0; };  //!< Is calculation enabled? N = 0: no.
     void    sort();
     void    merge(NegfResultList &second);
-    void    save(ostream &out);
+    void    save(ostream &out, bool isText = true);
 };
 
 }

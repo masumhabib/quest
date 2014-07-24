@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8)
 # Version
 set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 06)
-set(QMICAD_PATCH 1)
+set(QMICAD_PATCH 2)
 
 
 # Add local usr path for locally compiled libraries
@@ -120,7 +120,7 @@ add_custom_command(
     COMMAND cp -rp ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h ${QMICAD_DIST_DIR}/include
     COMMAND rm -f ${QMICAD_DIST_DIR}/include/config.in.h
     COMMAND cp -rp ${CMAKE_SOURCE_DIR}/python ${QMICAD_DIST_DIR}
-    COMMAND ln -s ${QMICAD_DIST_DIR}/python ${QMICAD_DIST_DIR}/qmicad
+    COMMAND ln -sf ${QMICAD_DIST_DIR}/python ${QMICAD_DIST_DIR}/qmicad
     COMMAND cd ${QMICAD_DIST_DIR}/python && ln -sf ../lib/lib${PROJECT_NAME}.so qmicad.so
 )
 
