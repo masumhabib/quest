@@ -23,14 +23,18 @@ void NegfResultList::merge(NegfResultList &second){
     R.merge(second.R, ResultComparator());
 }
 
-void NegfResultList::save(ostream &out){
-    out << tag << endl;
-    out << R.size() << endl;
-    out << ib << " " << jb << endl;
-    out << N << endl;
-    iter it;
-    for (it = R.begin(); it != R.end(); ++it){
-        out << it->E << endl << it->M << endl;
+void NegfResultList::save(ostream &out, bool isText){
+    if (isText){
+        out << tag << endl;
+        out << R.size() << endl;
+        out << ib << " " << jb << endl;
+        out << N << endl;
+        iter it;
+        for (it = R.begin(); it != R.end(); ++it){
+            out << it->E << endl << it->M << endl;
+        }
+    }else{
+        
     }
 }
  
