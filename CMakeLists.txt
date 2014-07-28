@@ -11,7 +11,6 @@ set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 08)
 set(QMICAD_PATCH 0)
 
-
 # Add local usr path for locally compiled libraries
 set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
 #set(Boost_INCLUDE_DIR $ENV{HOME}/usr/include)

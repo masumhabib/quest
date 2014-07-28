@@ -457,13 +457,24 @@ class Transport(object):
                 Eloop.enableTE(value)
             # current
             if (type == "I"):
-                for I in self.Calculations["I"]:
-                    Eloop.enableI(I["N"], I["From"], I["To"])
+                if (isinstance( value, int)):
+                    Eloop.enableI(value, 0, 1)
+                else:
+                    for I in self.Calculations["I"]:
+                        Eloop.enableI(I["N"], I["From"], I["To"])
             if (type == "DOS"):
                 Eloop.enableDOS(value)
             if (type == "n"):
-                Eloop.enablen(value)
-        
+                if (isinstance( value, int)):
+                    Eloop.enablen(value)
+                else:
+                    for n in self.Calculations["n"]:
+                        if (n["Block"] == "All"):
+                            for ib in range(1, self.nb-2):
+                                Eloop.enablen(n["N"], ib)
+                        else:
+                            Eloop.enablen(n["N"], n["Block"])
+
         # Run the simulation
         if (self.DryRun == False):
             Eloop.run()
@@ -587,6 +598,9 @@ class Transport(object):
                     msg += "  Current from block # " + str(I["From"])
                     msg += " to block # " + str(I["To"]) 
                     msg += " (" + str(I["N"]) + ").\n"
+            if (type == "n"):
+                msg += "  Electron density.\n"
+                
         msg += "  Save output at: " + self.OutPath + self.OutFileName + "*\n"
                     
         # End of info section
