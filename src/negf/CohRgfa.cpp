@@ -90,15 +90,40 @@ void CohRgfa::V(const field<shared_ptr<vec> > &V){
 }
 
 /*
- * Electron density operator. It returns Gn_i,i or sum_j(Gn_i,j*Sj,i)
+ * Hole density operator. It returns A_ii - Gn_i,i or sum_j(A_i,j*Sj,i - Gn_i,j*Sj,i)
  * depending on the orthogonality of the basis set.
  */
-cxmat CohRgfa::nop(uint N){
-    cxmat nOp(N, N, fill::zeros);
-    for (uint ib = miLc+1; ib < miRc; ++ib){
-        nOp += trace<cxmat>(Gn(ib, ib), N);
+cxmat CohRgfa::pOp(uint N, int ib){
+    cxmat pOp(N, N, fill::zeros);
+    // If out of range, sum over the device
+    if (ib >= miRc || ib <= miLc){
+        for (uint ib = miLc+1; ib < miRc; ++ib){
+            pOp += trace<cxmat>(Aop(ib, ib) - Gn(ib, ib), N);
+        }
+    }else{
+        pOp = trace<cxmat>(Aop(ib, ib) - Gn(ib, ib), N);
     }
-    return nOp/(2*pi);    
+    
+    return pOp/(2*pi);    
+}
+
+/*
+ * Electron density operator. It returns 
+ * Gn_i,i or sum_j(Gn_i,j*Sj,i) depending on the orthogonality of the basis set.
+ */
+cxmat CohRgfa::nOp(uint N, int ib){
+
+    cxmat nOp(N, N, fill::zeros);
+    // If out of range, sum over the device
+    if (ib >= miRc || ib <= miLc){
+        for (uint ib = miLc+1; ib < miRc; ++ib){
+            nOp += trace<cxmat>(Gn(ib, ib), N);
+        }
+    }else{
+        nOp = trace<cxmat>(Gn(ib, ib), N);
+    }
+    
+    return nOp/(2*pi);        
 }
 
 /*
@@ -122,19 +147,6 @@ cxmat CohRgfa::Aop(uint N, uint ib){
     return trace<cxmat>(A, N);    
 }
 
-/*
- * Current flowing from block ib to ib+1.
- */
-//cxmat CohRgfa::Iop(uint ib, uint N){
-//    if (ib == miLc){
-//        return I0op(N);
-//    } else if (ib == mN){
-//        return INop(N);
-//    }else if(ib > miLc && ib < mN){
-//        return Iiop(ib, N);
-//    } 
-//    return cxmat();
-//}
 
 /*
  * Generic current operators: current from block i to block j.
@@ -184,32 +196,6 @@ inline cxmat CohRgfa::Iijop(uint N, uint ib, uint jb){
     }else{
         Iijop = mDi(ib)*Gnij - Gnij*mDi(ib);
     }
-
-    
-//    if (ib + 1 == jb){
-//        cxmat &Gnij = Iijop;
-//        // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
-//        // Gn_i,j = i*[G_i,j - G_j,i']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
-//        Gnij = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(jb))) 
-//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));
-//        //I_i,i+1 = H_i,i+1*Gn_i+1,i - Gn_i,i+1*H_i+1,i
-//        //I_i,j = H_i,j*Gn_j,i - Gn_i,j*H_j,i
-//        Iijop = trans(mTl(ib))*trans(Gnij) - Gnij*mTl(ib);
-//
-//    }else if (ib == jb + 1){
-//        cxmat &Gnij = Iijop;
-//        // Gn_i+1,i = i*[G_i+1,i - G_i,i+1']*fN + G_i+1,1*Gam_1,1*G_i,1'*(f1-fN)
-//        // Gn_i,j = i*[G_i,j - G_i,j']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
-//        Gnij = (i*mfNp1)*(mGiim1(ib) - trans(mGiip1(jb))) 
-//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));        
-//        
-//        //I_i+1,i = H_i+1,i*Gn_i,i+1 - Gn_i+1,i*H_i,i+1
-//        //I_j,i = H_j,i*Gn_i,j - Gn_j,i*H_i,j
-//        Iijop = mTl(ib)*trans(Gnij) - Gnij*trans(mTl(ib));
-//
-//    }else if(ib == jb){
-//        
-//    }
     
     return i*trace<cxmat>(Iijop, N);    
 }
@@ -289,32 +275,7 @@ inline cxmat CohRgfa::Gn(uint ib, uint jb){
     // Gn_i,j = i*[G_i,j - G_j,i']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)    
     Gnij = (i*mfNp1)*(G(ib, jb) - trans(G(jb, ib))) 
               + (mf0 - mfNp1)*(G(ib,1)*GamL11()*trans(G(jb,1)));
-   
-//    if (ib + 1 == jb){
-//        // Gn_i,i+1 = i*[G_i,i+1 - G_i+1,i']*fN + G_i,1*Gam_1,1*G_i+1,1'*(f1-fN)
-//        // Gn_i,j = i*[G_i,j - G_j,i']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
-//        Gnij = (i*mfNp1)*(mGiip1(ib) - trans(mGiim1(ib))) 
-//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));
-// 
-//    }else if (ib == jb + 1){
-//        // Gn_i+1,i = i*[G_i+1,i - G_i,i+1']*fN + G_i+1,1*Gam_1,1*G_i,1'*(f1-fN)
-//        // Gn_i,j = i*[G_i,j - G_i,j']*fN + G_i,1*Gam_1,1*G_j,1'*(f1-fN)
-//        Gnij = (i*mfNp1)*(mGiim1(ib) - trans(mGiip1(jb))) 
-//                     + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(jb)));        
-//
-//    }else if(ib == jb){
-//        // Gn_i,i = i*[G_i,i - G_i,i']*fN + G_i,1*Gam_1,1*G_i,1'*(f1-fN)
-//        if (ib == miLc + 1){
-//            Gnij = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
-//                    + (mf0 - mfNp1)*(mGii(ib)*GamL11()*trans(mGii(ib))); 
-//        }else if(ib == miRc - 1){ 
-//            
-//        }else{
-//            Gnij = (i*mfNp1)*(mGii(ib) - trans(mGii(ib))) 
-//                    + (mf0 - mfNp1)*(mGi1(ib)*GamL11()*trans(mGi1(ib)));         
-//        }
-//    }
-    
+       
     return Gnij;
 }
 

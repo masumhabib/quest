@@ -314,7 +314,8 @@ public:
     
     
     // Density operator
-    cxmat nop(uint N = 1);
+    cxmat pOp(uint N = 1, int ib = -1);
+    cxmat nOp(uint N = 1, int ib = -1);
     
     // Density of states
     cxmat DOSop(uint N = 1);

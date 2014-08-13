@@ -117,11 +117,16 @@ void CohRgfLoop::compute(int il){
         r.M = mrgf.DOSop(mDOS.N);  // M => DOS(E)
         mThisDOS.push_back(r);  
     }
-    // Electron density
-    if(mn.isEnabled()){
-        r.M = mrgf.nop(mn.N);  // M => n(E)
-        mThisn.push_back(r);  
+    // Non-equilibrium electron density
+    for (int it = 0; it < mnOp.size(); ++it){
+        r.M = mnegf->nOp(mnOp[it].N,  mnOp[it].ib); 
+        mThisnOp[it].push_back(r);           // Thisnop[it] => vector of nop()
     }
+    // Equilibrium electron density
+    for (int it = 0; it < mpOp.size(); ++it){
+        r.M = mnegf->nOp(mpOp[it].N,  mpOp[it].ib); 
+        mThispOp[it].push_back(r);        
+    }    
 
 }
 
@@ -150,10 +155,15 @@ void CohRgfLoop::collect(){
         gather(mThisDOS, mDOS);
     }
 
-    // Gather electron density
-    if(mn.isEnabled()){
-        gather(mThisn, mn);
-    }
+    // Gather equilibrium electron density
+    for (int it = 0; it < mnOp.size(); ++it){
+        gather(mThisnOp[it], mnOp[it]);
+    }    
+
+    // Gather Non-equilibrium electron density
+    for (int it = 0; it < mpOp.size(); ++it){
+        gather(mThisnOp[it], mpOp[it]);
+    }    
 
 }
 
@@ -188,8 +198,8 @@ void CohRgfLoop::save(string fileName){
     if(mWorkers.IAmMaster()){
         // save to a file
         ofstream out;
-        if(mIsAscii){
-            out.open(fileName.c_str(), ostream::binary|ios::app);
+        if(!mIsText){
+            out.open(fileName.c_str(), ofstream::binary|ios::app);
         }else{
             out.open(fileName.c_str(), ios::app);
         }
@@ -213,10 +223,14 @@ void CohRgfLoop::save(string fileName){
             mDOS.save(out);
         }
 
-        // Electron density
-        if (mn.isEnabled()){
-            mn.save(out);
-        }
+        // Non-equilibrium electron density
+        for (int it = 0; it < mnOp.size(); ++it){
+            mnOp[it].save(out);
+        }        
+        // Equilibrium electron density
+        for (int it = 0; it < mpOp.size(); ++it){
+            mpOp[it].save(out);
+        }        
 
     }
 }
@@ -238,9 +252,20 @@ void CohRgfLoop::enableDOS(uint N){
     mDOS.N = N;
 }
 
-void CohRgfLoop::enablen(uint N){
-    mn.tag = "n";
-    mn.N = N;
+void NegfEloop::enablen(uint N, int ib){    
+    stringstream out;
+    out << "n";    
+    mnOp.push_back(NegfResultList(out.str(), N, ib, ib));
+    mThisnOp.push_back(vec_result());
+
+}
+
+void NegfEloop::enablep(uint N, int ib){    
+    stringstream out;
+    out << "p";    
+    mpOp.push_back(NegfResultList(out.str(), N, ib, ib));
+    mThispOp.push_back(vec_result());
+
 }
 
 }
@@ -256,17 +281,19 @@ using namespace negf;
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableI, enableI, 0, 3)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enableDOS, enableDOS, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enablen, enablen, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enablen, enablen, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(NegfEloop_enablep, enablep, 0, 2)
 void export_NegfEloop(){
     class_<CohRgfLoop, shared_ptr<CohRgfLoop> >("NegfEloop", 
             init<VecGrid&, /*const CohRgfaParams&,*/ const Workers&, 
             optional<bool> >())
-        .def("run", &CohRgfLoop::run)
-        .def("save", &CohRgfLoop::save)
-        .def("enableTE", &CohRgfLoop::enableTE, NegfEloop_enableTE())
-        .def("enableI", &CohRgfLoop::enableI, NegfEloop_enableI())
-        .def("enableDOS", &CohRgfLoop::enableDOS, NegfEloop_enableDOS())
-        .def("enablen", &CohRgfLoop::enablen, NegfEloop_enablen())
+        .def("run", &NegfEloop::run)
+        .def("save", &NegfEloop::save)
+        .def("enableTE", &NegfEloop::enableTE, NegfEloop_enableTE())
+        .def("enableI", &NegfEloop::enableI, NegfEloop_enableI())
+        .def("enableDOS", &NegfEloop::enableDOS, NegfEloop_enableDOS())
+        .def("enablen", &NegfEloop::enablen, NegfEloop_enablen())
+        .def("enablep", &NegfEloop::enablep, NegfEloop_enablep())
     ;
 }
 
