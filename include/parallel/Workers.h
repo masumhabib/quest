@@ -13,8 +13,9 @@
 #include <boost/mpi/environment.hpp>
 #include <boost/mpi/communicator.hpp>
 
-namespace utils{
+namespace qmicad{namespace parallel{
 using namespace boost::mpi;
+using namespace utils;
 
 class Workers {
 public:
@@ -26,7 +27,7 @@ public:
     bool    AmIMaster()     const { return mIAmMaster; };
     bool    IAmMaster()     const { return mIAmMaster; };
     
-    void    assignCpus(long &myStart, long &myEnd, long &myN, long N);
+    void    assignCpus(long &myStart, long &myEnd, long &myN, long N) const;
     
     const communicator& Comm() const {return mWorkers; };
     
@@ -40,6 +41,6 @@ private:
 };
 
 
-}
+}}
 #endif	/* WORKERS_H */
 

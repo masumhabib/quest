@@ -9,7 +9,7 @@
 #define	COHRGFLOOP_H
 
 #include "negf/CohRgfa.h"
-#include "negf/NegfResult.h"
+#include "negf/RgfResult.h"
 
 #include "utils/ConsoleProgressBar.h"
 #include "utils/std.hpp"
@@ -28,7 +28,7 @@ namespace qmicad{
 namespace negf{
 
 using namespace utils::stds;
-using utils::ParLoop;
+using namespace qmicad::parallel;
 using utils::VecGrid;
 using boost::shared_ptr;
 using boost::make_shared;
@@ -38,11 +38,11 @@ namespace mpi = boost::mpi;
  * NegfCalculations specifies what to calculate.
  */
 class CohRgfLoop: public Printable{
-    typedef vector<negf_result> vec_result;
+    typedef vector<cxmat> cxmat_vec;
 public:
     CohRgfLoop(const Workers &workers, uint nb = 5, double kT = 0.0259, 
-        dcmplx ieta = dcmplx(0,1E-3), bool orthogonal = true, string newprefix = ""); 
-    //const VecGrid &E, /*const CohRgfaParams &np,*/ const Workers &workers,  bool isAscii = true);
+        dcmplx ieta = dcmplx(0,1E-3), bool orthogonal = true, 
+        string newprefix = ""); 
 
     void            E(const vec &E);
     void            k(const mat &k);
@@ -51,18 +51,17 @@ public:
     void            enableTE(uint N = 1);   
     void            enableI(uint N = 1, uint ib = 0, uint jb = 0);
     void            enableDOS(uint N = 1);
-    void            enablen(uint N = 1);
+    void            enablen(uint N = 1, int ib = -1); //!< Electron density.
+    void            enablep(uint N = 1, int ib = -1); //!< Hole density.
     
     void            run();
-    virtual void    save(string fileName);
+    virtual void    save(string fileName, bool isText = false);
     
 private:
     virtual void    prepare();
-    virtual void    preCompute(int il);
-    virtual void    compute(int il);  
-    virtual void    postCompute(int il);
+    virtual void    compute();  
     virtual void    collect();
-    virtual void    gather(vec_result &thisR, NegfResultList &all);
+    virtual void    gather(cxmat_vec &thisR, RgfResult &all);
     
     long            npoints();
 
@@ -74,6 +73,7 @@ public:
     vec                   mE;           //!< Energy grid.
     mat                   mk;          //!< Wave vector.
     int                   mnb;
+    bool                  morthogonal;
     // Hamiltonian , overlap and potential
     field<shared_ptr<cxmat> >mH0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
                                  // H0(0) is on the left contact and H0(N+1) is 
@@ -105,25 +105,27 @@ public:
     
     
     // TEop: Transmission operator
-    vec_result            mThisTE;      //!< Transmission list for local process.
-    NegfResultList        mTE;          //!< Transmission list for all processes.
+    cxmat_vec            mThisTE;      //!< Transmission list for local process.
+    RgfResult            mTE;          //!< Transmission list for all processes.
 
     // Iop, Current operator for block # i.
-    vector<vec_result>  mThisIop;       //!< For local process.
-    vector<NegfResultList> mIop;        //!< Collection of all processes.
+    vector<cxmat_vec>    mThisIop;       //!< For local process.
+    vector<RgfResult>    mIop;        //!< Collection of all processes.
     
     // DOSop: Density of States operator
-    vec_result            mThisDOS;     //!< DOS list for local process.
-    NegfResultList        mDOS;         //!< DOS list for all processes.
-    
-    // Electron density operator
-    vec_result            mThisn;     //!< Density list for local process.
-    NegfResultList        mn;         //!< Density list for all processes.
-    
-    bool                  mIsAscii;     //!< Save as ascii/binary?
+    cxmat_vec            mThisDOS;     //!< DOS list for local process.
+    RgfResult            mDOS;         //!< DOS list for all processes.
 
+    // Electron density operator
+    vector<cxmat_vec>    mThisnOp;     //!< Density list for local process
+    vector<RgfResult>    mnOp;         //!< Density list for all processes
+
+    // Hole density operator
+    vector<cxmat_vec>    mThispOp;     //!< Density list for local process
+    vector<RgfResult>    mpOp;         //!< Density list for all processes   
+    
     // user feedback
-    ConsoleProgressBar    mbar;         //!< Shows a nice progress bar.
+    ConsoleProgressBar   mbar;         //!< Shows a nice progress bar.
     
 };
 }

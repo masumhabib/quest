@@ -7,7 +7,7 @@
 
 #include "parallel/parloop.h"
 
-namespace utils{
+namespace qmicad{namespace parallel{
     
 
 ParLoop::ParLoop(const Workers &workers, int N):
@@ -39,5 +39,5 @@ void ParLoop::run(){
     collect();
 }
        
-}
+}}
     

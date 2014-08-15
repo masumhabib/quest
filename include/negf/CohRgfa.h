@@ -345,6 +345,8 @@ protected:
 
     inline cxmat Gn(uint ib, uint jb); //!< Correlation function.
     inline const cxmat& G(uint ib, uint jb); //!< Retarded green function.
+    
+    inline void  reset();
         
 private:
     CohRgfa();
@@ -354,7 +356,7 @@ private:
     uint                mnb;     // Total number of blocks including contacts
     double              mkT;     // k*T
     dcmplx              mieta;   // small infinitesimal energy    
-    bool                morthogonal;
+    bool                morthogonal; // orthognality.
     
     double              mmuS;     // Fermi function at the left contact
     double              mmuD;     // Fermi function at the right contact

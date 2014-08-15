@@ -9,8 +9,7 @@
 #include "python/boostpython.hpp"
 
 
-namespace qmicad{
-namespace python{
+namespace qmicad{namespace parallel{
 
 Workers::Workers( const communicator &workers):mWorkers(workers), mMasterId(0)
 {
@@ -22,7 +21,7 @@ Workers::Workers( const communicator &workers):mWorkers(workers), mMasterId(0)
     stds::vout.myId(mMyCpuId);        
 }
 
-void Workers::assignCpus(long& myStart, long& myEnd, long& myN, long N){
+void Workers::assignCpus(long& myStart, long& myEnd, long& myN, long N) const{
     
     long quo = N/mNcpu;
     long rem = N%mNcpu;
@@ -30,12 +29,14 @@ void Workers::assignCpus(long& myStart, long& myEnd, long& myN, long N){
     myEnd = myStart + quo + (mMyCpuId < rem ? 1:0) - 1;        
     myN = myEnd - myStart + 1;
 }
+}}
 
+namespace qmicad{namespace python{
 /**
  * MPI communicator wrapper.
  */
 void export_Workers(){
-    using namespace utils;
+    using namespace parallel;
     
    class_<Workers, shared_ptr<Workers>, noncopyable>("Workers", 
           init<const communicator&>())
@@ -47,6 +48,5 @@ void export_Workers(){
     ;     
 }
 
-}
-}
+}}
 

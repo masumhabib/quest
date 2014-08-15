@@ -40,15 +40,7 @@ void CohRgfa::mu(double muD, double muS){
 
 void CohRgfa::E(double E){
     mE = E;
-    mDi.reset();
-    mTl.reset();
-    mgrc.reset();
-    mglc.reset();
-    mGii.reset();
-    mGi1.reset();
-    mGiN.reset();
-    mGiip1.reset();
-    mGiim1.reset();
+    reset();
 
     mf0 = fermi(mE, mmuS, mkT);
     mfNp1 = fermi(mE, mmuD, mkT);    
@@ -836,6 +828,18 @@ inline const cxmat& CohRgfa::GamRNN(){
         mGamRNN = i*(SigRNN() - trans(SigRNN()));
     }
     return mGamRNN;
+}
+
+inline void CohRgfa::reset(){
+    mDi.reset();
+    mTl.reset();
+    mgrc.reset();
+    mglc.reset();
+    mGii.reset();
+    mGi1.reset();
+    mGiN.reset();
+    mGiip1.reset();
+    mGiim1.reset();
 }
 
 }
