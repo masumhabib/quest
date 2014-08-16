@@ -87,7 +87,7 @@ public:
     virtual string  toString() const;
     
     void            run();
-    virtual void    save(string fileName, bool isText = false);
+    virtual void    save(string fileName, bool isText = true);
     
 private:
     virtual void    prepare();

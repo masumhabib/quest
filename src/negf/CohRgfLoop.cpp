@@ -198,72 +198,76 @@ void CohRgfLoop::run(){
     // Assign E and k points to CPUs 
     mWorkers.assignCpus(myStart, myEnd, myN, n);
     // Loop over problem assigned to this CPU.
-    for(long it = myStart; it < myEnd; ++it){
+    long ik, ikPrev = -1, iE;
+    for(long it = myStart; it <= myEnd; ++it){
         
-        long ik, iE;
-        // Hamiltonian and overlap matrices. 
-        field<shared_ptr<cxmat> > H0(nb);
-        field<shared_ptr<cxmat> > S0(nb);
-        field<shared_ptr<cxmat> > Hl(nb+1);
-        field<shared_ptr<cxmat> > Sl(nb+1);
+        ik = it/nE;
+        iE = it%nE;
 
-        if (nk != 0){ // Do a k-loop
-            //@TODO: Needs memory optimization.
-            ik = it/nE;
-            iE = it%nE;
-            
-            vec k = mk.row(ik);
-            
-            // Calculate block diagonal matrices.
-            for(int ib = 0; ib < nb; ++ib){
-                shared_ptr<cxmat> H0k = make_shared<cxmat>(mH0(ib,0)->n_rows, mH0(ib,0)->n_cols, fill::zeros);
-                shared_ptr<cxmat> S0k = make_shared<cxmat>(mS0(ib,0)->n_rows, mS0(ib,0)->n_cols, fill::zeros);
-                
-                double th;
-                dcmplx expith;
-                for(int in = 0; in < mH0.n_cols; ++in){
-                    th = dot(k, mpv0(ib, in));
-                    expith = exp(i*th);
-                    (*H0k) = (*H0k) + (*mH0(ib, in))*expith;                    
-                    (*S0k) = (*S0k) + (*mS0(ib, in))*expith;
+        if (ik != ikPrev){ // change H and S matrices only for new k vectors.
+            // Hamiltonian and overlap matrices. 
+            field<shared_ptr<cxmat> > H0(nb);
+            field<shared_ptr<cxmat> > S0(nb);
+            field<shared_ptr<cxmat> > Hl(nb+1);
+            field<shared_ptr<cxmat> > Sl(nb+1);
+
+            if (nk != 0){ // Do a k-loop
+                //@TODO: Needs memory optimization.
+
+                vec k = mk.row(ik);
+
+                // Calculate block diagonal matrices.
+                for(int ib = 0; ib < nb; ++ib){
+                    shared_ptr<cxmat> H0k = make_shared<cxmat>(mH0(ib,0)->n_rows, mH0(ib,0)->n_cols, fill::zeros);
+                    shared_ptr<cxmat> S0k = make_shared<cxmat>(mS0(ib,0)->n_rows, mS0(ib,0)->n_cols, fill::zeros);
+
+                    double th;
+                    dcmplx expith;
+                    for(int in = 0; in < mH0.n_cols; ++in){
+                        th = dot(k, mpv0(ib, in));
+                        expith = exp(i*th);
+                        (*H0k) = (*H0k) + (*mH0(ib, in))*expith;                    
+                        (*S0k) = (*S0k) + (*mS0(ib, in))*expith;
+                    }
+                    H0(ib) = H0k;
+                    S0(ib) = S0k;
                 }
-                H0(ib) = H0k;
-                S0(ib) = S0k;
-            }
-            // Calculate lower block diagonals
-            for(int ib = 0; ib <= nb; ++ib){
-                shared_ptr<cxmat> Hlk = make_shared<cxmat>(mHl(ib,0)->n_rows, mHl(ib,0)->n_cols, fill::zeros);
-                shared_ptr<cxmat> Slk = make_shared<cxmat>(mSl(ib,0)->n_rows, mSl(ib,0)->n_cols, fill::zeros);
-                
-                double th;
-                dcmplx expith;
-                for(int in = 0; in < mHl.n_cols; ++in){
-                    th = dot(k, mpvl(in));
-                    expith = exp(i*th);
-                    (*Hlk) = (*Hlk) + (*mHl(ib, in))*expith;
+                // Calculate lower block diagonals
+                for(int ib = 0; ib <= nb; ++ib){
+                    shared_ptr<cxmat> Hlk = make_shared<cxmat>(mHl(ib,0)->n_rows, mHl(ib,0)->n_cols, fill::zeros);
+                    shared_ptr<cxmat> Slk = make_shared<cxmat>(mSl(ib,0)->n_rows, mSl(ib,0)->n_cols, fill::zeros);
+
+                    double th;
+                    dcmplx expith;
+                    for(int in = 0; in < mHl.n_cols; ++in){
+                        th = dot(k, mpvl(in));
+                        expith = exp(i*th);
+                        (*Hlk) = (*Hlk) + (*mHl(ib, in))*expith;
+                        if (!mrgf.OrthoBasis()){
+                            (*Slk) = (*Slk) + (*mSl(ib, in))*expith;
+                        }
+                    }
+                    Hl(ib) = Hlk;
                     if (!mrgf.OrthoBasis()){
-                        (*Slk) = (*Slk) + (*mSl(ib, in))*expith;
+                        Sl(ib) = Slk;
                     }
                 }
-                Hl(ib) = Hlk;
-                if (!mrgf.OrthoBasis()){
-                    Sl(ib) = Slk;
-                }
+            }else{ // Do only E loop
+                H0 = mH0.col(0);
+                S0 = mS0.col(0);
+                Hl = mHl.col(0);
+                Sl = mSl.col(0);   
             }
-        }else{ // Do only E loop
-            ik = 0;
-            iE = it;
-            H0 = mH0.col(0);
-            S0 = mS0.col(0);
-            Hl = mHl.col(0);
-            Sl = mSl.col(0);   
+            // set H and S.
+            mrgf.H(H0, Hl);
+            mrgf.S(S0, Sl);
+            mrgf.V(mV);
+            
+            ikPrev = ik;
         }
         
-        // set E, H and S.
+        // set E
         mrgf.E(mE[iE]);
-        mrgf.H(H0, Hl);
-        mrgf.S(S0, Sl);
-        mrgf.V(mV);
         
         // run simulation step.
         compute();
@@ -286,6 +290,7 @@ void CohRgfLoop::compute(){
     if(mTE.isEnabled()){
         r = mrgf.TEop(mTE.N);  // M => T(E)
         mThisTE.push_back(r);  
+        cout << "DBG: T = " << r;
     }
     // Current
     for (int it = 0; it < mIop.size(); ++it){

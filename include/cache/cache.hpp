@@ -53,6 +53,7 @@ public:
     virtual void reset(){
         // reset iterator
         mIt = mBegin - 1;
+        mM.reset();
         // reset members.
         if (mCacheEnabled == true){
             mM.set_size(mLength);

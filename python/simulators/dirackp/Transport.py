@@ -442,8 +442,11 @@ class Transport(object):
         # Export potential to NEGF
 #        if (self.DevType == self.COH_RGF_UNI): 
         beg = 0
+        self.Vo = []
         for ib in range(self.nb):                  # setup the block hamiltonian
             end = beg + self.nbw[ib] - 1
+            #self.Vo.append(self.V.toOrbPot(beg, end)) 
+            #self.rgf.V(self.Vo[ib], ib)
             self.rgf.V(self.V.toOrbPot(beg, end), ib)
             beg = end + 1
             
