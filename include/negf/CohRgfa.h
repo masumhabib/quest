@@ -217,6 +217,7 @@ protected:
             // reset iterator
             mIt = mEnd + 1;
             // reset members.
+            mM.reset();
             if (mCacheEnabled == true){
                 mM.set_size(mLength);
             }else{

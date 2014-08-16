@@ -26,7 +26,7 @@ CohRgfa::CohRgfa(uint nb, double kT, dcmplx ieta, bool orthogonal, string newpre
         mGiip1(this, miLc+1, miRc-2),
         mGiim1(this, miLc+2, miRc-1)
 {
-    mTitle = "Transport";
+    mTitle = "Coherent Transport using RGF";
 }
 
 // set chemical potential
@@ -57,7 +57,7 @@ void CohRgfa::H(const field<shared_ptr<cxmat> > &H0, const field<shared_ptr<cxma
     }
     
     mH0 = H0;
-    mHl = Hl;
+    mHl = Hl;    
 }
 
 void CohRgfa::S(const field<shared_ptr<cxmat> > &S0, const field<shared_ptr<cxmat> > &Sl){
@@ -854,6 +854,10 @@ inline void CohRgfa::reset(){
     mGiN.reset();
     mGiip1.reset();
     mGiim1.reset();
+    mSigL11.reset();
+    mSigRNN.reset();
+    mGamL11.reset();
+    mGamRNN.reset();
 }
 
 }

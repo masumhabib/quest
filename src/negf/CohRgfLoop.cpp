@@ -290,7 +290,6 @@ void CohRgfLoop::compute(){
     if(mTE.isEnabled()){
         r = mrgf.TEop(mTE.N);  // M => T(E)
         mThisTE.push_back(r);  
-        cout << "DBG: T = " << r;
     }
     // Current
     for (int it = 0; it < mIop.size(); ++it){
