@@ -304,36 +304,15 @@ class Transport(object):
 
         nprint("\n Generating Hamiltonian matrix ...")
 
-        # Create Hamiltonian generator
-        #if (self.HamType == self.HAM_TI_SURF_KP):
-        #    self.ham = TISurfKpHam(self.hp)   
-        #if (self.HamType == self.HAM_TI_SURF_KP4):
-        #    self.ham = TISurfKpHam4(self.hp)               
-        #if (self.HamType == self.HAM_GRAPHENE_KP):
-        #    self.ham = GrapheneKpHam(self.hp)   
-
         # For uniform RGF blocks
         if (self.DevType == self.COH_RGF_UNI):            
             lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
             lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
-            # Block hamiltonian.
-            #self.ham.setSizeForNegf(2)                            # uniform device, only need H_0,0 and H_1,0
-            #self.ham.genDiagBlock(lyr0, lyr0, 0)                  # generate H_0,0 and S_0,0
-            #self.ham.genLowDiagBlock(lyr1, lyr0, 0)               # generate H_1,0                 
+
             self.H0, self.S0 = generateHamOvl(self.hp, lyr0, lyr0)
             self.Hl, self.Sl = generateHamOvl(self.hp, lyr1, lyr0)
-            # Set block Hamiltonian for the NEGF calculation.
-            #self.np = CohRgfaParams(self.nb)            
-            #for ib in range(0, self.nb+1):                  # setup the block hamiltonian
-            #    if (ib != self.nb):
-            #        self.np.H0(self.H0, ib)          # H0: 0 to N+1
-            #        self.np.S0(self.S0, ib)          # S0: 0 to N+1
-            #    self.np.Hl(self.Hl, ib)              # Hl: 0 to N+2
         # Non-uniform RGF blocks        
         elif (self.DevType == self.COH_RGF_NON_UNI):
-            # Set block Hamiltonian for the NEGF calculation.
-            #self.ham.setSizeForNegf(self.nb)            # non-uniform device, store all H_i,i and H_i,i-1
-            #self.np = CohRgfaParams(self.nb)            
             self.H0 = [];
             self.Hl = [];
             beg = 0
@@ -342,11 +321,8 @@ class Transport(object):
                 
                 # generate H_i,i and S_i,i
                 lyri = self.geom.span(beg, end);            # extract block # i             
-                #self.ham.genDiagBlock(lyri, lyri, ib)
                 H0,S0 = generateHamOvl(self.hp, lyri, lyri)
                 self.H0.append(H0)
-                #self.np.H0(self.H0(ib), ib)             # H0: 0 to N+1=nb-1
-                #self.np.S0(self.S0(0), ib)              # S0: just the identity matrix stored in S0(0)
 
                 # generate H_i,i-1
                 if (ib > 0):
@@ -360,9 +336,6 @@ class Transport(object):
                 lyrim1 = lyri
                 beg = end + 1
             
-            #self.np.Hl(self.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
-            #self.np.Hl(self.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N
-
         nprint(" done.")
         
     def setupPotential(self):
@@ -439,18 +412,14 @@ class Transport(object):
                 self.V.exportPotential(self.OutPath + self.DebugPotFile)
         
         # Export potential to NEGF
-#        if (self.DevType == self.COH_RGF_UNI): 
         beg = 0
         self.Vo = []
         for ib in range(self.nb):                  # setup the block hamiltonian
             end = beg + self.nbw[ib] - 1
             self.Vo.append(self.V.toOrbPot(beg, end)) 
             self.rgf.V(self.Vo[ib], ib)
-#            self.rgf.V(self.V.toOrbPot(beg, end), ib)
             beg = end + 1
             
-#                self.np.V(self.V.toOrbPot(self.nw*ib, 
-#                                          self.nw*(ib+1)-1), ib)
 
         # Create energy grid
         if (self.AutoGenE):

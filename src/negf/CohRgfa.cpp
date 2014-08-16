@@ -870,35 +870,6 @@ inline void CohRgfa::reset(){
 namespace qmicad{
 namespace python{
 using namespace negf;
-///**
-// * NEGF parameters.
-// */
-//void export_CohRgfaParams(){
-//    class_<CohRgfaParams, bases<Printable>, shared_ptr<CohRgfaParams> >("CohRgfaParams", 
-//            init<uint>())
-//        .enable_pickling()
-//        .def("H0", &CohRgfaParams::setH0)
-//        .def("S0", &CohRgfaParams::setS0)
-//        .def("Hl", &CohRgfaParams::setHl)
-//        .def("Sl", &CohRgfaParams::setSl)
-//        .def("V", &CohRgfaParams::setV)
-//        .def_readonly("nb", &CohRgfaParams::nb)
-//        .def_readwrite("kT", &CohRgfaParams::kT)
-//        .def_readwrite("ieta", &CohRgfaParams::ieta)
-//        .def_readwrite("muS", &CohRgfaParams::muS)
-//        .def_readwrite("muD", &CohRgfaParams::muD)
-//        .def_readwrite("isOrthogonal", &CohRgfaParams::isOrthogonal)
-//        .def_readwrite("DCacheEnabled", &CohRgfaParams::DCacheEnabled)
-//        .def_readwrite("TCacheEnabled", &CohRgfaParams::TCacheEnabled)
-//        .def_readwrite("grcCacheEnabled", &CohRgfaParams::grcCacheEnabled)
-//        .def_readwrite("glcCacheEnabled", &CohRgfaParams::glcCacheEnabled)
-//        .def_readwrite("GiiCacheEnabled", &CohRgfaParams::GiiCacheEnabled)
-//        .def_readwrite("Gi1CacheEnabled", &CohRgfaParams::Gi1CacheEnabled)
-//        .def_readwrite("GiNCacheEnabled", &CohRgfaParams::GiNCacheEnabled)
-//        .def_readwrite("Giip1CacheEnabled", &CohRgfaParams::Giip1CacheEnabled)
-//        .def_readwrite("Giim1CacheEnabled", &CohRgfaParams::Giim1CacheEnabled)
-//    ;
-//}
 
 }
 }
