@@ -27,11 +27,11 @@ band.BandStructParams.__init__ = _BandStructParamsInit
 _TISurfKpParamsOrgInit =  hamiltonian.TISurfKpParams.__init__
 def _TISurfKpParamsInit(self):
     _TISurfKpParamsOrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.a      = 2.0               # Lattice spacing
-    self.K      = 1.0               # Coefficient ot solve Fermion doubling
-    self.A2     = 3.33              # A2 paramter
-    self.C      = 0.0               # C parameter
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.a      = 2.0               # Lattice spacing
+#    self.K      = 1.0               # Coefficient ot solve Fermion doubling
+#    self.A2     = 3.33              # A2 paramter
+#    self.C      = 0.0               # C parameter
     self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 2, 2)   # Fake atom for TI k.p
     
@@ -55,11 +55,11 @@ hamiltonian.TISurfKpParams.__getstate_manages_dict__ = True
 _TISurfKpParams4OrgInit =  hamiltonian.TISurfKpParams4.__init__
 def _TISurfKpParams4Init(self):
     _TISurfKpParams4OrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.a      = 2.0               # Lattice spacing
-    self.K      = 1.165             # Coefficient ot solve Fermion doubling
-    self.A2     = 3.33              # A2 paramter
-    self.C      = 0.0               # C parameter
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.a      = 2.0               # Lattice spacing
+#    self.K      = 1.165             # Coefficient ot solve Fermion doubling
+#    self.A2     = 3.33              # A2 paramter
+#    self.C      = 0.0               # C parameter
     self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
     self.ptable.add(0, "D", 4, 4)   # Fake atom for TI k.p
     
@@ -82,10 +82,10 @@ hamiltonian.TISurfKpParams4.__getstate_manages_dict__ = True
 _GrapheneKpParamsOrgInit =  hamiltonian.GrapheneKpParams.__init__
 def _GrapheneKpParamsInit(self):
     _GrapheneKpParamsOrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.a      = 4.0               # Lattice spacing
-    self.K      = 1.165             # Coefficient ot solve Fermion doubling
-    self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.a      = 4.0               # Lattice spacing
+#    self.K      = 1.165             # Coefficient ot solve Fermion doubling
+#    self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
     self.ptable = atoms.PeriodicTable()   # Periodic table for graphene k.p
     self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
     
@@ -109,16 +109,16 @@ hamiltonian.GrapheneKpParams.__getstate_manages_dict__ = True
 _GrapheneTbParamsOrgInit =  hamiltonian.GrapheneTbParams.__init__
 def _GrapheneTbParamsInit(self):
     _GrapheneTbParamsOrgInit(self)
-    self.dtol   = 1E-3              # Tolerance when considering neighbors
-    self.ec         = 0             # Site energy of C
-    self.di0        = 1.42          # In-plane C-C bond length 
-    self.ti0        = 3.16          # In plane C-C hopping parameter
-    self.do0        = 3.35          # Out-of-plane C-C distance
-    self.to0        = 0.39          # Out-of-pane C-C hopping parameter
-    self.lmdz       = 0.6           # For interlayer all nearest neighbors
-    self.lmdxy      = 1.7           # See PRL 109, 236604 (2012)
-    self.alpha      = 1.65
-    self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
+#    self.dtol   = 1E-3              # Tolerance when considering neighbors
+#    self.ec         = 0             # Site energy of C
+#    self.di0        = 1.42          # In-plane C-C bond length 
+#    self.ti0        = 3.16          # In plane C-C hopping parameter
+#    self.do0        = 3.35          # Out-of-plane C-C distance
+#    self.to0        = 0.39          # Out-of-pane C-C hopping parameter
+#    self.lmdz       = 0.6           # For interlayer all nearest neighbors
+#    self.lmdxy      = 1.7           # See PRL 109, 236604 (2012)
+#    self.alpha      = 1.65
+#    self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
     self.ptable = atoms.PeriodicTable()   # Periodic table for graphene
     
 hamiltonian.GrapheneTbParams.__init__ = _GrapheneTbParamsInit
@@ -137,53 +137,53 @@ hamiltonian.GrapheneTbParams.__getstate__ = _GrapheneTbParamsGetState
 hamiltonian.GrapheneTbParams.__getstate_manages_dict__ = True
 
 # Coherent RGFA default parameters
-_CohRgfaParamsOrgInit =  negf.CohRgfaParams.__init__
-def _CohRgfaParamsInit(self, nb):
-    _CohRgfaParamsOrgInit(self, nb)
-    self.kT             = 0.0259        # Temperature in eV (300 K)
-    self.ieta           = 1E-3j         # Contact imaginary potential
-    self.mu             = 0.0           # Device Fermi level
-    self.muS            = 0.0           # Source Fermi level
-    self.muD            = 0.0           # Source Fermi level
-    self.isOrthogonal   = True          # Orthogonal basis?
-    self.Emin           =-1.0           # Minimum energy 
-    self.Emax           = 1.0           # Maximum energy
-    self.dE             = 0.005         # Energy step
-    self.AutoGenE       = False         # Generate grid automatically?
-    self.AdaptiveGrid   = False         # Adaptive E grid?
+#_CohRgfaParamsOrgInit =  negf.CohRgfaParams.__init__
+#def _CohRgfaParamsInit(self, nb):
+#    _CohRgfaParamsOrgInit(self, nb)
+#    self.kT             = 0.0259        # Temperature in eV (300 K)
+#    self.ieta           = 1E-3j         # Contact imaginary potential
+#    self.mu             = 0.0           # Device Fermi level
+#    self.muS            = 0.0           # Source Fermi level
+#    self.muD            = 0.0           # Source Fermi level
+#    self.isOrthogonal   = True          # Orthogonal basis?
+#    self.Emin           =-1.0           # Minimum energy 
+#    self.Emax           = 1.0           # Maximum energy
+#    self.dE             = 0.005         # Energy step
+#    self.AutoGenE       = False         # Generate grid automatically?
+#    self.AdaptiveGrid   = False         # Adaptive E grid?
     
-negf.CohRgfaParams.__init__ = _CohRgfaParamsInit
+# negf.CohRgfaParams.__init__ = _CohRgfaParamsInit
 
-_CohRgfaParamsOrgStr =  negf.CohRgfaParams.__str__
-def _CohRgfaParamsStr(self):
-    msg = _CohRgfaParamsOrgStr(self)
-    msg += "\n" + self.Prefix + " Emin         = " + str(self.Emin)
-    msg += "\n" + self.Prefix + " Emax         = " + str(self.Emax)
-    msg += "\n" + self.Prefix + " dE           = " + str(self.dE)
-    msg += "\n" + self.Prefix + " AutoGenE     = " + str(self.AutoGenE)
-    msg += "\n" + self.Prefix + " AdaptiveGrid = " + str(self.AdaptiveGrid)
-    
-    return msg
-negf.CohRgfaParams.__str__ = _CohRgfaParamsStr
+#_CohRgfaParamsOrgStr =  negf.CohRgfaParams.__str__
+#def _CohRgfaParamsStr(self):
+#    msg = _CohRgfaParamsOrgStr(self)
+#    msg += "\n" + self.Prefix + " Emin         = " + str(self.Emin)
+#    msg += "\n" + self.Prefix + " Emax         = " + str(self.Emax)
+#    msg += "\n" + self.Prefix + " dE           = " + str(self.dE)
+#    msg += "\n" + self.Prefix + " AutoGenE     = " + str(self.AutoGenE)
+#    msg += "\n" + self.Prefix + " AdaptiveGrid = " + str(self.AdaptiveGrid)
+#    
+#    return msg
+#negf.CohRgfaParams.__str__ = _CohRgfaParamsStr
 
 # Pickle support
-def _CohRgfaParamsSetState(self, dct):
-    self.__dict__.update(dct)
-    
-negf.CohRgfaParams.__setstate__ = _CohRgfaParamsSetState
+#def _CohRgfaParamsSetState(self, dct):
+#    self.__dict__.update(dct)
+#    
+#negf.CohRgfaParams.__setstate__ = _CohRgfaParamsSetState
+#
+#def _CohRgfaParamsGetState(self):
+#    dct = dict(self.__dict__)
+#    return dct
+#
+#negf.CohRgfaParams.__getstate__ = _CohRgfaParamsGetState
+#negf.CohRgfaParams.__getstate_manages_dict__ = True
 
-def _CohRgfaParamsGetState(self):
-    dct = dict(self.__dict__)
-    return dct
 
-negf.CohRgfaParams.__getstate__ = _CohRgfaParamsGetState
-negf.CohRgfaParams.__getstate_manages_dict__ = True
+#def _CohRgfaParamsGetInitArgs(self):
+#    return (self.nb,)
 
-
-def _CohRgfaParamsGetInitArgs(self):
-    return (self.nb,)
-
-negf.CohRgfaParams.__getinitargs__ = _CohRgfaParamsGetInitArgs
+#negf.CohRgfaParams.__getinitargs__ = _CohRgfaParamsGetInitArgs
 
 # Electrostatic potential
 _LinearPotOrgInit =  potential.LinearPot.__init__

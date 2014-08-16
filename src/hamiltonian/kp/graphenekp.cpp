@@ -12,8 +12,43 @@
 namespace qmicad{
 namespace hamiltonian{
 
+GrapheneKpParams::GrapheneKpParams(const string &prefix):cxhamparams(prefix)
+{
+    mTitle  = "Graphene k.p parameters";
+    mI      = eye<cxmat>(2,2);    
+    
+    setDefaultParams();
+    update();
+}
 
-cxmat GrapheneKpHam::genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj)
+string GrapheneKpParams::toString() const { 
+    stringstream ss;
+    ss << cxhamparams::toString() << ":" << endl;
+    ss << mPrefix << " a     = " << ma << endl;
+    ss << mPrefix << " K     = " << mK  << endl;
+    ss << mPrefix << " gamma = " << mgamma << endl;
+    ss << mPrefix << " dtol  = " << mdtol << endl;
+    ss << mPrefix << " eps: " << endl << meps;
+    ss << mPrefix << " t01x: " << endl << mt01x;
+    ss << mPrefix << " t01y: " << endl << mt01y;
+
+    return ss.str(); 
+};
+
+void GrapheneKpParams::update(){
+    if(!(is_finite(mdtol) && is_finite(mgamma) && is_finite(ma) 
+            && is_finite(mK))){
+        throw runtime_error("GrapheneKpParams: invalid k.p parameters.");    
+    }
+    double Kx = mK, Ky = mK, ax = ma, ay = ma;
+    meps = -mgamma*(Kx/ax + Ky/ay)*sz();
+    mt01x = (mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
+    mt10x = trans(mt01x);
+    mt01y = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+    mt10y = trans(mt01y);                
+}
+
+cxmat GrapheneKpParams::twoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj) const
 {
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1) {
         throw invalid_argument("GrapheneHamGen(): atomi and atomj must should contain one atom each.");
@@ -23,7 +58,6 @@ cxmat GrapheneKpHam::genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct
     int noj = atomj.NumOfOrbitals();
 
     cxmat hmat =  zeros<cxmat>(noi, noj);
-    shared_ptr<GrapheneKpParams> p = static_pointer_cast<GrapheneKpParams>(mhp);
 
     // calculate distance between atom i and atom j
     double xi = atomi.X(0);
@@ -39,28 +73,28 @@ cxmat GrapheneKpHam::genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // site energy
-        if (d <= p->mdtol){
-            hmat = p->meps;
+        if (d <= mdtol){
+            hmat = meps;
         // nearest neighbor in x
-        }else if(abs(d - p->ma) <= p->mdtol && abs(dx - p->ma) <= p->mdtol){ 
+        }else if(abs(d - ma) <= mdtol && abs(dx - ma) <= mdtol){ 
             if (xi > xj){
-                hmat = p->mt10x;
+                hmat = mt10x;
             }else{
-                hmat = p->mt01x;
+                hmat = mt01x;
             }
         //nearest neighbor y
-        }else if (abs(d - p->ma) <= p->mdtol && abs(dy - p->ma) <= p->mdtol){
+        }else if (abs(d - ma) <= mdtol && abs(dy - ma) <= mdtol){
             if(yi > yj){
-                hmat = p->mt10y;
+                hmat = mt10y;
             }else{
-                hmat = p->mt01y;
+                hmat = mt01y;
             }
         }            
     }  
     return hmat;
 };
 
-cxmat GrapheneKpHam::genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj)
+cxmat GrapheneKpParams::twoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj) const
 {
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1) {
         throw invalid_argument("GrapheneHamGen(): atomi and atomj must should contain one atom each.");
@@ -70,7 +104,6 @@ cxmat GrapheneKpHam::genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct
     int noj = atomj.NumOfOrbitals();
 
     cxmat smat =  zeros<cxmat>(noi, noj);
-    shared_ptr<GrapheneKpParams> p = static_pointer_cast<GrapheneKpParams>(mhp);
 
     // calculate distance between atom i and atom j
     double xi = atomi.X(0);
@@ -86,8 +119,8 @@ cxmat GrapheneKpHam::genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // overlap matrix of atom i.
-        if (d <= p->mdtol){
-            smat = p->mI;
+        if (d <= mdtol){
+            smat = mI;
         }
     }
     return smat;
@@ -114,20 +147,12 @@ void export_GrapheneKpParams(){
     void (GrapheneKpParams::*GrapheneKpParams_setgamma)(double) = &GrapheneKpParams::gamma;
     double (GrapheneKpParams::*GrapheneKpParams_getK)() = &GrapheneKpParams::K;
     void (GrapheneKpParams::*GrapheneKpParams_setK)(double) = &GrapheneKpParams::K;    
-    class_<GrapheneKpParams, bases<HamParams>, shared_ptr<GrapheneKpParams> >("GrapheneKpParams")
+    class_<GrapheneKpParams, bases<cxhamparams>, shared_ptr<GrapheneKpParams> >(
+        "GrapheneKpParams", init<optional<const string &> >())
         .enable_pickling()
         .add_property("a", GrapheneKpParams_geta, GrapheneKpParams_seta)
         .add_property("K", GrapheneKpParams_getK, GrapheneKpParams_setK)   
         .add_property("gamma", GrapheneKpParams_getgamma, GrapheneKpParams_setgamma)
-    ;
-}
-
-/**
- * Graphene k.p Hamiltonian.
- */
-void export_GrapheneKpHam(){
-    class_<GrapheneKpHam, bases<cxham >, shared_ptr<GrapheneKpHam> >("GrapheneKpHam",
-            init<const GrapheneKpParams& >())
     ;
 }
 

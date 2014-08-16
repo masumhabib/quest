@@ -88,17 +88,11 @@ void export_hamiltonian()
     scope().attr("hamiltonian") = hamiltonianModule;
     scope hamiltonian_scope = hamiltonianModule;
 
-    export_HamParams();
-    export_ham();
-    export_cxham();
+    export_cxhamparams();
     export_GrapheneTbParams();
-    export_GrapheneTbHam();
     export_GrapheneKpParams();
-    export_GrapheneKpHam();        
     export_TISurfKpParams();
-    export_TISurfKpHam();    
     export_TISurfKpParams4();
-    export_TISurfKpHam4();    
 
 }
 
@@ -118,8 +112,7 @@ void export_negf()
     scope().attr("negf") = negfModule;
     scope negf_scope = negfModule;
 
-    export_CohRgfaParams();    
-    export_NegfEloop();    
+    export_CohRgfLoop();    
 }
 
 BOOST_PYTHON_MODULE(qmicad)
@@ -132,8 +125,8 @@ BOOST_PYTHON_MODULE(qmicad)
     def("greet", greet, " Shows the QMICAD banner.");
     def("setVerbosity", setVerbosity, " Sets the verbosity level of C++ code.");
 
-    export_npyarma();
     
+    export_npyarma();    
     export_utils();
     export_atoms();
     export_kpoints();

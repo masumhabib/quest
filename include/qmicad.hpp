@@ -61,7 +61,7 @@
 
 #include "negf/computegs.h"
 #include "negf/CohRgfa.h"
-#include "negf/NegfEloop.h"
+#include "negf/CohRgfLoop.h"
 
 #include "band/BandStruct.h"
 

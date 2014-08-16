@@ -39,23 +39,16 @@ void export_quadrilateral();
 
 void export_Timer();
 
-void export_HamParams();
-void export_ham();
-void export_cxham();
+void export_cxhamparams();
 void export_GrapheneTbParams();
-void export_GrapheneTbHam();
 void export_GrapheneKpParams();
-void export_GrapheneKpHam();
 void export_TISurfKpParams();
-void export_TISurfKpHam();
 void export_TISurfKpParams4();
-void export_TISurfKpHam4();
 
 void export_Potential();
 void export_LinearPot();
 
-void export_CohRgfaParams();
-void export_NegfEloop();
+void export_CohRgfLoop();
 
 void export_KPoints();
 

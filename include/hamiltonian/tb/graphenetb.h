@@ -23,62 +23,69 @@ namespace hamiltonian{
 using boost::static_pointer_cast;
 using namespace maths::armadillo;
 
-class GrapheneTbHam;
+class GrapheneTbParams: public cxhamparams{
+public:
+    // Constructor
+    GrapheneTbParams( string prefix = "");        
+    virtual string toString() const;  
+    
+    void ec(double ec) { mec = ec; update(); }
+    double ec() { return mec; }
+    void di0(double di0) { mdi0 = di0; update(); }
+    double di0() { return mdi0; }
+    void ti0(double do0) { mti0 = do0; update(); }
+    double ti0() { return mti0; }
+    void do0(double do0) { mdo0 = do0; update(); }
+    double do0() { return mdo0; }
+    void to0(double to0) { mto0 = to0; update(); }
+    double to0() { return mto0; }
+    void doX(double doX) { mdoX = doX; update(); }
+    double doX() { return mdoX; }
+    void lmdz(double lmdz) { mlmdz = lmdz; update(); }
+    double lmdz() { return mlmdz; }
+    void lmdxy(double lmdxy) { mlmdxy = lmdxy; update(); }
+    double lmdxy() { return mlmdxy; }
+    void alpha(double alpha) { malpha = alpha; update(); }
+    double alpha() { return malpha; }
 
-struct GrapheneTbParams: public HamParams{
-    friend class GrapheneTbHam;
+    //!< Generate Hamiltonian between two atoms.
+    virtual cxmat twoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj) const;    
+    //!< Generate overlap matrix between two atoms.
+    virtual cxmat twoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj) const;        
+    
+private:
+    //!< Default parameters.
+    void setDefaultParams(){
+        mdtol   = 1E-3;
+        mec     = 0;
+        mdi0    = 1.42;
+        mti0    = 3.16;
+        mdo0    = 3.35;
+        mto0    = 0.39;
+        mlmdz   = 0.6;
+        mlmdxy  = 1.7;
+        malpha  = 1.65;
+        mdoX    = 6.0;
+        mortho = true;
+    };
+    //!< Updates internal state.
+    virtual void update();
+
+private:    
     // Tight binding parameters
-    double ec;            // onside energy
-    double di0;           // in-plane C-C bond length
-    double ti0;           // in-plane C-C hopping
-    double do0;           // out-of-plane C-C distance
-    double to0;           // out-of-plane C-C hopping
-    double doX;           // out-of-plane C-C neighbor cut-off distance in
+    double mec;            // onside energy
+    double mdi0;           // in-plane C-C bond length
+    double mti0;           // in-plane C-C hopping
+    double mdo0;           // out-of-plane C-C distance
+    double mto0;           // out-of-plane C-C hopping
+    double mdoX;           // out-of-plane C-C neighbor cut-off distance in
                           // units of 1 C-C bond length
     // Inter layer all nearest neighbors
     // See PRL 109, 236604 (2012)
-    double lmdz;         // lambda_z
-    double lmdxy;        // lambda_xy
-    double alpha;        // alpha
+    double mlmdz;         // lambda_z
+    double mlmdxy;        // lambda_xy
+    double malpha;        // alpha
     
-    // Constructor
-    GrapheneTbParams(string prefix = ""):HamParams(prefix){
-        mTitle = "Graphene tight binding parameters";
-    }
-        
-    string toString() const { 
-        stringstream ss;
-        ss << HamParams::toString() << ": " << endl;
-        ss << mPrefix << " dtol  = " << mdtol << endl;
-        ss << mPrefix << " ec    = " << ec << endl;
-        ss << mPrefix << " di0   = " << di0 << endl;
-        ss << mPrefix << " ti0   = " << ti0 << endl;
-        ss << mPrefix << " do0   = " << do0 << endl;
-        ss << mPrefix << " to0   = " << to0 << endl;
-        ss << mPrefix << " doX   = " << doX << endl;
-        ss << mPrefix << " lmdz  = " << lmdz << endl;
-        ss << mPrefix << " lmdxy = " << lmdxy << endl; 
-        ss << mPrefix << " alpha = " << alpha << endl;
-
-        return ss.str(); 
-    };   
-
-};
-/** 
- * Tight binding Hamiltonian and m for graphene.
- */
-class GrapheneTbHam: public cxham{
-// Methods
-public:
-    GrapheneTbHam(const GrapheneTbParams& p){
-        mhp = shared_ptr<HamParams> (new GrapheneTbParams(p));
-    };
-    virtual ~GrapheneTbHam(){};
-
-    //!< Generate Hamiltonian between two atoms.
-    virtual cxmat genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj);    
-    //!< Generate overlap matrix between two atoms.
-    virtual cxmat genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj);    
 };
 
 }

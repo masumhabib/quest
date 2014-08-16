@@ -40,6 +40,7 @@ public:
     ConsoleProgressBar& operator++();
     ConsoleProgressBar operator++(int);
     
+    void expectedCount(unsigned long expectedCount);
     void complete();
     void start();
     

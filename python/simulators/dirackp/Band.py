@@ -13,7 +13,7 @@ from   math import pi
 
 from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, LCoord
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
+from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams
 from qmicad.kpoints import KPoints
 from qmicad.band import BandStructParams, BandStruct
 from qmicad.utils import Timer, Workers, Point
