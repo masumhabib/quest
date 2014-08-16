@@ -335,9 +335,7 @@ class Transport(object):
             #self.ham.setSizeForNegf(self.nb)            # non-uniform device, store all H_i,i and H_i,i-1
             #self.np = CohRgfaParams(self.nb)            
             self.H0 = [];
-            self.S0 = [];
             self.Hl = [];
-            self.Sl = [];
             beg = 0
             for ib in range(0, self.nb):                    # setup the block hamiltonian
                 end = beg + self.nbw[ib] - 1
@@ -347,16 +345,17 @@ class Transport(object):
                 #self.ham.genDiagBlock(lyri, lyri, ib)
                 H0,S0 = generateHamOvl(self.hp, lyri, lyri)
                 self.H0.append(H0)
-                self.S0.append(S0)
                 #self.np.H0(self.H0(ib), ib)             # H0: 0 to N+1=nb-1
                 #self.np.S0(self.S0(0), ib)              # S0: just the identity matrix stored in S0(0)
 
                 # generate H_i,i-1
                 if (ib > 0):
                     #self.ham.genLowDiagBlock(lyri, lyrim1, ib) 
-                    Hl,Sl = generateHamOvl(self.hp, lyri, lyri)
+                    Hl,Sl = generateHamOvl(self.hp, lyri, lyrim1)
                     self.Hl.append(Hl)
                     #self.np.Hl(self.Hl(ib), ib)              # Hl: 1 to N+1=nb-1                
+                else:
+                    self.S0 = S0
                 
                 lyrim1 = lyri
                 beg = end + 1
@@ -545,12 +544,12 @@ class Transport(object):
                 self.rgf.Hl(self.Hl, ib)              # Hl: 0 to N+2
         elif (self.DevType == self.COH_RGF_NON_UNI):  # Non-uniform RGF blocks        
             for ib in range(0, self.nb):                 # setup the block hamiltonian
-                self.rgf.H0(self.H0(ib), ib)             # H0: 0 to N+1=nb-1
-                self.rgf.S0(self.S0(0), ib)              # S0: just the identity matrix stored in S0(0)
+                self.rgf.H0(self.H0[ib], ib)             # H0: 0 to N+1=nb-1
+                self.rgf.S0(self.S0, ib)              # S0: just the identity matrix stored in S0(0)
                 if (ib > 0):
-                    self.rgf.Hl(self.Hl(ib), ib)     # Hl: 1 to N+1=nb-1                            
-            self.rgf.Hl(self.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
-            self.rgf.Hl(self.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N            
+                    self.rgf.Hl(self.Hl[ib], ib)     # Hl: 1 to N+1=nb-1                            
+            self.rgf.Hl(self.Hl[1], 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
+            self.rgf.Hl(self.Hl[ib], ib+1)           # Set H_N+2,N+1 = H_N+1,N            
         # Enable calculations
         for type, value in self.Calculations.iteritems():
             # transmission
