@@ -213,6 +213,16 @@ protected:
             // Initally, cache is empty
             mIt = mEnd + 1;            
         };
+        virtual void reset(){
+            // reset iterator
+            mIt = mEnd + 1;
+            // reset members.
+            if (mCacheEnabled == true){
+                mM.set_size(mLength);
+            }else{
+                mM.set_size(1);
+            }
+        }
         const cxmat& operator ()(int ib);
     protected:
         inline void computegrc(cxmat& grci, const cxmat& grcip1, int ib);    
@@ -304,28 +314,37 @@ protected:
 // Methods    
 public:
     CohRgfa(uint nb, double kT = 0.0259, dcmplx ieta = dcmplx(0,1E-3), bool orthogonal = true, string newprefix = "");
+
+    uint        nb() { return mnb; };
+    double      kT() { return mkT; };
+    dcmplx      ieta(){ return mieta; };
+    bool        OrthoBasis() { return morthogonal; };
+    uint        N() { return mN; };
     
-    void mu(double muD = 0.0, double muS = 0.0);
-    void E(double E);
-    void H(const field<shared_ptr<cxmat> > &H0, const field<shared_ptr<cxmat> > &Hl);
-    void S(const field<shared_ptr<cxmat> > &S0, const field<shared_ptr<cxmat> > &Sl);
-    void V(const field<shared_ptr<vec> >  &V);
+    void        mu(double muD = 0.0, double muS = 0.0);
+    double      muS() { return mmuS; };
+    double      muD() { return mmuD; };
     
+    void        E(double E);
+    void        H(const field<shared_ptr<cxmat> > &H0, const field<shared_ptr<cxmat> > &Hl);
+    void        S(const field<shared_ptr<cxmat> > &S0, const field<shared_ptr<cxmat> > &Sl);
+    void        V(const field<shared_ptr<vec> >  &V);   
     
+    virtual string toString() const;
     
     // Density operator
-    cxmat pOp(uint N = 1, int ib = -1);
-    cxmat nOp(uint N = 1, int ib = -1);
+    cxmat       pOp(uint N = 1, int ib = -1);
+    cxmat       nOp(uint N = 1, int ib = -1);
     
     // Density of states
-    cxmat DOSop(uint N = 1);
+    cxmat       DOSop(uint N = 1);
     
     // Spectral function
-    cxmat Aop(uint N = 1, uint ib = 1);
+    cxmat       Aop(uint N = 1, uint ib = 1);
     
-    cxmat Iop(uint N = 1, uint ib = 0, uint jb = 0); //!< Generic current operators: current from block i to block j.
+    cxmat       Iop(uint N = 1, uint ib = 0, uint jb = 0); //!< Generic current operators: current from block i to block j.
     
-    cxmat TEop(uint N = 1); //!< Transmission operator
+    cxmat       TEop(uint N = 1); //!< Transmission operator
     
     
 protected:

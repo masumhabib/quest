@@ -71,10 +71,10 @@ def simulate(workers):
     
 
     # Bias
-    tr.VGG        = 0.0       # Gate voltage offset
-    tr.Vo         = 0.15      # Built-in voltage
+    tr.VGG        = np.array([0.0])    # Gate voltage offset
+    tr.Vo         = 0.15               # Built-in voltage
 
-    tr.VDD        = 0.0
+    tr.VDD        = np.array([0.0])
     tr.rVS        =-0.5       # source ratio
     tr.rVD        = 0.5       # drain ratio
 
@@ -117,14 +117,6 @@ def simulate(workers):
 
     # Generate the Hamiltonian
     tr.generateHamiltonian()
-        
-    # Energy range
-    tr.np.Emin     = tr.Emin       # Minimum energy 
-    tr.np.Emax     = tr.Emax       # Maximum energy
-    tr.np.dE       = tr.dE     # Energy step
-
-    if hasattr(tr, 'kT'):
-        tr.np.kT = tr.kT
     
     # Set up the potential solver
     tr.setupPotential()

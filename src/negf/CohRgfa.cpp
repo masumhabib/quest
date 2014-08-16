@@ -81,6 +81,20 @@ void CohRgfa::V(const field<shared_ptr<vec> > &V){
     mV = V;
 }
 
+string CohRgfa::toString() const {
+    stringstream out;
+    out << Printable::toString() << ":" << endl;
+    out << mPrefix << " IsOrthogonal = " << (morthogonal ? "Yes" : "No")  << endl;
+    out << mPrefix << " nb           = " << mnb << endl;
+    out << mPrefix << " N            = " << mN << endl;
+    out << mPrefix << " ieta         = " << mieta << endl;
+    out << mPrefix << " kT           = " << mkT << endl;
+    out << mPrefix << " muS          = " << mmuS << endl;
+    out << mPrefix << " muD          = " << mmuD;
+
+    return out.str();
+}
+
 /*
  * Hole density operator. It returns A_ii - Gn_i,i or sum_j(A_i,j*Sj,i - Gn_i,j*Sj,i)
  * depending on the orthogonality of the basis set.

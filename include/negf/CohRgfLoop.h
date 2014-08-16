@@ -18,6 +18,8 @@
 #include "maths/fermi.hpp"
 #include "parallel/parloop.h"
 
+#include "npyarma/npyarma.h"
+
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
@@ -33,6 +35,9 @@ using utils::VecGrid;
 using boost::shared_ptr;
 using boost::make_shared;
 namespace mpi = boost::mpi;
+namespace bp = boost::python;
+using qmicad::python::npy2mat;
+using qmicad::python::npy2col;
 
 /*
  * NegfCalculations specifies what to calculate.
@@ -48,11 +53,38 @@ public:
     void            k(const mat &k);
     void            mu(double muD = 0.0, double muS = 0.0);
     
+    // Hamiltonian and overlap matrices 
+    void            numTransNeighbors(uint n);
+    void            H(const field<shared_ptr<cxmat> > &H0, const field<shared_ptr<cxmat> > &Hl);
+    void            S(const field<shared_ptr<cxmat> > &S0, const field<shared_ptr<cxmat> > &Sl);    
+    void            V(const field<shared_ptr<vec> > &V);
+    void            pv(const field<vec> &pv0, const field<vec> &pvl);
+    void            H0(shared_ptr<cxmat> H0, int ib, int ineigh = -1);
+    void            S0(shared_ptr<cxmat> S0, int ib, int ineigh = -1);
+    void            Hl(shared_ptr<cxmat> Hl, int ib, int ineigh = -1);
+    void            Sl(shared_ptr<cxmat> Sl, int ib, int ineigh = -1); 
+    void            V(shared_ptr<vec> V, int ib);
+    void            pv0(const vec &pv0, int ib, int ineigh);
+    void            pvl(const vec &pv0, int ib, int ineigh);
+    // For python binding
+    void            H0(bp::object H0, int ib, int ineigh);
+    void            S0(bp::object S0, int ib, int ineigh);
+    void            Hl(bp::object Hl, int ib, int ineigh);
+    void            Sl(bp::object Sl, int ib, int ineigh);    
+    void            H0(bp::object H0, int ib);
+    void            S0(bp::object S0, int ib);
+    void            Hl(bp::object Hl, int ib);
+    void            Sl(bp::object Sl, int ib);    
+
+    void            V(bp::object Sl, int ib);
+    
     void            enableTE(uint N = 1);   
     void            enableI(uint N = 1, uint ib = 0, uint jb = 0);
     void            enableDOS(uint N = 1);
     void            enablen(uint N = 1, int ib = -1); //!< Electron density.
     void            enablep(uint N = 1, int ib = -1); //!< Hole density.
+    
+    virtual string  toString() const;
     
     void            run();
     virtual void    save(string fileName, bool isText = false);
@@ -67,13 +99,11 @@ private:
 
 public:
     
-public:
+private:
     const Workers         &mWorkers;    //!< MPI worker processes.
     CohRgfa               mrgf;         //!< Current Negf calculator.
     vec                   mE;           //!< Energy grid.
     mat                   mk;          //!< Wave vector.
-    int                   mnb;
-    bool                  morthogonal;
     // Hamiltonian , overlap and potential
     field<shared_ptr<cxmat> >mH0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i
                                  // H0(0) is on the left contact and H0(N+1) is 
@@ -104,6 +134,7 @@ public:
                                  // to block#N+1.
     
     
+    // --- Results ---
     // TEop: Transmission operator
     cxmat_vec            mThisTE;      //!< Transmission list for local process.
     RgfResult            mTE;          //!< Transmission list for all processes.

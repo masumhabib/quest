@@ -137,53 +137,53 @@ hamiltonian.GrapheneTbParams.__getstate__ = _GrapheneTbParamsGetState
 hamiltonian.GrapheneTbParams.__getstate_manages_dict__ = True
 
 # Coherent RGFA default parameters
-_CohRgfaParamsOrgInit =  negf.CohRgfaParams.__init__
-def _CohRgfaParamsInit(self, nb):
-    _CohRgfaParamsOrgInit(self, nb)
-    self.kT             = 0.0259        # Temperature in eV (300 K)
-    self.ieta           = 1E-3j         # Contact imaginary potential
-    self.mu             = 0.0           # Device Fermi level
-    self.muS            = 0.0           # Source Fermi level
-    self.muD            = 0.0           # Source Fermi level
-    self.isOrthogonal   = True          # Orthogonal basis?
-    self.Emin           =-1.0           # Minimum energy 
-    self.Emax           = 1.0           # Maximum energy
-    self.dE             = 0.005         # Energy step
-    self.AutoGenE       = False         # Generate grid automatically?
-    self.AdaptiveGrid   = False         # Adaptive E grid?
+#_CohRgfaParamsOrgInit =  negf.CohRgfaParams.__init__
+#def _CohRgfaParamsInit(self, nb):
+#    _CohRgfaParamsOrgInit(self, nb)
+#    self.kT             = 0.0259        # Temperature in eV (300 K)
+#    self.ieta           = 1E-3j         # Contact imaginary potential
+#    self.mu             = 0.0           # Device Fermi level
+#    self.muS            = 0.0           # Source Fermi level
+#    self.muD            = 0.0           # Source Fermi level
+#    self.isOrthogonal   = True          # Orthogonal basis?
+#    self.Emin           =-1.0           # Minimum energy 
+#    self.Emax           = 1.0           # Maximum energy
+#    self.dE             = 0.005         # Energy step
+#    self.AutoGenE       = False         # Generate grid automatically?
+#    self.AdaptiveGrid   = False         # Adaptive E grid?
     
-negf.CohRgfaParams.__init__ = _CohRgfaParamsInit
+# negf.CohRgfaParams.__init__ = _CohRgfaParamsInit
 
-_CohRgfaParamsOrgStr =  negf.CohRgfaParams.__str__
-def _CohRgfaParamsStr(self):
-    msg = _CohRgfaParamsOrgStr(self)
-    msg += "\n" + self.Prefix + " Emin         = " + str(self.Emin)
-    msg += "\n" + self.Prefix + " Emax         = " + str(self.Emax)
-    msg += "\n" + self.Prefix + " dE           = " + str(self.dE)
-    msg += "\n" + self.Prefix + " AutoGenE     = " + str(self.AutoGenE)
-    msg += "\n" + self.Prefix + " AdaptiveGrid = " + str(self.AdaptiveGrid)
-    
-    return msg
-negf.CohRgfaParams.__str__ = _CohRgfaParamsStr
+#_CohRgfaParamsOrgStr =  negf.CohRgfaParams.__str__
+#def _CohRgfaParamsStr(self):
+#    msg = _CohRgfaParamsOrgStr(self)
+#    msg += "\n" + self.Prefix + " Emin         = " + str(self.Emin)
+#    msg += "\n" + self.Prefix + " Emax         = " + str(self.Emax)
+#    msg += "\n" + self.Prefix + " dE           = " + str(self.dE)
+#    msg += "\n" + self.Prefix + " AutoGenE     = " + str(self.AutoGenE)
+#    msg += "\n" + self.Prefix + " AdaptiveGrid = " + str(self.AdaptiveGrid)
+#    
+#    return msg
+#negf.CohRgfaParams.__str__ = _CohRgfaParamsStr
 
 # Pickle support
-def _CohRgfaParamsSetState(self, dct):
-    self.__dict__.update(dct)
-    
-negf.CohRgfaParams.__setstate__ = _CohRgfaParamsSetState
+#def _CohRgfaParamsSetState(self, dct):
+#    self.__dict__.update(dct)
+#    
+#negf.CohRgfaParams.__setstate__ = _CohRgfaParamsSetState
+#
+#def _CohRgfaParamsGetState(self):
+#    dct = dict(self.__dict__)
+#    return dct
+#
+#negf.CohRgfaParams.__getstate__ = _CohRgfaParamsGetState
+#negf.CohRgfaParams.__getstate_manages_dict__ = True
 
-def _CohRgfaParamsGetState(self):
-    dct = dict(self.__dict__)
-    return dct
 
-negf.CohRgfaParams.__getstate__ = _CohRgfaParamsGetState
-negf.CohRgfaParams.__getstate_manages_dict__ = True
+#def _CohRgfaParamsGetInitArgs(self):
+#    return (self.nb,)
 
-
-def _CohRgfaParamsGetInitArgs(self):
-    return (self.nb,)
-
-negf.CohRgfaParams.__getinitargs__ = _CohRgfaParamsGetInitArgs
+#negf.CohRgfaParams.__getinitargs__ = _CohRgfaParamsGetInitArgs
 
 # Electrostatic potential
 _LinearPotOrgInit =  potential.LinearPot.__init__

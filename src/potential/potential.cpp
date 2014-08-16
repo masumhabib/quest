@@ -65,8 +65,8 @@ shared_ptr<vec> Potential::toOrbPot(span s){
     return pV;
 }
 
-shared_ptr<vec> Potential::toOrbPot(uint start, uint end){
-    return toOrbPot(span(start, end));
+vec Potential::toOrbPot(uint start, uint end){
+    return *toOrbPot(span(start, end));
 }
 
 double Potential::Vatom(uint ia){
@@ -176,7 +176,7 @@ using namespace potential;
 /**
  * Linear potential
  */  
-shared_ptr<vec> (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;
+vec (Potential::*Potential_toOrbPot)(uint, uint) = &Potential::toOrbPot;
 double (Potential::*Potential_Vatom1)(uint) = &Potential::Vatom;
 void (Potential::*Potential_Vatom2)(uint, double) = &Potential::Vatom;
 void export_Potential(){    

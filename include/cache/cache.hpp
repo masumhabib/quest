@@ -50,7 +50,7 @@ public:
     };
 
     // resets the cache.
-    void reset(){
+    virtual void reset(){
         // reset iterator
         mIt = mBegin - 1;
         // reset members.
