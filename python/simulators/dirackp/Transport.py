@@ -12,12 +12,13 @@ import random as rn
 
 from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, SVec
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpHam4, TISurfKpParams, TISurfKpHam, GrapheneKpParams, GrapheneKpHam
-from qmicad.negf import CohRgfaParams, NegfEloop
+from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
+from qmicad.negf import CohRgfLoop
 from qmicad.potential import LinearPot
 from qmicad.utils import VecGrid, Timer, Workers, Quadrilateral, Point
 from qmicad.simulators.utils import vprint
 from qmicad.simulators.utils.vprint import nprint, dprint, eprint
+from qmicad.simulators.utils.linspace import linspace
 
 class Transport(object):
     """
@@ -102,6 +103,16 @@ class Transport(object):
         self.Calculations = {}
         self.Calculations["TE"] = 1
         
+        # 
+        self.kT             = 0.0259        # Temperature in eV (300 K)
+        self.ieta           = 1E-3j         # Contact imaginary potential
+        self.mu             = 0.0           # Device Fermi level
+        self.OrthoBasis     = True          # Orthogonal basis?
+        self.Emin           =-1.0           # Minimum energy 
+        self.Emax           = 1.0           # Maximum energy
+        self.dE             = 0.005         # Energy step
+        self.AutoGenE       = False         # Generate grid automatically?
+        
         # Debug stuffs
         self.DebugPotFile   = "dbg_pot.dat"
         self.DebugGeomFile  = "dbg_geom.svg"
@@ -127,11 +138,11 @@ class Transport(object):
    
     def muS(self, VDD):
         """Calculates the fermi energy level of the source."""
-        return self.np.mu - VDD*self.V.rVS
+        return self.mu - VDD*self.V.rVS
     
     def muD(self, VDD):
         """Calculates the drain energy level of the source."""
-        return self.np.mu - VDD*self.V.rVD
+        return self.mu - VDD*self.V.rVD
  
     
     def VG(self, VGG, Vo, ig):
@@ -293,55 +304,38 @@ class Transport(object):
 
         nprint("\n Generating Hamiltonian matrix ...")
 
-        # Create Hamiltonian generator
-        if (self.HamType == self.HAM_TI_SURF_KP):
-            self.ham = TISurfKpHam(self.hp)   
-        if (self.HamType == self.HAM_TI_SURF_KP4):
-            self.ham = TISurfKpHam4(self.hp)               
-        if (self.HamType == self.HAM_GRAPHENE_KP):
-            self.ham = GrapheneKpHam(self.hp)   
-
         # For uniform RGF blocks
         if (self.DevType == self.COH_RGF_UNI):            
             lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
             lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
-            # Block hamiltonian.
-            self.ham.setSizeForNegf(2)                            # uniform device, only need H_0,0 and H_1,0
-            self.ham.genDiagBlock(lyr0, lyr0, 0)                  # generate H_0,0 and S_0,0
-            self.ham.genLowDiagBlock(lyr1, lyr0, 0)               # generate H_1,0                 
-            # Set block Hamiltonian for the NEGF calculation.
-            self.np = CohRgfaParams(self.nb)            
-            for ib in range(0, self.nb+1):                  # setup the block hamiltonian
-                if (ib != self.nb):
-                    self.np.H0(self.ham.H0(0), ib)          # H0: 0 to N+1
-                    self.np.S0(self.ham.S0(0), ib)          # S0: 0 to N+1
-                self.np.Hl(self.ham.Hl(0), ib)              # Hl: 0 to N+2
+
+            self.H0, self.S0 = generateHamOvl(self.hp, lyr0, lyr0)
+            self.Hl, self.Sl = generateHamOvl(self.hp, lyr1, lyr0)
         # Non-uniform RGF blocks        
         elif (self.DevType == self.COH_RGF_NON_UNI):
-            # Set block Hamiltonian for the NEGF calculation.
-            self.ham.setSizeForNegf(self.nb)            # non-uniform device, store all H_i,i and H_i,i-1
-            self.np = CohRgfaParams(self.nb)            
+            self.H0 = [];
+            self.Hl = [];
             beg = 0
             for ib in range(0, self.nb):                    # setup the block hamiltonian
                 end = beg + self.nbw[ib] - 1
                 
                 # generate H_i,i and S_i,i
                 lyri = self.geom.span(beg, end);            # extract block # i             
-                self.ham.genDiagBlock(lyri, lyri, ib)
-                self.np.H0(self.ham.H0(ib), ib)             # H0: 0 to N+1=nb-1
-                self.np.S0(self.ham.S0(0), ib)              # S0: just the identity matrix stored in S0(0)
+                H0,S0 = generateHamOvl(self.hp, lyri, lyri)
+                self.H0.append(H0)
 
                 # generate H_i,i-1
                 if (ib > 0):
-                    self.ham.genLowDiagBlock(lyri, lyrim1, ib)      
-                    self.np.Hl(self.ham.Hl(ib), ib)              # Hl: 1 to N+1=nb-1                
+                    #self.ham.genLowDiagBlock(lyri, lyrim1, ib) 
+                    Hl,Sl = generateHamOvl(self.hp, lyri, lyrim1)
+                    self.Hl.append(Hl)
+                    #self.np.Hl(self.Hl(ib), ib)              # Hl: 1 to N+1=nb-1                
+                else:
+                    self.S0 = S0
                 
                 lyrim1 = lyri
                 beg = end + 1
             
-            self.np.Hl(self.ham.Hl(1), 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
-            self.np.Hl(self.ham.Hl(ib), ib+1)           # Set H_N+2,N+1 = H_N+1,N
-
         nprint(" done.")
         
     def setupPotential(self):
@@ -366,8 +360,7 @@ class Transport(object):
         """Runs the sumulation."""
 
         # Set drain and Fermi levels
-        self.np.muS = self.muS(VDD)
-        self.np.muD = self.muD(VDD)
+        self.rgf.mu(self.muD(VDD), self.muS(VDD))
             
         nprint("\n Bias loop:")                                
         nprint("\n  VGG = " + str(VGG) + ", Vo = " + str(Vo) 
@@ -419,65 +412,39 @@ class Transport(object):
                 self.V.exportPotential(self.OutPath + self.DebugPotFile)
         
         # Export potential to NEGF
-#        if (self.DevType == self.COH_RGF_UNI): 
         beg = 0
+        self.Vo = []
         for ib in range(self.nb):                  # setup the block hamiltonian
             end = beg + self.nbw[ib] - 1
-            self.np.V(self.V.toOrbPot(beg, end), ib)
+            self.Vo.append(self.V.toOrbPot(beg, end)) 
+            self.rgf.V(self.Vo[ib], ib)
             beg = end + 1
             
-#                self.np.V(self.V.toOrbPot(self.nw*ib, 
-#                                          self.nw*(ib+1)-1), ib)
 
         # Create energy grid
-        if (self.np.AutoGenE):
-            Emin = self.np.muD - 10*self.np.kT
-            Emax = self.np.muS + 10*self.np.kT
+        if (self.AutoGenE):
+            Emin = self.muD(VDD) - 10*self.kT
+            Emax = self.muS(VDD) + 10*self.kT
         else:
-            Emin = self.np.Emin
-            Emax = self.np.Emax
+            Emin = self.Emin
+            Emax = self.Emax
             
-        EE = VecGrid(Emin, Emax, self.np.dE)
+        EE = linspace(Emin, Emax, self.dE)
 
         
         nprint("\n Energy grid:\n  Min: " + str(Emin) + ", max: " 
-                    + str(Emax) + ", interval " + str(self.np.dE)
+                    + str(Emax) + ", interval " + str(self.dE)
                     + ".")
-        nprint("\n Total " + str(EE.N()) + " energy point(s) " 
+        nprint("\n Total " + str(len(EE)) + " energy point(s) " 
                     + "running on " + str(self.workers.N()) + " CPU(s): " 
-                    + str(int(round(EE.N()/self.workers.N()))) + " pts/CPU ... \n")
+                    + str(int(round(len(EE)/self.workers.N()))) + " pts/CPU ... \n")
                                 
-        # create and run energy loop
-        Eloop = NegfEloop(EE, self.np, self.workers) 
-
-        # enable calculations
-        for type, value in self.Calculations.iteritems():
-            # transmission
-            if (type == "TE"):
-                Eloop.enableTE(value)
-            # current
-            if (type == "I"):
-                if (isinstance( value, int)):
-                    Eloop.enableI(value, 0, 1)
-                else:
-                    for I in self.Calculations["I"]:
-                        Eloop.enableI(I["N"], I["From"], I["To"])
-            if (type == "DOS"):
-                Eloop.enableDOS(value)
-            if (type == "n"):
-                if (isinstance( value, int)):
-                    Eloop.enablen(value)
-                else:
-                    for n in self.Calculations["n"]:
-                        if (n["Block"] == "All"):
-                            for ib in range(1, self.nb-2):
-                                Eloop.enablen(n["N"], ib)
-                        else:
-                            Eloop.enablen(n["N"], n["Block"])
+        # Set energy
+        self.rgf.E(EE)
 
         # Run the simulation
         if (self.DryRun == False):
-            Eloop.run()
+            self.rgf.run()
         nprint("\n  done.")
         
         nprint("\n Saving results to disk ...")
@@ -490,7 +457,7 @@ class Transport(object):
             if (self.DryRun == False):
                 fo = open(self.OutPath + fileName + ".dat", "wt")
                 fo.close()
-                Eloop.save(self.OutPath + fileName + ".dat")            
+                self.rgf.save(self.OutPath + fileName + ".dat")            
 
         nprint(" done.\n")
         nprint(" ------------------------------------------------------------------")
@@ -534,10 +501,54 @@ class Transport(object):
                     os.makedirs(self.OutPath) 
                 self.V.exportSvg(self.OutPath + self.DebugGeomFile)
         
-        # Loop over drain bias
+        # Configure the RGF solver
+        self.rgf = CohRgfLoop(self.workers, self.nb, self.kT, self.ieta, 
+                self.OrthoBasis)
+        # Setup H and S 
+        if (self.DevType == self.COH_RGF_UNI):        # for uniform RGF blocks
+            for ib in range(0, self.nb+1):            # setup the block hamiltonian
+                if (ib != self.nb):
+                    self.rgf.H0(self.H0, ib)          # H0: 0 to N+1
+                    self.rgf.S0(self.S0, ib)          # S0: 0 to N+1
+                self.rgf.Hl(self.Hl, ib)              # Hl: 0 to N+2
+        elif (self.DevType == self.COH_RGF_NON_UNI):  # Non-uniform RGF blocks        
+            for ib in range(0, self.nb):                 # setup the block hamiltonian
+                self.rgf.H0(self.H0[ib], ib)             # H0: 0 to N+1=nb-1
+                self.rgf.S0(self.S0, ib)              # S0: just the identity matrix stored in S0(0)
+                if (ib > 0):
+                    self.rgf.Hl(self.Hl[ib], ib)     # Hl: 1 to N+1=nb-1                            
+            self.rgf.Hl(self.Hl[1], 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
+            self.rgf.Hl(self.Hl[ib], ib+1)           # Set H_N+2,N+1 = H_N+1,N            
+        # Enable calculations
+        for type, value in self.Calculations.iteritems():
+            # transmission
+            if (type == "TE"):
+                self.rgf.enableTE(value)
+            # current
+            if (type == "I"):
+                if (isinstance( value, int)):
+                    self.rgf.enableI(value, 0, 1)
+                else:
+                    for I in self.Calculations["I"]:
+                        self.rgf.enableI(I["N"], I["From"], I["To"])
+            if (type == "DOS"):
+                self.rgf.enableDOS(value)
+            if (type == "n"):
+                if (isinstance( value, int)):
+                    self.rgf.enablen(value)
+                else:
+                    for n in self.Calculations["n"]:
+                        if (n["Block"] == "All"):
+                            for ib in range(1, self.nb-2):
+                                self.rgf.enablen(n["N"], ib)
+                        else:
+                            self.rgf.enablen(n["N"], n["Block"])
+    
+        # Loop over drain and gate bias
         for VDD in self.VDD:
             for VGG in self.VGG:
                 self.runBiasStep(VGG, self.Vo, VDD)
+                pass
         self.clock.toc()           
         nprint("\n" + str(self.clock) + "\n")
  
@@ -562,7 +573,7 @@ class Transport(object):
         
         msg += "\n  Device geometry:"
         msg += "\n  ---------------------------------------------"
-        msg += "\n  ... |-1 | 0 | 1 |   ...  | " + str(self.np.nb-2) + " | " + str(self.np.nb-1) + " | " + str(self.np.nb) + " | ..."
+        msg += "\n  ... |-1 | 0 | 1 |   ...  | " + str(self.nb-2) + " | " + str(self.nb-1) + " | " + str(self.nb) + " | ..."
         msg += "\n  ---------------------------------------------"
         msg += "\n            ^  <-------^------->  ^"
         msg += "\n          left       Device     right"
@@ -610,7 +621,7 @@ class Transport(object):
     
     def dynamicnstr(self):
         # NEGF parameters
-        msg = str(self.np)
+        msg = str(self.rgf)
         # Electrostatics
         msg += "\n"
         msg += str(self.V)
@@ -629,7 +640,7 @@ class Transport(object):
         dct = dict(self.__dict__)
         del dct['workers']
         del dct['clock']
-        del dct['ham']
+        #del dct['rgf']
         return dct
     
     def __setstate__(self, dct):

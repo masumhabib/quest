@@ -13,7 +13,7 @@
 #include "Workers.h"
 
 
-namespace utils{
+namespace qmicad{namespace parallel{
 /*
  * Parallel loop
  */
@@ -40,7 +40,7 @@ protected:
     int                 mMyEnd;         //!< End point for this CPU.
 };
 
-}
+}}
 
 #endif	/* PARFOR_H */
 

@@ -11,8 +11,47 @@
 namespace qmicad{
 namespace hamiltonian{
 
-cxmat TISurfKpHam::genTwoAtomHam(const AtomicStruct& atomi, 
-        const AtomicStruct& atomj)
+
+TISurfKpParams::TISurfKpParams(const string &prefix):cxhamparams(prefix)
+{
+    mTitle = "Topological Insulator surface k.p parameters";
+    mI = eye<cxmat>(2,2);
+   
+    setDefaultParams();
+    update();
+}
+        
+string TISurfKpParams::toString() const { 
+    stringstream ss;
+    ss << cxhamparams::toString() << ":" << endl;
+    ss << mPrefix << " a    = " << ma << endl;
+    ss << mPrefix << " K    = " << mK << endl;
+    ss << mPrefix << " C    = " << mC << endl;
+    ss << mPrefix << " A2   = " << mA2 << endl;
+    ss << mPrefix << " dtol = " << mdtol << endl;
+    ss << mPrefix << " eps: " << endl << meps;
+    ss << mPrefix << " t01x: " << endl << mt01x;
+    ss << mPrefix << " t01y: " << endl << mt01y;
+
+    return ss.str(); 
+};
+    
+void TISurfKpParams::update(){
+
+    if(!(is_finite(mdtol) && is_finite(mC) && is_finite(mA2) && is_finite(ma)
+             && is_finite(mK))){
+        throw runtime_error("TISurfKpParams: invalid TI parameters.");            
+    }
+    double Kx = mK, Ky = mK, ax = ma, ay = ma;
+    meps = mC*mI - mA2*(Kx/ax + Ky/ay)*sz();
+    mt01x =  (mA2/(2*ax))*sy()*i + (Kx*mA2/(2*ax))*sz();
+    mt10x = trans(mt01x);
+    mt01y = (-mA2/(2*ay))*sx()*i + (Ky*mA2/(2*ay))*sz();
+    mt10y = trans(mt01y);
+} 
+
+cxmat TISurfKpParams::twoAtomHam(const AtomicStruct& atomi, 
+        const AtomicStruct& atomj)  const
 {
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1){
         throw invalid_argument("TISurfHamGen(): atomi and atomj must should contain one atom each.");
@@ -22,7 +61,6 @@ cxmat TISurfKpHam::genTwoAtomHam(const AtomicStruct& atomi,
     int noj = atomj.NumOfOrbitals();
 
     cxmat hmat =  zeros<cxmat>(noi, noj);
-    shared_ptr<TISurfKpParams> p = static_pointer_cast<TISurfKpParams>(mhp);
 
     // calculate distance between atom i and atom j
     double xi = atomi.X(0);
@@ -38,21 +76,21 @@ cxmat TISurfKpHam::genTwoAtomHam(const AtomicStruct& atomi,
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // site energy
-        if (d <= p->mdtol){
-            hmat = p->meps;
+        if (d <= mdtol){
+            hmat = meps;
         // nearest neighbor in x
-        }else if(abs(d - p->ma) <= p->mdtol && abs(dx - p->ma) <= p->mdtol){ 
+        }else if(abs(d - ma) <= mdtol && abs(dx - ma) <= mdtol){ 
             if (xi > xj){
-                hmat = p->mt10x;
+                hmat = mt10x;
             }else{
-                hmat = p->mt01x;
+                hmat = mt01x;
             }
         //nearest neighbor y
-        }else if (abs(d - p->ma) <= p->mdtol && abs(dy - p->ma) <= p->mdtol){
+        }else if (abs(d - ma) <= mdtol && abs(dy - ma) <= mdtol){
             if(yi > yj){
-                hmat = p->mt10y;
+                hmat = mt10y;
             }else{
-                hmat = p->mt01y;
+                hmat = mt01y;
             }
         }            
     }
@@ -60,8 +98,8 @@ cxmat TISurfKpHam::genTwoAtomHam(const AtomicStruct& atomi,
     return hmat;
 };
 
-cxmat TISurfKpHam::genTwoAtomOvl(const AtomicStruct& atomi, 
-        const AtomicStruct& atomj)
+cxmat TISurfKpParams::twoAtomOvl(const AtomicStruct& atomi, 
+        const AtomicStruct& atomj)  const
 {
     if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1){
         throw invalid_argument("TISurfHamGen(): atomi and atomj must should contain one atom each.");
@@ -71,7 +109,6 @@ cxmat TISurfKpHam::genTwoAtomOvl(const AtomicStruct& atomi,
     int noj = atomj.NumOfOrbitals();
 
     cxmat smat =  zeros<cxmat>(noi, noj);
-    shared_ptr<TISurfKpParams> p = static_pointer_cast<TISurfKpParams>(mhp);
 
     // calculate distance between atom i and atom j
     double xi = atomi.X(0);
@@ -87,8 +124,8 @@ cxmat TISurfKpHam::genTwoAtomOvl(const AtomicStruct& atomi,
     // the lattice points.
     if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
         // site energy
-        if (d <= p->mdtol){
-            smat = p->mI;
+        if (d <= mdtol){
+            smat = mI;
         }
     }   
     return smat;
@@ -117,21 +154,13 @@ void export_TISurfKpParams(){
     double (TISurfKpParams::*TISurfKpParams_getK)() = &TISurfKpParams::K;
     void (TISurfKpParams::*TISurfKpParams_setK)(double) = &TISurfKpParams::K;
 
-    class_<TISurfKpParams, bases<HamParams>, shared_ptr<TISurfKpParams> >("TISurfKpParams")
+    class_<TISurfKpParams, bases<cxhamparams>, shared_ptr<TISurfKpParams> >(
+        "TISurfKpParams", init<optional<const string &> >())
         .enable_pickling()
         .add_property("a", TISurfKpParams_geta, TISurfKpParams_seta)
         .add_property("K", TISurfKpParams_getK, TISurfKpParams_setK)   
         .add_property("A2", TISurfKpParams_getA2, TISurfKpParams_setA2)
         .add_property("C", TISurfKpParams_getC, TISurfKpParams_setC)
-    ;
-}
-
-    /**
-     * TI Surface Hamiltonian.
-     */
-void export_TISurfKpHam(){
-    class_<TISurfKpHam, bases<cxham>, shared_ptr<TISurfKpHam> >("TISurfKpHam",
-            init<const TISurfKpParams& >())
     ;
 }
 

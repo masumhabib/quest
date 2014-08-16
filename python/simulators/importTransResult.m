@@ -9,7 +9,9 @@ function out = importTransResult(fileName)
     ibneq = 1;
     while (~feof(fid))
         type = fscanf(fid, '%s[^\n]');
-        if strfind(type, 'TRANSMISSION') == 1
+        if strfind(type, 'ENERGY') == 1
+            [out.NE, out.E] = scanE();
+        elseif strfind(type, 'TRANSMISSION') == 1
             out.TE = scan();
         elseif strfind(type, 'CURRENT') == 1
             out.IE{ibIE} = scan();
@@ -29,13 +31,13 @@ function out = importTransResult(fileName)
     
     function M = scan()
         NE = fscanf(fid, '%d[^\n]');
-        M.NE = NE;
+        %M.NE = NE;
         tmp = fscanf(fid, '%d %d[^\n]');
         M.ib = tmp(1); M.jb = tmp(2);
         N = fscanf(fid, '%d[^\n]');
-        M.N = N;
+        %M.N = N;
         for iE = 1:NE
-            M.E(iE) = fscanf(fid, '%f[^\n]');
+            %M.E(iE) = fscanf(fid, '%f[^\n]');
             M.M{iE} = zeros(N,N);
             for ii = 1:N
                 for jj = 1:N
@@ -43,6 +45,14 @@ function out = importTransResult(fileName)
                     M.M{iE}(ii,jj) = data(1) + 1i*data(2);
                 end
             end
+        end    
+    end
+
+    function [NE, EE] = scanE()
+        NE = fscanf(fid, '%d[^\n]');
+        EE = zeros(NE, 1);
+        for iE = 1:NE
+            EE(iE) = fscanf(fid, '%f[^\n]');
         end    
     end
 end

@@ -49,7 +49,7 @@ public:
     Potential(AtomicStruct::ptr atoms = AtomicStruct::ptr(), const string &prefix = "");
     //!< Convert atomic potential to orbital potential.
     shared_ptr<vec> toOrbPot(span s = span::all);
-    shared_ptr<vec> toOrbPot(uint start, uint end);
+    vec toOrbPot(uint start, uint end);
     double Vatom(uint ia);
     void Vatom(uint ia, double V);
     //!< Calculate electrostatic potential.

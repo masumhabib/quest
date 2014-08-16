@@ -21,8 +21,6 @@ using boost::static_pointer_cast;
 using namespace maths::armadillo;
 using namespace maths::constants;
 
-class TISurfKpHam4;
-
 /**
  * TI surface k.p Hamiltonian parameters in four spins basis set.
  * In four spin basis [z_up, z_dn, z_up, z_dn], the hamiltonian 
@@ -35,28 +33,11 @@ class TISurfKpHam4;
  * from the lowe 2x2 to avoid fermion doubling and to avoid all the side
  * effects that can be introduced by the term sigma_z*(kx^2 + ky^2).
  */
-class TISurfKpParams4: public HamParams{
-    friend class TISurfKpHam4;
-protected:
-    //!< k.p parameters
-    double ma;            // discretization length in y direction
-    double mC;            // C parameter, see Rev. Mod. Phys. 83, 1057 (2011)
-    double mA2;           // A2 parameter, see Rev. Mod. Phys. 83, 1057 (2011)
-    double mK;            // parameter to avoid fermion doubling
-    
-    //!< tight binding parameters
-    cxmat mI;
-    cxmat meps;
-    cxmat mt01x;
-    cxmat mt10x;
-    cxmat mt01y;
-    cxmat mt10y;
+class TISurfKpParams4: public cxhamparams{
     
 public:
-    TISurfKpParams4(const string &prefix = ""):HamParams(prefix){
-        mTitle = "Topological Insulator surface k.p parameters with four spins";   
-        mI = eye<cxmat>(4,4); 
-    }
+    TISurfKpParams4(const string &prefix = ""); 
+    
     double a(){return ma; }
     void   a(double newa ){ ma = newa; update(); }
     double C(){return mC; }
@@ -66,77 +47,44 @@ public:
     double K(){return mK; }
     void   K(double newK ){ mK = newK; update(); }
     
-    virtual string toString() const { 
-        stringstream ss;
-        ss << HamParams::toString() << ":" << endl;
-        ss << mPrefix << " dtol = " << mdtol << endl;
-        ss << mPrefix << " a    = " << ma << endl;
-        ss << mPrefix << " K    = " << mK << endl;
-        ss << mPrefix << " C    = " << mC << endl;
-        ss << mPrefix << " A2   = " << mA2 << endl;
-        ss << mPrefix << " eps: " << endl << meps;
-        ss << mPrefix << " t01x: " << endl << mt01x;
-        ss << mPrefix << " t01y: " << endl << mt01y;
+    virtual string toString() const;
 
-        return ss.str(); 
-    };
+    //!< Generate Hamiltonian between two atoms.
+    virtual cxmat twoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj) const;    
+    //!< Generate overlap matrix between two atoms.
+    virtual cxmat twoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj) const;    
     
-protected:
+private:
+    //!< Default parameters.
+    void setDefaultParams(){
+        ma     = 2.0;
+        mK     = 1.0;  
+        mC     = 0.0; 
+        mA2    = 3.33; 
+        mdtol  = 1E-3; 
+        mortho = true;
+    };    
     // Updates internal tight binding parameters calculated using 
     // k.p model. Call it after changing any of the k.p parameters.
-    virtual void update(){
-        
-        if(!(is_finite(mdtol) && is_finite(mC) && is_finite(mA2) && is_finite(ma)
-                && is_finite(mK))){
-            throw runtime_error("TISufrParams: invalid TI parameters.");            
-        }
-        // To avoid the famous Fermion doubling and its side effects, we are
-        // adding sigma_z(kx^2 + ky^2) to the upper 2x2 and subtract from the 
-        // lower 2x2. 
-        double Kx = mK, Ky = mK, ax = ma, ay = ma;
-        cxmat I22 = eye<cxmat>(2,2); 
-        cxmat tmp1, tmp2;
-        
-        meps = zeros<cxmat>(4,4);
-        tmp1 = mC*I22 - mA2*(Kx/ax + Ky/ay)*sz();
-        tmp2 = mC*I22 + mA2*(Kx/ax + Ky/ay)*sz();
-        meps(span(0,1), span(0,1)) = tmp1;
-        meps(span(2,3), span(2,3)) = tmp2;
-        
-        mt01x = zeros<cxmat>(4,4);
-        tmp1 = (mA2/(2*ax))*sy()*i + (Kx*mA2/(2*ax))*sz();
-        tmp2 = (mA2/(2*ax))*sy()*i - (Kx*mA2/(2*ax))*sz();
-        mt01x(span(0,1), span(0,1)) = tmp1;
-        mt01x(span(2,3), span(2,3)) = tmp2;
-        mt10x = trans(mt01x);
-        
-        mt01y = zeros<cxmat>(4,4);
-        tmp1 = (-mA2/(2*ay))*sx()*i + (Ky*mA2/(2*ay))*sz();
-        tmp1 = (-mA2/(2*ay))*sx()*i - (Ky*mA2/(2*ay))*sz();
-        mt01y(span(0,1), span(0,1)) = tmp1;
-        mt01y(span(2,3), span(2,3)) = tmp2;
-        mt10y = trans(mt01y);
-    }    
+    virtual void update();
+    
+private:
+    //!< k.p parameters
+    double ma;            // discretization length in y direction
+    double mK;            // parameter to avoid fermion doubling
+    double mC;            // C parameter, see Rev. Mod. Phys. 83, 1057 (2011)
+    double mA2;           // A2 parameter, see Rev. Mod. Phys. 83, 1057 (2011)
+    
+    //!< tight binding parameters
+    cxmat mI;
+    cxmat meps;
+    cxmat mt01x;
+    cxmat mt10x;
+    cxmat mt01y;
+    cxmat mt10y;
+    
 };
 
-/** 
- * Tight binding Hamiltonian and overlap matrix for TI surface using 
- *  method k.p.
- */
-class TISurfKpHam4: public cxham{
-protected:    
-public:
-    TISurfKpHam4(const TISurfKpParams4& p){
-        mhp = shared_ptr<TISurfKpParams4> (new TISurfKpParams4(p));
-    };
-    virtual ~TISurfKpHam4(){};
-protected:
-    //!< Generate Hamiltonian between two atoms.
-    virtual cxmat genTwoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj);    
-    //!< Generate overlap matrix between two atoms.
-    virtual cxmat genTwoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj);    
-        
-};
 
 }
 }
