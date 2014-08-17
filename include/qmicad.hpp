@@ -44,7 +44,6 @@
 #include "atoms/Lattice.h"
 #include "atoms/AtomicStruct.h"
 
-#include "parallel/parloop.h"
 #include "parallel/Workers.h"
 
 #include "kpoints/KPoints.h"
