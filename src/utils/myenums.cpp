@@ -6,25 +6,8 @@
  */
 
 #include "utils/myenums.hpp"
-#include "python/boostpython.hpp"
 
-namespace qmicad{
-namespace python{
 
-/**
-* python export.
-*/
-void export_Option(){
-    using namespace utils::enums;
-    
-    enum_<Option>("Option") 
-       .value("Disabled", Disabled)
-       .value("Enabled",  Enabled)
-    ;
-}
-
-}
-}
 
 
 

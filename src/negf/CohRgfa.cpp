@@ -6,7 +6,6 @@
  */
 
 #include "negf/CohRgfa.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace negf{
@@ -864,14 +863,5 @@ inline void CohRgfa::reset(){
 }
 
 
-/**
- * Python exporters.
- */
-namespace qmicad{
-namespace python{
-using namespace negf;
-
-}
-}
 
 

@@ -8,8 +8,8 @@
  * 
  */
 
-#include "python/pyqmicad.h"
-#include "python/boostpython.hpp"
+#include "pyqmicad.h"
+#include "boostpython.hpp"
 #include "qmicad.hpp"
 
 

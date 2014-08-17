@@ -96,6 +96,7 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${MPI_INCLUDE_PATH})
 
+# -------- <QMICAD C++ Library> ------------------------------------------------
 # sources
 file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
 file(GLOB_RECURSE QMICAD_HEADERS "include/*.h*")
@@ -118,9 +119,6 @@ add_custom_command(
     COMMAND cp -rp ${CMAKE_SOURCE_DIR}/include ${QMICAD_DIST_DIR}
     COMMAND cp -rp ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h ${QMICAD_DIST_DIR}/include
     COMMAND rm -f ${QMICAD_DIST_DIR}/include/config.in.h
-    COMMAND cp -rp ${CMAKE_SOURCE_DIR}/python ${QMICAD_DIST_DIR}
-    COMMAND ln -sf ${QMICAD_DIST_DIR}/python ${QMICAD_DIST_DIR}/qmicad
-    COMMAND cd ${QMICAD_DIST_DIR}/python && ln -sf ../lib/lib${PROJECT_NAME}.so qmicad.so
 )
 
 # doxygen
@@ -140,6 +138,36 @@ if(DOXYGEN_FOUND)
         COMMAND cd ${QMICAD_DIST_DIR}/doc && ln -sf html/index.html index.html
     )
 endif(DOXYGEN_FOUND)
+
+# -------- </QMICAD C++ Library> -----------------------------------------------
+
+# -------- <QMICAD Python Library> ---------------------------------------------
+# sources
+set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/python)
+file(GLOB_RECURSE PYQMICAD_SOURCES "python/*.cpp")
+file(GLOB_RECURSE PYQMICAD_HEADERS "python/*.h*")
+include_directories(${PYQMICAD_INCLUDE_DIRS})
+add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
+
+
+# linking
+target_link_libraries (pyqmicad qmicad)
+set_target_properties(pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
+set_target_properties(pyqmicad PROPERTIES PREFIX "")
+set_target_properties(pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
+
+# Prepare qmicad package
+add_custom_command(
+    TARGET pyqmicad POST_BUILD
+    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/python
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/python/*.py ${QMICAD_DIST_DIR}/python
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/python/simulators ${QMICAD_DIST_DIR}/python
+    COMMAND ln    -sf ${QMICAD_DIST_DIR}/python ${QMICAD_DIST_DIR}/qmicad
+    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad.so  ${QMICAD_DIST_DIR}/python
+)
+
+# -------- </QMICAD Python Library> ---------
+
 
 # installation
 install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)

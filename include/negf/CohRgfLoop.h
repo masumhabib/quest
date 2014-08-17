@@ -18,9 +18,6 @@
 #include "maths/fermi.hpp"
 #include "parallel/parloop.h"
 
-#include "npyarma/npyarma.h"
-
-
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
@@ -35,9 +32,6 @@ using utils::VecGrid;
 using boost::shared_ptr;
 using boost::make_shared;
 namespace mpi = boost::mpi;
-namespace bp = boost::python;
-using qmicad::python::npy2mat;
-using qmicad::python::npy2col;
 
 /*
  * NegfCalculations specifies what to calculate.
@@ -66,17 +60,6 @@ public:
     void            V(shared_ptr<vec> V, int ib);
     void            pv0(const vec &pv0, int ib, int ineigh);
     void            pvl(const vec &pv0, int ib, int ineigh);
-    // For python binding
-    void            H0(bp::object H0, int ib, int ineigh);
-    void            S0(bp::object S0, int ib, int ineigh);
-    void            Hl(bp::object Hl, int ib, int ineigh);
-    void            Sl(bp::object Sl, int ib, int ineigh);    
-    void            H0(bp::object H0, int ib);
-    void            S0(bp::object S0, int ib);
-    void            Hl(bp::object Hl, int ib);
-    void            Sl(bp::object Sl, int ib);    
-
-    void            V(bp::object Sl, int ib);
     
     void            enableTE(uint N = 1);   
     void            enableI(uint N = 1, uint ib = 0, uint jb = 0);
@@ -99,7 +82,7 @@ private:
 
 public:
     
-private:
+protected:
     const Workers         &mWorkers;    //!< MPI worker processes.
     CohRgfa               mrgf;         //!< Current Negf calculator.
     vec                   mE;           //!< Energy grid.

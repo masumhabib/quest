@@ -7,7 +7,6 @@
 
 
 #include "hamiltonian/kp/graphenekp.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{
@@ -129,35 +128,5 @@ cxmat GrapheneKpParams::twoAtomOvl(const AtomicStruct& atomi, const AtomicStruct
 
 }
 }
-
-/**
- * Python exporters.
- */
-namespace qmicad{
-namespace python{
-using namespace hamiltonian;
-
-/**
- * Graphene k.p parameters.
- */
-void export_GrapheneKpParams(){
-    double (GrapheneKpParams::*GrapheneKpParams_geta)() = &GrapheneKpParams::a;
-    void (GrapheneKpParams::*GrapheneKpParams_seta)(double) = &GrapheneKpParams::a;
-    double (GrapheneKpParams::*GrapheneKpParams_getgamma)() = &GrapheneKpParams::gamma;
-    void (GrapheneKpParams::*GrapheneKpParams_setgamma)(double) = &GrapheneKpParams::gamma;
-    double (GrapheneKpParams::*GrapheneKpParams_getK)() = &GrapheneKpParams::K;
-    void (GrapheneKpParams::*GrapheneKpParams_setK)(double) = &GrapheneKpParams::K;    
-    class_<GrapheneKpParams, bases<cxhamparams>, shared_ptr<GrapheneKpParams> >(
-        "GrapheneKpParams", init<optional<const string &> >())
-        .enable_pickling()
-        .add_property("a", GrapheneKpParams_geta, GrapheneKpParams_seta)
-        .add_property("K", GrapheneKpParams_getK, GrapheneKpParams_setK)   
-        .add_property("gamma", GrapheneKpParams_getgamma, GrapheneKpParams_setgamma)
-    ;
-}
-
-}
-}
-
 
 

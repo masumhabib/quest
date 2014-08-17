@@ -11,7 +11,7 @@
 #ifndef NPYARMA_H
 #define NPYARMA_H
 
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 #include "utils/std.hpp"
 #include <numpy/arrayobject.h>
 #include <armadillo>
