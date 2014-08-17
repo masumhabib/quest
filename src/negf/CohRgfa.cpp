@@ -6,7 +6,6 @@
  */
 
 #include "negf/CohRgfa.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace negf{

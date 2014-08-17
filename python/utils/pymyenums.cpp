@@ -6,7 +6,7 @@
  */
 
 #include "utils/myenums.hpp"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 namespace qmicad{
 namespace python{

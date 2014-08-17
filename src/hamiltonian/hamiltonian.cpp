@@ -9,7 +9,6 @@
  */
 
 #include "hamiltonian/hamiltonian.hpp"
-#include "python/boostpython.hpp"
 
 
 

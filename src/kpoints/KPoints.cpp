@@ -6,7 +6,6 @@
  */
 
 #include "kpoints/KPoints.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace kpoints{

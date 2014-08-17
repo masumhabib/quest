@@ -6,7 +6,7 @@
  */
 
 #include "grid/grid.hpp"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 /**

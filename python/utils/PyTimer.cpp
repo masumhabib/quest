@@ -7,7 +7,7 @@
 
 #include "utils/Timer.h"
 #include "maths/geometry.hpp"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 namespace qmicad{

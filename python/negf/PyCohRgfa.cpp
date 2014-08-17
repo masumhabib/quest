@@ -6,7 +6,7 @@
  */
 
 #include "negf/CohRgfa.h"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 /**
  * Python exporters.

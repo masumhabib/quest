@@ -6,7 +6,7 @@
  */
 
 #include "maths/arma.hpp"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 /**

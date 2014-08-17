@@ -8,7 +8,7 @@
  */
 
 #include "hamiltonian/tb/graphenetb.h"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 /**

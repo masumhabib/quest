@@ -6,6 +6,5 @@
  */
 
 #include "maths/arma.hpp"
-#include "python/boostpython.hpp"
 
 

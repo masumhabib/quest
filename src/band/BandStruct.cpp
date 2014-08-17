@@ -6,7 +6,6 @@
  */
 
 #include "band/BandStruct.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace band{

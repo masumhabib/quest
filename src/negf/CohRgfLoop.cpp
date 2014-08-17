@@ -7,7 +7,6 @@
 
 #include "negf/CohRgfLoop.h"
 #include "negf/RgfResult.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace negf{
@@ -113,43 +112,6 @@ void CohRgfLoop::pv0(const vec& pv0, int ib, int ineigh){
 void CohRgfLoop::pvl(const vec& pvl, int ib, int ineigh){
     mpvl(ib, ineigh) = pvl;
 }
-
-void CohRgfLoop::H0(bp::object H0, int ib, int ineigh){
-    mH0(ib, ineigh) = npy2mat<dcmplx>(H0);
-}
-
-void CohRgfLoop::S0(bp::object S0, int ib, int ineigh){
-    mS0(ib, ineigh) = npy2mat<dcmplx>(S0);
-}
-
-void CohRgfLoop::Hl(bp::object Hl, int ib, int ineigh){
-    mHl(ib, ineigh) = npy2mat<dcmplx>(Hl);
-}
-
-void CohRgfLoop::Sl(bp::object Sl, int ib, int ineigh){
-    mSl(ib, ineigh) = npy2mat<dcmplx>(Sl);
-}
-
-void CohRgfLoop::H0(bp::object H0, int ib){
-    mH0(ib) = npy2mat<dcmplx>(H0);
-}
-
-void CohRgfLoop::S0(bp::object S0, int ib){
-    mS0(ib) = npy2mat<dcmplx>(S0);
-}
-
-void CohRgfLoop::Hl(bp::object Hl, int ib){
-    mHl(ib) = npy2mat<dcmplx>(Hl);
-}
-
-void CohRgfLoop::Sl(bp::object Sl, int ib){
-    mSl(ib) = npy2mat<dcmplx>(Sl);
-}
-
-void CohRgfLoop::V(bp::object V, int ib){
-    mV(ib) = npy2col<double>(V);
-}
-
 
 void CohRgfLoop::enableTE(uint N){
     mTE.tag = "TRANSMISSION";

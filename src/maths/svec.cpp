@@ -9,7 +9,6 @@
  */
 
 #include "maths/svec.h"
-#include "python/boostpython.hpp"
 
 
 

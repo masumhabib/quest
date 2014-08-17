@@ -9,7 +9,7 @@
  */
 
 #include "maths/svec.h"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 namespace qmicad{

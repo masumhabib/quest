@@ -7,7 +7,6 @@
 
 
 #include "hamiltonian/kp/graphenekp.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

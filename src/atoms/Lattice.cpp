@@ -9,7 +9,6 @@
  */
 
 #include "atoms/Lattice.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace atoms{

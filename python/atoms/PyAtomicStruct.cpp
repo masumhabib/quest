@@ -9,8 +9,7 @@
  * 
  */
 
-#include "atoms/AtomicStruct.h"
-#include "python/boostpython.hpp"
+#include "PyAtomicStruct.h"
 
 /**
  * Python exporters.

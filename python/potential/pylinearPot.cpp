@@ -6,7 +6,7 @@
  */
 
 #include "potential/linearPot.h"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 /**
  * Python exporters.

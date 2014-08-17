@@ -6,7 +6,6 @@
  */
 
 #include "hamiltonian/kp/tikp4.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

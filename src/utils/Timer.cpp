@@ -7,7 +7,6 @@
 
 #include "utils/Timer.h"
 #include "maths/geometry.hpp"
-#include "python/boostpython.hpp"
 
 
 

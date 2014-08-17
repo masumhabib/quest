@@ -6,7 +6,7 @@
  */
 
 #include "hamiltonian/kp/tikp.h"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 /**

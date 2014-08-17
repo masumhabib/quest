@@ -6,7 +6,6 @@
  */
 
 #include "parallel/Workers.h"
-#include "python/boostpython.hpp"
 
 
 namespace qmicad{namespace parallel{

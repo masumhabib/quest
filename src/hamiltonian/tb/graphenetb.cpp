@@ -8,7 +8,6 @@
  */
 
 #include "hamiltonian/tb/graphenetb.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace hamiltonian{

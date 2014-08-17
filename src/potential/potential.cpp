@@ -6,7 +6,6 @@
  */
 
 #include "potential/potential.h"
-#include "python/boostpython.hpp"
 
 namespace qmicad{
 namespace potential{

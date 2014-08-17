@@ -9,7 +9,7 @@
  */
 
 #include "hamiltonian/hamiltonian.hpp"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 /**
  * Python exporters.

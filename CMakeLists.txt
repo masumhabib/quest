@@ -143,8 +143,10 @@ endif(DOXYGEN_FOUND)
 
 # -------- <QMICAD Python Library> ---------------------------------------------
 # sources
+set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/python)
 file(GLOB_RECURSE PYQMICAD_SOURCES "python/*.cpp")
-file(GLOB_RECURSE PYQMICAD_HEADERS "include/*.h*")
+file(GLOB_RECURSE PYQMICAD_HEADERS "python/*.h*")
+include_directories(${PYQMICAD_INCLUDE_DIRS})
 add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
 
 

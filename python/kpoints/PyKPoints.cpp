@@ -6,7 +6,7 @@
  */
 
 #include "kpoints/KPoints.h"
-#include "python/boostpython.hpp"
+#include "boostpython.hpp"
 
 
 /**
