@@ -10,22 +10,4 @@
 #include "python/boostpython.hpp"
 
 
-namespace qmicad{
-namespace python{
 
-/**
- * Wall clock python exporter.
- */
-void export_Timer(){
-    using namespace maths::geometry;
-    
-    class_<Timer, bases<Printable>, shared_ptr<Timer> >("Timer", 
-            init<optional<const string&> >())
-        .def("tic", &Timer::tic)
-        .def("toc", &Timer::toc)
-    ;
-
-}
-
-}
-}

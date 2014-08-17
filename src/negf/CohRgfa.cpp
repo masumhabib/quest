@@ -864,14 +864,5 @@ inline void CohRgfa::reset(){
 }
 
 
-/**
- * Python exporters.
- */
-namespace qmicad{
-namespace python{
-using namespace negf;
-
-}
-}
 
 

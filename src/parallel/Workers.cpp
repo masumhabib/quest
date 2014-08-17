@@ -31,22 +31,5 @@ void Workers::assignCpus(long& myStart, long& myEnd, long& myN, long N) const{
 }
 }}
 
-namespace qmicad{namespace python{
-/**
- * MPI communicator wrapper.
- */
-void export_Workers(){
-    using namespace parallel;
-    
-   class_<Workers, shared_ptr<Workers>, noncopyable>("Workers", 
-          init<const communicator&>())
-        .def("MyId", &Workers::MyId)
-        .def("MasterId", &Workers::MasterId)
-        .def("N", &Workers::N)
-        .def("AmIMaster", &Workers::AmIMaster)
-        .def("IAmMaster", &Workers::IAmMaster)
-    ;     
-}
 
-}}
 

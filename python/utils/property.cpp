@@ -6,6 +6,3 @@
  */
 
 #include "utils/property.hpp"
-
-
-
