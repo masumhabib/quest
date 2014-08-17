@@ -11,7 +11,7 @@
 #ifndef BANDSTRUCT_H
 #define	BANDSTRUCT_H
 
-#include "parallel/parloop.h"
+#include "parallel/Workers.h"
 
 #include "utils/ConsoleProgressBar.h"
 #include "utils/Printable.hpp"
@@ -81,9 +81,34 @@ struct BandStructParams: public Printable{
 /**
  * Band structure calculator.
  */
-class BandStruct: public ParLoop {
+class BandStruct: public Printable {
+// Methods    
+public:
+    BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
+            const Workers &workers, bool saveAscii = true);
+   
+    int     NumOfKpoints() const { return mN; };
+    void    enableEigVec() { mCalcEigV = true; };
+    void    run();
+    void    save(string fileName);    
+
+protected:
+    virtual void    prepare();
+    virtual void    preCompute(int il);
+    virtual void    compute(int il);  
+    virtual void    postCompute(int il);
+    virtual void    collect();
+
+private:
+
 // Fields    
 protected:
+    const Workers       &mWorkers;    //!< MPI worker processes.
+    long                mN;             //!< Number of grid points.
+    long                mMyN;           //!< Number of grid points to be calculated by this process.    
+    long                mMyStart;       //!< Start point for this CPU.
+    long                mMyEnd;         //!< End point for this CPU.
+
     BandStructParams    mp;         //!< Simulation parameters.
     shared_ptr<mat>     mk;         //!< k-points:     (# of kpoints)  x  3.
     
@@ -97,23 +122,6 @@ protected:
 
 
     ConsoleProgressBar  mbar;//!< Progress bar.
-// Methods    
-public:
-    BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
-            const Workers &workers, bool saveAscii = true);
-   
-    int     NumOfKpoints() const { return mN; };
-    void    enableEigVec() { mCalcEigV = true; };
-    void    save(string fileName);    
-
-protected:
-    virtual void    prepare();
-    virtual void    preCompute(int il);
-    virtual void    compute(int il);  
-    virtual void    postCompute(int il);
-    virtual void    collect();
-
-private:
 
 };
 

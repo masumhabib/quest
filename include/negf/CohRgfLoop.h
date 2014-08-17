@@ -16,7 +16,7 @@
 #include "utils/vout.h"
 #include "utils/serialize.hpp"
 #include "maths/fermi.hpp"
-#include "parallel/parloop.h"
+#include "parallel/Workers.h"
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
@@ -28,7 +28,6 @@ namespace negf{
 
 using namespace utils::stds;
 using namespace qmicad::parallel;
-using utils::VecGrid;
 using boost::shared_ptr;
 using boost::make_shared;
 namespace mpi = boost::mpi;

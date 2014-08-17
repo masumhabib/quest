@@ -11,9 +11,9 @@ namespace qmicad{
 namespace band{
 
 BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
-        const Workers &workers, bool saveAscii): ParLoop(workers, pk->n_rows), 
+        const Workers &workers, bool saveAscii): Printable(""), 
         mp(bp), mk(pk) , mSaveAscii(saveAscii), mCalcEigV(false),
-        mbar("  EK: ",  pk->n_rows)
+        mbar("  EK: ",  pk->n_rows), mWorkers(workers)
 {    
     
     mlb = mp.ne/2 - mp.nb/2;     // lowest band to calculate
@@ -29,7 +29,51 @@ BandStruct::BandStruct(shared_ptr<mat> pk, const BandStructParams &bp,
     
     if (mub >= mp.no){
         mub = mp.no-1;
+    } 
+    
+    mN = mk->n_rows;
+    mWorkers.assignCpus(mMyStart, mMyEnd, mMyN, mN);
+}
+
+void BandStruct::run(){
+    prepare();
+    for(int il = mMyStart; il <= mMyEnd; ++il){
+        preCompute(il);
+        compute(il);
+        postCompute(il);
     }    
+    collect();
+}
+
+void BandStruct::save(string fileName){
+    if(mWorkers.IAmMaster()){
+        // open file.
+        ofstream out;
+        if(mSaveAscii){
+            out.open(fileName.c_str(), ostream::binary);
+        }else{
+            out.open(fileName.c_str());
+        }
+        if (!out.is_open()){
+            throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
+                    + fileName + ".");
+        }
+        
+        out << "EK" << endl;    // tag
+        out << mk->n_rows << endl; // # of k points
+        out << 1 << " " << mE.n_cols << endl; // 1xnb matrix; nb = number of bands
+
+        for (int ik = 0; ik < mk->n_rows; ++ik){
+            out << mk->row(ik);
+            out << mE.row(ik);
+        }
+
+        out.close();
+        
+        if (mCalcEigV){
+        }
+
+    }
 }
 
 void BandStruct::prepare(){
@@ -110,38 +154,8 @@ void BandStruct::collect(){
     }
 }
 
-void BandStruct::save(string fileName){
-    if(mWorkers.IAmMaster()){
-        // open file.
-        ofstream out;
-        if(mSaveAscii){
-            out.open(fileName.c_str(), ostream::binary);
-        }else{
-            out.open(fileName.c_str());
-        }
-        if (!out.is_open()){
-            throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
-                    + fileName + ".");
-        }
-        
-        out << "EK" << endl;    // tag
-        out << mk->n_rows << endl; // # of k points
-        out << 1 << " " << mE.n_cols << endl; // 1xnb matrix; nb = number of bands
-
-        for (int ik = 0; ik < mk->n_rows; ++ik){
-            out << mk->row(ik);
-            out << mE.row(ik);
-        }
-
-        out.close();
-        
-        if (mCalcEigV){
-        }
-
-    }
-}
 
 
-}
-}
+
+}}
 
