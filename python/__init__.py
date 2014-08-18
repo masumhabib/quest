@@ -15,14 +15,6 @@
 from qmicad import * 
 import simulators
 
-# Coherent RGFA default parameters
-_BandStructParamsOrgInit =  band.BandStructParams.__init__
-def _BandStructParamsInit(self, nn):
-    _BandStructParamsOrgInit(self, nn)
-    self.isOrthogonal   = True          # Orthogonal basis?
-    
-band.BandStructParams.__init__ = _BandStructParamsInit
-
 # TI surface k.p default parameters
 _TISurfKpParamsOrgInit =  hamiltonian.TISurfKpParams.__init__
 def _TISurfKpParamsInit(self):

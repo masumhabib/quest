@@ -41,7 +41,7 @@ public:
     void            addKRect(const point& lb, const point& rt, double dkx, double dky);
     void            addKRect(const point& lb, const point& rt, uint nkx, uint nky);
     
-    shared_ptr<mat> kp();
+    mat             kp();
     uint            N() {return mk.n_rows; }
     
     virtual string toString(){

@@ -49,33 +49,22 @@ namespace mpi = boost::mpi;
 using boost::shared_ptr;
 using std::string;
 
-/**
- * Band structure parameters
- */
-struct BandStructParams: public Printable{
-    
-    field<shared_ptr<cxmat> >H; //!< Hamiltonian of all nearest neighboring cells.
-                                //!< H(0) is the cell # 0.
-    field<shared_ptr<cxmat> >S; //!< Overlap matrix of all nearest neighboring cells.
-                                //!< H(0) is the cell # 0.
-    field<lcoord>   lc;         //!< Position vectors of neighbors.
-    uint            nb;         //!< Number of bands to be saved.
-    uint            no;         //!< Number of orbitals.
-    uint            ne;         //!< Number of electrons in the super cell.
-    uint            nn;         //!< Number of neighbors
-    lvec            lv;         //!< Lattice vector.
-    bool            isOrthogonal; //!< Is this orthogonal basis set?
-    
-    BandStructParams(uint nn, const string &prefix = ""):
-        Printable(" " + prefix), H(nn), S(nn), lc(nn), nn(nn)
-    {
-        mTitle = "Band structure parameters";
-    }
-    
-    void setH(shared_ptr<cxmat> H, uint it){ this->H(it) = H; }
-    void setS(shared_ptr<cxmat> S, uint it){ this->S(it) = S; }
-    void setLattCoord(shared_ptr<lcoord> pv, uint it) { this->lc(it) = *pv; }
-};
+///**
+// * Band structure parameters
+// */
+//struct BandStructParams: public Printable{
+//    
+//    
+//    BandStructParams(uint nn, const string &prefix = ""):
+//        Printable(" " + prefix), H(nn), S(nn), lc(nn), nn(nn)
+//    {
+//        mTitle = "Band structure parameters";
+//    }
+//    
+//    void setH(shared_ptr<cxmat> H, uint it){ this->H(it) = H; }
+//    void setS(shared_ptr<cxmat> S, uint it){ this->S(it) = S; }
+//    void setLattCoord(shared_ptr<lcoord> pv, uint it) { this->lc(it) = *pv; }
+//};
 
 
 /**
@@ -84,39 +73,70 @@ struct BandStructParams: public Printable{
 class BandStruct: public Printable {
 // Methods    
 public:
-    BandStruct(shared_ptr<mat> pk, const BandStructParams &bp, 
-            const Workers &workers, bool saveAscii = true);
+    BandStruct(const Workers &workers, uint nn, bool orthoBasis = true, 
+            bool calcEigV = false, const string &prefix = "");
    
+    void    nb(uint nb);
+    uint    nb(){ return mnb; };
+    void    ne(uint ne);
+    uint    ne(){ return mne; };
+    void    lv(const lvec& lv);
+    lvec    lv() { return mlv; }
+    void    lc(field<lcoord> lc);
+    void    lc(const lcoord &lc, int ineigh);
+    void    k(const mat &k);
+    mat     k(){ return mk; };
+    
+    void    H(const field<shared_ptr<cxmat> > &H);
+    void    S(const field<shared_ptr<cxmat> > &S);    
+    void    H(shared_ptr<cxmat> H, int ineigh);
+    void    S(shared_ptr<cxmat> S, int ineigh);
+    
     int     NumOfKpoints() const { return mN; };
     void    enableEigVec() { mCalcEigV = true; };
+    
     void    run();
-    void    save(string fileName);    
+    void    save(string fileName, bool saveAsText = true);    
 
 protected:
+    void    resetBandIndices();
+    
     virtual void    prepare();
-    virtual void    preCompute(int il);
-    virtual void    compute(int il);  
-    virtual void    postCompute(int il);
+    virtual void    preCompute(long il);
+    virtual void    compute(long il);  
+    virtual void    postCompute(long il);
     virtual void    collect();
+    
 
 private:
 
 // Fields    
 protected:
-    const Workers       &mWorkers;    //!< MPI worker processes.
-    long                mN;             //!< Number of grid points.
-    long                mMyN;           //!< Number of grid points to be calculated by this process.    
-    long                mMyStart;       //!< Start point for this CPU.
-    long                mMyEnd;         //!< End point for this CPU.
+    const Workers       &mWorkers;  //!< MPI worker processes.
+    long                mN;         //!< Number of grid points.
+    long                mMyN;       //!< Number of grid points to be calculated by this process.    
+    long                mMyStart;   //!< Start point for this CPU.
+    long                mMyEnd;     //!< End point for this CPU.
 
-    BandStructParams    mp;         //!< Simulation parameters.
-    shared_ptr<mat>     mk;         //!< k-points:     (# of kpoints)  x  3.
+    uint                mnn;        //!< Number of neighbors
+    uint                mnb;        //!< Number of bands to be saved.
+    uint                mno;        //!< Number of orbitals.
+    uint                mne;        //!< Number of electrons in the super cell.
+    bool                mOrthoBasis;//!< Is this orthogonal basis set?
+    field<lcoord>       mlc;        //!< Position vectors of neighbors.
+    lvec                mlv;        //!< Lattice vector.
+
+    mat                 mk;         //!< k-points:     (# of kpoints)  x  3.    
+    field<shared_ptr<cxmat> >mH;    //!< Hamiltonian of all nearest neighboring cells.
+                                    //!< H(0) is the cell # 0.
+    field<shared_ptr<cxmat> >mS;    //!< Overlap matrix of all nearest neighboring cells.
+                                    //!< H(0) is the cell # 0.    
     
     mat                 mE;         //!< Eigen energy: (# of kpoints)  x  (# of bands).
     mat                 mThisE;     //!< Eigen energy for this process: 
                                     //!< (# of kpoints for this proc)  x  (# of bands).
-    int                 mlb;        //!< lowest band to calculate
-    int                 mub;        //!< highest band to calculate    
+    long                mlb;        //!< lowest band to calculate
+    long                mub;        //!< highest band to calculate    
     bool                mSaveAscii; //!< Save ASCII/Binary file?
     bool                mCalcEigV;  //!< Calculate eigen values?
 

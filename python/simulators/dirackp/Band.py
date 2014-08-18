@@ -13,9 +13,9 @@ from   math import pi
 
 from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, LCoord
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams
+from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.kpoints import KPoints
-from qmicad.band import BandStructParams, BandStruct
+from qmicad.band import BandStruct
 from qmicad.utils import Timer, Workers, Point
 from qmicad.simulators.utils import vprint
 from qmicad.simulators.utils.vprint import nprint, dprint, eprint
@@ -153,30 +153,35 @@ class Band(object):
         
     def generateHamiltonian(self):
         """ Generates hamiltonian and overlap matrices. """
-        # Create Hamiltonian generator
-        if (self.HamType == self.HAM_TI_SURF_KP):
-            self.ham = TISurfKpHam(self.hp)   
-        if (self.HamType == self.HAM_TI_SURF_KP4):
-            self.ham = TISurfKpHam4(self.hp)               
-        if (self.HamType == self.HAM_GRAPHENE_KP):
-            self.ham = GrapheneKpHam(self.hp)   
+#        # Create Hamiltonian generator
+#        if (self.HamType == self.HAM_TI_SURF_KP):
+#            self.ham = TISurfKpHam(self.hp)   
+#        if (self.HamType == self.HAM_TI_SURF_KP4):
+#            self.ham = TISurfKpHam4(self.hp)               
+#        if (self.HamType == self.HAM_GRAPHENE_KP):
+#            self.ham = GrapheneKpHam(self.hp)   
 
         # Generate hamiltonian and overlap matrices.
         # Hamiltonian of nearest neighbors
         nn = len(self.lc)                                 # number of nearest neighbors.
-        self.ham.setSizeForBand(nn)                     
-        self.bp = BandStructParams(nn)                  # Band structure parameterrs.
+#        self.ham.setSizeForBand(nn)                     
+#        self.bp = BandStructParams(nn)                  # Band structure parameterrs.
         # generate H_0,i and S_0,i
+        self.H = [];
+        self.S = [];
         for inn in range(nn):
             neigh = self.geom + self.lc[inn]                  # extract block # 1
-            self.ham.genNearestNeigh(self.geom, neigh, inn)        
-            self.bp.H(self.ham.H(inn), inn)
-            self.bp.lc(self.lc[inn], inn)
+            H, S = generateHamOvl(self.hp, self.geom, neigh)
+            self.H.append(H)
+#            self.S.append(S)
+#            self.ham.genNearestNeigh(self.geom, neigh, inn)        
+#            self.bp.H(self.ham.H(inn), inn)
+#            self.bp.lc(self.lc[inn], inn)
 
-        self.bp.lv = self.lv                            # Lattice vector.
-        self.bp.nb = self.nb                            # number of bands
-        self.bp.ne = self.geom.NumOfElectrons           # number of bands
-        self.bp.no = self.geom.NumOfOrbitals            # Number of orbitals
+#        self.bp.lv = self.lv                            # Lattice vector.
+#        self.bp.nb = self.nb                            # number of bands
+#        self.bp.ne = self.geom.NumOfElectrons           # number of bands
+#        self.bp.no = self.geom.NumOfOrbitals            # Number of orbitals
       
     def generateKPoints(self):
         if (self.Dim == 1):
@@ -221,7 +226,16 @@ class Band(object):
 #            pk.dump(self, fp)
             fp.close()
             
-        bs = BandStruct(self.kp.kp, self.bp, self.workers)
+        # Setup band structure calculator.
+        nn = len(self.lc)
+        bs = BandStruct(self.workers, nn)
+        bs.lv = self.lv                            # Lattice vector.
+        bs.nb = self.nb                            # number of bands
+        bs.ne = self.geom.NumOfElectrons           # number of bands        
+        for inn in range(nn):
+            bs.lc(self.lc[inn], inn)               # lattice coordinate
+            bs.H(self.H[inn], inn)                 # Hamiltonian
+        bs.k(self.kp.kp)                           # kpoints
 
         # Calculate eigen vectors?
         if self.EnableEigVec == True:
@@ -278,7 +292,7 @@ class Band(object):
         msg += str(self.hp)
         
         # Band structure parameters
-        msg += str(self.bp)
+#        msg += str(self.bp)
                 
         # Calculations to perform
         msg += " Calculations:\n"

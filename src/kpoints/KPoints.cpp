@@ -97,9 +97,8 @@ void KPoints::addKRect(const point& lb, const point& rt, uint nkx, uint nky){
     }
 }
 
-shared_ptr<mat> KPoints::kp(){
-    shared_ptr<mat> k(&mk, NullDeleter());
-    return k;
+mat KPoints::kp(){
+    return mk;
 }
     
 }

@@ -102,7 +102,6 @@ void export_band()
     scope().attr("band") = bandModule;
     scope band_scope = bandModule;
 
-    export_BandStructParams();
     export_BandStruct();    
 }
 

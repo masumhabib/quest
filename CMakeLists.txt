@@ -164,6 +164,7 @@ add_custom_command(
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/python/simulators ${QMICAD_DIST_DIR}/python
     COMMAND ln    -sf ${QMICAD_DIST_DIR}/python ${QMICAD_DIST_DIR}/qmicad
     COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad.so  ${QMICAD_DIST_DIR}/python
+    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad.so  ${QMICAD_DIST_DIR}/python
 )
 
 # -------- </QMICAD Python Library> ---------
