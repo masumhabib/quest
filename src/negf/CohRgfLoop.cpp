@@ -339,7 +339,7 @@ void CohRgfLoop::save(string fileName, bool isText){
         
         if(isText){ // ASCII format
             ofstream out;
-            out.open(fileName.c_str(), ios::app);
+            out.open(fileName.c_str());
             if (!out.is_open()){
                 throw ios_base::failure(" NegfResult::saveTE(): Failed to open file " 
                         + fileName + ".");
