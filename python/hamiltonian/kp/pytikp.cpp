@@ -20,13 +20,13 @@ using namespace hamiltonian;
      * TI Surface k.p parameters.
      */
 void export_TISurfKpParams(){
-    double (TISurfKpParams::*TISurfKpParams_geta)() = &TISurfKpParams::a;
+    double (TISurfKpParams::*TISurfKpParams_geta)() const = &TISurfKpParams::a;
     void (TISurfKpParams::*TISurfKpParams_seta)(double) = &TISurfKpParams::a;
-    double (TISurfKpParams::*TISurfKpParams_getC)() = &TISurfKpParams::C;
+    double (TISurfKpParams::*TISurfKpParams_getC)() const = &TISurfKpParams::C;
     void (TISurfKpParams::*TISurfKpParams_setC)(double) = &TISurfKpParams::C;
-    double (TISurfKpParams::*TISurfKpParams_getA2)() = &TISurfKpParams::A2;
+    double (TISurfKpParams::*TISurfKpParams_getA2)() const = &TISurfKpParams::A2;
     void (TISurfKpParams::*TISurfKpParams_setA2)(double) = &TISurfKpParams::A2;
-    double (TISurfKpParams::*TISurfKpParams_getK)() = &TISurfKpParams::K;
+    double (TISurfKpParams::*TISurfKpParams_getK)() const = &TISurfKpParams::K;
     void (TISurfKpParams::*TISurfKpParams_setK)(double) = &TISurfKpParams::K;
 
     class_<TISurfKpParams, bases<cxhamparams>, shared_ptr<TISurfKpParams> >(

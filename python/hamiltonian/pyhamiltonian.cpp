@@ -34,7 +34,7 @@ bp::tuple generateHamOvl(const HamParams<cxmat> &p, const AtomicStruct &bi,
  * Hamiltonian parameters.
  */
 void export_cxhamparams(){    
-    double (cxhamparams::*cxhamparams_getdtol)() = &cxhamparams::dtol;
+    double (cxhamparams::*cxhamparams_getdtol)() const = &cxhamparams::dtol;
     void (cxhamparams::*cxhamparams_setdtol)(double) = &cxhamparams::dtol;
     class_<cxhamparams, bases<Printable>, shared_ptr<cxhamparams> >("HamiltonianParams", 
             no_init)

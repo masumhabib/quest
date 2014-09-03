@@ -38,13 +38,13 @@ class TISurfKpParams4: public cxhamparams{
 public:
     TISurfKpParams4(const string &prefix = ""); 
     
-    double a(){return ma; }
+    double a() const {return ma; }
     void   a(double newa ){ ma = newa; update(); }
-    double C(){return mC; }
+    double C() const {return mC; }
     void   C(double newC ){ mC = newC; update(); }
-    double A2(){return mA2; }
+    double A2() const {return mA2; }
     void   A2(double newA2 ){ mA2 = newA2; update(); }
-    double K(){return mK; }
+    double K() const {return mK; }
     void   K(double newK ){ mK = newK; update(); }
     
     virtual string toString() const;
@@ -63,6 +63,7 @@ private:
         mA2    = 3.33; 
         mdtol  = 1E-3; 
         mortho = true;
+        mpt.add(0, "D", 4, 4);
     };    
     // Updates internal tight binding parameters calculated using 
     // k.p model. Call it after changing any of the k.p parameters.

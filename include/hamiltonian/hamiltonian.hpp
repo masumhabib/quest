@@ -29,6 +29,7 @@ using namespace utils::stds;
 using utils::Printable;
 using namespace maths::armadillo;
 using atoms::AtomicStruct;
+using atoms::PeriodicTable;
 
 template<class T>
 class HamParams: public Printable{    
@@ -39,10 +40,13 @@ public:
     }
     
     void   dtol(double dtol){ mdtol = dtol; update(); }
-    double dtol(){ return mdtol; }
+    double dtol() const { return mdtol; } 
     
     void   orthogonal(bool orth){ mortho = orth; update(); }
-    bool   orthogonal(){ return mortho; }
+    bool   orthogonal() const { return mortho; }
+    
+    void  periodicTable(const PeriodicTable &pt) { mpt = pt; update(); }
+    const PeriodicTable &periodicTable() const { return mpt; }
 
     //!< Generate Hamiltonian between two atoms.
     virtual T twoAtomHam(const AtomicStruct& atomi, 
@@ -59,8 +63,8 @@ protected:
 protected:
     // Parameters required for all Hamiltonin
     double mdtol;         //!< Distance tolerance. 
-    
-    bool   mortho;         //!< Is this an orthogonal basis.
+    bool   mortho;        //!< Is this an orthogonal basis.
+    PeriodicTable mpt;    //!< The periodic table required for this system.
                             
 };
 

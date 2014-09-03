@@ -30,23 +30,23 @@ public:
     virtual string toString() const;  
     
     void ec(double ec) { mec = ec; update(); }
-    double ec() { return mec; }
+    double ec() const { return mec; }
     void di0(double di0) { mdi0 = di0; update(); }
-    double di0() { return mdi0; }
+    double di0() const { return mdi0; }
     void ti0(double do0) { mti0 = do0; update(); }
-    double ti0() { return mti0; }
+    double ti0() const { return mti0; }
     void do0(double do0) { mdo0 = do0; update(); }
-    double do0() { return mdo0; }
+    double do0() const { return mdo0; }
     void to0(double to0) { mto0 = to0; update(); }
-    double to0() { return mto0; }
+    double to0() const { return mto0; }
     void doX(double doX) { mdoX = doX; update(); }
-    double doX() { return mdoX; }
+    double doX() const { return mdoX; }
     void lmdz(double lmdz) { mlmdz = lmdz; update(); }
-    double lmdz() { return mlmdz; }
+    double lmdz() const { return mlmdz; }
     void lmdxy(double lmdxy) { mlmdxy = lmdxy; update(); }
-    double lmdxy() { return mlmdxy; }
+    double lmdxy() const { return mlmdxy; }
     void alpha(double alpha) { malpha = alpha; update(); }
-    double alpha() { return malpha; }
+    double alpha() const { return malpha; }
 
     //!< Generate Hamiltonian between two atoms.
     virtual cxmat twoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj) const;    
@@ -67,6 +67,8 @@ private:
         malpha  = 1.65;
         mdoX    = 6.0;
         mortho = true;
+        
+        mpt.add(6, "C", 1, 1);
     };
     //!< Updates internal state.
     virtual void update();

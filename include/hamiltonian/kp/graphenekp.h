@@ -36,11 +36,11 @@ class GrapheneKpParams: public cxhamparams{
 public:
     GrapheneKpParams(const string &prefix = "");
     
-    double a(){return ma; }
+    double a() const {return ma; }
     void   a(double newa ){ ma = newa; update(); }
-    double gamma(){return mgamma; }
+    double gamma() const {return mgamma; }
     void   gamma(double newgamma ){ mgamma = newgamma; update(); }
-    double K(){return mK; }
+    double K() const {return mK; }
     void   K(double newK ){ mK = newK; update(); }
 
     
@@ -59,6 +59,7 @@ private:
         mgamma   = 3.16*1.42*3/2, 
         mdtol    = 1E-3; 
         mortho   = true;
+        mpt.add(0, "D", 2, 2);
     };        
     //!< Updates internal tight binding parameters calculated using 
     //!< k.p model. Call it after changing any of the k.p parameters.

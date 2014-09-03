@@ -20,11 +20,11 @@ using namespace hamiltonian;
  * Graphene k.p parameters.
  */
 void export_GrapheneKpParams(){
-    double (GrapheneKpParams::*GrapheneKpParams_geta)() = &GrapheneKpParams::a;
+    double (GrapheneKpParams::*GrapheneKpParams_geta)() const = &GrapheneKpParams::a;
     void (GrapheneKpParams::*GrapheneKpParams_seta)(double) = &GrapheneKpParams::a;
-    double (GrapheneKpParams::*GrapheneKpParams_getgamma)() = &GrapheneKpParams::gamma;
+    double (GrapheneKpParams::*GrapheneKpParams_getgamma)() const = &GrapheneKpParams::gamma;
     void (GrapheneKpParams::*GrapheneKpParams_setgamma)(double) = &GrapheneKpParams::gamma;
-    double (GrapheneKpParams::*GrapheneKpParams_getK)() = &GrapheneKpParams::K;
+    double (GrapheneKpParams::*GrapheneKpParams_getK)() const = &GrapheneKpParams::K;
     void (GrapheneKpParams::*GrapheneKpParams_setK)(double) = &GrapheneKpParams::K;    
     class_<GrapheneKpParams, bases<cxhamparams>, shared_ptr<GrapheneKpParams> >(
         "GrapheneKpParams", init<optional<const string &> >())
