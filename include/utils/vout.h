@@ -74,15 +74,33 @@ public:
         mCurrVerb = v;
         return *this;
     }
-
-    // For endl and such to work.
-    ostream& operator<< ( ostream& (*pf)(ostream&)) {
+    
+    // this is the type of std::cout
+    typedef std::basic_ostream<char, std::char_traits<char> > CoutType;
+    // this is the function signature of std::endl
+    typedef CoutType& (*StandardEndLine)(CoutType&);
+    // define an operator<< to take in std::endl
+    vostream& operator<<(StandardEndLine manip){
         if (mAppVerb >= mCurrVerb && mPrintersId == mMyId){
-            return pf(this->mout);
+            // call the function, but we cannot return it's value
+            manip(this->mout);
         }
-        
-        return this->mout;
-    };
+        return *this;
+    }
+    
+    // For endl and such to work.
+    //ostream& operator<< ( ostream& (*pf)(ostream&)) {
+    //    if (mAppVerb >= mCurrVerb && mPrintersId == mMyId){
+    //        return pf(this->mout);
+    //    }
+    //    
+    //    return this->mout;
+    //};
+    //typedef std::ostream& (*ostream_manipulator)(std::ostream&);
+    //vostream& operator<<(vostream& os, ostream_manipulator pf)
+    //{
+    //    return operator<< <ostream_manipulator> (os, pf);
+    //}
     
     void myId(int id){ mMyId = id; };
     int  myId() const { return mMyId; };
