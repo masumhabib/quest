@@ -6,6 +6,8 @@
  */
 
 
+#include <maths/svec.h>
+
 #include "hamiltonian/kp/graphenekp.h"
 
 namespace qmicad{
@@ -27,6 +29,8 @@ string GrapheneKpParams::toString() const {
     ss << mPrefix << " K     = " << mK  << endl;
     ss << mPrefix << " gamma = " << mgamma << endl;
     ss << mPrefix << " dtol  = " << mdtol << endl;
+    ss << mPrefix << " Bz    = " << mBz << endl;
+    ss << mPrefix << " A     = " << (mBzGauge == coord::X?" (-Bz*y, 0, 0)":" (0, Bz*x, 0)") << endl;
     ss << mPrefix << " eps: " << endl << meps;
     ss << mPrefix << " t01x: " << endl << mt01x;
     ss << mPrefix << " t01y: " << endl << mt01y;
@@ -76,17 +80,41 @@ cxmat GrapheneKpParams::twoAtomHam(const AtomicStruct& atomi, const AtomicStruct
             hmat = meps;
         // nearest neighbor in x
         }else if(abs(d - ma) <= mdtol && abs(dx - ma) <= mdtol){ 
+            // add magnetic field
+            dcmplx phase = dcmplx(1,0);
+            if(abs(mBz) > mBzTol){
+                if (mBzGauge == coord::X){ // for A = (-Bz*y, 0, 0)
+                    double phi = mfactor*mBz*(xi - xj)*(yi+yj);
+                    phase = exp(i*phi);
+                }else if (mBzGauge == coord::Y){ // for A = (0, Bz*x, 0)
+                    double phi = mfactor*mBz*(yj - yi)*(xi+xj);
+                    phase = exp(i*phi);
+                }
+            }
+            
             if (xi > xj){
-                hmat = mt10x;
+                hmat = mt10x*phase;
             }else{
-                hmat = mt01x;
+                hmat = mt01x*phase;
             }
         //nearest neighbor y
         }else if (abs(d - ma) <= mdtol && abs(dy - ma) <= mdtol){
+            // add magnetic field
+            dcmplx phase = dcmplx(1,0);
+            if(abs(mBz) > mBzTol){
+                if (mBzGauge == coord::Y){ // for A = (0, Bz*x, 0)
+                    double phi = mfactor*mBz*(yj - yi)*(xi+xj);
+                    phase = exp(i*phi);
+                }else if (mBzGauge == coord::X){ // for A = (-Bz*y, 0, 0)
+                    double phi = mfactor*mBz*(xi - xj)*(yi+yj);
+                    phase = exp(i*phi);
+                }
+            }
+            
             if(yi > yj){
-                hmat = mt10y;
+                hmat = mt10y*phase;
             }else{
-                hmat = mt01y;
+                hmat = mt01y*phase;
             }
         }            
     }  

@@ -16,6 +16,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
+#include "maths/constants.h"
 #include "maths/arma.hpp"
 #include "atoms/AtomicStruct.h"
 #include "utils/vout.h"
@@ -30,6 +31,8 @@ using utils::Printable;
 using namespace maths::armadillo;
 using atoms::AtomicStruct;
 using atoms::PeriodicTable;
+using namespace maths::spvec;
+using namespace maths::constants;
 
 template<class T>
 class HamParams: public Printable{    
@@ -45,8 +48,11 @@ public:
     void   orthogonal(bool orth){ mortho = orth; update(); }
     bool   orthogonal() const { return mortho; }
     
-    void  periodicTable(const PeriodicTable &pt) { mpt = pt; update(); }
-    const PeriodicTable &periodicTable() const { return mpt; }
+    void   periodicTable(const PeriodicTable &pt) { mpt = pt; update(); }
+    const  PeriodicTable &periodicTable() const { return mpt; }
+    
+    void   Bz(double Bz, int gauge = coord::X){ mBz = Bz; mBzGauge = gauge; update(); };
+    double Bz() const { return mBz; }
 
     //!< Generate Hamiltonian between two atoms.
     virtual T twoAtomHam(const AtomicStruct& atomi, 
@@ -65,6 +71,9 @@ protected:
     double mdtol;         //!< Distance tolerance. 
     bool   mortho;        //!< Is this an orthogonal basis.
     PeriodicTable mpt;    //!< The periodic table required for this system.
+    double mBz;           //!< The z-component of magnetic field.
+    int    mBzGauge;      //!< gauge choice for the z-component.
+    static const double mBzTol = 1E-10;
                             
 };
 
