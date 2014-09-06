@@ -28,7 +28,10 @@ void ConsoleProgressBar::step(unsigned long count){
     int nDots = (mCount*mnTotalDots)/mExpectedCount;
     
     while(nDots--){
+        int myId = vout.myId();
+        vout.myId(0);
         vout << vnormal << mDot;
+        vout.myId(myId);
         mCount = 0;
     }    
 }
