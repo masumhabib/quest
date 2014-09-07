@@ -273,11 +273,11 @@ string AtomicStruct::toString() const{
     for(int i=0; i < NumOfAtoms(); i++){
         out.width(3);
         out << Symbol(i);
-        out.width(10); 
+        out.width(15); 
         out << std::fixed << X(i);
-        out.width(10);
+        out.width(15);
         out << Y(i);
-        out.width(10);
+        out.width(15);
         out << Z(i) << endl;
     }
     
