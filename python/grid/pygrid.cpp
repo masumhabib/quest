@@ -19,17 +19,18 @@ using namespace utils;
 /**
  * Vector grid
  */
-void export_VecGrid(){
-    class_<VecGrid, bases<Printable>, shared_ptr<VecGrid> >("VecGrid", 
-            init<double, double, double, optional<const string&> >())
-        .def(init<optional<double, double, int, const string&> >())
-        .def("V", &VecGrid::V)        
-        .def("min", &VecGrid::min)
-        .def("max", &VecGrid::max)
-        .def("del", &VecGrid::del)
-        .def("N", &VecGrid::N)
-    ;
-}
+
+//void export_VecGrid(){
+//    class_<VecGrid, bases<Printable>, shared_ptr<VecGrid> >("VecGrid", 
+//            init<double, double, double, optional<const string&> >())
+//        .def(init<optional<double, double, int, const string&> >())
+//        .def("V", &VecGrid::V)        
+//        .def("min", &VecGrid::min)
+//        .def("max", &VecGrid::max)
+//        .def("del", &VecGrid::del)
+//        .def("N", &VecGrid::N)
+//    ;
+//}
 }
 }
     

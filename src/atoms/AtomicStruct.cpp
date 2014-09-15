@@ -364,13 +364,14 @@ void AtomicStruct::genRectLattAtoms(uint nl, uint nw, double ax, double ay,
     double w = (nw-1)*ax;                  // width (in A)
     double l = (nl-1)*ay;                  // length  (in A)
     // create meshgrid of k.p atoms    
-    MatGrid xy(-l/2, l/2, ax, -w/2, w/2, ay);
+    col X, Y;
+    meshgrid(X, Y, -l/2, l/2, ax, -w/2, w/2, ay);
     
     // calculate x, y and z coordinates of the atoms
-    mNa = xy.Nx()*xy.Ny();            // total number of atoms
+    mNa = X.n_rows;            // total number of atoms
     mXyz.set_size(mNa, 3);            // xyz coordinate of atoms
-    mXyz.col(coord::X) = xy.X();
-    mXyz.col(coord::Y) = xy.Y();
+    mXyz.col(coord::X) = X;
+    mXyz.col(coord::Y) = Y;
     mXyz.col(coord::Z).zeros();
     
     // prepare atomId list containing atomic number of a fake atom 'D'.
@@ -379,8 +380,8 @@ void AtomicStruct::genRectLattAtoms(uint nl, uint nw, double ax, double ay,
     mia.fill(mpt[0].ia);
     
     // lattice vector
-    mlv.a1(coord::X) = xy.maxx()-xy.minx() + ax;
-    mlv.a2(coord::Y) = xy.maxy()-xy.miny() + ay;  
+    mlv.a1(coord::X) = max(X)-min(X) + ax;
+    mlv.a2(coord::Y) = max(Y)-min(Y) + ay;  
     
     // calculate number of orbitals and electrons.
     mNo = computeNumOfOrbitals();

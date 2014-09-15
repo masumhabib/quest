@@ -15,7 +15,7 @@ from qmicad.atoms import AtomicStruct, SVec
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.negf import CohRgfLoop
 from qmicad.potential import LinearPot
-from qmicad.utils import VecGrid, Timer, Workers, Quadrilateral, Point
+from qmicad.utils import Timer, Workers, Quadrilateral, Point
 from qmicad.simulators.utils import vprint
 from qmicad.simulators.utils.vprint import nprint, dprint, eprint
 from qmicad.simulators.utils.linspace import linspace
