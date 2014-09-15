@@ -30,7 +30,7 @@ namespace atoms{
 
 using utils::Printable;
 using utils::trim;
-using utils::MatGrid; 
+using utils::meshgrid; 
 using namespace utils::stds;
 using namespace maths::armadillo;
 using namespace maths::spvec;
