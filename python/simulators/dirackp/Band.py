@@ -13,7 +13,7 @@ from   math import pi
 
 from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, LCoord
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
+from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.kpoints import KPoints
 from qmicad.band import BandStruct
 from qmicad.utils import Timer, Workers, Point
@@ -63,6 +63,7 @@ class Band(object):
         # Hamiltonian type
         self.HAM_TI_SURF_KP  = 10       # TI surface k.p hamiltonian
         self.HAM_TI_SURF_KP4 = 11       # TI surface k.p hamiltonian with 4 spin basis set
+        self.HAM_TI_3D_KP    = 15       # TI 3D k.p hamiltonian with 4 spin basis set
         self.HAM_GRAPHENE_KP = 20       # Graphene k.p Hamiltonian
         self.HamType         = self.HAM_TI_SURF_KP 
                         
@@ -109,6 +110,16 @@ class Band(object):
             # Create atomistic geometry of the device.
             self.geom = AtomicStruct()
             self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+        elif (self.HamType == self.HAM_TI_3D_KP):    
+            # Hamiltonian parameter
+            if not hasattr(self, "hp"): # if hp does not exist, create it.
+                self.hp = TI3DKpParams()
+            else:
+                if not isinstance(self.hp, TI3DKpParams): # if hp exists but not TISurfKpParams type, create it.
+                    self.hp = TI3DKpParams()
+            # Create atomistic geometry of the device.
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         elif (self.HamType == self.HAM_GRAPHENE_KP):
             # Hamiltonian parameter
             if not hasattr(self, "hp"): # if hp does not exist, create it.
@@ -137,6 +148,7 @@ class Band(object):
                 # For rectangular lattice.
                 if (self.HamType == self.HAM_TI_SURF_KP or 
                     self.HamType == self.HAM_TI_SURF_KP4 or 
+                    self.HamType == self.HAM_TI_3D_KP or 
                     self.HamType == self.HAM_GRAPHENE_KP):
                     # The nearest neighbors
                     self.lc.append(LCoord(0, 0, 0))                     # main cell

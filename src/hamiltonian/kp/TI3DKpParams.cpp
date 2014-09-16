@@ -5,7 +5,7 @@
  * Created on September 12, 2014, 9:49 AM
  */
 
-#include "TI3DKpParams.h"
+#include "hamiltonian/kp/TI3DKpParams.h"
 
 namespace qmicad{namespace hamiltonian{
 TI3DKpParams::TI3DKpParams(const string material, 
@@ -14,10 +14,10 @@ TI3DKpParams::TI3DKpParams(const string material,
     mTitle = "Topological Insulator four band k.p parameters";   
     mI = eye<cxmat>(4,4);
     mU = zeros<cxmat>(4,4);
-    mU(1, 1) = 1;
-    mU(2, 3) = 1;
-    mU(3, 2) = 1;
-    mU(4, 4) = 1;
+    mU(0, 0) = 1;
+    mU(1, 2) = 1;
+    mU(2, 1) = 1;
+    mU(3, 3) = 1;
     
     setDefaultParams();
     if (material == "Bi2Se3"){
@@ -70,45 +70,45 @@ void TI3DKpParams::update(){
     cxmat Gz(4,4,fill::zeros), Gz2(4,4,fill::zeros);
     
     // see TI notes, page 11.
-    Gx(1,4) = mA2;
-    Gx(2,3) = mA2;
-    Gx(3,2) = mA2;
-    Gx(4,1) = mA2;
+    Gx(0,3) = mA2;
+    Gx(1,2) = mA2;
+    Gx(2,1) = mA2;
+    Gx(3,0) = mA2;
     
-    Gy(1,4) = -i*mA2;
-    Gy(2,3) = -i*mA2;
-    Gy(3,2) = i*mA2;
-    Gy(4,1) = i*mA2;
+    Gy(0,3) = -i*mA2;
+    Gy(1,2) = -i*mA2;
+    Gy(2,1) = i*mA2;
+    Gy(3,0) = i*mA2;
 
-    Gx2(1,1) = mD2 - mB2;
-    Gx2(2,2) = mD2 + mB2;
-    Gx2(3,3) = mD2 - mB2;
-    Gx2(4,4) = mD2 + mB2;
+    Gx2(0,0) = mD2 - mB2;
+    Gx2(1,1) = mD2 + mB2;
+    Gx2(2,2) = mD2 - mB2;
+    Gx2(3,3) = mD2 + mB2;
     
-    Gy2(1,1) = mD2 - mB2;
-    Gy2(2,2) = mD2 + mB2;
-    Gy2(3,3) = mD2 - mB2;
-    Gy2(4,4) = mD2 + mB2;
+    Gy2(0,0) = mD2 - mB2;
+    Gy2(1,1) = mD2 + mB2;
+    Gy2(2,2) = mD2 - mB2;
+    Gy2(3,3) = mD2 + mB2;
     
-    Gz(1,2) = mA1;
-    Gz(2,1) = mA1;
-    Gz(3,4) = -mA1;
-    Gz(4,3) = -mA1;
+    Gz(0,1) = mA1;
+    Gz(1,0) = mA1;
+    Gz(2,3) = -mA1;
+    Gz(3,2) = -mA1;
 
-    Gz2(1,1) = mD1 - mB1;
-    Gz2(2,2) = mD1 + mB1;
-    Gz2(3,3) = mD1 - mB1;
-    Gz2(4,4) = mD1 + mB1;
+    Gz2(0,0) = mD1 - mB1;
+    Gz2(1,1) = mD1 + mB1;
+    Gz2(2,2) = mD1 - mB1;
+    Gz2(3,3) = mD1 + mB1;
     
-    Go(1,1) = mC + mM;
-    Go(2,2) = mC - mM;
-    Go(3,3) = mC + mM;
-    Go(4,4) = mC - mM;
+    Go(0,0) = mC + mM;
+    Go(1,1) = mC - mM;
+    Go(2,2) = mC + mM;
+    Go(3,3) = mC - mM;
    
-    meps = Go + (2/ax^2)*Gx2 + (2/ay^2)*Gy2 + (2/az^2)*Gz2;
-    mt01x = (-i/(2*ax))*Gx + (1/ax^2)*Gx2;
-    mt01y = (-i/(2*ay))*Gy + (1/ay^2)*Gy2;
-    mt01z = (-i/(2*az))*Gz + (1/az^2)*Gz2;
+    meps = Go + (2/(ax*ax))*Gx2 + (2/(ay*ay))*Gy2 + (2/(az*az))*Gz2;
+    mt01x = (-i/(2*ax))*Gx + (1/(ax*ax))*Gx2;
+    mt01y = (-i/(2*ay))*Gy + (1/(ay*ay))*Gy2;
+    mt01z = (-i/(2*az))*Gz + (1/(az*az))*Gz2;
     
     // change basis to |1, up> |1, dn> |2, up> |2, dn>
     mt01x = trans(mU)*mt01x*mU;

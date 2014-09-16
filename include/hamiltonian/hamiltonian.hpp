@@ -53,7 +53,7 @@ public:
     
     void   Bz(double Bz, int gauge = coord::X){ mBz = Bz; mBzGauge = gauge; update(); };
     double Bz() const { return mBz; }
-
+    
     //!< Generate Hamiltonian between two atoms.
     virtual T twoAtomHam(const AtomicStruct& atomi, 
                             const AtomicStruct& atomj) const { return T(); };
@@ -73,7 +73,8 @@ protected:
     PeriodicTable mpt;    //!< The periodic table required for this system.
     double mBz;           //!< The z-component of magnetic field.
     int    mBzGauge;      //!< gauge choice for the z-component.
-    static const double mBzTol = 1E-10;
+    //static const double mBzTol = 1E-10;
+    double mBzTol;
                             
 };
 

@@ -44,6 +44,7 @@ void export_GrapheneTbParams();
 void export_GrapheneKpParams();
 void export_TISurfKpParams();
 void export_TISurfKpParams4();
+void export_TI3DKpParams();
 
 void export_Potential();
 void export_LinearPot();

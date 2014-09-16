@@ -20,7 +20,7 @@ using namespace utils;
  * Vector grid
  */
 
-//void export_VecGrid(){
+void export_VecGrid(){
 //    class_<VecGrid, bases<Printable>, shared_ptr<VecGrid> >("VecGrid", 
 //            init<double, double, double, optional<const string&> >())
 //        .def(init<optional<double, double, int, const string&> >())
@@ -30,7 +30,7 @@ using namespace utils;
 //        .def("del", &VecGrid::del)
 //        .def("N", &VecGrid::N)
 //    ;
-//}
+}
 }
 }
     

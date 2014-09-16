@@ -45,6 +45,12 @@ mpt(periodicTable){
     importGjf(gjfFileName);
 }
 
+// constructs from a periodic table
+AtomicStruct::AtomicStruct(const ptable &periodicTable):
+mpt(periodicTable){    
+    init();
+}
+
 /* Construct from coordinates */
 AtomicStruct::AtomicStruct(const icol& atomId, const mat& coordinate, const lvec& lv):
 mpt()
@@ -361,8 +367,12 @@ void AtomicStruct::exportGjf(const string& gjfFileName){
 void AtomicStruct::genRectLattAtoms(uint nl, uint nw, double ax, double ay, 
         const ptable &periodicTable){
     
+    vout << endl << " Deprecation Warning: AtomicStruct::genRectLattAtoms() will be removed from future release.";
+    vout << " Use AtomicStruct::genSimpleCubicStruct() instead." << endl;
+    
     double w = (nw-1)*ax;                  // width (in A)
     double l = (nl-1)*ay;                  // length  (in A)
+
     // create meshgrid of k.p atoms    
     col X, Y;
     meshgrid(X, Y, -l/2, l/2, ax, -w/2, w/2, ay);
@@ -387,6 +397,54 @@ void AtomicStruct::genRectLattAtoms(uint nl, uint nw, double ax, double ay,
     mNo = computeNumOfOrbitals();
     mNe = computeNumOfElectrons();    
  
+}
+
+void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, double l, double w, double h){
+    // create grid along x, y and z axes.
+    col X, Y, Z;
+    X = linspace<double>(-l/2, l/2, a);
+    Y = linspace<double>(-w/2, w/2, a);
+    Z = linspace<double>(-h/2, w/2, a);
+    
+    // total number of atoms
+    long nx = X.n_rows, ny = Y.n_rows, nz = Z.n_rows;
+    mNa = nx*ny*nz;
+        
+    // prepare atomId list containing atomic number of atom.
+    mpt.add(atom);
+    mia.set_size(mNa);
+    mia.fill(atom.ia);
+
+    // create simple cubic lattice.
+    mXyz.set_size(mNa, 3);            // xyz coordinate of atoms
+    long ia = 0;
+    for(long iz = 0; iz < nz; ++iz){
+        for (long iy = 0; iy < ny; ++iy){
+            for (long ix = 0; ix < nx; ++ ix){
+                mXyz(ia, coord::X) = X(ix);
+                mXyz(ia, coord::Y) = Y(iy);
+                mXyz(ia, coord::Z) = Z(iz);                
+                ++ia;
+            }
+        }
+    }
+    
+    // update lattice vector
+    mlv.a1(coord::X) = max(X)-min(X) + a;
+    mlv.a2(coord::Y) = max(Y)-min(Y) + a;  
+    mlv.a3(coord::Z) = max(Z)-min(Z) + a;  
+    
+    // calculate number of orbitals and electrons.
+    mNo = computeNumOfOrbitals();
+    mNe = computeNumOfElectrons();
+}
+
+void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, uint nl, uint nw, uint nh){
+    double w = (nw-1)*a;                  // width (in A)
+    double l = (nl-1)*a;                  // length  (in A)
+    double h = (nh-1)*a;                  // length  (in A)
+    
+    genSimpleCubicStruct(atom, a, l, w, h);
 }
 
 int AtomicStruct::computeNumOfOrbitals(){

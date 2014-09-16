@@ -12,8 +12,7 @@
 /**
  * Python exporters.
  */
-namespace qmicad{
-namespace python{
+namespace qmicad{namespace python{
 using namespace hamiltonian;
 
     /**
@@ -39,8 +38,7 @@ void export_TISurfKpParams(){
     ;
 }
 
-}
-}
+}}
 
 
 

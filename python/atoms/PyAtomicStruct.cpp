@@ -31,12 +31,14 @@ void export_Atom(){
 /**
  * Periodic table.
  */
+Atom (PeriodicTable::*PeriodicTable_getitem)(uint) const = &PeriodicTable::operator [];
 void (PeriodicTable::*PeriodicTable_add1)(uint, string, uint, uint) = &PeriodicTable::add;
 void (PeriodicTable::*PeriodicTable_add2)(const Atom&) = &PeriodicTable::add;
 void export_PeriodicTable(){
     class_<PeriodicTable, shared_ptr<PeriodicTable> >("PeriodicTable")
         .def("add", PeriodicTable_add1)
         .def("add", PeriodicTable_add2)
+        .def("__getitem__", PeriodicTable_getitem)
         .def_pickle(PeriodicTablePickler())
     ;
 }
@@ -44,12 +46,14 @@ void export_PeriodicTable(){
 /**
  * Atomistic geometry of the device.
  */
-
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AtomicStruct_genSimpleCubicStruct1, genSimpleCubicStruct, 3, 5)
+void (AtomicStruct::*AtomicStruct_genSimpleCubicStruct1)(const Atom &, double, uint, uint, uint) = &AtomicStruct::genSimpleCubicStruct;
 lvec (AtomicStruct::*AtomicStruct_LatticeVector1)() const = &AtomicStruct::LatticeVector;
 void export_AtomicStruct(){
     class_<AtomicStruct, bases<Printable>, shared_ptr<AtomicStruct> >("AtomicStruct", 
             init<>())
         .def(init<const string&>())
+        .def(init<const PeriodicTable>())
         .def(init<const string&, const PeriodicTable>())
         .def_pickle(AtomicStructPickler())
         .add_property("xmax", &AtomicStruct::xmax)
@@ -67,6 +71,7 @@ void export_AtomicStruct(){
         .add_property("NumOfElectrons", &AtomicStruct::NumOfElectrons) 
         .def("span", &AtomicStruct::span)
         .def("genRectLattAtoms", &AtomicStruct::genRectLattAtoms)
+        .def("genSimpleCubicStruct", AtomicStruct_genSimpleCubicStruct1)
         .def(self + self)
         .def(self + svec())
         .def(self - svec())

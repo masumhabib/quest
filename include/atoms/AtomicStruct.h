@@ -15,12 +15,13 @@
 
 #include "Lattice.h"
 
-#include "string/stringutils.h"
-#include "grid/grid.hpp"
-#include "utils/Printable.hpp"
 #include "maths/svec.h"
 #include "maths/arma.hpp"
+#include "grid/grid.hpp"
+#include "string/stringutils.h"
+#include "utils/Printable.hpp"
 #include "utils/serialize.hpp"
+#include "utils/vout.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
@@ -31,6 +32,7 @@ namespace atoms{
 using utils::Printable;
 using utils::trim;
 using utils::meshgrid; 
+using utils::linspace;
 using namespace utils::stds;
 using namespace maths::armadillo;
 using namespace maths::spvec;
@@ -150,7 +152,15 @@ struct PeriodicTable{
     Atom operator[](uint ia) const{
         return elements.find(ia)->second;
     }
+    
+    Atom operator[](const Atom & a) const{
+        return elements.find(a.ia)->second;
+    }
 
+    Atom at(uint ia){
+        return this->operator [](ia);
+    }
+    
     void update(const PeriodicTable pt){
         cpiter it;
         for(it = pt.elements.begin(); it != pt.elements.end(); ++it){
@@ -199,6 +209,8 @@ public:
     AtomicStruct(const AtomicStruct& orig);
     //!< constructs from a GaussView GJF file.
     AtomicStruct(const string& gjfFileName ); 
+    //!< constructs a periodic table.
+    AtomicStruct(const ptable &periodicTable);    
     //!< constructs from a GaussView GJF file and a periodic table.
     AtomicStruct(const string& gjfFileName, const ptable &periodicTable);
     //!< Constructs from a atomic coordinates and lattice vector.
@@ -236,6 +248,9 @@ public:
     //!< Generate atoms in a rectangular lattice.
     void genRectLattAtoms(uint nl, uint nw, double ax, double ay, 
                     const ptable& periodicTable);
+    void genSimpleCubicStruct(const Atom &atom, double a, uint nl, uint nw = 1, uint nh = 1);
+    //!< Generates simple cubic structures.
+    void genSimpleCubicStruct(const Atom &atom, double a, double l, double w = 0, double h = 0);
     //!< String representation of Atomic structure.
     string toString() const;
 

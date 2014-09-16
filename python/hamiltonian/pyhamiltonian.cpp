@@ -30,29 +30,36 @@ bp::tuple generateHamOvl(const HamParams<cxmat> &p, const AtomicStruct &bi,
     return bp::make_tuple(H, S);
 }
 
+// Helper functions just to make boost::python happy.
+double cxhamparams_getBz2(const cxhamparams &self){
+    return self.Bz();
+}
+void cxhamparams_setBz2(cxhamparams &self, double Bz){
+    self.Bz(Bz);
+}
+
 /**
  * Hamiltonian parameters.
  */
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxhamparams_setBz, Bz, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxhamparams_getBz, Bz, 0, 0)
+double (cxhamparams::*cxhamparams_getdtol)() const = &cxhamparams::dtol;
+void (cxhamparams::*cxhamparams_setdtol)(double) = &cxhamparams::dtol;
+const PeriodicTable& (cxhamparams::*cxhamparams_getptable)() const = &cxhamparams::periodicTable;
+void (cxhamparams::*cxhamparams_setptable)(const PeriodicTable&) = &cxhamparams::periodicTable;
 void export_cxhamparams(){    
-    double (cxhamparams::*cxhamparams_getdtol)() const = &cxhamparams::dtol;
-    void (cxhamparams::*cxhamparams_setdtol)(double) = &cxhamparams::dtol;
-    //double (cxhamparams::*cxhamparams_getBz)() const = &cxhamparams::Bz;
-    //void (cxhamparams::*cxhamparams_setBz)(double) = &cxhamparams::Bz;    
-    //void (cxhamparams::*cxhamparams_setBz2)(double, int) = &cxhamparams::Bz;
-    //void (cxhamparams::*cxhamparams_setBz)(double) = static_cast< void(cxhamparams::*) (double)>(&cxhamparams::Bz);
-    //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxhamparams_getBz, cxhamparams::Bz, 0, 0)
-    //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(cxhamparams_setBz, cxhamparams::Bz, 1, 2)
+
+    
     class_<cxhamparams, bases<Printable>, shared_ptr<cxhamparams> >("HamiltonianParams", 
             no_init)
-        //.def("setBz",  static_cast< void(cxhamparams::*) (double)>(&cxhamparams::Bz), cxhamparams_setBz())
-        //.def("setBz",  cxhamparams_setBz)
         .add_property("dtol", cxhamparams_getdtol, cxhamparams_setdtol)
-        //.add_property("Bz", cxhamparams_getBz, cxhamparams_setBz)
-        //.add_property("Bz", static_cast< double(cxhamparams::*) ()>(&cxhamparams::Bz), cxhamparams_getBz(), static_cast< void(cxhamparams::*) (double)>(&cxhamparams::Bz), cxhamparams_setBz())
+        .add_property("ptable", make_function(cxhamparams_getptable, return_value_policy<reference_existing_object>()), cxhamparams_setptable)
+        .add_property("Bz", &cxhamparams_getBz2, &cxhamparams_setBz2)
+        .def("getBz",  static_cast< double(cxhamparams::*) () const >(&cxhamparams::Bz), cxhamparams_getBz())
+        .def("setBz",  static_cast< void(cxhamparams::*) (double, int)>(&cxhamparams::Bz), cxhamparams_setBz())
     ;
     
-    def("generateHamOvl", generateHamOvl, " Generates Hamiltonian and Overlap matrices.");
-    
+    def("generateHamOvl", generateHamOvl, " Generates Hamiltonian and Overlap matrices.");    
 }
 
 }

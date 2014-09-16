@@ -93,6 +93,7 @@ void export_hamiltonian()
     export_GrapheneKpParams();
     export_TISurfKpParams();
     export_TISurfKpParams4();
+    export_TI3DKpParams();
 
 }
 

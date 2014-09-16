@@ -6,33 +6,34 @@
  * Created on September 12, 2014, 9:49 AM
  */
 
-#include "TI3DKpParams.h"
+#include "hamiltonian/kp/TI3DKpParams.h"
+#include "boostpython.hpp"
 
 namespace qmicad{namespace python{
-using namespace hamiltonian;
+using namespace qmicad::hamiltonian;
 
 /**
  * TI Surface k.p parameters.
  */
 void export_TI3DKpParams(){
-    double (export_TI3DKpParams::*TI3DKpParams_geta)() const = &TI3DKpParams::a;
-    void (export_TI3DKpParams::*TI3DKpParams_seta)(double) = &TI3DKpParams::a;
-    double (export_TI3DKpParams::*TI3DKpParams_getA1)() const = &TI3DKpParams::A1;
-    void (export_TI3DKpParams::*TI3DKpParams_setA1)(double) = &TI3DKpParams::A1;
-    double (export_TI3DKpParams::*TI3DKpParams_getA2)() const = &TI3DKpParams::A2;
-    void (export_TI3DKpParams::*TI3DKpParams_setA2)(double) = &TI3DKpParams::A2;
-    double (export_TI3DKpParams::*TI3DKpParams_getB1)() const = &TI3DKpParams::B1;
-    void (export_TI3DKpParams::*TI3DKpParams_setB1)(double) = &TI3DKpParams::B1;
-    double (export_TI3DKpParams::*TI3DKpParams_getB2)() const = &TI3DKpParams::B2;
-    void (export_TI3DKpParams::*TI3DKpParams_setB2)(double) = &TI3DKpParams::B2;
-    double (export_TI3DKpParams::*TI3DKpParams_getC)() const = &TI3DKpParams::C;
-    void (export_TI3DKpParams::*TI3DKpParams_setC)(double) = &TI3DKpParams::C;
-    double (export_TI3DKpParams::*TI3DKpParams_getD1)() const = &TI3DKpParams::D1;
-    void (export_TI3DKpParams::*TI3DKpParams_setD1)(double) = &TI3DKpParams::D1;
-    double (export_TI3DKpParams::*TI3DKpParams_getD2)() const = &TI3DKpParams::D2;
-    void (export_TI3DKpParams::*TI3DKpParams_setD2)(double) = &TI3DKpParams::D2;
-    double (export_TI3DKpParams::*TI3DKpParams_getM)() const = &TI3DKpParams::M;
-    void (export_TI3DKpParams::*TI3DKpParams_setM)(double) = &TI3DKpParams::M;
+    double (TI3DKpParams::*TI3DKpParams_geta)() const = &TI3DKpParams::a;
+    void (TI3DKpParams::*TI3DKpParams_seta)(double) = &TI3DKpParams::a;
+    double (TI3DKpParams::*TI3DKpParams_getA1)() const = &TI3DKpParams::A1;
+    void (TI3DKpParams::*TI3DKpParams_setA1)(double) = &TI3DKpParams::A1;
+    double (TI3DKpParams::*TI3DKpParams_getA2)() const = &TI3DKpParams::A2;
+    void (TI3DKpParams::*TI3DKpParams_setA2)(double) = &TI3DKpParams::A2;
+    double (TI3DKpParams::*TI3DKpParams_getB1)() const = &TI3DKpParams::B1;
+    void (TI3DKpParams::*TI3DKpParams_setB1)(double) = &TI3DKpParams::B1;
+    double (TI3DKpParams::*TI3DKpParams_getB2)() const = &TI3DKpParams::B2;
+    void (TI3DKpParams::*TI3DKpParams_setB2)(double) = &TI3DKpParams::B2;
+    double (TI3DKpParams::*TI3DKpParams_getC)() const = &TI3DKpParams::C;
+    void (TI3DKpParams::*TI3DKpParams_setC)(double) = &TI3DKpParams::C;
+    double (TI3DKpParams::*TI3DKpParams_getD1)() const = &TI3DKpParams::D1;
+    void (TI3DKpParams::*TI3DKpParams_setD1)(double) = &TI3DKpParams::D1;
+    double (TI3DKpParams::*TI3DKpParams_getD2)() const = &TI3DKpParams::D2;
+    void (TI3DKpParams::*TI3DKpParams_setD2)(double) = &TI3DKpParams::D2;
+    double (TI3DKpParams::*TI3DKpParams_getM)() const = &TI3DKpParams::M;
+    void (TI3DKpParams::*TI3DKpParams_setM)(double) = &TI3DKpParams::M;
 
     class_<TI3DKpParams, bases<cxhamparams >, shared_ptr<TI3DKpParams> >("TI3DKpParams",
         init<optional<const string &> >())

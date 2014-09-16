@@ -24,8 +24,8 @@ def _TISurfKpParamsInit(self):
 #    self.K      = 1.0               # Coefficient ot solve Fermion doubling
 #    self.A2     = 3.33              # A2 paramter
 #    self.C      = 0.0               # C parameter
-    self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
-    self.ptable.add(0, "D", 2, 2)   # Fake atom for TI k.p
+#    self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
+#    self.ptable.add(0, "D", 2, 2)   # Fake atom for TI k.p
     
 hamiltonian.TISurfKpParams.__init__ = _TISurfKpParamsInit
 
@@ -52,8 +52,8 @@ def _TISurfKpParams4Init(self):
 #    self.K      = 1.165             # Coefficient ot solve Fermion doubling
 #    self.A2     = 3.33              # A2 paramter
 #    self.C      = 0.0               # C parameter
-    self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
-    self.ptable.add(0, "D", 4, 4)   # Fake atom for TI k.p
+#    self.ptable = atoms.PeriodicTable()   # Periodic table for k.p for TI
+#    self.ptable.add(0, "D", 4, 4)   # Fake atom for TI k.p
     
 hamiltonian.TISurfKpParams4.__init__ = _TISurfKpParams4Init
 
@@ -78,8 +78,8 @@ def _GrapheneKpParamsInit(self):
 #    self.a      = 4.0               # Lattice spacing
 #    self.K      = 1.165             # Coefficient ot solve Fermion doubling
 #    self.gamma  = 3.16*1.42*3/2     # gamma = hbar * v_F
-    self.ptable = atoms.PeriodicTable()   # Periodic table for graphene k.p
-    self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
+#    self.ptable = atoms.PeriodicTable()   # Periodic table for graphene k.p
+#    self.ptable.add(0, "D", 2, 2)   # Fake atom for k.p
     
 hamiltonian.GrapheneKpParams.__init__ = _GrapheneKpParamsInit
 
@@ -111,7 +111,7 @@ def _GrapheneTbParamsInit(self):
 #    self.lmdxy      = 1.7           # See PRL 109, 236604 (2012)
 #    self.alpha      = 1.65
 #    self.doX        = 6.0           # Out-of-plane neighbor cut-off distance
-    self.ptable = atoms.PeriodicTable()   # Periodic table for graphene
+#    self.ptable = atoms.PeriodicTable()   # Periodic table for graphene
     
 hamiltonian.GrapheneTbParams.__init__ = _GrapheneTbParamsInit
 
