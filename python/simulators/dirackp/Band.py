@@ -98,8 +98,10 @@ class Band(object):
                 if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+#            self.geom = AtomicStruct()
+#            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         elif (self.HamType == self.HAM_TI_SURF_KP4):    
             # Hamiltonian parameter
             if not hasattr(self, "hp"): # if hp does not exist, create it.
@@ -108,8 +110,10 @@ class Band(object):
                 if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams4()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+#            self.geom = AtomicStruct()
+#            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         elif (self.HamType == self.HAM_TI_3D_KP):    
             # Hamiltonian parameter
             if not hasattr(self, "hp"): # if hp does not exist, create it.
@@ -128,8 +132,10 @@ class Band(object):
                 if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
                     self.hp = GrapheneKpParams()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+#            self.geom = AtomicStruct()
+#            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         else:
             raise RuntimeError(" Unsupported Hamiltonian type. ")
         
@@ -181,10 +187,18 @@ class Band(object):
         # generate H_0,i and S_0,i
         self.H = [];
         self.S = [];
+        all_neigh = AtomicStruct()                       # for storing all neighbors
         for inn in range(nn):
             neigh = self.geom + self.lc[inn]                  # extract block # 1
             H, S = generateHamOvl(self.hp, self.geom, neigh)
             self.H.append(H)
+            all_neigh = all_neigh + neigh                 # collect neighbors for debug.            
+        if self.verbosity == vprint.MSG_DUMP:
+            if (self.workers.IAmMaster()):
+                if not os.path.exists(self.OutPath):
+                    os.makedirs(self.OutPath)    
+                nprint (" Saving atomistic geometry to " + self.OutPath + "dbg_geom.gjf")
+                all_neigh.exportGjf(self.OutPath + 'dbg_geom.gjf')
 #            self.S.append(S)
 #            self.ham.genNearestNeigh(self.geom, neigh, inn)        
 #            self.bp.H(self.ham.H(inn), inn)
@@ -320,8 +334,7 @@ class Band(object):
         return msg
     
     def dstr(self):
-        msg = " Debugging information: \n"
-        msg = "  Atomic structure: \n"
+        msg = "\n Debugging information: \n"
         msg += str(self.geom)
         msg += " ------------------------------------------------------------------"
         return msg

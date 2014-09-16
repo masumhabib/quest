@@ -42,7 +42,7 @@ string TI3DKpParams::toString() const {
     ss << mPrefix << " C    = " << mC << endl;
     ss << mPrefix << " D1   = " << mD1 << endl;
     ss << mPrefix << " D2   = " << mD2 << endl;
-    ss << mPrefix << " M    = " << mC << endl;
+    ss << mPrefix << " M    = " << mM << endl;
     ss << mPrefix << " eps: " << endl << meps;
     ss << mPrefix << " t01x: " << endl << mt01x;
     ss << mPrefix << " t01y: " << endl << mt01y;
@@ -106,11 +106,12 @@ void TI3DKpParams::update(){
     Go(3,3) = mC - mM;
    
     meps = Go + (2/(ax*ax))*Gx2 + (2/(ay*ay))*Gy2 + (2/(az*az))*Gz2;
-    mt01x = (-i/(2*ax))*Gx + (1/(ax*ax))*Gx2;
-    mt01y = (-i/(2*ay))*Gy + (1/(ay*ay))*Gy2;
-    mt01z = (-i/(2*az))*Gz + (1/(az*az))*Gz2;
+    mt01x = (-i/(2*ax))*Gx - (1/(ax*ax))*Gx2;
+    mt01y = (-i/(2*ay))*Gy - (1/(ay*ay))*Gy2;
+    mt01z = (-i/(2*az))*Gz - (1/(az*az))*Gz2;
     
     // change basis to |1, up> |1, dn> |2, up> |2, dn>
+    meps = trans(mU)*meps*mU;
     mt01x = trans(mU)*mt01x*mU;
     mt01y = trans(mU)*mt01y*mU;
     mt01z = trans(mU)*mt01z*mU;

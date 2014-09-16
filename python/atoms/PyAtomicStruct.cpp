@@ -72,6 +72,8 @@ void export_AtomicStruct(){
         .def("span", &AtomicStruct::span)
         .def("genRectLattAtoms", &AtomicStruct::genRectLattAtoms)
         .def("genSimpleCubicStruct", AtomicStruct_genSimpleCubicStruct1)
+        .def("exportGjf", &AtomicStruct::exportGjf)
+        .def("importGjf", &AtomicStruct::importGjf)
         .def(self + self)
         .def(self + svec())
         .def(self - svec())
