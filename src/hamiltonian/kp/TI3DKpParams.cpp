@@ -104,7 +104,7 @@ void TI3DKpParams::update(){
     Go(1,1) = mC - mM;
     Go(2,2) = mC + mM;
     Go(3,3) = mC - mM;
-   
+    
     meps = Go + (2/(ax*ax))*Gx2 + (2/(ay*ay))*Gy2 + (2/(az*az))*Gz2;
     mt01x = (-i/(2*ax))*Gx - (1/(ax*ax))*Gx2;
     mt01y = (-i/(2*ay))*Gy - (1/(ay*ay))*Gy2;

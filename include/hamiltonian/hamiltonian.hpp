@@ -73,8 +73,8 @@ protected:
     PeriodicTable mpt;    //!< The periodic table required for this system.
     double mBz;           //!< The z-component of magnetic field.
     int    mBzGauge;      //!< gauge choice for the z-component.
-    //static const double mBzTol = 1E-10;
-    double mBzTol;
+    static const double mBzTol = 1E-10;
+    //double mBzTol;
                             
 };
 

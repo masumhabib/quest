@@ -171,19 +171,10 @@ class Band(object):
         
     def generateHamiltonian(self):
         """ Generates hamiltonian and overlap matrices. """
-#        # Create Hamiltonian generator
-#        if (self.HamType == self.HAM_TI_SURF_KP):
-#            self.ham = TISurfKpHam(self.hp)   
-#        if (self.HamType == self.HAM_TI_SURF_KP4):
-#            self.ham = TISurfKpHam4(self.hp)               
-#        if (self.HamType == self.HAM_GRAPHENE_KP):
-#            self.ham = GrapheneKpHam(self.hp)   
 
         # Generate hamiltonian and overlap matrices.
         # Hamiltonian of nearest neighbors
         nn = len(self.lc)                                 # number of nearest neighbors.
-#        self.ham.setSizeForBand(nn)                     
-#        self.bp = BandStructParams(nn)                  # Band structure parameterrs.
         # generate H_0,i and S_0,i
         self.H = [];
         self.S = [];
@@ -199,15 +190,6 @@ class Band(object):
                     os.makedirs(self.OutPath)    
                 nprint (" Saving atomistic geometry to " + self.OutPath + "dbg_geom.gjf")
                 all_neigh.exportGjf(self.OutPath + 'dbg_geom.gjf')
-#            self.S.append(S)
-#            self.ham.genNearestNeigh(self.geom, neigh, inn)        
-#            self.bp.H(self.ham.H(inn), inn)
-#            self.bp.lc(self.lc[inn], inn)
-
-#        self.bp.lv = self.lv                            # Lattice vector.
-#        self.bp.nb = self.nb                            # number of bands
-#        self.bp.ne = self.geom.NumOfElectrons           # number of bands
-#        self.bp.no = self.geom.NumOfOrbitals            # Number of orbitals
       
     def generateKPoints(self):
         if (self.Dim == 1):
