@@ -11,9 +11,10 @@ import numpy as np
 import random as rn
 
 from qmicad import setVerbosity, greet
-from qmicad.atoms import AtomicStruct, SVec
+from qmicad.atoms import AtomicStruct, SVec, LCoord
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.negf import CohRgfLoop
+from qmicad.kpoints import KPoints
 from qmicad.potential import LinearPot
 from qmicad.utils import Timer, Workers, Quadrilateral, Point
 from qmicad.simulators.utils import vprint
@@ -82,11 +83,17 @@ class Transport(object):
         # Device geometry
         self.nb         = 11           # Length of the device+contacts
         self.nw         = 9            # Width of the device
+        self.nh         = 1
         self.nbw        = []           # Width of all layers
 
+        # for k-loop
+        self.nk2         = 0            # number of k points along a2        
+        self.kp         = KPoints()    # K point generator
+        
         # Hamiltonian type
         self.HAM_TI_SURF_KP  = 10       # TI surface k.p hamiltonian
         self.HAM_TI_SURF_KP4 = 11       # TI surface k.p hamiltonian with 4 spin basis set
+        self.HAM_TI_3D_KP    = 15       # TI 3D k.p hamiltonian with 4 spin basis set        
         self.HAM_GRAPHENE_KP = 20       # Graphene k.p Hamiltonian
         self.HamType         = self.HAM_TI_SURF_KP 
         
@@ -192,8 +199,10 @@ class Transport(object):
                 if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+#            self.geom = AtomicStruct()
+#            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
             # Just to make sure that no point of gate regions is    
             # at the border
             a = self.hp.a
@@ -207,8 +216,10 @@ class Transport(object):
                 if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams4()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+#            self.geom = AtomicStruct()
+#            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
             # Just to make sure that no point of gate regions is    
             # at the border
             a = self.hp.a
@@ -222,8 +233,10 @@ class Transport(object):
                 if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
                     self.hp = GrapheneKpParams()
             # Create atomistic geometry of the device.
-            self.geom = AtomicStruct()
-            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+#            self.geom = AtomicStruct()
+#            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
             # Just to make sure that no point of gate regions is    
             # at the border
             a = self.hp.a
@@ -305,12 +318,49 @@ class Transport(object):
         nprint("\n Generating Hamiltonian matrix ...")
 
         # For uniform RGF blocks
-        if (self.DevType == self.COH_RGF_UNI):            
-            lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
-            lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
-
-            self.H0, self.S0 = generateHamOvl(self.hp, lyr0, lyr0)
-            self.Hl, self.Sl = generateHamOvl(self.hp, lyr1, lyr0)
+        if (self.DevType == self.COH_RGF_UNI): 
+            # no k-loop, real space hamiltonian only
+            if self.kp.N == 0:
+                lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
+                lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
+                self.H0, self.S0 = generateHamOvl(self.hp, lyr0, lyr0)
+                self.Hl, Sl = generateHamOvl(self.hp, lyr1, lyr0)
+            # nearest neighbors in transverse direction for k-loop
+            else:
+                self.H0 = [];
+                self.S0 = [];
+                self.Hl = [];
+                self.pv = []; 
+                self.pvl = []; 
+                
+                lv = self.geom.LatticeVector
+                self.pv.append(lv*LCoord(0,0,0))
+                self.pvl.append(lv*LCoord(0,0,0))
+                lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
+                lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
+                
+                H, S = generateHamOvl(self.hp, lyr0, lyr0)
+                self.H0.append(H); self.S0.append(S)
+                H, S = generateHamOvl(self.hp, lyr1, lyr0)
+                self.Hl.append(H)
+                
+                self.pv.append(lv*LCoord(0,1,0))
+                lyr0top = lyr0 + self.pv[1]                # top neighbor of layer 0
+                H, S = generateHamOvl(self.hp, lyr0, lyr0top)
+                self.H0.append(H)
+                
+                self.pv.append(lv*LCoord(0, -1, 0))
+                lyr0bot = lyr0 + self.pv[2]                # bottom neighbor of layer 0
+                H, S = generateHamOvl(self.hp, lyr0, lyr0bot)
+                self.H0.append(H)
+               
+                self.pvl.append(lv*LCoord(-1,1,0))
+                H, S = generateHamOvl(self.hp, lyr1, lyr0top)
+                self.Hl.append(H)
+                
+                self.pvl.append(lv*LCoord(-1,-1,0))
+                H, S = generateHamOvl(self.hp, lyr1, lyr0bot)        
+                self.Hl.append(H)
         # Non-uniform RGF blocks        
         elif (self.DevType == self.COH_RGF_NON_UNI):
             self.H0 = [];
@@ -502,15 +552,40 @@ class Transport(object):
                 self.V.exportSvg(self.OutPath + self.DebugGeomFile)
         
         # Configure the RGF solver
-        self.rgf = CohRgfLoop(self.workers, self.nb, self.kT, self.ieta, 
-                self.OrthoBasis)
+        if self.kp.N == 0: # without k-loop
+            self.rgf = CohRgfLoop(self.workers, self.nb, self.kT, self.ieta,  
+                    self.OrthoBasis)
+        else:# with k-loop
+            self.rgf = CohRgfLoop(self.workers, self.nb, self.kT, self.ieta,  
+                    self.OrthoBasis, 2)
+
         # Setup H and S 
         if (self.DevType == self.COH_RGF_UNI):        # for uniform RGF blocks
+
             for ib in range(0, self.nb+1):            # setup the block hamiltonian
-                if (ib != self.nb):
-                    self.rgf.H0(self.H0, ib)          # H0: 0 to N+1
-                    self.rgf.S0(self.S0, ib)          # S0: 0 to N+1
-                self.rgf.Hl(self.Hl, ib)              # Hl: 0 to N+2
+                if self.kp.N == 0: # no k-loop
+                    if (ib != self.nb):
+                        self.rgf.H0(self.H0, ib)          # H0: 0 to N+1
+                        self.rgf.S0(self.S0, ib)          # S0: 0 to N+1
+                    self.rgf.Hl(self.Hl, ib)              # Hl: 0 to N+2
+                    
+                else: # we have k-loop, add transverse neighbors
+                    self.rgf.k(self.kp.kp)                      # set k-points
+                    if (ib != self.nb):
+                        self.rgf.H0(self.H0[0], ib, 0)          # H0_i,i: 0 to N+1 
+                        self.rgf.H0(self.H0[1], ib, 1)          # H0_i,i+1: 0 to N+1
+                        self.rgf.H0(self.H0[2], ib, 2)          # H0_i,i-1: 0 to N+1
+                        self.rgf.S0(self.S0[0], ib, 0)          # S0_i,i: 0 to N+1
+                        self.rgf.pv0(self.pv[0], ib, 0)
+                        self.rgf.pv0(self.pv[1], ib, 1)
+                        self.rgf.pv0(self.pv[2], ib, 2)
+                    self.rgf.Hl(self.Hl[0], ib, 0)              # Hl_i,i: 0 to N+2
+                    self.rgf.Hl(self.Hl[1], ib, 1)              # Hl_i,i: 0 to N+2
+                    self.rgf.Hl(self.Hl[2], ib, 2)              # Hl_i,i: 0 to N+2
+                    self.rgf.pvl(self.pvl[0], ib, 0)
+                    self.rgf.pvl(self.pvl[1], ib, 1)
+                    self.rgf.pvl(self.pvl[2], ib, 2)                
+                    
         elif (self.DevType == self.COH_RGF_NON_UNI):  # Non-uniform RGF blocks        
             for ib in range(0, self.nb):                 # setup the block hamiltonian
                 self.rgf.H0(self.H0[ib], ib)             # H0: 0 to N+1=nb-1
@@ -640,6 +715,7 @@ class Transport(object):
         dct = dict(self.__dict__)
         del dct['workers']
         del dct['clock']
+        del dct['kp']
         #del dct['rgf']
         return dct
     

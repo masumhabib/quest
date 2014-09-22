@@ -25,7 +25,7 @@ using qmicad::python::npy2col;
 class PyCohRgfLoop: public CohRgfLoop{
 public:
     PyCohRgfLoop(const Workers &workers, uint nb = 5, double kT = 0.0259, 
-        dcmplx ieta = dcmplx(0,1E-3), bool orthogonal = true, 
+        dcmplx ieta = dcmplx(0,1E-3), bool orthogonal = true, uint nTransNeigh = 0,
         string newprefix = ""); 
     
     // For python binding
@@ -39,6 +39,9 @@ public:
     void            Sl(bp::object Sl, int ib);    
 
     void            V(bp::object Sl, int ib);
+    void            pv0(bp::object pv0, int ib, int ineigh);
+    void            pvl(bp::object pv0, int ib, int ineigh);
+
 };
 
 }}

@@ -14,8 +14,8 @@ namespace qmicad{
 namespace python{
 
 PyCohRgfLoop::PyCohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ieta, 
-        bool orthogonal, string newprefix): 
-        CohRgfLoop(workers, nb, kT, ieta, orthogonal, newprefix)
+        bool orthogonal, uint nTransNeigh, string newprefix): 
+        CohRgfLoop(workers, nb, kT, ieta, orthogonal, nTransNeigh, newprefix)
 {
 }
 
@@ -55,6 +55,13 @@ void PyCohRgfLoop::V(bp::object V, int ib){
     mV(ib) = npy2col<double>(V);
 }
 
+void PyCohRgfLoop::pv0(bp::object pv0, int ib, int ineigh){
+    mpv0(ib, ineigh) = npy2col<double>(pv0);
+}
+
+void PyCohRgfLoop::pvl(bp::object pvl, int ib, int ineigh){
+    mpvl(ib, ineigh) = npy2col<double>(pvl);
+}
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableI, enableI, 0, 3)
@@ -71,6 +78,8 @@ void (PyCohRgfLoop::*PyCohRgfLoop_S0_2)(bp::object, int) = &PyCohRgfLoop::S0;
 void (PyCohRgfLoop::*PyCohRgfLoop_Hl_2)(bp::object, int) = &PyCohRgfLoop::Hl;
 void (PyCohRgfLoop::*PyCohRgfLoop_Sl_2)(bp::object, int) = &PyCohRgfLoop::Sl;
 void (PyCohRgfLoop::*PyCohRgfLoop_V)(bp::object, int) = &PyCohRgfLoop::V;
+void (PyCohRgfLoop::*PyCohRgfLoop_pv0_1)(bp::object, int, int) = &PyCohRgfLoop::pv0;
+void (PyCohRgfLoop::*PyCohRgfLoop_pvl_1)(bp::object, int, int) = &PyCohRgfLoop::pvl;
 void export_CohRgfLoop(){
     // ~~~~~~~~ To avoid nasty numpy segfault ~~~~~~~
     import_array(); 
@@ -80,7 +89,7 @@ void export_CohRgfLoop(){
     
     class_<PyCohRgfLoop, bases<CohRgfLoop>, shared_ptr<PyCohRgfLoop> >("CohRgfLoop", 
             init<const Workers&, 
-            optional<uint, double, dcmplx, bool, string> >())
+            optional<uint, double, dcmplx, bool, uint, string> >())
         .def("E", &PyCohRgfLoop::E)
         .def("k", &PyCohRgfLoop::k)
         .def("mu", &PyCohRgfLoop::mu)
@@ -93,6 +102,8 @@ void export_CohRgfLoop(){
         .def("Hl", PyCohRgfLoop_Hl_2)
         .def("Sl", PyCohRgfLoop_Sl_2)
         .def("V", PyCohRgfLoop_V)
+        .def("pv0", PyCohRgfLoop_pv0_1)
+        .def("pvl", PyCohRgfLoop_pvl_1)
         .def("run", &PyCohRgfLoop::run)
         .def("save", &PyCohRgfLoop::save, PyCohRgfLoop_save())
         .def("enableTE", &PyCohRgfLoop::enableTE, PyCohRgfLoop_enableTE())

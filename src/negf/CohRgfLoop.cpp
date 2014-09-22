@@ -12,15 +12,27 @@ namespace qmicad{
 namespace negf{
 
 CohRgfLoop::CohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ieta, 
-        bool orthogonal, string newprefix): Printable(newprefix), 
+        bool orthogonal, uint nTransNeigh, string newprefix): Printable(newprefix), 
         mrgf(nb, kT, ieta, orthogonal, " " + newprefix), mbar("  NEGF: "),
-        mWorkers(workers)
+        mWorkers(workers) 
 {
-    mH0.set_size(nb, 1);
-    mS0.set_size(nb, 1);
-    mHl.set_size(nb+1, 1);
-    mSl.set_size(nb+1, 1);
+//    mH0.set_size(nb, 1);
+//    mS0.set_size(nb, 1);
+//    mHl.set_size(nb+1, 1);
+//    mSl.set_size(nb+1, 1);
+    
+
+    mH0.set_size(nb, nTransNeigh+1);
+    mS0.set_size(nb, nTransNeigh+1);
+    mHl.set_size(nb+1, nTransNeigh+1);
+    mSl.set_size(nb+1, nTransNeigh+1);
+    mpv0.set_size(nb, nTransNeigh+1);
+    mpvl.set_size(nb+1, nTransNeigh+1);
+    
     mV.set_size(nb);
+    
+    integrateOverKpoints = false;
+
 }
 
 void CohRgfLoop::E(const vec &E){
@@ -34,21 +46,11 @@ void CohRgfLoop::E(const vec &E){
 void CohRgfLoop::k(const mat &k){
     mk = k;
     mbar.expectedCount(npoints());
+    integrateOverKpoints = true;
 }
 
 void CohRgfLoop::mu(double muD, double muS){
     mrgf.mu(muD, muS);
-}
-
-void CohRgfLoop::numTransNeighbors(uint n){
-    uint nb = mrgf.nb();
-    mH0.set_size(nb, n);
-    mS0.set_size(nb, n);
-    mHl.set_size(nb+1, n);
-    mSl.set_size(nb+1, n);
-    
-    mpv0.set_size(nb, n);
-    mpvl.set_size(nb+1, n);
 }
 
 void CohRgfLoop::H(const field<shared_ptr<cxmat> >& H0, 
@@ -80,37 +82,61 @@ void CohRgfLoop::V(const field<shared_ptr<vec> >& V){
     mV = V;
 }
 
-void CohRgfLoop::pv(const field<vec>& pv0, const field<vec>& pvl){
+void CohRgfLoop::pv(const field<shared_ptr<vec> >& pv0, const field<shared_ptr<vec> >& pvl){
     mpv0 = pv0;
     mpvl = pvl;
 }
 
 void CohRgfLoop::H0(shared_ptr<cxmat> H0, int ib, int ineigh){
-    mH0(ib, ineigh) = H0;
+    if (ineigh != -1){
+        mH0(ib, ineigh) = H0;
+    }else{
+        mH0(ib) = H0;
+    }
 }
 
 void CohRgfLoop::S0(shared_ptr<cxmat> S0, int ib, int ineigh){
-    mS0(ib, ineigh) = S0;
+    if (ineigh != -1){
+        mS0(ib, ineigh) = S0;
+    }else{
+        mS0(ib) = S0;
+    }
 }
 
 void CohRgfLoop::Hl(shared_ptr<cxmat> Hl, int ib, int ineigh){
-    mHl(ib, ineigh) = Hl;
+    if (ineigh != -1){
+        mHl(ib, ineigh) = Hl;
+    }else{
+        mHl(ib) = Hl;
+    }
 }
 
 void CohRgfLoop::Sl(shared_ptr<cxmat> Sl, int ib, int ineigh){
-    mSl(ib, ineigh) = Sl;
+    if (ineigh != -1){
+        mSl(ib, ineigh) = Sl;
+    }else{
+        mSl(ib) = Sl;
+    }
 }
 
 void CohRgfLoop::V(shared_ptr<vec> V, int ib){
     mV(ib) = V;
 }
 
-void CohRgfLoop::pv0(const vec& pv0, int ib, int ineigh){
-    mpv0(ib, ineigh) = pv0;
+void CohRgfLoop::pv0(shared_ptr<vec> pv0, int ib, int ineigh){
+    if (ineigh != -1){
+        mpv0(ib, ineigh) = pv0;
+    }else{
+        mpv0(ib) = pv0;
+    }
 }
 
-void CohRgfLoop::pvl(const vec& pvl, int ib, int ineigh){
-    mpvl(ib, ineigh) = pvl;
+void CohRgfLoop::pvl(shared_ptr<vec> pvl, int ib, int ineigh){
+    if (ineigh != -1){
+        mpvl(ib, ineigh) = pvl;
+    }else{
+        mpvl(ib) = pvl;
+    }
 }
 
 void CohRgfLoop::enableTE(uint N){
@@ -165,7 +191,7 @@ void CohRgfLoop::run(){
         
         ik = it/nE;
         iE = it%nE;
-
+        
         if (ik != ikPrev){ // change H and S matrices only for new k vectors.
             // Hamiltonian and overlap matrices. 
             field<shared_ptr<cxmat> > H0(nb);
@@ -175,21 +201,27 @@ void CohRgfLoop::run(){
 
             if (nk != 0){ // Do a k-loop
                 //@TODO: Needs memory optimization.
-
-                vec k = mk.row(ik);
+                row k = mk.row(ik);
 
                 // Calculate block diagonal matrices.
                 for(int ib = 0; ib < nb; ++ib){
                     shared_ptr<cxmat> H0k = make_shared<cxmat>(mH0(ib,0)->n_rows, mH0(ib,0)->n_cols, fill::zeros);
-                    shared_ptr<cxmat> S0k = make_shared<cxmat>(mS0(ib,0)->n_rows, mS0(ib,0)->n_cols, fill::zeros);
+                    shared_ptr<cxmat> S0k;
+                    if (!mrgf.OrthoBasis()){
+                        S0k = make_shared<cxmat>(mS0(ib,0)->n_rows, mS0(ib,0)->n_cols, fill::zeros);
+                    }else{
+                        S0k = make_shared<cxmat>(mS0(ib,0)->n_rows, mS0(ib,0)->n_cols, fill::eye);
+                    }
 
                     double th;
                     dcmplx expith;
                     for(int in = 0; in < mH0.n_cols; ++in){
-                        th = dot(k, mpv0(ib, in));
+                        th = dot(k, *mpv0(ib, in));
                         expith = exp(i*th);
-                        (*H0k) = (*H0k) + (*mH0(ib, in))*expith;                    
-                        (*S0k) = (*S0k) + (*mS0(ib, in))*expith;
+                        (*H0k) = (*H0k) + (*mH0(ib, in))*expith; 
+                        if (!mrgf.OrthoBasis()){
+                            (*S0k) = (*S0k) + (*mS0(ib, in))*expith;
+                        }
                     }
                     H0(ib) = H0k;
                     S0(ib) = S0k;
@@ -197,12 +229,14 @@ void CohRgfLoop::run(){
                 // Calculate lower block diagonals
                 for(int ib = 0; ib <= nb; ++ib){
                     shared_ptr<cxmat> Hlk = make_shared<cxmat>(mHl(ib,0)->n_rows, mHl(ib,0)->n_cols, fill::zeros);
-                    shared_ptr<cxmat> Slk = make_shared<cxmat>(mSl(ib,0)->n_rows, mSl(ib,0)->n_cols, fill::zeros);
-
+                    shared_ptr<cxmat> Slk;
+                    if (!mrgf.OrthoBasis()){
+                        Slk = make_shared<cxmat>(mSl(ib,0)->n_rows, mSl(ib,0)->n_cols, fill::zeros);
+                    }
                     double th;
                     dcmplx expith;
                     for(int in = 0; in < mHl.n_cols; ++in){
-                        th = dot(k, mpvl(in));
+                        th = dot(k, *mpvl(in));
                         expith = exp(i*th);
                         (*Hlk) = (*Hlk) + (*mHl(ib, in))*expith;
                         if (!mrgf.OrthoBasis()){
@@ -284,26 +318,41 @@ void CohRgfLoop::collect(){
     // Gather transmission
     if(mTE.isEnabled()){
         gather(mThisTE, mTE);
+        if(integrateOverKpoints){
+            intOverKpoints(mTE);
+        }
     }
 
     // Gather current
     for (int it = 0; it < mIop.size(); ++it){
         gather(mThisIop[it], mIop[it]);
+        if(integrateOverKpoints){
+            intOverKpoints(mIop[it]);
+        }
     }
 
     // Gather Density of States
     if(mDOS.isEnabled()){
         gather(mThisDOS, mDOS);
+        if(integrateOverKpoints){
+            intOverKpoints(mDOS);
+        }        
     }
 
     // Gather equilibrium electron density
     for (int it = 0; it < mnOp.size(); ++it){
         gather(mThisnOp[it], mnOp[it]);
+        if(integrateOverKpoints){
+            intOverKpoints(mnOp[it]);
+        }                
     }    
 
     // Gather Non-equilibrium electron density
     for (int it = 0; it < mpOp.size(); ++it){
         gather(mThisnOp[it], mpOp[it]);
+        if(integrateOverKpoints){
+            intOverKpoints(mpOp[it]);
+        }                
     }    
 
 }
@@ -326,6 +375,48 @@ void CohRgfLoop::gather(cxmat_vec &thisR, RgfResult &all){
             all.R.insert(all.R.end(), it->begin(), it->end());
         }
     }       
+}
+
+void CohRgfLoop::intOverKpoints(RgfResult& integrand){
+    long nE = mE.n_rows;
+    long nk = mk.n_rows;
+    long np = npoints();
+            
+    // convert list of cxmat to vector of cxmat for easy access.
+    vector<cxmat>result (np);
+    for (list<cxmat>::iterator it = integrand.R.begin(); it != integrand.R.end(); ++it){
+        long i = std::distance(integrand.R.begin(), it);
+        result[i] = *it;
+    }
+    integrand.R.clear();
+    
+    /*
+    // trapezoidal integration over k-points
+    // find delta k
+    vec dk(nk-1);
+    for (long ik = 0; ik < nk-1; ++ik){
+        dk(ik) = sqrt(sum(square(mk.row(ik+1) - mk.row(ik))));
+    }
+    // do the summation
+    cxmat sum;
+    for (long iE = 0; iE < nE; ++iE){
+        sum = zeros<cxmat>(integrand.N, integrand.N);  
+        for (long ik = 0; ik < nk-1; ++ik){            
+            sum = sum + (dk(ik)/2)*(result[(ik+1)*nE+iE] + result[ik*nE+iE]);
+        }
+        integrand.R.push_back(sum);
+    }
+    */
+
+    // simple sum
+    cxmat sum;
+    for (long iE = 0; iE < nE; ++iE){
+        sum = zeros<cxmat>(integrand.N, integrand.N);  
+        for (long ik = 0; ik < nk-1; ++ik){            
+            sum = sum + result[ik*nE+iE];
+        }
+        integrand.R.push_back(sum);
+    }
 }
 
 long CohRgfLoop::npoints(){

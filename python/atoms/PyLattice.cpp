@@ -32,6 +32,7 @@ void export_lvec(){
         .def("la1", &lvec::la1)
         .def("la2", &lvec::la2)
         .def("la3", &lvec::la3)
+        .def(self * lcoord())
     ;
 }
 

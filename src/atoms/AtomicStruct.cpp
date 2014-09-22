@@ -442,9 +442,9 @@ void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, double l, do
     // create simple cubic lattice.
     mXyz.set_size(mNa, 3);            // xyz coordinate of atoms
     long ia = 0;
-    for(long iz = 0; iz < nz; ++iz){
+    for (long ix = 0; ix < nx; ++ ix){
         for (long iy = 0; iy < ny; ++iy){
-            for (long ix = 0; ix < nx; ++ ix){
+            for(long iz = 0; iz < nz; ++iz){
                 mXyz(ia, coord::X) = X(ix);
                 mXyz(ia, coord::Y) = Y(iy);
                 mXyz(ia, coord::Z) = Z(iz);                
