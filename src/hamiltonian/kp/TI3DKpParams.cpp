@@ -115,10 +115,6 @@ void TI3DKpParams::update(){
     mt01x = trans(mU)*mt01x*mU;
     mt01y = trans(mU)*mt01y*mU;
     mt01z = trans(mU)*mt01z*mU;
-
-    // DBG
-    mt01y = mt01x;
-    mt01z = mt01x;
     
     mt10x = trans(mt01x);
     mt10y = trans(mt01y);
