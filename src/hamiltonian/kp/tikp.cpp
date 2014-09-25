@@ -64,14 +64,11 @@ cxmat TISurfKpParams::twoAtomHam(const AtomicStruct& atomi,
     cxmat hmat =  zeros<cxmat>(noi, noj);
 
     // calculate distance between atom i and atom j
-    double xi = atomi.X(0);
-    double yi = atomi.Y(0);
-    double xj = atomj.X(0);
-    double yj = atomj.Y(0);
-
-    double dx = abs(xi - xj);
-    double dy = abs(yi - yj);           
-    double d = sqrt(dx*dx + dy*dy);
+    double xi = atomi.X(0), yi = atomi.Y(0), zi = atomi.Z(0);
+    double xj = atomj.X(0), yj = atomj.Y(0), zj = atomj.Z(0);
+    
+    double dx = abs(xi - xj), dy = abs(yi - yj), dz = abs(zi - zj);           
+    double d = sqrt(dx*dx + dy*dy + dz*dz);
 
     // Assign the the matrix elements based on the distance between 
     // the lattice points.
@@ -136,14 +133,11 @@ cxmat TISurfKpParams::twoAtomOvl(const AtomicStruct& atomi,
     cxmat smat =  zeros<cxmat>(noi, noj);
 
     // calculate distance between atom i and atom j
-    double xi = atomi.X(0);
-    double yi = atomi.Y(0);
-    double xj = atomj.X(0);
-    double yj = atomj.Y(0);
-
-    double dx = abs(xi - xj);
-    double dy = abs(yi - yj);           
-    double d = sqrt(dx*dx + dy*dy);
+    double xi = atomi.X(0), yi = atomi.Y(0), zi = atomi.Z(0);
+    double xj = atomj.X(0), yj = atomj.Y(0), zj = atomj.Z(0);
+    
+    double dx = abs(xi - xj), dy = abs(yi - yj), dz = abs(zi - zj);           
+    double d = sqrt(dx*dx + dy*dy + dz*dz);
 
     // Assign the the matrix elements based on the distance between 
     // the lattice points.

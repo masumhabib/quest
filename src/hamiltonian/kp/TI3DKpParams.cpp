@@ -75,15 +75,15 @@ void TI3DKpParams::update(){
     Gx(2,1) = mA2;
     Gx(3,0) = mA2;
     
-    Gy(0,3) = -i*mA2;
-    Gy(1,2) = -i*mA2;
-    Gy(2,1) = i*mA2;
-    Gy(3,0) = i*mA2;
-
     Gx2(0,0) = mD2 - mB2;
     Gx2(1,1) = mD2 + mB2;
     Gx2(2,2) = mD2 - mB2;
     Gx2(3,3) = mD2 + mB2;
+
+    Gy(0,3) = -i*mA2;
+    Gy(1,2) = -i*mA2;
+    Gy(2,1) = i*mA2;
+    Gy(3,0) = i*mA2;
     
     Gy2(0,0) = mD2 - mB2;
     Gy2(1,1) = mD2 + mB2;
@@ -115,6 +115,10 @@ void TI3DKpParams::update(){
     mt01x = trans(mU)*mt01x*mU;
     mt01y = trans(mU)*mt01y*mU;
     mt01z = trans(mU)*mt01z*mU;
+
+    // DBG
+    mt01y = mt01x;
+    mt01z = mt01x;
     
     mt10x = trans(mt01x);
     mt10y = trans(mt01y);
@@ -135,17 +139,10 @@ cxmat TI3DKpParams::twoAtomHam(const AtomicStruct& atomi,
     cxmat hmat =  zeros<cxmat>(noi, noj);
 
     // calculate distance between atom i and atom j
-    double xi = atomi.X(0);
-    double yi = atomi.Y(0);
-    double zi = atomi.Z(0);
+    double xi = atomi.X(0), yi = atomi.Y(0), zi = atomi.Z(0);
+    double xj = atomj.X(0), yj = atomj.Y(0), zj = atomj.Z(0);
     
-    double xj = atomj.X(0);
-    double yj = atomj.Y(0);
-    double zj = atomj.Z(0);
-
-    double dx = abs(xi - xj);
-    double dy = abs(yi - yj);           
-    double dz = abs(zi - zj);           
+    double dx = abs(xi - xj), dy = abs(yi - yj), dz = abs(zi - zj);           
     double d = sqrt(dx*dx + dy*dy + dz*dz);
 
     // Assign the the matrix elements based on the distance between 
@@ -195,14 +192,11 @@ cxmat TI3DKpParams::twoAtomOvl(const AtomicStruct& atomi,
     cxmat smat =  zeros<cxmat>(noi, noj);
 
     // calculate distance between atom i and atom j
-    double xi = atomi.X(0);
-    double yi = atomi.Y(0);
-    double xj = atomj.X(0);
-    double yj = atomj.Y(0);
-
-    double dx = abs(xi - xj);
-    double dy = abs(yi - yj);           
-    double d = sqrt(dx*dx + dy*dy);
+    double xi = atomi.X(0), yi = atomi.Y(0), zi = atomi.Z(0);
+    double xj = atomj.X(0), yj = atomj.Y(0), zj = atomj.Z(0);
+    
+    double dx = abs(xi - xj), dy = abs(yi - yj), dz = abs(zi - zj);           
+    double d = sqrt(dx*dx + dy*dy + dz*dz);
 
     // Assign the the matrix elements based on the distance between 
     // the lattice points.

@@ -44,7 +44,7 @@ void PyCohRgfLoop::S0(bp::object S0, int ib){
 }
 
 void PyCohRgfLoop::Hl(bp::object Hl, int ib){
-    mHl(ib) = npy2mat<dcmplx>(Hl);
+    mHl(ib) = npy2mat<dcmplx>(Hl);    
 }
 
 void PyCohRgfLoop::Sl(bp::object Sl, int ib){

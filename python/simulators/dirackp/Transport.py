@@ -12,7 +12,7 @@ import random as rn
 
 from qmicad import setVerbosity, greet
 from qmicad.atoms import AtomicStruct, SVec, LCoord
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
+from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.negf import CohRgfLoop
 from qmicad.kpoints import KPoints
 from qmicad.potential import LinearPot
@@ -198,15 +198,8 @@ class Transport(object):
             else:
                 if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams()
-            # Create atomistic geometry of the device.
-#            self.geom = AtomicStruct()
-#            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             self.geom = AtomicStruct(self.hp.ptable)
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            # Just to make sure that no point of gate regions is    
-            # at the border
-            a = self.hp.a
-            delta = a*7.0/220.0
             self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_TI_SURF_KP4):    
             # Hamiltonian parameter
@@ -215,15 +208,19 @@ class Transport(object):
             else:
                 if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams4()
-            # Create atomistic geometry of the device.
-#            self.geom = AtomicStruct()
-#            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             self.geom = AtomicStruct(self.hp.ptable)
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            # Just to make sure that no point of gate regions is    
-            # at the border
-            a = self.hp.a
-            delta = a*7.0/220.0  + a*7.0/2200.0
+            self.nbw = [self.nw]*self.nb
+        elif (self.HamType == self.HAM_TI_3D_KP):    
+            # Hamiltonian parameter
+            if not hasattr(self, "hp"): # if hp does not exist, create it.
+                self.hp = TI3DKpParams()
+            else:
+                if not isinstance(self.hp, TI3DKpParams): # if hp exists but not TISurfKpParams type, create it.
+                    self.hp = TI3DKpParams()
+            # Create atomistic geometry of the device.
+            self.geom = AtomicStruct(self.hp.ptable)
+            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
             self.nbw = [self.nw]*self.nb
         elif (self.HamType == self.HAM_GRAPHENE_KP):
             # Hamiltonian parameter
@@ -232,15 +229,8 @@ class Transport(object):
             else:
                 if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
                     self.hp = GrapheneKpParams()
-            # Create atomistic geometry of the device.
-#            self.geom = AtomicStruct()
-#            self.geom.genRectLattAtoms(self.nb, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             self.geom = AtomicStruct(self.hp.ptable)
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            # Just to make sure that no point of gate regions is    
-            # at the border
-            a = self.hp.a
-            delta = a*7.0/220.0
             self.nbw = [self.nw]*self.nb
         else:
             raise RuntimeError(" Unsupported Hamiltonian type. ")
@@ -321,10 +311,27 @@ class Transport(object):
         if (self.DevType == self.COH_RGF_UNI): 
             # no k-loop, real space hamiltonian only
             if self.kp.N == 0:
-                lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
-                lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
+                
+                lyr0 = self.geom.span(0, self.nw*self.nh-1);               # extract block # 0
+                lyr1 = self.geom.span(self.nw*self.nh, 2*self.nw*self.nh-1);    # extract block # 1                
+                
                 self.H0, self.S0 = generateHamOvl(self.hp, lyr0, lyr0)
-                self.Hl, Sl = generateHamOvl(self.hp, lyr1, lyr0)
+
+                self.Hl, S = generateHamOvl(self.hp, lyr1, lyr0)
+
+#                np.set_printoptions(linewidth=200)
+#                print "\nS0\n"
+#                print self.S0
+#                print "\nH0\n"
+#                print self.H0
+#                print "\nHl\n"
+#                print self.Hl
+#                self.geom.exportGjf('dbg_geom.gjf')
+#                lyr0.exportGjf('lyr0.gjf')
+#                lyr1.exportGjf('lyr1.gjf')
+#                lyr01 = lyr0+lyr1;
+#                lyr01.exportGjf('lyr01.gjf')
+                
             # nearest neighbors in transverse direction for k-loop
             else:
                 self.H0 = [];
@@ -336,8 +343,8 @@ class Transport(object):
                 lv = self.geom.LatticeVector
                 self.pv.append(lv*LCoord(0,0,0))
                 self.pvl.append(lv*LCoord(0,0,0))
-                lyr0 = self.geom.span(0, self.nw-1);               # extract block # 0
-                lyr1 = self.geom.span(self.nw, 2*self.nw-1);    # extract block # 1
+                lyr0 = self.geom.span(0, self.nw*self.nh-1);               # extract block # 0
+                lyr1 = self.geom.span(self.nw*self.nh, 2*self.nw*self.nh-1);    # extract block # 1
                 
                 H, S = generateHamOvl(self.hp, lyr0, lyr0)
                 self.H0.append(H); self.S0.append(S)
@@ -465,12 +472,12 @@ class Transport(object):
         beg = 0
         self.Vo = []
         for ib in range(self.nb):                  # setup the block hamiltonian
-            end = beg + self.nbw[ib] - 1
+            end = beg + self.nbw[ib]*self.nh - 1
             self.Vo.append(self.V.toOrbPot(beg, end)) 
             self.rgf.V(self.Vo[ib], ib)
             beg = end + 1
             
-
+            
         # Create energy grid
         if (self.AutoGenE):
             Emin = self.muD(VDD) - 10*self.kT
@@ -516,9 +523,6 @@ class Transport(object):
         """Runs the sumulation."""
 
         self.clock.tic()
-        
-#        # Print welcome message.
-#        nprint(greet())
         
         nprint("\n\n Starting simulation ...")
 

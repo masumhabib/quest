@@ -252,7 +252,7 @@ void CohRgfLoop::run(){
                 H0 = mH0.col(0);
                 S0 = mS0.col(0);
                 Hl = mHl.col(0);
-                Sl = mSl.col(0);   
+                Sl = mSl.col(0);                   
             }
             // set H and S.
             mrgf.H(H0, Hl);
@@ -412,7 +412,7 @@ void CohRgfLoop::intOverKpoints(RgfResult& integrand){
     cxmat sum;
     for (long iE = 0; iE < nE; ++iE){
         sum = zeros<cxmat>(integrand.N, integrand.N);  
-        for (long ik = 0; ik < nk-1; ++ik){            
+        for (long ik = 0; ik < nk; ++ik){            
             sum = sum + result[ik*nE+iE];
         }
         integrand.R.push_back(sum);
@@ -466,10 +466,8 @@ void CohRgfLoop::save(string fileName, bool isText){
             for (int it = 0; it < mpOp.size(); ++it){
                 mpOp[it].save(out, isText);
             } 
-        }else{
-            
+        }else{   
         }
-
     }
 }
 

@@ -57,7 +57,7 @@ inline string ttos(double sec){
     }
 
     if (hr > 0){
-        times << hr << " hours(s) ";
+        times << hr << " hour(s) ";
     }
 
     if (min > 0){
