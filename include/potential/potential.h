@@ -10,11 +10,13 @@
 
 #include "potential/terminal.h"
 
-#include "string/stringutils.h"
 #include "maths/geometry.hpp"
 #include "maths/svec.h"
+
 #include "atoms/AtomicStruct.h"
+
 #include "utils/std.hpp"
+#include "utils/stringutils.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
@@ -22,10 +24,10 @@
 namespace qmicad{
 namespace potential{
 
+using utils::strings::itos;
 using namespace atoms;
 using namespace utils::stds;
 using namespace maths::spvec;
-using utils::itos;
 using boost::shared_ptr;
 using boost::make_shared;
 

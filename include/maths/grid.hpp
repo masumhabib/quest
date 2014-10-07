@@ -8,25 +8,12 @@
 #ifndef GRID_HPP
 #define	GRID_HPP
 
-#include "utils/Printable.hpp"
-#include "maths/svec.h"
-#include <armadillo>
-#include <iostream>
-#include <limits>
+#include "maths/linspace.hpp"
 
-namespace utils{
-using namespace maths::armadillo;
-using namespace maths::spvec;
-using std::stringstream;
-using std::numeric_limits;
-
-/*
- * Generates linear grid
- */
-template<class T>
-Col<T> linspace(T start, T end, T delta);
-template<class T>
-void linspace(Col<T>& col, T start, T end, T delta);
+namespace maths{
+using maths::armadillo::Col;
+using maths::armadillo::Mat;
+using maths::linspace;
 
 /*
  * Mesh grid: two dimensional, linear matrix like grid
@@ -41,27 +28,6 @@ template<class T>
 void meshgrid(Mat<T> &X, Mat<T> &Y, const Col<T> &xi, const Col<T> &yi);
 template<class T>
 void meshgrid(Col<T> &X, Col<T> &Y, const Col<T> &xi, const Col<T> &yi);
-
-
-/* Definitions */
-template<class T>
-Col<T> linspace(T start, T end, T delta){
-    long N;
-    T correctEnd;
-    if (delta <= numeric_limits<T>::min()){
-        N = 1;
-    }else{
-        N = floor(abs((end - start)/delta))+1;
-        correctEnd = start + (N - 1)*delta;
-    }
-    
-    return maths::armadillo::linspace<Col<T> >(start, end, N);
-}
-
-template<class T>
-void linspace(Col<T>& col, T start, T end, T delta){
-    col = linspace<T>(start, end, delta);
-}
 
 template<class T>
 void meshgrid(Mat<T> &X, Mat<T> &Y, T startx, T endx, T delx, T starty, T endy, T dely){

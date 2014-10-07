@@ -98,8 +98,6 @@ class Band(object):
                 if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams()
             # Create atomistic geometry of the device.
-#            self.geom = AtomicStruct()
-#            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             self.geom = AtomicStruct(self.hp.ptable)
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         elif (self.HamType == self.HAM_TI_SURF_KP4):    
@@ -110,8 +108,6 @@ class Band(object):
                 if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
                     self.hp = TISurfKpParams4()
             # Create atomistic geometry of the device.
-#            self.geom = AtomicStruct()
-#            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             self.geom = AtomicStruct(self.hp.ptable)
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         elif (self.HamType == self.HAM_TI_3D_KP):    
@@ -132,8 +128,6 @@ class Band(object):
                 if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
                     self.hp = GrapheneKpParams()
             # Create atomistic geometry of the device.
-#            self.geom = AtomicStruct()
-#            self.geom.genRectLattAtoms(self.nl, self.nw, self.hp.a, self.hp.a, self.hp.ptable)
             self.geom = AtomicStruct(self.hp.ptable)
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
         else:

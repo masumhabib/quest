@@ -10,16 +10,16 @@
 
 #include "maths/arma.hpp"
 #include "utils/std.hpp"
-#include "string/stringutils.h"
+#include "utils/stringutils.h"
 #include "utils/Printable.hpp"
 
 namespace qmicad{
 namespace python{
 
 using maths::armadillo::wall_clock;
-using namespace utils::stds;
+using utils::stds::string;
 using utils::Printable;
-using utils::ttos;
+using utils::strings::ttos;
 
 
 class Timer: public Printable{

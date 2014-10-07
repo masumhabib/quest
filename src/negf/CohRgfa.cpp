@@ -251,7 +251,7 @@ inline cxmat CohRgfa::I0op(uint N){
     // Current operator
     cxmat I1op = Gn11*trans(Sigl11) - Sigl11*Gn11 
           +G11*Gaml11*mf0 - Gaml11*G11a*mf0;
-
+    
     return i*trace<cxmat>(I1op, N);    
 }
 

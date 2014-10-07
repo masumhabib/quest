@@ -112,6 +112,11 @@ void BandStruct::save(string fileName, bool saveAsText){
             out.close();
 
             if (mCalcEigV){
+                fileName = fileName.substr(0,fileName.find_last_of("."));
+                fileName += "_eig_vec.dat";
+                
+                
+                
             }
         }else{ // binary file
             

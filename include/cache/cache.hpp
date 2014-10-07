@@ -13,9 +13,11 @@
 #include "maths/constants.h"
 #include "utils/myenums.hpp"
 
-namespace utils{
+namespace qmicad{ namespace cache{
 using std::out_of_range;
-using namespace maths::armadillo;
+using maths::armadillo::Mat;
+using maths::armadillo::field;
+using maths::armadillo::dcmplx;
 
 
 /*
@@ -156,7 +158,7 @@ private:
 
 typedef MatCache<dcmplx> CxMatCache;
 
-}
+}}
 
 #endif	/* CACHE_HPP */
 

@@ -13,8 +13,7 @@
 
 #include "maths/arma.hpp"
 
-namespace maths{
-namespace constants{
+namespace maths{ namespace constants{
     
 using namespace armadillo;
 

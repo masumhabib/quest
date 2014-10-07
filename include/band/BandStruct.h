@@ -18,8 +18,7 @@
 #include "utils/myenums.hpp"
 #include "utils/NullDeleter.hpp"
 
-#include "grid/grid.hpp"
-#include "string/stringutils.h"
+#include "maths/grid.hpp"
 #include "maths/constants.h"
 #include "maths/svec.h"
 #include "maths/arma.hpp"

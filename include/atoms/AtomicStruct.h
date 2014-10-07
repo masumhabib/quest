@@ -17,8 +17,9 @@
 
 #include "maths/svec.h"
 #include "maths/arma.hpp"
-#include "grid/grid.hpp"
-#include "string/stringutils.h"
+#include "maths/linspace.hpp"
+#include "maths/grid.hpp"
+#include "utils/stringutils.h"
 #include "utils/Printable.hpp"
 #include "utils/serialize.hpp"
 #include "utils/vout.h"
@@ -30,9 +31,9 @@ namespace qmicad{
 namespace atoms{
 
 using utils::Printable;
-using utils::trim;
-using utils::meshgrid; 
-using utils::linspace;
+using utils::strings::trim;
+using maths::meshgrid; 
+using maths::linspace;
 using namespace utils::stds;
 using namespace maths::armadillo;
 using namespace maths::spvec;

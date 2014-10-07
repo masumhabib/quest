@@ -19,7 +19,6 @@
 
 #include "potential/terminal.h"
 #include "potential/potential.h"
-#include "string/stringutils.h"
 #include "utils/vout.h"
 
 #include <vector>
@@ -32,7 +31,6 @@
 namespace qmicad{
 namespace potential{
 
-using utils::dtos;
 using namespace utils::stds;
 /*
  * Linear terminal emulates linear voltage drop between two 

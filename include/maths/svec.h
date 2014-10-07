@@ -14,8 +14,7 @@
 #include "maths/arma.hpp"
 
 
-namespace maths{
-namespace spvec{
+namespace maths{namespace spvec{
 
 //using armadillo::row3;
 //using armadillo::row2;

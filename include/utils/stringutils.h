@@ -12,8 +12,9 @@
 #include <boost/lexical_cast.hpp>
 #include "utils/std.hpp"
 
-namespace utils{
-using namespace stds;
+namespace utils{namespace strings{
+using stds::string;
+using stds::stringstream;
 using boost::lexical_cast;
 
 string trim(const string& s, const char* t = " \t\n\r\f\v");
@@ -68,6 +69,7 @@ inline string ttos(double sec){
 
     return times.str();
 }
-}
+
+}}
 #endif	/* STRINGUTILS_H */
 

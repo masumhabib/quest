@@ -30,16 +30,15 @@
 #include "utils/Exception.h"
 #include "utils/Timer.h"
 #include "utils/NullDeleter.hpp"
-
-#include "string/stringutils.h"
-
-#include "grid/grid.hpp"
+#include "utils/stringutils.h"
 
 #include "maths/svec.h"
 #include "maths/constants.h"
 #include "maths/trace.hpp"
 #include "maths/fermi.hpp"
 #include "maths/geometry.hpp"
+#include "maths/grid.hpp"
+#include "maths/linspace.hpp"
 
 #include "atoms/Lattice.h"
 #include "atoms/AtomicStruct.h"
