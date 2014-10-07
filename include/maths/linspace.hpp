@@ -42,8 +42,6 @@ Col<T> linspace(T start, T end, T delta){
         end = start + (N - 1)*delta;
     }
     
-    using namespace utils::stds;
-    dout << "DBG: beg = " << start <<  " end = " << end << " delta = " << delta << endl;
     return maths::armadillo::linspace<Col<T> >(start, end, N);
 }
 
