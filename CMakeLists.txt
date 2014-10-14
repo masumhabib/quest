@@ -8,8 +8,8 @@ cmake_minimum_required(VERSION 2.8)
 
 # Version
 set(QMICAD_MAJOR 0)
-set(QMICAD_MINOR 08)
-set(QMICAD_PATCH 1)
+set(QMICAD_MINOR 09)
+set(QMICAD_PATCH 0)
 
 # Add local usr path for locally compiled libraries
 set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
