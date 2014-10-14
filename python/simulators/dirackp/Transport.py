@@ -598,6 +598,7 @@ class Transport(object):
                     self.rgf.Hl(self.Hl[ib], ib)     # Hl: 1 to N+1=nb-1                            
             self.rgf.Hl(self.Hl[1], 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
             self.rgf.Hl(self.Hl[ib], ib+1)           # Set H_N+2,N+1 = H_N+1,N            
+            
         # Enable calculations
         for type, value in self.Calculations.iteritems():
             # transmission
@@ -622,6 +623,8 @@ class Transport(object):
                                 self.rgf.enablen(n["N"], ib)
                         else:
                             self.rgf.enablen(n["N"], n["Block"])
+        if (hasattr, "atomsTracedOver"):
+            self.rgf.atomsTracedOver = self.atomsTracedOver;
     
         # Loop over drain and gate bias
         for VDD in self.VDD:

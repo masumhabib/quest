@@ -15,13 +15,7 @@ CohRgfLoop::CohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ieta,
         bool orthogonal, uint nTransNeigh, string newprefix): Printable(newprefix), 
         mrgf(nb, kT, ieta, orthogonal, " " + newprefix), mbar("  NEGF: "),
         mWorkers(workers) 
-{
-//    mH0.set_size(nb, 1);
-//    mS0.set_size(nb, 1);
-//    mHl.set_size(nb+1, 1);
-//    mSl.set_size(nb+1, 1);
-    
-
+{    
     mH0.set_size(nb, nTransNeigh+1);
     mS0.set_size(nb, nTransNeigh+1);
     mHl.set_size(nb+1, nTransNeigh+1);
@@ -32,7 +26,6 @@ CohRgfLoop::CohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ieta,
     mV.set_size(nb);
     
     integrateOverKpoints = false;
-
 }
 
 void CohRgfLoop::E(const vec &E){
@@ -139,6 +132,7 @@ void CohRgfLoop::pvl(shared_ptr<vec> pvl, int ib, int ineigh){
     }
 }
 
+
 void CohRgfLoop::enableTE(uint N){
     mTE.tag = "TRANSMISSION";
     mTE.N = N;
@@ -164,6 +158,10 @@ void CohRgfLoop::enablep(uint N, int ib){
     mpOp.push_back(RgfResult("p", N, ib, ib));
     mThispOp.push_back(cxmat_vec());
 
+}
+
+void CohRgfLoop::atomsTracedOver(shared_ptr<ucol> atomsTracedOver){
+    matomsTracedOver = atomsTracedOver;
 }
 
 string CohRgfLoop::toString() const {
@@ -284,27 +282,27 @@ void CohRgfLoop::compute(){
     
     // Transmission
     if(mTE.isEnabled()){
-        r = mrgf.TEop(mTE.N);  // M => T(E)
+        r = mrgf.TEop(mTE.N, matomsTracedOver.get());  // M => T(E)
         mThisTE.push_back(r);  
     }
     // Current
     for (int it = 0; it < mIop.size(); ++it){
-        r = mrgf.Iop(mIop[it].N,  mIop[it].ib, mIop[it].jb); 
+        r = mrgf.Iop(mIop[it].N,  mIop[it].ib, mIop[it].jb, matomsTracedOver.get()); 
         mThisIop[it].push_back(r);           // ThisIop[it] => vector of Iop()
     }
     // Density of States
     if(mDOS.isEnabled()){
-        r = mrgf.DOSop(mDOS.N);  // M => DOS(E)
+        r = mrgf.DOSop(mDOS.N, matomsTracedOver.get());  // M => DOS(E)
         mThisDOS.push_back(r);  
     }
     // Non-equilibrium electron density
     for (int it = 0; it < mnOp.size(); ++it){
-        r = mrgf.nOp(mnOp[it].N,  mnOp[it].ib); 
+        r = mrgf.nOp(mnOp[it].N,  mnOp[it].ib, matomsTracedOver.get()); 
         mThisnOp[it].push_back(r);           // Thisnop[it] => vector of nop()
     }
     // Non-equilibrium hole density
     for (int it = 0; it < mpOp.size(); ++it){
-        r = mrgf.pOp(mpOp[it].N,  mpOp[it].ib); 
+        r = mrgf.pOp(mpOp[it].N,  mpOp[it].ib, matomsTracedOver.get()); 
         mThispOp[it].push_back(r);        
     }    
 

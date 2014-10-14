@@ -41,6 +41,7 @@ public:
     void            V(bp::object Sl, int ib);
     void            pv0(bp::object pv0, int ib, int ineigh);
     void            pvl(bp::object pv0, int ib, int ineigh);
+    void            atomsTracedOver(bp::object atomsTracedOver);
 
 };
 

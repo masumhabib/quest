@@ -66,6 +66,7 @@ public:
     void            enableDOS(uint N = 1);
     void            enablen(uint N = 1, int ib = -1); //!< Electron density.
     void            enablep(uint N = 1, int ib = -1); //!< Hole density.
+    void            atomsTracedOver(shared_ptr<ucol> atomsTracedOver);
     
     virtual string  toString() const;
     
@@ -90,6 +91,8 @@ protected:
     vec                   mE;           //!< Energy grid.
     mat                   mk;           //!< Wave vector.
     bool                  integrateOverKpoints;//!< integrate over k-point?
+    
+    shared_ptr<ucol>      matomsTracedOver; //!< A list of atoms on which trace will be performed.
     
     // Hamiltonian , overlap and potential
     field<shared_ptr<cxmat> >mH0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i

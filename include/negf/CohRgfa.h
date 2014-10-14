@@ -232,19 +232,12 @@ public:
     
     virtual string toString() const;
     
-    // Density operator
-    cxmat       pOp(uint N = 1, int ib = -1);
-    cxmat       nOp(uint N = 1, int ib = -1);
-    
-    // Density of states
-    cxmat       DOSop(uint N = 1);
-    
-    // Spectral function
-    cxmat       Aop(uint N = 1, uint ib = 1);
-    
-    cxmat       Iop(uint N = 1, uint ib = 0, uint jb = 0); //!< Generic current operators: current from block i to block j.
-    
-    cxmat       TEop(uint N = 1); //!< Transmission operator
+    cxmat       pOp(uint N = 1, int ib = -1, ucol *atomsTracedOver = 0); //!< hole density.
+    cxmat       nOp(uint N = 1, int ib = -1, ucol *atomsTracedOver = 0); //!< electron density.
+    cxmat       DOSop(uint N = 1, ucol *atomsTracedOver = 0); //!< density of states.
+    cxmat       Aop(uint N = 1, uint ib = 1, ucol *atomsTracedOver = 0); //!< spectral function.    
+    cxmat       Iop(uint N = 1, uint ib = 0, uint jb = 0, ucol *atomsTracedOver = 0); //!< Generic current operators: current from block i to block j.
+    cxmat       TEop(uint N = 1, ucol *atomsTracedOver = 0); //!< Transmission operator
     
     
 protected:
@@ -258,9 +251,9 @@ protected:
     inline const cxmat&   GamL11();
     inline const cxmat&   GamRNN();
     
-    inline cxmat Iijop(uint N, uint ib, uint jb); //!< Current from block i to block j.
-    inline cxmat INop(uint N); //!< Current injected from terminal # N to device.
-    inline cxmat I0op(uint N); //!< Current injected from terminal # 0 to device.
+    inline cxmat Iijop(uint ib, uint jb); //!< Current from block i to block j.
+    inline cxmat INop(); //!< Current injected from terminal # N to device.
+    inline cxmat I0op(); //!< Current injected from terminal # 0 to device.
 
     inline cxmat Gn(uint ib, uint jb); //!< Correlation function.
     inline const cxmat& G(uint ib, uint jb); //!< Retarded green function.

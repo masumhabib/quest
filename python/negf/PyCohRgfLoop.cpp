@@ -63,6 +63,10 @@ void PyCohRgfLoop::pvl(bp::object pvl, int ib, int ineigh){
     mpvl(ib, ineigh) = npy2col<double>(pvl);
 }
 
+void PyCohRgfLoop::atomsTracedOver(bp::object atomsTracedOver){
+    matomsTracedOver = npy2col<uint>(atomsTracedOver);
+}
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableTE, enableTE, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableI, enableI, 0, 3)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableDOS, enableDOS, 0, 1)
@@ -80,6 +84,7 @@ void (PyCohRgfLoop::*PyCohRgfLoop_Sl_2)(bp::object, int) = &PyCohRgfLoop::Sl;
 void (PyCohRgfLoop::*PyCohRgfLoop_V)(bp::object, int) = &PyCohRgfLoop::V;
 void (PyCohRgfLoop::*PyCohRgfLoop_pv0_1)(bp::object, int, int) = &PyCohRgfLoop::pv0;
 void (PyCohRgfLoop::*PyCohRgfLoop_pvl_1)(bp::object, int, int) = &PyCohRgfLoop::pvl;
+void (PyCohRgfLoop::*PyCohRgfLoop_atomsTracedOver_1)(bp::object) = &PyCohRgfLoop::atomsTracedOver;
 void export_CohRgfLoop(){
     // ~~~~~~~~ To avoid nasty numpy segfault ~~~~~~~
     import_array(); 
@@ -104,6 +109,7 @@ void export_CohRgfLoop(){
         .def("V", PyCohRgfLoop_V)
         .def("pv0", PyCohRgfLoop_pv0_1)
         .def("pvl", PyCohRgfLoop_pvl_1)
+        .def("pvl", PyCohRgfLoop_atomsTracedOver_1)
         .def("run", &PyCohRgfLoop::run)
         .def("save", &PyCohRgfLoop::save, PyCohRgfLoop_save())
         .def("enableTE", &PyCohRgfLoop::enableTE, PyCohRgfLoop_enableTE())
