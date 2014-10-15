@@ -109,7 +109,7 @@ void export_CohRgfLoop(){
         .def("V", PyCohRgfLoop_V)
         .def("pv0", PyCohRgfLoop_pv0_1)
         .def("pvl", PyCohRgfLoop_pvl_1)
-        .def("pvl", PyCohRgfLoop_atomsTracedOver_1)
+        .def("atomsTracedOver", PyCohRgfLoop_atomsTracedOver_1)
         .def("run", &PyCohRgfLoop::run)
         .def("save", &PyCohRgfLoop::save, PyCohRgfLoop_save())
         .def("enableTE", &PyCohRgfLoop::enableTE, PyCohRgfLoop_enableTE())

@@ -624,7 +624,7 @@ class Transport(object):
                         else:
                             self.rgf.enablen(n["N"], n["Block"])
         if (hasattr, "atomsTracedOver"):
-            self.rgf.atomsTracedOver = self.atomsTracedOver;
+            self.rgf.atomsTracedOver(self.atomsTracedOver);
     
         # Loop over drain and gate bias
         for VDD in self.VDD:

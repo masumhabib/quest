@@ -198,7 +198,7 @@ cxmat CohRgfa::TEop(uint N, ucol *traveOveratoms){
     const cxmat &G11 = mGii(1);                       // Get or caluclate G_1,1
     const cxmat &Gaml11 = GamL11();
     cxmat G11a = trans(G11);
-    cxmat TEop = Gaml11*(i*(G11 - G11a) - G11*Gaml11*G11a);    
+    cxmat TEop = Gaml11*(i*(G11 - G11a) - G11*Gaml11*G11a); 
     return trace<cxmat>(TEop, N, traveOveratoms);
 }
 
