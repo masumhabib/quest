@@ -10,6 +10,18 @@ extended Huckel method and density functional theory codes. This library also
 includes a generic empirical tight binding model and a k.p model which can be 
 extended for any material with known parameters.
 
+Dependencies
+-------------
+
+The following libraries are needed to build QMICAD:
+
+* CMake >= 2.8
+* Boost >= 1.55 (Boost.MPI and Boost.Python)
+* Armadillo >= 4.x
+* BLAS+LAPACK (Intel MKL)
+* Python >= 2.7
+* Doxygen >= 1.8
+
 Installation
 -------------
 Download and unzip source. Then configure using cmake:   
@@ -23,6 +35,13 @@ To change installation directory, change `~/` to `/your/install/path`.
 
 To create documentation do:   
 `$ ./configure build doc`
+
+
+Documentation
+--------------
+
+Please see the documentation produced by doxygen. 
+We also have a[wiki](https://bitbucket.org/masumhabib/qmicad/wiki/Home).
 
 
 Copyright Notice
