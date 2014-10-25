@@ -12,26 +12,23 @@ extended for any material with known parameters.
 
 Installation
 -------------
-Download and unzip source. Then configure using cmake:
+Download and unzip source. Then configure using cmake:   
+$ ./configure
 
-`$ ./configure`
-
-Make and install using:
-
-`$ ./configure build`
-
-`$ ./configure install ~/` 
+Make and install using:   
+$ ./configure build   
+$ ./configure install ~/
 
 To change installation directory, change `~/` to `/your/install/path`.
 
-To create documentation do:
+To create documentation do:   
+$ ./configure build doc
 
-`$ ./configure build doc`
 
 Copyright Notice
 ----------------
 
-`Quantum Mechanics Inspired Computer Aided Design (QMICAD)
+Quantum Mechanics Inspired Computer Aided Design (QMICAD)
 Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com
 
 This library is free software; you can redistribute it and/or
@@ -46,6 +43,6 @@ Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.`
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
           
  
