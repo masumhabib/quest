@@ -11,13 +11,13 @@ includes a generic empirical tight binding model and a k.p model which can be
 extended for any material with known parameters.
 
 Unlike most of the quantum transport tools available out there, 
-QMICAD is a *not* a predefined simulator for a predefined problem for 
+QMICAD is a *not* a predefined simulator for a predefined problem in 
 a predefined device structure. Rather, it is a flexible toolbox 
 that allows users to write their own simulators best-suited for their 
 own problems. 
 
 Deep down, QMICAD is a C++ library that uses BLAS and LAPACK for computation.
-QMICAD provides both C++ and Python interfaces so that one can choose between 
+Yet, QMICAD provides both C++ and Python interfaces so that one can choose between 
 the elegance of C++ and ease of Python.
 
 Dependencies
