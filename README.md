@@ -13,16 +13,16 @@ extended for any material with known parameters.
 Installation
 -------------
 Download and unzip source. Then configure using cmake:   
-$ ./configure
+`$ ./configure`
 
 Make and install using:   
-$ ./configure build   
-$ ./configure install ~/
+`$ ./configure build`   
+`$ ./configure install ~/`
 
 To change installation directory, change `~/` to `/your/install/path`.
 
 To create documentation do:   
-$ ./configure build doc
+`$ ./configure build doc`
 
 
 Copyright Notice
