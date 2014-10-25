@@ -41,7 +41,7 @@ Documentation
 --------------
 
 Please see the documentation produced by doxygen. 
-We also have a[wiki](https://bitbucket.org/masumhabib/qmicad/wiki/Home).
+We also have a [wiki](https://bitbucket.org/masumhabib/qmicad/wiki/Home).
 
 
 Copyright Notice
