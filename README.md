@@ -10,19 +10,49 @@ extended Huckel method and density functional theory codes. This library also
 includes a generic empirical tight binding model and a k.p model which can be 
 extended for any material with known parameters.
 
+Unlike most of the quantum transport tools available out there, 
+QMICAD is a *not* a predefined simulator for a predefined problem in 
+a predefined device structure. Rather, it is a flexible toolbox 
+that allows users to write their own simulators best-suited for their 
+own problems. 
+
+Deep down, QMICAD is a C++ library that uses BLAS and LAPACK for computation.
+Yet, QMICAD provides both C++ and Python interfaces so that one can choose between 
+the elegance of C++ and ease of Python.
+
+Dependencies
+-------------
+
+The following libraries are needed to build QMICAD:
+
+* CMake >= 2.8
+* Boost >= 1.55 (Boost.MPI and Boost.Python)
+* Armadillo >= 4.x
+* BLAS+LAPACK (Intel MKL)
+* Python >= 2.7
+* Doxygen >= 1.8
+
 Installation
 -------------
-Download and unzip source. Create a folder named 'build':
-$ mkdir build
-$ cd build
-Then configure using cmake:
-$ cmake ../
-Make and install using:
-$ make
-$ make install DESTDIR=~/ 
-To change installation directory, change DESTDIR option.
-To create documentation do:
-$ make doc
+Download and unzip source. Then configure using cmake:   
+`$ ./configure`
+
+Make and install using:   
+`$ ./configure build`   
+`$ ./configure install ~/`
+
+To change installation directory, change `~/` to `/your/install/path`.
+
+To create documentation do:   
+`$ ./configure build doc`
+
+
+Documentation
+--------------
+
+Please see the documentation produced by doxygen. 
+We also have a [wiki](https://bitbucket.org/masumhabib/qmicad/wiki/Home).
+
 
 Copyright Notice
 ----------------
