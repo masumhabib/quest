@@ -25,7 +25,7 @@ message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 # Options
 # -----------------------------------------------------------------------------
 set(CMAKE_VERBOSE_MAKEFILE      off)
-set(LINK_SEARCH_START_STATIC    on)
+#set(LINK_SEARCH_START_STATIC    on)
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -35,7 +35,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to 'Release' as none was specified.")
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
     # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"x )
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" )
 endif()
 
 # Compiler flags
@@ -55,7 +55,7 @@ find_package(MPI REQUIRED)
 find_package(PythonLibs REQUIRED)
 
 # MKL
-find_package(MKL REQUIRED)
+#find_package(MKL REQUIRED)
 
 # doxygen
 find_package(Doxygen)
@@ -64,12 +64,12 @@ find_package(Doxygen)
 # Shared linking of libboost_python is required for mpi::communicator
 # to work both in python and C++.
 set(Boost_USE_MULTITHREADED     off)
-set(Boost_USE_STATIC_LIBS       off)
+#set(Boost_USE_STATIC_LIBS       off)
 find_package(Boost 1.55 REQUIRED python)
 set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
 unset(Boost_LIBRARIES)
 unset(Boost_PYTHON_LIBRARIES)
-set(Boost_USE_STATIC_LIBS       on)
+#set(Boost_USE_STATIC_LIBS       on)
 find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
 
 # Sources and headers
@@ -109,8 +109,9 @@ target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_PYTHON_LIBRARIES})
 target_link_libraries (qmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
-target_link_libraries (qmicad ${MPI_LIBRARIES})
-target_link_libraries (qmicad ${MKL_LIBRARIES})
+#target_link_libraries (qmicad ${MPI_LIBRARIES})
+target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
+#target_link_libraries (qmicad ${MKL_LIBRARIES})
 set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # Prepare qmicad package
