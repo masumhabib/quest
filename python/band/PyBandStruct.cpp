@@ -20,11 +20,18 @@ PyBandStruct::PyBandStruct(const Workers &workers, uint nn,  bool orthoBasis,
 
 void PyBandStruct::H(bp::object H, int ineigh){
     shared_ptr<cxmat> HH = npy2mat<dcmplx>(H);
+    if (HH == 0){
+        throw runtime_error("In PyBandStruct::H(): cannot convert numpy array to C++ matrix");
+    }
     BandStruct::H(HH, ineigh);
 }
 
 void PyBandStruct::S(bp::object S, int ineigh){
     shared_ptr<cxmat> SS = npy2mat<dcmplx>(S);
+    if (SS == 0){
+        throw runtime_error("In PyBandStruct::HS(): cannot convert numpy array to C++ matrix");
+    }
+
     BandStruct::S(SS, ineigh);
 }
 

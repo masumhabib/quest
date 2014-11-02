@@ -15,8 +15,12 @@
 #include "utils/std.hpp"
 #include <numpy/arrayobject.h>
 #include <armadillo>
+#include <boost/smart_ptr.hpp>
 
 namespace qmicad{ namespace python{
+
+using boost::shared_ptr;
+using boost::make_shared;
 
 namespace bp = boost::python;
 using namespace utils::stds;
@@ -25,6 +29,8 @@ namespace ar = arma;
 template <typename T> int ctype_to_npytype() {
     throw runtime_error("Type not supported in C++.");
 }
+
+string type_to_string(int type);
 
 
 /**
@@ -81,30 +87,36 @@ shared_ptr<ar::Mat<T> > npy2mat(bp::object obj){
                     
     PyObject *objp = obj.ptr();
     PyArrayObject* a = (PyArrayObject*)objp;
+    shared_ptr<ar::Mat<T> > out;
     
-    if(PyArray_Check(objp)){ // if this is a PyArray
+    if(!PyArray_Check(objp)){ // if this is NOT a a PyArray, we cannot continue.
+        throw invalid_argument("In npy2mat(obj): obj is not a numpy array.\n");
+    }
         
-        PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(objp);            
-        
-        if(ctype_to_npytype<T>() == PyArray_DESCR(arr)->type_num){ // if array has the same type
-            if(arr->nd == 2){ 
-                if(arr->flags &  NPY_F_CONTIGUOUS){
-                    shared_ptr<ar::Mat<T> > out(new ar::Mat<T>((T*)a->data,  a->dimensions[0], a->dimensions[1], false, true));
-                    return out;
-                }else if (arr->flags &  NPY_C_CONTIGUOUS){
-                    shared_ptr<ar::Mat<T> > out(new ar::Mat<T>(a->dimensions[0], a->dimensions[1]));
-                    for (int i = 0; i < a->dimensions[0]; ++i){
-                        for (int j = 0; j < a->dimensions[1]; ++j){
-                            (*out)(i,j) = *static_cast<T*>(PyArray_GETPTR2(arr, i, j));
-                        }
-                    }        
+    PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(objp);            
+    int given_type = PyArray_DESCR(arr)->type_num;
+    int expected_type = ctype_to_npytype<T>();
+    
+    if(expected_type != given_type){ // if array is NOT the same type
+        throw invalid_argument(string("In npy2mat(obj): obj is a ") + type_to_string(given_type) + ", but a " + type_to_string(expected_type) + " was expected.");
+    }
 
-                    return out;
-                }
+    if(arr->nd != 2){ // if NOT matrix
+        throw invalid_argument("In npy2mat(obj): obj is NOT a matrix.");
+    }
+    
+    if(arr->flags &  NPY_F_CONTIGUOUS){
+        out = shared_ptr<ar::Mat<T> >(new ar::Mat<T>((T*)a->data,  a->dimensions[0], a->dimensions[1], false, true));
+    }else if (arr->flags &  NPY_C_CONTIGUOUS){
+        out = make_shared<ar::Mat<T> >(a->dimensions[0], a->dimensions[1]);
+        for (int i = 0; i < a->dimensions[0]; ++i){
+            for (int j = 0; j < a->dimensions[1]; ++j){
+                (*out)(i,j) = *static_cast<T*>(PyArray_GETPTR2(arr, i, j));
             }
         }
     }
-    return  shared_ptr<ar::Mat<T> >(); // Failure, return null.
+    
+    return  out;
 }
 
 
