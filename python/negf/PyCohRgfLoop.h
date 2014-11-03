@@ -29,19 +29,28 @@ public:
         string newprefix = ""); 
     
     // For python binding
-    void            H0(bp::object H0, int ib, int ineigh);
-    void            S0(bp::object S0, int ib, int ineigh);
-    void            Hl(bp::object Hl, int ib, int ineigh);
-    void            Sl(bp::object Sl, int ib, int ineigh);    
-    void            H0(bp::object H0, int ib);
-    void            S0(bp::object S0, int ib);
-    void            Hl(bp::object Hl, int ib);
-    void            Sl(bp::object Sl, int ib);    
+//    void            H0(bp::object H0, int ib, int ineigh);
+//    void            S0(bp::object S0, int ib, int ineigh);
+//    void            Hl(bp::object Hl, int ib, int ineigh);
+//    void            Sl(bp::object Sl, int ib, int ineigh);    
+//    void            H0(bp::object H0, int ib);
+//    void            S0(bp::object S0, int ib);
+//    void            Hl(bp::object Hl, int ib);
+//    void            Sl(bp::object Sl, int ib);    
+    void            H0(const cxmat& H0, int ib, int ineigh);
+    void            S0(const cxmat& S0, int ib, int ineigh);
+    void            Hl(const cxmat& Hl, int ib, int ineigh);
+    void            Sl(const cxmat& Sl, int ib, int ineigh);    
+    void            H0(const cxmat& H0, int ib);
+    void            S0(const cxmat& S0, int ib);
+    void            Hl(const cxmat& Hl, int ib);
+    void            Sl(const cxmat& Sl, int ib);    
 
-    void            V(bp::object Sl, int ib);
-    void            pv0(bp::object pv0, int ib, int ineigh);
-    void            pvl(bp::object pv0, int ib, int ineigh);
-    void            atomsTracedOver(bp::object atomsTracedOver);
+    void            V(const col& Sl, int ib);
+    void            pv0(const col& pv0, int ib, int ineigh);
+    void            pvl(const col& pv0, int ib, int ineigh);
+
+    void            atomsTracedOver(const ucol& atomsTracedOver);
 
 };
 

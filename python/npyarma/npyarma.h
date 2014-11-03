@@ -18,6 +18,9 @@
 
 namespace qmicad{ namespace python{
 
+using std::shared_ptr;
+using std::make_shared;
+
 namespace bp = boost::python;
 using namespace utils::stds;
 namespace ar = arma;
@@ -26,27 +29,55 @@ template <typename T> int ctype_to_npytype() {
     throw runtime_error("Type not supported in C++.");
 }
 
+string type_to_string(int type);
+
+template<typename T>
+PyArrayObject* convertible(bp::object obj, int ndim){
+    PyObject *objp = obj.ptr();
+    PyArrayObject* arr = 0;
+    
+    if(!PyArray_Check(objp)){ // if this is NOT a a PyArray, we cannot continue.
+        throw invalid_argument("obj is not a numpy-array.\n");
+    }
+        
+    arr = reinterpret_cast<PyArrayObject*>(objp);            
+    int given_type = PyArray_DESCR(arr)->type_num;
+    int expected_type = ctype_to_npytype<T>();
+    
+    if(expected_type != given_type){ // if array is NOT the same type
+        throw invalid_argument(string("obj is a ") + type_to_string(given_type) + " numpy-array, but a " + type_to_string(expected_type) + " was expected.");
+    }
+
+    if(arr->nd != ndim){ // if NOT matrix
+        stringstream err;
+        err << " expected a " << ndim << "numpy array, but got a " <<  arr->nd << " array." << endl;
+        throw invalid_argument(err.str());
+    }
+    
+    return arr;
+}
 
 /**
  * Converter for boost::python::object & to Col<T>.
  */
 template<typename T>
 shared_ptr<ar::Col<T> > npy2col(bp::object obj){
+    shared_ptr<ar::Col<T> > out;
+    PyArrayObject* arr = 0;
     
-    PyObject *objp = obj.ptr();
-    PyArrayObject* a = (PyArrayObject*)objp;
-    if(PyArray_Check(objp)){ // if this is a PyArray
-        PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(objp);            
-        if(ctype_to_npytype<T>() == PyArray_DESCR(arr)->type_num){ // if array has the same type
-            if(arr->nd == 1){ // if array is 1 dimensional
-                if(arr->flags &  NPY_F_CONTIGUOUS || arr->flags &  NPY_C_CONTIGUOUS){
-                    
-                    shared_ptr<ar::Col<T> > out(new ar::Col<T>((T*)a->data,  a->dimensions[0], false, true));
-                    return out;
-                }
-            }
-        }
-    }    
+    try{
+        arr = convertible<T>(obj,1);
+    }catch(const invalid_argument &e){
+        throw invalid_argument(string("In npy2col(obj): ") + e.what());
+    }
+    
+    if(arr->flags &  NPY_F_CONTIGUOUS || arr->flags &  NPY_C_CONTIGUOUS){
+
+        out = make_shared<ar::Col<T> > ((T*)arr->data,  arr->dimensions[0], false, true);
+        
+    }
+    
+    return out;
 }
 
 /**
@@ -54,60 +85,50 @@ shared_ptr<ar::Col<T> > npy2col(bp::object obj){
  */
 template<typename T>
 shared_ptr<ar::Row<T> > npy2row(bp::object obj){
+    shared_ptr<ar::Row<T> > out;
+    PyArrayObject* arr = 0;
     
-    PyObject *objp = obj.ptr();
-    PyArrayObject* a = (PyArrayObject*)objp;
-    if(PyArray_Check(objp)){ // if this is a PyArray
-        PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(objp);            
-        if(ctype_to_npytype<T>() == PyArray_DESCR(arr)->type_num){ // if array has the same type
-            if(arr->nd == 1){ // if array is 1 dimensional
-                if(arr->flags &  NPY_F_CONTIGUOUS || arr->flags &  NPY_C_CONTIGUOUS){
-                    
-                    shared_ptr<ar::Row<T> > out(new ar::Row<T>((T*)a->data,  a->dimensions[0], false, true));
-                    return out;
-                }
-            }
-        }
-    }    
+    try{
+        arr = convertible<T>(obj,1);
+    }catch(const invalid_argument &e){
+        throw invalid_argument(string("In npy2row(obj): ") + e.what());
+    }
+    
+    if(arr->flags &  NPY_F_CONTIGUOUS || arr->flags &  NPY_C_CONTIGUOUS){
+        out = make_shared<ar::Row<T> >((T*)arr->data,  arr->dimensions[0], false, true);
+    }
+    return out;
 }
 
 
 /**
  * Converter for boost::python::object & to Mat<T>.
+ * @FIXME: does not work for gcc-4.8
  */
 template<typename T>
-shared_ptr<ar::Mat<T> > npy2mat(bp::object obj){
-
-                    
-    PyObject *objp = obj.ptr();
-    PyArrayObject* a = (PyArrayObject*)objp;
+shared_ptr<ar::Mat<T> > npy2mat(bp::object obj){    
+    shared_ptr<ar::Mat<T> > out;
+    PyArrayObject* arr = 0;
     
-    if(PyArray_Check(objp)){ // if this is a PyArray
-        
-        PyArrayObject* arr = reinterpret_cast<PyArrayObject*>(objp);            
-        
-        if(ctype_to_npytype<T>() == PyArray_DESCR(arr)->type_num){ // if array has the same type
-            if(arr->nd == 2){ 
-                if(arr->flags &  NPY_F_CONTIGUOUS){
-                    shared_ptr<ar::Mat<T> > out(new ar::Mat<T>((T*)a->data,  a->dimensions[0], a->dimensions[1], false, true));
-                    return out;
-                }else if (arr->flags &  NPY_C_CONTIGUOUS){
-                    shared_ptr<ar::Mat<T> > out(new ar::Mat<T>(a->dimensions[0], a->dimensions[1]));
-                    for (int i = 0; i < a->dimensions[0]; ++i){
-                        for (int j = 0; j < a->dimensions[1]; ++j){
-                            (*out)(i,j) = *static_cast<T*>(PyArray_GETPTR2(arr, i, j));
-                        }
-                    }        
-
-                    return out;
-                }
+    try{
+        arr = convertible<T>(obj,2);
+    }catch(const invalid_argument &e){
+        throw invalid_argument(string("In npy2mat(obj): ") + e.what());
+    }
+    
+    if(arr->flags &  NPY_F_CONTIGUOUS){
+        out = make_shared<ar::Mat<T> >((T*)arr->data,  arr->dimensions[0], arr->dimensions[1], false, true);
+    }else if (arr->flags &  NPY_C_CONTIGUOUS){
+        out = make_shared<ar::Mat<T> >(arr->dimensions[0], arr->dimensions[1]);
+        for (int i = 0; i < arr->dimensions[0]; ++i){
+            for (int j = 0; j < arr->dimensions[1]; ++j){
+                (*out)(i,j) = *static_cast<T*>(PyArray_GETPTR2(arr, i, j));
             }
         }
     }
-    return  shared_ptr<ar::Mat<T> >(); // Failure, return null.
+    
+    return  out;
 }
-
-
 
 /**
  * Objects of this type create a binding between arma::Col<T> and

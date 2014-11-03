@@ -19,7 +19,7 @@ function usage(){
 function doconfig(){
     mkdir -p build
     cd build
-    cmake28 ../
+    cmake ../
 }
 
 ncpu="4"

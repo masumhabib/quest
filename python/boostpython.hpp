@@ -18,12 +18,13 @@
 #include <boost/python/str.hpp>
 #include <boost/python/detail/wrap_python.hpp>
 #include <boost/mpi/python.hpp>
+#include <memory>
 
 namespace qmicad{
 namespace python{
 
 using namespace boost::python;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::noncopyable;
 
 }

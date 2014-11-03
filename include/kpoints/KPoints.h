@@ -14,8 +14,7 @@
 #include "utils/NullDeleter.hpp"
 #include "utils/vout.h"
 #include "utils/Printable.hpp"
-
-#include <boost/shared_ptr.hpp>
+#include "utils/std.hpp"
 
 namespace qmicad{
 namespace kpoints{
@@ -27,8 +26,6 @@ using utils::Printable;
 using namespace maths::spvec;
 using namespace maths::armadillo;
 using maths::geometry::point;
-
-using boost::shared_ptr;
 
 class KPoints: public Printable {
 public:

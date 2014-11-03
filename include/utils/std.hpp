@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <functional>
 #include <cmath>
+#include <memory>
 
 namespace utils{
 namespace stds{
@@ -53,6 +54,11 @@ using std::invalid_argument;
 using std::runtime_error;
 
 using std::binary_function;
+
+using std::make_shared;
+using std::shared_ptr;
+using std::unique_ptr;
+using std::static_pointer_cast;
 
 }
 }

@@ -18,8 +18,6 @@
 #include "utils/std.hpp"
 #include "utils/stringutils.h"
 
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 
 namespace qmicad{
 namespace potential{
@@ -28,8 +26,6 @@ using utils::strings::itos;
 using namespace atoms;
 using namespace utils::stds;
 using namespace maths::spvec;
-using boost::shared_ptr;
-using boost::make_shared;
 
 /**
  * Potential class handles electrostatic potential.

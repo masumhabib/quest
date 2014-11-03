@@ -15,13 +15,13 @@
 #include "utils/std.hpp"
 #include "utils/vout.h"
 #include "utils/serialize.hpp"
+#include "utils/std.hpp"
 #include "maths/fermi.hpp"
 #include "parallel/Workers.h"
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/smart_ptr.hpp>
 
 #include <iterator>
 
@@ -30,8 +30,6 @@ namespace negf{
 
 using namespace utils::stds;
 using namespace qmicad::parallel;
-using boost::shared_ptr;
-using boost::make_shared;
 namespace mpi = boost::mpi;
 
 /*

@@ -20,9 +20,6 @@
 namespace qmicad{
 namespace hamiltonian{
 
-using boost::static_pointer_cast;
-using namespace maths::armadillo;
-
 class GrapheneTbParams: public cxhamparams{
 public:
     // Constructor

@@ -29,7 +29,7 @@ def simulate(workers):
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.08.0-dev"
+    tr.VERSION_REQUIRED = "0.09.0"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False
@@ -87,10 +87,10 @@ def simulate(workers):
 
     # --------------------------------------------------------------
     if qmicad.version != tr.VERSION_REQUIRED:
-        str = "QMICAD version mismatch. Required "
-        str += str(bs.VERSION_REQUIRED) + ". Got "
-        str += str(qmicad.version)
-        raise(str)
+        msg = "QMICAD version mismatch. Required "
+        msg += str(bs.VERSION_REQUIRED) + ". Got "
+        msg += str(qmicad.version)
+        raise(msg)
 
     
     # Get the total length

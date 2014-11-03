@@ -8,6 +8,7 @@
 #ifndef PYBANDSTRUCT_H
 #define	PYBANDSTRUCT_H
 
+#include "utils/std.hpp"
 #include "band/BandStruct.h"
 #include "boostpython.hpp"
 #include "npyarma/npyarma.h"
@@ -25,8 +26,10 @@ public:
     PyBandStruct(const Workers &workers, uint nn,  bool orthoBasis = true, 
             bool calcEigV = false, const string &prefix = "");
     
-    void    H(bp::object H, int ineigh);
-    void    S(bp::object S, int ineigh);    
+    //void    H(bp::object H, int ineigh);
+    //void    S(bp::object S, int ineigh); 
+    void H(const cxmat& H, int ineigh);
+    void S(const cxmat& H, int ineigh);
 };
 
 }}
