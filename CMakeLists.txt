@@ -127,10 +127,7 @@ file(GLOB_RECURSE QMICAD_HEADERS "include/*.h*")
 add_library(qmicad SHARED ${QMICAD_SOURCES} ${QMICAD_HEADERS})
 
 # linking
-target_link_libraries (qmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
-target_link_libraries (qmicad ${Boost_PYTHON_LIBRARIES})
-target_link_libraries (qmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
 target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
 set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
@@ -174,9 +171,12 @@ add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
 
 # linking
 target_link_libraries (pyqmicad qmicad)
-set_target_properties(pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
-set_target_properties(pyqmicad PROPERTIES PREFIX "")
-set_target_properties(pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
+target_link_libraries (pyqmicad ${Boost_MPI_PYTHON_LIBRARIES})
+target_link_libraries (pyqmicad ${Boost_PYTHON_LIBRARIES})
+target_link_libraries (pyqmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
+set_target_properties (pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
+set_target_properties (pyqmicad PROPERTIES PREFIX "")
+set_target_properties (pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
 
 # Prepare qmicad package
 add_custom_command(
