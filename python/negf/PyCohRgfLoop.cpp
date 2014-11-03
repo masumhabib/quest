@@ -99,7 +99,6 @@ void PyCohRgfLoop::pvl(const col& pvl, int ib, int ineigh){
 //void PyCohRgfLoop::atomsTracedOver(bp::object atomsTracedOver){
 //    matomsTracedOver = npy2col<uint>(atomsTracedOver);
 //}
-
 void PyCohRgfLoop::atomsTracedOver(const ucol& atomsTracedOver){
     matomsTracedOver = make_shared<ucol>(atomsTracedOver);
 }

@@ -623,7 +623,7 @@ class Transport(object):
                                 self.rgf.enablen(n["N"], ib)
                         else:
                             self.rgf.enablen(n["N"], n["Block"])
-        if (hasattr, "atomsTracedOver"):
+        if hasattr(self, "atomsTracedOver"):
             self.rgf.atomsTracedOver(self.atomsTracedOver);
     
         # Loop over drain and gate bias
