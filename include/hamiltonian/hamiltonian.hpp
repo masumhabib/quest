@@ -13,19 +13,16 @@
 
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 
 #include "maths/constants.h"
 #include "maths/arma.hpp"
 #include "atoms/AtomicStruct.h"
 #include "utils/vout.h"
+#include "utils/std.hpp"
 
 namespace qmicad{
 namespace hamiltonian{
 
-using boost::shared_ptr;
-using boost::make_shared;
 using namespace utils::stds;
 using utils::Printable;
 using namespace maths::armadillo;
@@ -33,6 +30,8 @@ using atoms::AtomicStruct;
 using atoms::PeriodicTable;
 using namespace maths::spvec;
 using namespace maths::constants;
+using utils::stds::static_pointer_cast;
+
 
 template<class T>
 class HamParams: public Printable{    
@@ -73,8 +72,7 @@ protected:
     PeriodicTable mpt;    //!< The periodic table required for this system.
     double mBz;           //!< The z-component of magnetic field.
     int    mBzGauge;      //!< gauge choice for the z-component.
-    static const double mBzTol = 1E-10;
-    //double mBzTol;
+    static constexpr double mBzTol = 1E-10;
                             
 };
 

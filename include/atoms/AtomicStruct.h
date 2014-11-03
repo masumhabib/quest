@@ -23,9 +23,7 @@
 #include "utils/Printable.hpp"
 #include "utils/serialize.hpp"
 #include "utils/vout.h"
-
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include "utils/std.hpp"
 
 namespace qmicad{
 namespace atoms{
@@ -36,11 +34,7 @@ using maths::meshgrid;
 using maths::linspace;
 using namespace utils::stds;
 using namespace maths::armadillo;
-using namespace maths::spvec;
-
-using boost::shared_ptr;
-using boost::make_shared;  
-    
+using namespace maths::spvec;    
         
 /**
  * The Atom structure describes properties of an atom as seen in 

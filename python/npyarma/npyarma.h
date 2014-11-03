@@ -15,12 +15,11 @@
 #include "utils/std.hpp"
 #include <numpy/arrayobject.h>
 #include <armadillo>
-#include <boost/smart_ptr.hpp>
 
 namespace qmicad{ namespace python{
 
-using boost::shared_ptr;
-using boost::make_shared;
+using std::shared_ptr;
+using std::make_shared;
 
 namespace bp = boost::python;
 using namespace utils::stds;

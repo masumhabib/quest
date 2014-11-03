@@ -27,7 +27,7 @@ PyBandStruct::PyBandStruct(const Workers &workers, uint nn,  bool orthoBasis,
 //}
 
 void PyBandStruct::H(const cxmat& H, int ineigh){
-    shared_ptr<cxmat> HH = make_shared<cxmat>(H);
+    auto HH = std::make_shared<cxmat>(H);
     BandStruct::H(HH, ineigh);
 }
 

@@ -17,6 +17,7 @@
 #include "utils/Printable.hpp"
 #include "utils/myenums.hpp"
 #include "utils/NullDeleter.hpp"
+#include "utils/std.hpp"
 
 #include "maths/grid.hpp"
 #include "maths/constants.h"
@@ -24,9 +25,6 @@
 #include "maths/arma.hpp"
 
 #include "atoms/Lattice.h"
-
-#include <boost/smart_ptr.hpp>
-
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -45,7 +43,7 @@ using namespace utils::enums;
 using namespace atoms;
 
 namespace mpi = boost::mpi;
-using boost::shared_ptr;
+using std::shared_ptr;
 using std::string;
 
 ///**

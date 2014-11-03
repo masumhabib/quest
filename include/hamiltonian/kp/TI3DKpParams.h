@@ -17,7 +17,6 @@
 
 namespace qmicad{namespace hamiltonian{
 
-using boost::static_pointer_cast;
 using namespace maths::armadillo;
 using namespace maths::constants;
 

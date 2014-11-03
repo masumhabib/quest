@@ -22,7 +22,7 @@ set(LINK_STATIC off)
 include(cmake/machines/fir)
 
 # Compiler flags
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # optimization
 set(CMAKE_CXX_FLAGS_RELEASE " -m64 -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
