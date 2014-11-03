@@ -267,12 +267,12 @@ void export_npyarma(){
    register_mat_to_npy<std::complex<double> >();
    //register_mat_to_npy<std::complex<long double> >();
    
-//   def("test_mat_to_npy", test_mat_to_npy<double>, " Tests arma::mat to numpy.array conversion.");
-   def("test_mat_to_npy", test_mat_to_npy<complex<double> >, " Tests arma::mat to numpy.array conversion.");
-//   def("test_npy_to_mat", test_npy_to_mat<double>, " Tests numpy.array to arma::mat conversion.");
-   def("test_npy_to_mat", test_npy_to_mat<complex<double> >, " Tests numpy.array to arma::mat conversion.");
-//   def("test_npy2mat", test_npy2mat<double>, " Tests numpy.array to arma::mat conversion.");
-   def("test_npy2mat", test_npy2mat<complex<double> >, " Tests numpy.array to arma::mat conversion.");
+   def("test_mat_to_npy", test_mat_to_npy<double>, " Tests arma::mat to numpy.array conversion.");
+//   def("test_mat_to_npy", test_mat_to_npy<complex<double> >, " Tests arma::mat to numpy.array conversion.");
+   def("test_npy_to_mat", test_npy_to_mat<double>, " Tests numpy.array to arma::mat conversion.");
+//   def("test_npy_to_mat", test_npy_to_mat<complex<double> >, " Tests numpy.array to arma::mat conversion.");
+   def("test_npy2mat", test_npy2mat<double>, " Tests numpy.array to arma::mat conversion.");
+//   def("test_npy2mat", test_npy2mat<complex<double> >, " Tests numpy.array to arma::mat conversion.");
 
    //   def("construct", construct, " Converts numpy.array to mat");
 

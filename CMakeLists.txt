@@ -15,13 +15,11 @@ set(QMICAD_PATCH 1)
 
 # Options
 set(VERBOSE_MAKE off)
-set(LINK_STATIC on)
+set(LINK_STATIC off)
 #set(CMAKE_BUILD_TYPE "Debug")
 
-# Add local usr path for locally compiled libraries
-set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
-#set(Boost_INCLUDE_DIR $ENV{HOME}/usr/include)
-#set(Boost_LIBRARY_DIR $ENV{HOME}/usr/lib)
+# Add machine specific local usr path for locally compiled libraries
+include(cmake/machines/fir)
 
 # Compiler flags
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -73,19 +71,23 @@ find_package(Doxygen)
 # Shared linking of libboost_python is required for mpi::communicator
 # to work both in python and C++.
 set(Boost_USE_MULTITHREADED     off)
-#set(Boost_USE_STATIC_LIBS       off)
+if(LINK_STATIC)
+    set(Boost_USE_STATIC_LIBS       off)
+endif()
 find_package(Boost 1.55 REQUIRED python)
 set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
 unset(Boost_LIBRARIES)
 unset(Boost_PYTHON_LIBRARIES)
-#set(Boost_USE_STATIC_LIBS       on)
+if(LINK_STATIC)
+    set(Boost_USE_STATIC_LIBS       on)
+endif()
 find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
 
 # Sources and headers
 # -----------------------------------------------------------------------------
 
 # Prepare distribution directory
-set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
+set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION}-${MACHINE_NAME})
 set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 
 # version header
