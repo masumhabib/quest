@@ -19,6 +19,7 @@ namespace qmicad{ namespace python{
 namespace bp = boost::python;
 using namespace utils::stds;
 namespace ar = arma;
+using std::complex;
 
 template <> int ctype_to_npytype<bool>() { return NPY_BOOL; }
 
@@ -41,6 +42,34 @@ template <> int ctype_to_npytype<std::complex<double> >() { return NPY_COMPLEX12
 template <> int ctype_to_npytype<std::complex<long double> >() { return NPY_COMPLEX256; }
 #endif
 
+string type_to_string(int type){
+    string type_name;
+    switch(type){
+        case NPY_BOOL: type_name = "NPY_BOOL"; break;
+        case NPY_INT8: type_name = "NPY_INT8"; break;
+        case NPY_UINT8: type_name = "NPY_UINT8"; break;
+        case NPY_INT16: type_name = "NPY_INT16"; break;
+        case NPY_UINT16: type_name = "NPY_UINT16"; break;
+        case NPY_INT32: type_name = "NPY_INT32"; break;
+        case NPY_UINT32: type_name = "NPY_UINT32"; break;
+        case NPY_INT64: type_name = "NPY_INT64"; break;
+        case NPY_UINT64: type_name = "NPY_UINT64"; break;
+        case NPY_FLOAT32: type_name = "NPY_FLOAT32"; break;
+        case NPY_FLOAT64: type_name = "NPY_FLOAT64"; break;
+        #ifdef NPY_FLOAT128
+        case NPY_FLOAT128: type_name = "NPY_FLOAT128"; break;
+        #endif
+        case NPY_COMPLEX64: type_name = "NPY_COMPLEX64"; break;
+        case NPY_COMPLEX128: type_name = "NPY_COMPLEX128"; break;
+        #ifdef NPY_COMPLEX256
+        case NPY_COMPLEX256: type_name = "NPY_COMPLEX256"; break;
+        #endif
+        
+        default: type_name = "Type not supported in C++."; break;
+    }
+    
+    return type_name;
+}
 
 //bp::object construct(bp::object obj){
 //    using namespace ar;
@@ -78,13 +107,14 @@ template <> int ctype_to_npytype<std::complex<long double> >() { return NPY_COMP
 //    
 //}
 
-void test_npy_to_mat(const ar::mat &value){
+template <typename T>
+void test_npy_to_mat(const ar::Mat<T> &value){
     cout << "In test_npy_to_mat(), value: " << endl << value << endl;
-    
 }
 
-ar::mat test_mat_to_npy(){
-    ar::mat m(2,3);
+template <typename T>
+ar::Mat<T> test_mat_to_npy(){
+    ar::Mat<T> m(2,3);
     m << 1 << 2 << 3 << ar::endr
       << 4 << 5 << 6 << ar::endr;
     
@@ -93,10 +123,12 @@ ar::mat test_mat_to_npy(){
     return m;
 }
 
+template <typename T>
 void test_npy2mat(bp::object obj){
-    shared_ptr<ar::mat> pmat = npy2mat<double>(obj);
-    cout << "In test_npy_to_mat(), value: " << endl << *pmat << endl;
-    
+    shared_ptr<ar::Mat<T> > pmat = npy2mat<T>(obj);
+    if (pmat !=0){
+        cout << "In test_npy_to_mat(), value: " << endl << *pmat << endl;
+    }
 }
 
 void export_npyarma(){
@@ -235,10 +267,14 @@ void export_npyarma(){
    register_mat_to_npy<std::complex<double> >();
    //register_mat_to_npy<std::complex<long double> >();
    
-   def("test_mat_to_npy", test_mat_to_npy, " Tests arma::mat to numpy.array conversion.");
-   def("test_npy_to_mat", test_npy_to_mat, " Tests numpy.array to arma::mat conversion.");
-   def("test_npy2mat", test_npy2mat, " Tests numpy.array to arma::mat conversion.");
-//   def("construct", construct, " Converts numpy.array to mat");
+   def("test_mat_to_npy", test_mat_to_npy<double>, " Tests arma::mat to numpy.array conversion.");
+//   def("test_mat_to_npy", test_mat_to_npy<complex<double> >, " Tests arma::mat to numpy.array conversion.");
+   def("test_npy_to_mat", test_npy_to_mat<double>, " Tests numpy.array to arma::mat conversion.");
+//   def("test_npy_to_mat", test_npy_to_mat<complex<double> >, " Tests numpy.array to arma::mat conversion.");
+   def("test_npy2mat", test_npy2mat<double>, " Tests numpy.array to arma::mat conversion.");
+//   def("test_npy2mat", test_npy2mat<complex<double> >, " Tests numpy.array to arma::mat conversion.");
+
+   //   def("construct", construct, " Converts numpy.array to mat");
 
 
 }

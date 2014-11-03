@@ -14,6 +14,7 @@
 #include "utils/myenums.hpp"
 #include "utils/std.hpp"
 #include "utils/vout.h"
+#include "utils/std.hpp"
 #include "maths/grid.hpp"
 #include "maths/constants.h"
 #include "maths/trace.hpp"
@@ -21,15 +22,13 @@
 #include "maths/arma.hpp"
 #include "cache/cache.hpp"
 
-#include <boost/smart_ptr.hpp>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
 namespace qmicad{
 namespace negf{
 
-using boost::shared_ptr;
+using std::shared_ptr;
 using maths::trace;
 using cache::CxMatCache;
 using utils::Printable;
@@ -281,7 +280,7 @@ private:
     uint                miLc;    // index of left contact block
     uint                miRc;    // index of right contact block
     
-    static const double SurfGTolX = 1E-8;
+    static constexpr double SurfGTolX = 1E-8;
     
     // Hamiltonian , overlap and potential
     field<shared_ptr<cxmat> >mH0;// Diagonal blocks of Hamiltonian: H0(i) = [H]_i,i

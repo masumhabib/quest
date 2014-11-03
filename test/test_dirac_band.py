@@ -27,7 +27,7 @@ def simulate(workers):
     bs.verbosity = vprint.MSG_NORMAL
     
     #Simulation parameters.
-    bs.VERSION_REQUIRED = "0.08.0-dev"
+    bs.VERSION_REQUIRED = "0.09.0"
 
     bs.DryRun = False
     bs.AutoGenKp = False
@@ -57,10 +57,10 @@ def simulate(workers):
 
     # Setup and simulation
     if qmicad.version != bs.VERSION_REQUIRED:
-        str = "QMICAD version mismatch. Required "
-        str += str(bs.VERSION_REQUIRED) + ". Got "
-        str += str(qmicad.version)
-        raise(str)
+        msg = "QMICAD version mismatch. Required "
+        msg += str(bs.VERSION_REQUIRED) + ". Got "
+        msg += str(qmicad.version)
+        raise(msg)
 
     # Change lattice constant if requested
     if hasattr(bs, 'a'):
