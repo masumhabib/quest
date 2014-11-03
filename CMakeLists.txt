@@ -10,8 +10,8 @@ project(qmicad CXX)
 
 # Version
 set(QMICAD_MAJOR 0)
-set(QMICAD_MINOR 08)
-set(QMICAD_PATCH 1)
+set(QMICAD_MINOR 09)
+set(QMICAD_PATCH 0)
 
 # Options
 set(VERBOSE_MAKE off)
