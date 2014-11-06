@@ -88,9 +88,9 @@ def simulate(workers):
     # --------------------------------------------------------------
     if qmicad.version != tr.VERSION_REQUIRED:
         msg = "QMICAD version mismatch. Required "
-        msg += str(tr.VERSION_REQUIRED) + ". Got "
+        msg += str(bs.VERSION_REQUIRED) + ". Got "
         msg += str(qmicad.version)
-        raise(msg)
+        raise Exception(msg)
 
     
     # Get the total length
