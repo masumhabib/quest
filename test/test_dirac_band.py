@@ -27,7 +27,7 @@ def simulate(workers):
     bs.verbosity = vprint.MSG_NORMAL
     
     #Simulation parameters.
-    bs.VERSION_REQUIRED = "0.08.0-dev"
+    bs.VERSION_REQUIRED = "0.08.2"
 
     bs.DryRun = False
     bs.AutoGenKp = False
