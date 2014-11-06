@@ -60,7 +60,7 @@ def simulate(workers):
         msg = "QMICAD version mismatch. Required "
         msg += str(bs.VERSION_REQUIRED) + ". Got "
         msg += str(qmicad.version)
-        raise(msg)
+        raise Exception(msg)
 
     # Change lattice constant if requested
     if hasattr(bs, 'a'):
