@@ -87,7 +87,7 @@ find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
 # -----------------------------------------------------------------------------
 
 # Prepare distribution directory
-set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION}-${MACHINE_NAME})
+set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
 set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 
 # version header

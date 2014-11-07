@@ -17,7 +17,10 @@ void export_Workers(){
     using namespace parallel;
     
    class_<Workers, shared_ptr<Workers>, noncopyable>("Workers", 
-          init<const communicator&>())
+          init<>())
+        .def(init<int, char**>())
+        .def(init<const vector<string>&>())
+        .def(init<const communicator&>())
         .def("MyId", &Workers::MyId)
         .def("MasterId", &Workers::MasterId)
         .def("N", &Workers::N)

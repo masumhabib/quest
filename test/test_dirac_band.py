@@ -10,7 +10,6 @@
 import  sys
 import  numpy as np
 from    math import pi
-import  mpi
 
 import  qmicad
 from    qmicad.simulators.dirackp import * 
@@ -18,11 +17,11 @@ from    qmicad.simulators.dirackp import *
 
 ##
 # Run the simulation
-def simulate(workers):
+def simulate():
 
     # some constants 
-    # Transport simulator
-    bs = Band(workers)
+    # Band structure simulator
+    bs = Band()
     bs.HamType = bs.HAM_TI_SURF_KP
     bs.verbosity = vprint.MSG_NORMAL
     
@@ -92,10 +91,8 @@ def main(argv = None):
     if argv is None:
         argv = sys.argv
 
-    # get MPI communicator
-    workers = mpi.world
     # Run the simulator
-    simulate(workers)
+    simulate()
         
     return 0
 

@@ -55,7 +55,7 @@ class Transport(object):
         
     """
 
-    def __init__(self, workers):   
+    def __init__(self, workers = None):   
         """ 
         Class constructor. 
         param:
@@ -65,7 +65,10 @@ class Transport(object):
         self.verbosity = vprint.MSG_NORMAL # Verbosity level
         
         # MPI stuff
-        self.workers = Workers(workers)
+        if workers is None:
+            self.workers = Workers()
+        else:
+            self.workers = Workers(workers)
         vprint.IAmMaster = self.workers.IAmMaster()
     
         # Timer

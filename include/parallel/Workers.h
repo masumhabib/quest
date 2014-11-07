@@ -9,6 +9,7 @@
 #define	WORKERS_H
 
 #include "utils/vout.h"
+#include "utils/std.hpp"
 #include <boost/mpi.hpp>
 #include <boost/mpi/environment.hpp>
 #include <boost/mpi/communicator.hpp>
@@ -16,10 +17,14 @@
 namespace qmicad{namespace parallel{
 using namespace boost::mpi;
 using namespace utils;
+using namespace utils::stds;
 
 class Workers {
 public:
-    Workers( const communicator &workers);    
+    Workers();
+    Workers(const vector<string>& argv);
+    Workers(int argc, char** argv);
+    Workers(const communicator &workers);    
 
     int     MyId()          const {return mMyCpuId; };
     int     MasterId()      const { return mMasterId; };
@@ -32,11 +37,16 @@ public:
     const communicator& Comm() const {return mWorkers; };
     
 private:
-    const communicator      &mWorkers;      //!< MPI worker processes 
-    int                     mMyCpuId;       //!< This process ID
-    int                     mNcpu;          //!< Total number of processes
-    bool                    mIAmMaster;     //!< Master process
-    const int               mMasterId;      //!< Master ID
+    void init();
+    
+private:
+    environment             menv;           //!< Our local MPI environment.
+    communicator            mworld;         //!< Our local MPI world.
+    const communicator      &mWorkers;      //!< MPI worker processes.
+    int                     mMyCpuId;       //!< This process ID.
+    int                     mNcpu;          //!< Total number of processes.
+    bool                    mIAmMaster;     //!< Master process.
+    const int               mMasterId;      //!< Master ID.
 
 };
 
