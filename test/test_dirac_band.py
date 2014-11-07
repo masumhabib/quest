@@ -10,7 +10,13 @@
 import  sys
 import  numpy as np
 from    math import pi
-import  mpi
+
+# Workaround for a bug involving Boost.MPI, OpenMPI and Python
+# in linux system. You can ignore these lines if you are not using
+# OpenMPI in linux.
+import DLFCN as dl
+import sys
+sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
 
 import  qmicad
 from    qmicad.simulators.dirackp import * 
@@ -18,11 +24,11 @@ from    qmicad.simulators.dirackp import *
 
 ##
 # Run the simulation
-def simulate(workers):
+def simulate():
 
     # some constants 
-    # Transport simulator
-    bs = Band(workers)
+    # Band structure simulator
+    bs = Band()
     bs.HamType = bs.HAM_TI_SURF_KP
     bs.verbosity = vprint.MSG_NORMAL
     
@@ -92,10 +98,8 @@ def main(argv = None):
     if argv is None:
         argv = sys.argv
 
-    # get MPI communicator
-    workers = mpi.world
     # Run the simulator
-    simulate(workers)
+    simulate()
         
     return 0
 

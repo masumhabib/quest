@@ -26,7 +26,7 @@ class Band(object):
     Band structure calculator using QMICAD.    
     """
     
-    def __init__(self, workers):   
+    def __init__(self, workers = None):   
         """ 
         Class constructor. 
         param:
@@ -36,7 +36,10 @@ class Band(object):
         self.verbosity = vprint.MSG_NORMAL # Verbosity level
         
         # MPI stuff
-        self.workers = Workers(workers)
+        if workers is None:
+            self.workers = Workers()
+        else:
+            self.workers = Workers(workers)
         vprint.IAmMaster = self.workers.IAmMaster()
     
         # Timer

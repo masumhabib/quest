@@ -10,14 +10,32 @@
 
 namespace qmicad{namespace parallel{
 
+Workers::Workers():mMasterId(0), mWorkers(mworld)
+{
+    init();
+}
+
+Workers::Workers(const vector<string> &argv):mMasterId(0), mWorkers(mworld)
+{
+}
+
+Workers::Workers(int argc, char** argv):mMasterId(0), menv(argc, argv), mWorkers(mworld)
+{
+    init();
+}
+
 Workers::Workers( const communicator &workers):mWorkers(workers), mMasterId(0)
 {
+    init();
+}
+
+void Workers::init(){
     mMyCpuId = mWorkers.rank();
     mNcpu = mWorkers.size();
     mIAmMaster = (mMasterId == mMyCpuId);
 
     stds::vout.printersId(mMasterId);        
-    stds::vout.myId(mMyCpuId);        
+    stds::vout.myId(mMyCpuId);    
 }
 
 void Workers::assignCpus(long& myStart, long& myEnd, long& myN, long N) const{
