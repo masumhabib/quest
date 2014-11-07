@@ -12,6 +12,13 @@ import  numpy as np
 import  math
 from    math import pi, tan, cos, sin
 
+# Workaround for a bug involving Boost.MPI, OpenMPI and Python
+# in linux system. You can ignore these lines if you are not using
+# OpenMPI in linux.
+import DLFCN as dl
+import sys
+sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
+
 import  qmicad
 from    qmicad.simulators.utils.linspace import linspace
 from    qmicad.simulators.dirackp import *

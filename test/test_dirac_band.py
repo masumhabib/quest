@@ -11,6 +11,13 @@ import  sys
 import  numpy as np
 from    math import pi
 
+# Workaround for a bug involving Boost.MPI, OpenMPI and Python
+# in linux system. You can ignore these lines if you are not using
+# OpenMPI in linux.
+import DLFCN as dl
+import sys
+sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
+
 import  qmicad
 from    qmicad.simulators.dirackp import * 
 
