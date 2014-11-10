@@ -30,10 +30,12 @@ protected:
     char            mDot;
     char            mEnds;
     
+    bool            mscaled;
+    
     
 public:
     ConsoleProgressBar(string prefix = "", unsigned long expectedCount = 100,
-                       unsigned long count = 0, bool livePercent = false);
+                       unsigned long count = 0, bool scaled = true, bool livePercent = false);
     
     ConsoleProgressBar& operator+= (unsigned long newCount);
     friend ConsoleProgressBar operator+ (ConsoleProgressBar lhs, unsigned long newCount);
@@ -43,6 +45,7 @@ public:
     void expectedCount(unsigned long expectedCount);
     void complete();
     void start();
+    void reset();
     
        
 protected:

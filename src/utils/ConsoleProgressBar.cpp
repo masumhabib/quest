@@ -11,9 +11,10 @@ namespace utils{
     
 
 ConsoleProgressBar::ConsoleProgressBar(string prefix, unsigned long expectedCount, 
-    unsigned long count, bool livePercent):
+    unsigned long count, bool scaled, bool livePercent):
     mExpectedCount(expectedCount),
     mCount(count < expectedCount ? count:expectedCount),
+    mscaled(scaled),
     mPrefix(prefix)
 {
     mSuffix = "%";
@@ -25,13 +26,18 @@ ConsoleProgressBar::ConsoleProgressBar(string prefix, unsigned long expectedCoun
 void ConsoleProgressBar::step(unsigned long count){
     
     mCount += count;
-    int nDots = (mCount*mnTotalDots)/mExpectedCount;
+    
+    int nDots = mscaled ? (mCount*mnTotalDots)/mExpectedCount : mCount;
     
     while(nDots--){
-        int myId = vout.myId();
-        vout.myId(0);
-        vout << vnormal << mDot;
-        vout.myId(myId);
+        if (mscaled){
+            vout << vnormal << mDot;
+        }else{
+            int myId = vout.myId();
+            vout.myId(0);            
+            vout << vnormal << mDot;
+            vout.myId(myId);
+        }
         mCount = 0;
     }    
 }
@@ -70,6 +76,12 @@ void ConsoleProgressBar::complete(){
 void ConsoleProgressBar::start(){
     vout << vnormal << mPrefix << mEnds;
 }
+
+
+void ConsoleProgressBar::reset(){
+    mCount = 0;
+}
+
 
 }
 
