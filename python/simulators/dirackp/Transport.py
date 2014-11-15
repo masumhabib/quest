@@ -461,7 +461,11 @@ class Transport(object):
                     Eloop.enableI(value, 0, 1)
                 else:
                     for I in self.Calculations["I"]:
-                        Eloop.enableI(I["N"], I["From"], I["To"])
+                        if (I["Block"] == "All"):
+                            for ib in range(1, self.nb-3):
+                                Eloop.enableI(I["N"], ib, ib+1)
+                        else:
+                            Eloop.enableI(I["N"], I["From"], I["To"])
             if (type == "DOS"):
                 Eloop.enableDOS(value)
             if (type == "n"):
@@ -471,7 +475,7 @@ class Transport(object):
                     for n in self.Calculations["n"]:
                         if (n["Block"] == "All"):
                             for ib in range(1, self.nb-2):
-                                Eloop.enablen(n["N"], ib)
+                                Eloop.enablen(n["N"], ib)                    
                         else:
                             Eloop.enablen(n["N"], n["Block"])
 
@@ -594,12 +598,30 @@ class Transport(object):
             if (type == "TE"):
                 msg += "  Transmission.\n"
             if (type == "I"):
-                for I in self.Calculations["I"]:
-                    msg += "  Current from block # " + str(I["From"])
-                    msg += " to block # " + str(I["To"]) 
+                if (isinstance( value, int)):
+                    msg += "  Current at left contact"
                     msg += " (" + str(I["N"]) + ").\n"
+                else:
+                    for I in self.Calculations["I"]:
+                        if (I["Block"] == "All"):
+                            msg += "  Current of all blocks"
+                            msg += " (" + str(I["N"]) + ").\n"
+                        else:
+                            msg += "  Current from block # " + str(I["From"])
+                            msg += " to block # " + str(I["To"]) 
+                            msg += " (" + str(I["N"]) + ").\n"
             if (type == "n"):
-                msg += "  Electron density.\n"
+                if (isinstance( value, int)):
+                    msg += "  Electron density of the device"
+                    msg += " (" + str(n["N"]) + ").\n"
+                else:
+                    for n in self.Calculations["n"]:
+                        if (n["Block"] == "All"):
+                            msg += "  Electron density of all blocks"
+                            msg += " (" + str(n["N"]) + ").\n"
+                        else:
+                            msg += "  Electron density of block # " + str(n["Block"])
+                            msg += " (" + str(n["N"]) + ").\n"
                 
         msg += "  Save output at: " + self.OutPath + self.OutFileName + "*\n"
                     

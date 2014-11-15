@@ -11,22 +11,30 @@ set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 06)
 set(QMICAD_PATCH 3)
 
+# Options
+set(VERBOSE_MAKE off)
+set(LINK_STATIC off)
 
 # Add local usr path for locally compiled libraries
 set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
-#set(Boost_INCLUDE_DIR $ENV{HOME}/usr/include)
-#set(Boost_LIBRARY_DIR $ENV{HOME}/usr/lib)
+
+# Compiler flags
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# optimization
+set(CMAKE_CXX_FLAGS_RELEASE " -m64 -O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
+# Linker flags
+#set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
+
+if (VERBOSE_MAKE)
+    set(CMAKE_VERBOSE_MAKEFILE      on)
+endif()
 
 # Start configuration
 set(QMICAD_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
 message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
 project(qmicad CXX)
 message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
-
-# Options
-# -----------------------------------------------------------------------------
-set(CMAKE_VERBOSE_MAKEFILE      off)
-set(LINK_SEARCH_START_STATIC    on)
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -39,13 +47,13 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"x )
 endif()
 
-# Compiler flags
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-# optimization
-#set(CMAKE_CXX_FLAGS_RELEASE " -m64 -O2 -MMD -MP -MF ")
-
 # Libraries
 # -----------------------------------------------------------------------------
+
+if(LINK_STATIC)
+    set(LINK_SEARCH_START_STATIC    on)
+endif()
+
 # Armadillo
 find_package(Armadillo REQUIRED)
 
@@ -56,7 +64,7 @@ find_package(MPI REQUIRED)
 find_package(PythonLibs REQUIRED)
 
 # MKL
-find_package(MKL REQUIRED)
+#find_package(MKL REQUIRED)
 
 # doxygen
 find_package(Doxygen)
@@ -65,12 +73,16 @@ find_package(Doxygen)
 # Shared linking of libboost_python is required for mpi::communicator
 # to work both in python and C++.
 set(Boost_USE_MULTITHREADED     off)
-set(Boost_USE_STATIC_LIBS       off)
+if(LINK_STATIC)
+    set(Boost_USE_STATIC_LIBS       off)
+endif()
 find_package(Boost 1.55 REQUIRED python)
 set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
 unset(Boost_LIBRARIES)
 unset(Boost_PYTHON_LIBRARIES)
-set(Boost_USE_STATIC_LIBS       on)
+if(LINK_STATIC)
+    set(Boost_USE_STATIC_LIBS       on)
+endif()
 find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
 
 # Sources and headers
@@ -109,8 +121,7 @@ target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_PYTHON_LIBRARIES})
 target_link_libraries (qmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
-target_link_libraries (qmicad ${MPI_LIBRARIES})
-target_link_libraries (qmicad ${MKL_LIBRARIES})
+target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
 set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # Prepare qmicad package
