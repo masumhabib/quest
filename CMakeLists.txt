@@ -131,7 +131,7 @@ add_custom_command(
     COMMAND cp -rp ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h ${QMICAD_DIST_DIR}/include
     COMMAND rm -f ${QMICAD_DIST_DIR}/include/config.in.h
     COMMAND cp -rp ${CMAKE_SOURCE_DIR}/python ${QMICAD_DIST_DIR}
-    COMMAND cd     ${QMICAD_DIST_DIR} && ln -sf python qmicad
+    COMMAND cd     ${QMICAD_DIST_DIR} && ln -sf ./python ./qmicad
     COMMAND cd     ${QMICAD_DIST_DIR}/python && ln -sf ../lib/lib${PROJECT_NAME}.so qmicad.so
 )
 
