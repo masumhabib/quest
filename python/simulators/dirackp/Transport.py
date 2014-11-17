@@ -462,7 +462,7 @@ class Transport(object):
                 else:
                     for I in self.Calculations["I"]:
                         if (I["Block"] == "All"):
-                            for ib in range(1, self.nb-3):
+                            for ib in range(0, self.nb-2):
                                 Eloop.enableI(I["N"], ib, ib+1)
                         else:
                             Eloop.enableI(I["N"], I["From"], I["To"])
