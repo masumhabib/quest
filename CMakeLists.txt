@@ -11,7 +11,7 @@ project(qmicad CXX)
 # Version
 set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 08)
-set(QMICAD_PATCH 2)
+set(QMICAD_PATCH 3)
 
 # Options
 set(VERBOSE_MAKE off)
