@@ -501,6 +501,37 @@ class Transport(object):
                                 
         # Set energy
         self.rgf.E(EE)
+        # create and run energy loop
+        self.rgf = Negfself.rgf(EE, self.np, self.workers) 
+
+        # enable calculations
+        for type, value in self.Calculations.iteritems():
+            # transmission
+            if (type == "TE"):
+                self.rgf.enableTE(value)
+            # current
+            if (type == "I"):
+                if (isinstance( value, int)):
+                    self.rgf.enableI(value, 0, 1)
+                else:
+                    for I in self.Calculations["I"]:
+                        if (I["Block"] == "All"):
+                            for ib in range(0, self.nb-2):
+                                self.rgf.enableI(I["N"], ib, ib+1)
+                        else:
+                            self.rgf.enableI(I["N"], I["From"], I["To"])
+            if (type == "DOS"):
+                self.rgf.enableDOS(value)
+            if (type == "n"):
+                if (isinstance( value, int)):
+                    self.rgf.enablen(value)
+                else:
+                    for n in self.Calculations["n"]:
+                        if (n["Block"] == "All"):
+                            for ib in range(1, self.nb-2):
+                                self.rgf.enablen(n["N"], ib)                    
+                        else:
+                            self.rgf.enablen(n["N"], n["Block"])
 
         # Run the simulation
         if (self.DryRun == False):
@@ -690,12 +721,30 @@ class Transport(object):
             if (type == "TE"):
                 msg += "  Transmission.\n"
             if (type == "I"):
-                for I in self.Calculations["I"]:
-                    msg += "  Current from block # " + str(I["From"])
-                    msg += " to block # " + str(I["To"]) 
+                if (isinstance( value, int)):
+                    msg += "  Current at left contact"
                     msg += " (" + str(I["N"]) + ").\n"
+                else:
+                    for I in self.Calculations["I"]:
+                        if (I["Block"] == "All"):
+                            msg += "  Current of all blocks"
+                            msg += " (" + str(I["N"]) + ").\n"
+                        else:
+                            msg += "  Current from block # " + str(I["From"])
+                            msg += " to block # " + str(I["To"]) 
+                            msg += " (" + str(I["N"]) + ").\n"
             if (type == "n"):
-                msg += "  Electron density.\n"
+                if (isinstance( value, int)):
+                    msg += "  Electron density of the device"
+                    msg += " (" + str(n["N"]) + ").\n"
+                else:
+                    for n in self.Calculations["n"]:
+                        if (n["Block"] == "All"):
+                            msg += "  Electron density of all blocks"
+                            msg += " (" + str(n["N"]) + ").\n"
+                        else:
+                            msg += "  Electron density of block # " + str(n["Block"])
+                            msg += " (" + str(n["N"]) + ").\n"
                 
         msg += "  Save output at: " + self.OutPath + self.OutFileName + "*\n"
                     

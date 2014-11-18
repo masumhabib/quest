@@ -47,7 +47,7 @@ elif [[ $# -ge 1 ]]; then
     elif [[ $opt == "install" ]]; then
         if [[ $# == 2 ]]; then
             install_dir=$2
-            cd build && make install DESTDIR=$install_dir 
+            cd build && cmake -DCMAKE_INSTALL_PREFIX:PATH=$install_dir ../ && make install
         else
             cd build && make install 
         fi
