@@ -18,31 +18,33 @@ PyBandStruct::PyBandStruct(const Workers &workers, uint nn,  bool orthoBasis,
 {    
 }
 
-void PyBandStruct::H(bp::object H, int ineigh){
-    shared_ptr<cxmat> HH = npy2mat<dcmplx>(H);
+//void PyBandStruct::H(bp::object H, int ineigh){
+//    shared_ptr<cxmat> HH = npy2mat<dcmplx>(H);
+//    if (HH == 0){
+//        throw runtime_error("In BandStruct::H(): cannot convert numpy array to C++ matrix");
+//    }
+//    BandStruct::H(HH, ineigh);
+//}
+
+void PyBandStruct::H(const cxmat& H, int ineigh){
+    shared_ptr<cxmat> HH = make_shared<cxmat>(H);
     BandStruct::H(HH, ineigh);
 }
 
-void PyBandStruct::S(bp::object S, int ineigh){
-    shared_ptr<cxmat> SS = npy2mat<dcmplx>(S);
+//void PyBandStruct::S(bp::object S, int ineigh){
+//    shared_ptr<cxmat> SS = npy2mat<dcmplx>(S);
+//    if (SS == 0){
+//        throw runtime_error("In BandStruct::HS(): cannot convert numpy array to C++ matrix");
+//    }
+//
+//    BandStruct::S(SS, ineigh);
+//}
+
+void PyBandStruct::S(const cxmat& S, int ineigh){
+    shared_ptr<cxmat> SS = make_shared<cxmat>(S);
     BandStruct::S(SS, ineigh);
 }
 
-
-
-//void export_BandStructParams(){
-//    class_<BandStructParams, bases<Printable>, shared_ptr<BandStructParams>, noncopyable>("BandStructParams",
-//        init<uint, optional<const string&> >()) 
-//        .def("H", &BandStructParams::setH)
-//        .def("S", &BandStructParams::setS)
-//        .def("lc", &BandStructParams::setLattCoord)
-//        .def_readwrite("nb", &BandStructParams::nb)
-//        .def_readwrite("ne", &BandStructParams::ne)
-//        .def_readwrite("no", &BandStructParams::no)
-//        .def_readwrite("lv", &BandStructParams::lv)
-//        .def_readwrite("isOrthogonal", &BandStructParams::isOrthogonal)
-//    ;
-//}
 
 void (PyBandStruct::*PyBandStruct_nb_set)(uint) = &PyBandStruct::nb;
 uint (PyBandStruct::*PyBandStruct_nb_get)() = &PyBandStruct::nb;
@@ -52,8 +54,10 @@ void (PyBandStruct::*PyBandStruct_lv_set)(const lvec&) = &PyBandStruct::lv;
 lvec (PyBandStruct::*PyBandStruct_lv_get)() = &PyBandStruct::lv;
 void (PyBandStruct::*PyBandStruct_lc_1)(const lcoord&, int) = &PyBandStruct::lc;
 void (PyBandStruct::*PyBandStruct_k_1)(const mat&) = &PyBandStruct::k;
-void (PyBandStruct::*PyBandStruct_H_1)(bp::object, int) = &PyBandStruct::H;
-void (PyBandStruct::*PyBandStruct_S_1)(bp::object, int) = &PyBandStruct::S;
+//void (PyBandStruct::*PyBandStruct_H_1)(bp::object, int) = &PyBandStruct::H;
+//void (PyBandStruct::*PyBandStruct_S_1)(bp::object, int) = &PyBandStruct::S;
+void (PyBandStruct::*PyBandStruct_H_1)(const cxmat&, int) = &PyBandStruct::H;
+void (PyBandStruct::*PyBandStruct_S_1)(const cxmat&, int) = &PyBandStruct::S;
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyBandStruct_save, save, 1, 2)
 void export_BandStruct(){
     // ~~~~~~~~ To avoid nasty numpy segfault ~~~~~~~

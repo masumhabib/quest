@@ -19,48 +19,81 @@ PyCohRgfLoop::PyCohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ie
 {
 }
 
-void PyCohRgfLoop::H0(bp::object H0, int ib, int ineigh){
-    mH0(ib, ineigh) = npy2mat<dcmplx>(H0);
+//void PyCohRgfLoop::H0(bp::object H0, int ib, int ineigh){
+//    mH0(ib, ineigh) = npy2mat<dcmplx>(H0);
+//}
+void PyCohRgfLoop::H0(const cxmat& H0, int ib, int ineigh){
+    mH0(ib, ineigh) = make_shared<cxmat>(H0);
 }
 
-void PyCohRgfLoop::S0(bp::object S0, int ib, int ineigh){
-    mS0(ib, ineigh) = npy2mat<dcmplx>(S0);
+//void PyCohRgfLoop::S0(bp::object S0, int ib, int ineigh){
+//    mS0(ib, ineigh) = npy2mat<dcmplx>(S0);
+//}
+void PyCohRgfLoop::S0(const cxmat& S0, int ib, int ineigh){
+    mS0(ib, ineigh) = make_shared<cxmat>(S0);
 }
 
-void PyCohRgfLoop::Hl(bp::object Hl, int ib, int ineigh){
-    mHl(ib, ineigh) = npy2mat<dcmplx>(Hl);
+//void PyCohRgfLoop::Hl(bp::object Hl, int ib, int ineigh){
+//    mHl(ib, ineigh) = npy2mat<dcmplx>(Hl);
+//}
+void PyCohRgfLoop::Hl(const cxmat& Hl, int ib, int ineigh){
+    mHl(ib, ineigh) = make_shared<cxmat>(Hl);
 }
 
-void PyCohRgfLoop::Sl(bp::object Sl, int ib, int ineigh){
-    mSl(ib, ineigh) = npy2mat<dcmplx>(Sl);
+//void PyCohRgfLoop::Sl(bp::object Sl, int ib, int ineigh){
+//    mSl(ib, ineigh) = npy2mat<dcmplx>(Sl);
+//}
+void PyCohRgfLoop::Sl(const cxmat& Sl, int ib, int ineigh){
+    mSl(ib, ineigh) = make_shared<cxmat>(Sl);
 }
 
-void PyCohRgfLoop::H0(bp::object H0, int ib){
-    mH0(ib) = npy2mat<dcmplx>(H0);
+//void PyCohRgfLoop::H0(bp::object H0, int ib){
+//    mH0(ib) = npy2mat<dcmplx>(H0);
+//}
+void PyCohRgfLoop::H0(const cxmat& H0, int ib){
+    mH0(ib) = make_shared<cxmat>(H0);
 }
 
-void PyCohRgfLoop::S0(bp::object S0, int ib){
-    mS0(ib) = npy2mat<dcmplx>(S0);
+//void PyCohRgfLoop::S0(bp::object S0, int ib){
+//    mS0(ib) = npy2mat<dcmplx>(S0);
+//}
+void PyCohRgfLoop::S0(const cxmat& S0, int ib){
+    mS0(ib) = make_shared<cxmat>(S0);
 }
 
-void PyCohRgfLoop::Hl(bp::object Hl, int ib){
-    mHl(ib) = npy2mat<dcmplx>(Hl);    
+//void PyCohRgfLoop::Hl(bp::object Hl, int ib){
+//    mHl(ib) = npy2mat<dcmplx>(Hl);    
+//}
+void PyCohRgfLoop::Hl(const cxmat& Hl, int ib){
+    mHl(ib) = make_shared<cxmat>(Hl);    
 }
 
-void PyCohRgfLoop::Sl(bp::object Sl, int ib){
-    mSl(ib) = npy2mat<dcmplx>(Sl);
+//void PyCohRgfLoop::Sl(bp::object Sl, int ib){
+//    mSl(ib) = npy2mat<dcmplx>(Sl);
+//}
+void PyCohRgfLoop::Sl(const cxmat& Sl, int ib){
+    mSl(ib) = make_shared<cxmat>(Sl);
 }
 
-void PyCohRgfLoop::V(bp::object V, int ib){
-    mV(ib) = npy2col<double>(V);
+//void PyCohRgfLoop::V(bp::object V, int ib){
+//    mV(ib) = npy2col<double>(V);
+//}
+void PyCohRgfLoop::V(const col& V, int ib){
+    mV(ib) = make_shared<col>(V);
 }
 
-void PyCohRgfLoop::pv0(bp::object pv0, int ib, int ineigh){
-    mpv0(ib, ineigh) = npy2col<double>(pv0);
+//void PyCohRgfLoop::pv0(bp::object pv0, int ib, int ineigh){
+//    mpv0(ib, ineigh) = npy2col<double>(pv0);
+//}
+void PyCohRgfLoop::pv0(const col& pv0, int ib, int ineigh){
+    mpv0(ib, ineigh) = make_shared<col>(pv0);
 }
 
-void PyCohRgfLoop::pvl(bp::object pvl, int ib, int ineigh){
-    mpvl(ib, ineigh) = npy2col<double>(pvl);
+//void PyCohRgfLoop::pvl(bp::object pvl, int ib, int ineigh){
+//    mpvl(ib, ineigh) = npy2col<double>(pvl);
+//}
+void PyCohRgfLoop::pvl(const col& pvl, int ib, int ineigh){
+    mpvl(ib, ineigh) = make_shared<col>(pvl);
 }
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableTE, enableTE, 0, 1)
@@ -69,17 +102,29 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enableDOS, enableDOS, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enablen, enablen, 0, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_enablep, enablep, 0, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyCohRgfLoop_save, save, 1, 2)
-void (PyCohRgfLoop::*PyCohRgfLoop_H0_1)(bp::object, int, int) = &PyCohRgfLoop::H0;
-void (PyCohRgfLoop::*PyCohRgfLoop_S0_1)(bp::object, int, int) = &PyCohRgfLoop::S0;
-void (PyCohRgfLoop::*PyCohRgfLoop_Hl_1)(bp::object, int, int) = &PyCohRgfLoop::Hl;
-void (PyCohRgfLoop::*PyCohRgfLoop_Sl_1)(bp::object, int, int) = &PyCohRgfLoop::Sl;
-void (PyCohRgfLoop::*PyCohRgfLoop_H0_2)(bp::object, int) = &PyCohRgfLoop::H0;
-void (PyCohRgfLoop::*PyCohRgfLoop_S0_2)(bp::object, int) = &PyCohRgfLoop::S0;
-void (PyCohRgfLoop::*PyCohRgfLoop_Hl_2)(bp::object, int) = &PyCohRgfLoop::Hl;
-void (PyCohRgfLoop::*PyCohRgfLoop_Sl_2)(bp::object, int) = &PyCohRgfLoop::Sl;
-void (PyCohRgfLoop::*PyCohRgfLoop_V)(bp::object, int) = &PyCohRgfLoop::V;
-void (PyCohRgfLoop::*PyCohRgfLoop_pv0_1)(bp::object, int, int) = &PyCohRgfLoop::pv0;
-void (PyCohRgfLoop::*PyCohRgfLoop_pvl_1)(bp::object, int, int) = &PyCohRgfLoop::pvl;
+//void (PyCohRgfLoop::*PyCohRgfLoop_H0_1)(bp::object, int, int) = &PyCohRgfLoop::H0;
+//void (PyCohRgfLoop::*PyCohRgfLoop_S0_1)(bp::object, int, int) = &PyCohRgfLoop::S0;
+//void (PyCohRgfLoop::*PyCohRgfLoop_Hl_1)(bp::object, int, int) = &PyCohRgfLoop::Hl;
+//void (PyCohRgfLoop::*PyCohRgfLoop_Sl_1)(bp::object, int, int) = &PyCohRgfLoop::Sl;
+//void (PyCohRgfLoop::*PyCohRgfLoop_H0_2)(bp::object, int) = &PyCohRgfLoop::H0;
+//void (PyCohRgfLoop::*PyCohRgfLoop_S0_2)(bp::object, int) = &PyCohRgfLoop::S0;
+//void (PyCohRgfLoop::*PyCohRgfLoop_Hl_2)(bp::object, int) = &PyCohRgfLoop::Hl;
+//void (PyCohRgfLoop::*PyCohRgfLoop_Sl_2)(bp::object, int) = &PyCohRgfLoop::Sl;
+//void (PyCohRgfLoop::*PyCohRgfLoop_V)(bp::object, int) = &PyCohRgfLoop::V;
+//void (PyCohRgfLoop::*PyCohRgfLoop_pv0_1)(bp::object, int, int) = &PyCohRgfLoop::pv0;
+//void (PyCohRgfLoop::*PyCohRgfLoop_pvl_1)(bp::object, int, int) = &PyCohRgfLoop::pvl;
+void (PyCohRgfLoop::*PyCohRgfLoop_H0_1)(const cxmat&, int, int) = &PyCohRgfLoop::H0;
+void (PyCohRgfLoop::*PyCohRgfLoop_S0_1)(const cxmat&, int, int) = &PyCohRgfLoop::S0;
+void (PyCohRgfLoop::*PyCohRgfLoop_Hl_1)(const cxmat&, int, int) = &PyCohRgfLoop::Hl;
+void (PyCohRgfLoop::*PyCohRgfLoop_Sl_1)(const cxmat&, int, int) = &PyCohRgfLoop::Sl;
+void (PyCohRgfLoop::*PyCohRgfLoop_H0_2)(const cxmat&, int) = &PyCohRgfLoop::H0;
+void (PyCohRgfLoop::*PyCohRgfLoop_S0_2)(const cxmat&, int) = &PyCohRgfLoop::S0;
+void (PyCohRgfLoop::*PyCohRgfLoop_Hl_2)(const cxmat&, int) = &PyCohRgfLoop::Hl;
+void (PyCohRgfLoop::*PyCohRgfLoop_Sl_2)(const cxmat&, int) = &PyCohRgfLoop::Sl;
+void (PyCohRgfLoop::*PyCohRgfLoop_V)(const col&, int) = &PyCohRgfLoop::V;
+void (PyCohRgfLoop::*PyCohRgfLoop_pv0_1)(const col&, int, int) = &PyCohRgfLoop::pv0;
+void (PyCohRgfLoop::*PyCohRgfLoop_pvl_1)(const col&, int, int) = &PyCohRgfLoop::pvl;
+
 void export_CohRgfLoop(){
     // ~~~~~~~~ To avoid nasty numpy segfault ~~~~~~~
     import_array(); 
