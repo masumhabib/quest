@@ -19,7 +19,7 @@ set(LINK_STATIC off)
 #set(CMAKE_BUILD_TYPE "Debug")
 
 # Add machine specific local usr path for locally compiled libraries
-include(cmake/machines/fir)
+#include(cmake/machines/fir)
 
 # Compiler flags
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
