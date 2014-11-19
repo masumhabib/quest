@@ -40,8 +40,8 @@ void PyBandStruct::H(const cxmat& H, int ineigh){
 //    BandStruct::S(SS, ineigh);
 //}
 
-void PyBandStruct::S(const cxmat& H, int ineigh){
-    shared_ptr<cxmat> SS = make_shared<cxmat>(H);
+void PyBandStruct::S(const cxmat& S, int ineigh){
+    shared_ptr<cxmat> SS = make_shared<cxmat>(S);
     BandStruct::S(SS, ineigh);
 }
 

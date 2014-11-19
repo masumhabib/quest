@@ -501,37 +501,6 @@ class Transport(object):
                                 
         # Set energy
         self.rgf.E(EE)
-        # create and run energy loop
-        self.rgf = Negfself.rgf(EE, self.np, self.workers) 
-
-        # enable calculations
-        for type, value in self.Calculations.iteritems():
-            # transmission
-            if (type == "TE"):
-                self.rgf.enableTE(value)
-            # current
-            if (type == "I"):
-                if (isinstance( value, int)):
-                    self.rgf.enableI(value, 0, 1)
-                else:
-                    for I in self.Calculations["I"]:
-                        if (I["Block"] == "All"):
-                            for ib in range(0, self.nb-2):
-                                self.rgf.enableI(I["N"], ib, ib+1)
-                        else:
-                            self.rgf.enableI(I["N"], I["From"], I["To"])
-            if (type == "DOS"):
-                self.rgf.enableDOS(value)
-            if (type == "n"):
-                if (isinstance( value, int)):
-                    self.rgf.enablen(value)
-                else:
-                    for n in self.Calculations["n"]:
-                        if (n["Block"] == "All"):
-                            for ib in range(1, self.nb-2):
-                                self.rgf.enablen(n["N"], ib)                    
-                        else:
-                            self.rgf.enablen(n["N"], n["Block"])
 
         # Run the simulation
         if (self.DryRun == False):
@@ -644,7 +613,11 @@ class Transport(object):
                     self.rgf.enableI(value, 0, 1)
                 else:
                     for I in self.Calculations["I"]:
-                        self.rgf.enableI(I["N"], I["From"], I["To"])
+                        if (I.has_key("Block") and I["Block"] == "All"):
+                            for ib in range(0, self.nb-1):
+                                self.rgf.enableI(I["N"], ib, ib+1)
+                        else:
+                            self.rgf.enableI(I["N"], I["From"], I["To"])
             if (type == "DOS"):
                 self.rgf.enableDOS(value)
             if (type == "n"):
@@ -653,8 +626,8 @@ class Transport(object):
                 else:
                     for n in self.Calculations["n"]:
                         if (n["Block"] == "All"):
-                            for ib in range(1, self.nb-2):
-                                self.rgf.enablen(n["N"], ib)
+                            for ib in range(1, self.nb-1):
+                                self.rgf.enablen(n["N"], ib)                    
                         else:
                             self.rgf.enablen(n["N"], n["Block"])
         if hasattr(self, "atomsTracedOver"):
@@ -726,7 +699,7 @@ class Transport(object):
                     msg += " (" + str(I["N"]) + ").\n"
                 else:
                     for I in self.Calculations["I"]:
-                        if (I["Block"] == "All"):
+                        if (I.has_key("Block") and I["Block"] == "All"):
                             msg += "  Current of all blocks"
                             msg += " (" + str(I["N"]) + ").\n"
                         else:

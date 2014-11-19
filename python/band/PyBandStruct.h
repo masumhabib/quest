@@ -18,6 +18,7 @@ namespace qmicad{namespace python{
 namespace bp = boost::python;
 using qmicad::python::npy2mat;
 using qmicad::python::npy2col;
+using boost::make_shared;
 using namespace band;
 
 class PyBandStruct: public BandStruct {
