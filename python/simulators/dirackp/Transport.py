@@ -461,8 +461,8 @@ class Transport(object):
                     Eloop.enableI(value, 0, 1)
                 else:
                     for I in self.Calculations["I"]:
-                        if (I["Block"] == "All"):
-                            for ib in range(0, self.nb-2):
+                        if (I.has_key("Block") and I["Block"] == "All"):
+                            for ib in range(0, self.nb-1):
                                 Eloop.enableI(I["N"], ib, ib+1)
                         else:
                             Eloop.enableI(I["N"], I["From"], I["To"])
@@ -474,7 +474,7 @@ class Transport(object):
                 else:
                     for n in self.Calculations["n"]:
                         if (n["Block"] == "All"):
-                            for ib in range(1, self.nb-2):
+                            for ib in range(1, self.nb-1):
                                 Eloop.enablen(n["N"], ib)                    
                         else:
                             Eloop.enablen(n["N"], n["Block"])
@@ -603,7 +603,7 @@ class Transport(object):
                     msg += " (" + str(I["N"]) + ").\n"
                 else:
                     for I in self.Calculations["I"]:
-                        if (I["Block"] == "All"):
+                        if (I.has_key("Block") and I["Block"] == "All"):
                             msg += "  Current of all blocks"
                             msg += " (" + str(I["N"]) + ").\n"
                         else:
