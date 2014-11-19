@@ -63,6 +63,11 @@ def simulate(workers):
 
     # Calculation type
     tr.Calculations["TE"] = 1
+    #tr.Calculations["n"] = [{"N":2, "Block":'All'}]
+    tr.Calculations["n"] = [{"N":2, "Block":4}]
+    #tr.Calculations["I"] = [{"N":2, "Block":'All'}]
+    tr.Calculations["I"] = [{"N":2, "From":0, "To":1},
+                            {"N":2, "From":tr.nb-2, "To":tr.nb-1}]
 
 
     # Output path
