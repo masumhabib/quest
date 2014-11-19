@@ -29,7 +29,7 @@ def simulate(workers):
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.06.3"
+    tr.VERSION_REQUIRED = "0.06.4"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False

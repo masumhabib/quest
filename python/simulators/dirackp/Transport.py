@@ -466,6 +466,18 @@ class Transport(object):
                                 Eloop.enableI(I["N"], ib, ib+1)
                         else:
                             Eloop.enableI(I["N"], I["From"], I["To"])
+            # torque
+            if (type == "T"):
+                if (isinstance( value, int)):
+                    Eloop.enableI(value, 1, 1)
+                else:
+                    for T in self.Calculations["T"]:
+                        if (T["Block"] == "All"):
+                            for ib in range(1, self.nb-2):
+                                Eloop.enableI(T["N"], ib, ib)
+                        else:
+                            Eloop.enableI(T["N"], T["Block"], T["Block"])
+ 
             if (type == "DOS"):
                 Eloop.enableDOS(value)
             if (type == "n"):
