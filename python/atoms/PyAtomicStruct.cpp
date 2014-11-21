@@ -47,6 +47,7 @@ void export_PeriodicTable(){
  * Atomistic geometry of the device.
  */
 //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AtomicStruct_genSimpleCubicStruct1, genSimpleCubicStruct, 3, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AtomicStruct_genGNR1, genGNR, 4, 5);
 void (AtomicStruct::*AtomicStruct_genSimpleCubicStruct1)(const Atom &, double, uint, uint, uint) = &AtomicStruct::genSimpleCubicStruct;
 lvec (AtomicStruct::*AtomicStruct_LatticeVector1)() const = &AtomicStruct::LatticeVector;
 void export_AtomicStruct(){
@@ -72,6 +73,7 @@ void export_AtomicStruct(){
         .def("span", &AtomicStruct::span)
         .def("genRectLattAtoms", &AtomicStruct::genRectLattAtoms)
         .def("genSimpleCubicStruct", AtomicStruct_genSimpleCubicStruct1)
+        .def("genGNR", &AtomicStruct::genGNR, AtomicStruct_genGNR1())
         .def("exportGjf", &AtomicStruct::exportGjf)
         .def("importGjf", &AtomicStruct::importGjf)
         .def(self + self)

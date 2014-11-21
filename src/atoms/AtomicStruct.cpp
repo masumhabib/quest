@@ -463,6 +463,78 @@ void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, double l, do
     mNe = computeNumOfElectrons();
 }
 
+void AtomicStruct::genGNR(const Atom &atom, double a, double l, double w, double h)
+{
+    // No of primitive cell needed in x direction
+    double nbx = l/(3*a);
+    
+    if( ceil(nbx)*3*a - a   <=   l ){
+        nbx = ceil(nbx);
+    }else{
+        nbx = floor(nbx);
+    }
+    // No of primitive cell needed in y direction
+    double nby = w / ( sqrt(3)*a );
+    
+    if(  ceil(nby) * sqrt(3) * a  -  sqrt(3) * a / 2     <=    w  ){
+        nby = ceil(nby);
+    }else{
+        nby = floor(nby);
+    }
+    // generating primitive cell
+    AtomicStruct basisStructForGNR = this->genGNRPrimitiveCell( atom, a );
+    
+    AtomicStruct wholeGNR;
+    wholeGNR.init();
+    
+    // Creating the GNR structure using the primitive cell and its lattice vector
+    for (long ix = 0; ix < nbx; ++ix){
+        for ( long iy=0; iy < nby; ++iy ){
+            AtomicStruct tempBasisStruct = basisStructForGNR;
+            
+            tempBasisStruct += ix * basisStructForGNR.mlv.a1; // shifting basisStruct
+            tempBasisStruct += iy * basisStructForGNR.mlv.a2; // shifting basisStruct
+
+            wholeGNR += tempBasisStruct; //concatenation 
+        }
+    }
+    *this = wholeGNR;
+}
+
+AtomicStruct AtomicStruct::genGNRPrimitiveCell(const Atom &atom, double a){
+    //////  generating the Primitive Cell consisting 4 atom for GNR
+    //////                O      O
+    //////           O                O
+    //////
+    
+    // Updating Periodic Table
+    mpt.add(atom);
+    
+    double nXorigin = 0;
+    double nYorigin = 0;
+    
+    mat mCoOrdinates = zeros<mat>(4,3);
+    mCoOrdinates( 0, coord::X ) = nXorigin;
+    mCoOrdinates( 0, coord::Y ) = nYorigin;
+    mCoOrdinates( 1, coord::X ) = nXorigin    +   a / 2;
+    mCoOrdinates( 1, coord::Y ) = nYorigin    +   sqrt(3) * a / 2;
+    mCoOrdinates( 2, coord::X ) = nXorigin    +   3 * a / 2;
+    mCoOrdinates( 2, coord::Y ) = nYorigin    +   sqrt(3) * a / 2;
+    mCoOrdinates( 3, coord::X ) = nXorigin    +   2 * a;
+    mCoOrdinates( 3, coord::Y ) = nYorigin;
+    
+    lvec tempMlv;
+    tempMlv.zeros();
+    tempMlv.a1(coord::X) = 3*a;
+    tempMlv.a2(coord::Y) = sqrt(3) * a;
+    
+    icol tempAtomId = zeros<icol>(4);
+    tempAtomId.fill(atom.ia);
+    
+    return AtomicStruct( tempAtomId, mCoOrdinates, tempMlv );
+
+}
+
 void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, uint nl, uint nw, uint nh){
     double w = (nw-1)*a;                  // width (in A)
     double l = (nl-1)*a;                  // length  (in A)
