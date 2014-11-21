@@ -498,7 +498,14 @@ void AtomicStruct::genGNR(const Atom &atom, double a, double l, double w, double
             wholeGNR += tempBasisStruct; //concatenation 
         }
     }
-    *this = wholeGNR;
+    
+    // overriding the lattice vectors // TODO // AtomicStruct operator += overloading adds up the lattice vector 
+    wholeGNR.mlv.a1 =  basisStructForGNR.mlv.a1;
+    wholeGNR.mlv.a2 =  basisStructForGNR.mlv.a2;
+    wholeGNR.mlv.a3 =  basisStructForGNR.mlv.a3;
+    
+    // Assigning wholeGNR to this. 
+    *this = wholeGNR; 
 }
 
 AtomicStruct AtomicStruct::genGNRPrimitiveCell(const Atom &atom, double a){
