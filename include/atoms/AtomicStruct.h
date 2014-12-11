@@ -246,6 +246,8 @@ public:
     void genSimpleCubicStruct(const Atom &atom, double a, uint nl, uint nw = 1, uint nh = 1);
     //!< Generates simple cubic structures.
     void genSimpleCubicStruct(const Atom &atom, double a, double l, double w = 0, double h = 0);
+    //!< Generates Atomistic GNR 
+    void genGNR(const Atom &atom, double acc, double l, double w, double h = 0);
     //!< String representation of Atomic structure.
     string toString() const;
 
@@ -282,6 +284,7 @@ protected:
     void        init();
     int         computeNumOfOrbitals();
     int         computeNumOfElectrons();
+    AtomicStruct genGNRPrimitiveCell(const Atom &atom, double acc);
 
     //!< Serialization.
     friend class boost::serialization::access;
