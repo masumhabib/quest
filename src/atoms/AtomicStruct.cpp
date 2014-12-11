@@ -463,26 +463,26 @@ void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, double l, do
     mNe = computeNumOfElectrons();
 }
 
-void AtomicStruct::genGNR(const Atom &atom, double a, double l, double w, double h)
+void AtomicStruct::genGNR(const Atom &atom, double acc, double l, double w, double h)
 {
     // No of primitive cell needed in x direction
-    double nbx = l/(3*a);
+    double nbx = l/(3*acc);
     
-    if( ceil(nbx)*3*a - a   <=   l ){
+    if( ceil(nbx)*3*acc - acc   <=   l ){
         nbx = ceil(nbx);
     }else{
         nbx = floor(nbx);
     }
     // No of primitive cell needed in y direction
-    double nby = w / ( sqrt(3)*a );
+    double nby = w / ( sqrt(3)*acc );
     
-    if(  ceil(nby) * sqrt(3) * a  -  sqrt(3) * a / 2     <=    w  ){
+    if(  ceil(nby) * sqrt(3) * acc  -  sqrt(3) * acc / 2     <=    w  ){
         nby = ceil(nby);
     }else{
         nby = floor(nby);
     }
     // generating primitive cell
-    AtomicStruct basisStructForGNR = this->genGNRPrimitiveCell( atom, a );
+    AtomicStruct basisStructForGNR = this->genGNRPrimitiveCell( atom, acc );
     
     AtomicStruct wholeGNR;
     wholeGNR.init();
@@ -508,7 +508,7 @@ void AtomicStruct::genGNR(const Atom &atom, double a, double l, double w, double
     *this = wholeGNR; 
 }
 
-AtomicStruct AtomicStruct::genGNRPrimitiveCell(const Atom &atom, double a){
+AtomicStruct AtomicStruct::genGNRPrimitiveCell(const Atom &atom, double acc){
     //////  generating the Primitive Cell consisting 4 atom for GNR
     //////                O      O
     //////           O                O
@@ -523,17 +523,17 @@ AtomicStruct AtomicStruct::genGNRPrimitiveCell(const Atom &atom, double a){
     mat mCoOrdinates = zeros<mat>(4,3);
     mCoOrdinates( 0, coord::X ) = nXorigin;
     mCoOrdinates( 0, coord::Y ) = nYorigin;
-    mCoOrdinates( 1, coord::X ) = nXorigin    +   a / 2;
-    mCoOrdinates( 1, coord::Y ) = nYorigin    +   sqrt(3) * a / 2;
-    mCoOrdinates( 2, coord::X ) = nXorigin    +   3 * a / 2;
-    mCoOrdinates( 2, coord::Y ) = nYorigin    +   sqrt(3) * a / 2;
-    mCoOrdinates( 3, coord::X ) = nXorigin    +   2 * a;
+    mCoOrdinates( 1, coord::X ) = nXorigin    +   acc / 2;
+    mCoOrdinates( 1, coord::Y ) = nYorigin    +   sqrt(3) * acc / 2;
+    mCoOrdinates( 2, coord::X ) = nXorigin    +   3 * acc / 2;
+    mCoOrdinates( 2, coord::Y ) = nYorigin    +   sqrt(3) * acc / 2;
+    mCoOrdinates( 3, coord::X ) = nXorigin    +   2 * acc;
     mCoOrdinates( 3, coord::Y ) = nYorigin;
     
     lvec tempMlv;
     tempMlv.zeros();
-    tempMlv.a1(coord::X) = 3*a;
-    tempMlv.a2(coord::Y) = sqrt(3) * a;
+    tempMlv.a1(coord::X) = 3*acc;
+    tempMlv.a2(coord::Y) = sqrt(3) * acc;
     
     icol tempAtomId = zeros<icol>(4);
     tempAtomId.fill(atom.ia);
