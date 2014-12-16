@@ -12,13 +12,7 @@ import  numpy as np
 import  math
 from    math import pi, tan, cos, sin
 
-# Workaround for a bug involving Boost.MPI, OpenMPI and Python
-# in linux system. You can ignore these lines if you are not using
-# OpenMPI in linux.
-import DLFCN as dl
-import sys
-sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
-
+import  mpi
 import  qmicad
 from    qmicad.simulators.utils.linspace import linspace
 from    qmicad.simulators.dirackp import *
@@ -26,16 +20,17 @@ from    qmicad.simulators.dirackp import *
 
 ##
 # Run the simulation
-def simulate():
+def simulate(workers):
 
     # some constants 
     # Transport simulator
-    tr = Transport()
+    tr = Transport(workers)
     tr.HamType = tr.HAM_TI_SURF_KP
+    tr.DevType = tr.COH_RGF_NON_UNI
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.11.0"
+    tr.VERSION_REQUIRED = "0.08.5"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False
@@ -200,8 +195,10 @@ def main(argv = None):
     if argv is None:
         argv = sys.argv
 
+    # get MPI communicator
+    workers = mpi.world
     # Run the simulator
-    simulate()
+    simulate(workers)
         
     return 0
 

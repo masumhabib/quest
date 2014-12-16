@@ -35,11 +35,11 @@ The following libraries are needed to build QMICAD:
 Installation
 -------------
 Download and unzip source. Then configure using cmake:   
-`$ ./configure`
+`$ ./build config`
 
 Make and install using:   
-`$ ./configure build`   
-`$ ./configure install ~/`
+`$ ./build`   
+`$ ./build install ~/`
 
 To change installation directory, change `~/` to `/your/install/path`.
 
