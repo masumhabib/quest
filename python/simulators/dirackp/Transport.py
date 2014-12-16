@@ -392,6 +392,7 @@ class Transport(object):
                 
                 lyrim1 = lyri
                 beg = end + 1
+            self.Hl.insert(0, self.Hl[0])
             
         nprint(" done.")
         
@@ -598,6 +599,13 @@ class Transport(object):
                     self.rgf.Hl(self.Hl[ib], ib)     # Hl: 1 to N+1=nb-1                            
             self.rgf.Hl(self.Hl[1], 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
             self.rgf.Hl(self.Hl[ib], ib+1)           # Set H_N+2,N+1 = H_N+1,N            
+        # Clean up unused memory; we alredy have copies of these variables
+        # in self.rgf.
+        self.H0 = None
+        self.Hl = None
+        self.S0 = None
+        self.Sl = None
+
         # Enable calculations
         for type, value in self.Calculations.iteritems():
             # transmission
@@ -742,6 +750,11 @@ class Transport(object):
         del dct['workers']
         del dct['clock']
         del dct['kp']
+        #del dct['H0']
+        #del dct['Hl']
+        #del dct['S0']
+        #del dct['Sl']
+        #del dct['geom']
         #del dct['rgf']
         return dct
     

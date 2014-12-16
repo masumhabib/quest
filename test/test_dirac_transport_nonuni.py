@@ -26,6 +26,7 @@ def simulate(workers):
     # Transport simulator
     tr = Transport(workers)
     tr.HamType = tr.HAM_TI_SURF_KP
+    tr.DevType = tr.COH_RGF_NON_UNI
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
