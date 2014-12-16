@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8)
 # Version
 set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 06)
-set(QMICAD_PATCH 4)
+set(QMICAD_PATCH 5)
 
 # Options
 set(VERBOSE_MAKE off)
