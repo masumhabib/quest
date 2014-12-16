@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+# FileName: build
+# Description: A build script that runs configures, builds and installs qmicad.
+# 
+# Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
+#
+# Created: 18 June 2014.
+
+build_dir="obj"
+
+function usage(){
+    echo "Usage: build [options]"
+    echo "  When no option is given, builds qmicad using make."
+    echo "  options: " 
+    echo "    config: configures qmicad using cmake."
+    echo "    install [path]: installs qmicad."
+    echo "    clean: deletes compiled object files in the build folder."
+    echo "    superclean: deletes build folder."
+    echo "    help: shows this message."
+}
+
+function doconfig(){
+    mkdir -p $build_dir
+    cd $build_dir
+    cmake ../
+    cd ../
+}
+
+function domake(){
+    mkopt=""
+    ncpu="4"
+
+    if [[ "$1" ]]; then
+        mkopt=$1
+    fi
+
+    if [[ "$2" ]]; then
+        ncpu=$2
+    fi
+
+    if [[ ! -f "./$build_dir/Makefile" ]]; then
+        doconfig
+    fi
+
+    cd $build_dir && make -j $ncpu $mkopt
+}
+
+if [[ $# -eq 0 ]]; then
+    # No argument, run build qmicad
+    domake
+elif [[ $# -ge 1 ]]; then
+    opt=$1
+    if [[ $opt == "help" ]]; then
+        usage
+    #elif [[ $opt == "build" ]]; then
+    #    if [[ ! -d "build/" ]]; then
+    #        doconfig
+    #        cd ../
+    #    fi
+#
+    #    if [[ $# == 2 ]]; then
+    #        mkopt=$2
+    #        cd build && make -j $ncpu $mkopt
+    #    else
+    #        cd build && make -j $ncpu
+    #    fi
+    elif [[ $opt == "config" ]]; then 
+        doconfig
+    elif [[ $opt == "clean" ]]; then 
+        domake "clean"
+    elif [[ $opt == "superclean" ]]; then
+        rm -rf $build_dir
+    elif [[ $opt == "install" ]]; then
+        if [[ $# == 2 ]]; then
+            install_dir=$2
+            cd $build_dir && cmake -DCMAKE_INSTALL_PREFIX:PATH=$install_dir ../ && make install
+        else
+            cd $build_dir && make install 
+        fi
+    else
+        usage
+        exit -1
+    fi
+else
+    usage
+    exit -1
+fi
+
+
