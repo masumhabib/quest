@@ -44,7 +44,7 @@ Make and install using:
 To change installation directory, change `~/` to `/your/install/path`.
 
 To create documentation do:   
-`$ ./configure build doc`
+`$ ./build doc`
 
 
 Documentation

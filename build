@@ -15,6 +15,7 @@ function usage(){
     echo "  options: " 
     echo "    config: configures qmicad using cmake."
     echo "    install [path]: installs qmicad."
+    echo "    doc: build documentation."
     echo "    clean: deletes compiled object files in the build folder."
     echo "    superclean: deletes build folder."
     echo "    help: shows this message."
@@ -53,18 +54,6 @@ elif [[ $# -ge 1 ]]; then
     opt=$1
     if [[ $opt == "help" ]]; then
         usage
-    #elif [[ $opt == "build" ]]; then
-    #    if [[ ! -d "build/" ]]; then
-    #        doconfig
-    #        cd ../
-    #    fi
-#
-    #    if [[ $# == 2 ]]; then
-    #        mkopt=$2
-    #        cd build && make -j $ncpu $mkopt
-    #    else
-    #        cd build && make -j $ncpu
-    #    fi
     elif [[ $opt == "config" ]]; then 
         doconfig
     elif [[ $opt == "clean" ]]; then 
@@ -78,6 +67,12 @@ elif [[ $# -ge 1 ]]; then
         else
             cd $build_dir && make install 
         fi
+    elif [[ $opt == "doc" ]]; then
+        if [[ ! -f "./$build_dir/Makefile" ]]; then
+            doconfig
+        fi
+
+        cd $build_dir && make doc
     else
         usage
         exit -1
