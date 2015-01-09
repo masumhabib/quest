@@ -10,16 +10,15 @@ import pickle as pk
 import numpy as np
 import random as rn
 
-from qmicad import setVerbosity, greet
+from qmicad import setVerbosity, greet, vprint
+from qmicad.vprint import nprint, dprint, eprint
+from qmicad.linspace import linspace
 from qmicad.atoms import AtomicStruct, SVec, LCoord
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.negf import CohRgfLoop
 from qmicad.kpoints import KPoints
 from qmicad.potential import LinearPot
 from qmicad.utils import Timer, Workers, Quadrilateral, Point
-from qmicad.simulators.utils import vprint
-from qmicad.simulators.utils.vprint import nprint, dprint, eprint
-from qmicad.simulators.utils.linspace import linspace
 
 class Transport(object):
     """

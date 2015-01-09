@@ -14,7 +14,7 @@ from    math import pi, tan, cos, sin
 
 import  mpi
 import  qmicad
-from    qmicad.simulators.utils.linspace import linspace
+from    qmicad.linspace import linspace
 from    qmicad.simulators.dirackp import *
 
 

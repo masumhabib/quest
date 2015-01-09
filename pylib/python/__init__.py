@@ -13,6 +13,8 @@
 
 """
 from qmicad import * 
+import linspace 
+import vprint
 import simulators
 
 # TI surface k.p default parameters

@@ -12,14 +12,13 @@ import numpy as np
 from   math import pi
 
 from qmicad import setVerbosity, greet
+from qmicad import vprint
+from qmicad.vprint import nprint, dprint, eprint
 from qmicad.atoms import AtomicStruct, LCoord
 from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
 from qmicad.kpoints import KPoints
 from qmicad.band import BandStruct
 from qmicad.utils import Timer, Workers, Point
-from qmicad.simulators.utils import vprint
-from qmicad.simulators.utils.vprint import nprint, dprint, eprint
-
 
 class Band(object):
     """
