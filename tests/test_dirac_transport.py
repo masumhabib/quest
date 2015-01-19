@@ -83,7 +83,7 @@ def simulate():
 
     # Bias
     tr.VGG        = np.array([0.0])    # Gate voltage offset
-    tr.Vo         = 0.15               # Built-in voltage
+    tr.Vo         = 0.0               # Built-in voltage
 
     tr.VDD        = np.array([0.0])
     tr.rVS        =-0.5       # source ratio

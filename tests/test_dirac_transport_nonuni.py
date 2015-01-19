@@ -30,7 +30,7 @@ def simulate(workers):
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.08.5"
+    tr.VERSION_REQUIRED = "0.10.0"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False
@@ -78,7 +78,7 @@ def simulate(workers):
 
     # Bias
     tr.VGG        = np.array([0.0])    # Gate voltage offset
-    tr.Vo         = 0.15               # Built-in voltage
+    tr.Vo         = 0.0               # Built-in voltage
 
     tr.VDD        = np.array([0.0])
     tr.rVS        =-0.5       # source ratio
