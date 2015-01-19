@@ -20,7 +20,7 @@ import sys
 sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
 
 import  qmicad
-from    qmicad.simulators.utils.linspace import linspace
+from    qmicad.linspace import linspace
 from    qmicad.simulators.dirackp import *
 
 
@@ -35,7 +35,7 @@ def simulate():
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.10.0"
+    tr.VERSION_REQUIRED = "0.11.0"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False

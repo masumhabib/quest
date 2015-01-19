@@ -10,7 +10,7 @@ project(qmicad CXX)
 
 # Version
 set(QMICAD_MAJOR 0)
-set(QMICAD_MINOR 10)
+set(QMICAD_MINOR 11)
 set(QMICAD_PATCH 0)
 
 # Options
@@ -92,12 +92,12 @@ set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 
 # version header
 configure_file (
-    "${CMAKE_SOURCE_DIR}/include/config.in.h"
+    "${CMAKE_SOURCE_DIR}/lib/include/config.in.h"
     "${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h"
 )
 
 # includes
-set(QMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
+set(QMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/lib/include)
 list(REMOVE_DUPLICATES QMICAD_INCLUDE_DIRS)
 list(APPEND QMICAD_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include)
 
@@ -122,8 +122,8 @@ message(STATUS "Installation location: ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_
 # -------- <QMICAD C++ Library> ------------------------------------------------
 
 # sources
-file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
-file(GLOB_RECURSE QMICAD_HEADERS "include/*.h*")
+file(GLOB_RECURSE QMICAD_SOURCES "lib/src/*.cpp")
+file(GLOB_RECURSE QMICAD_HEADERS "lib/include/*.h*")
 add_library(qmicad SHARED ${QMICAD_SOURCES} ${QMICAD_HEADERS})
 
 # linking
@@ -135,14 +135,14 @@ set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 # Prepare qmicad package
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND cp -rp ${CMAKE_SOURCE_DIR}/include ${QMICAD_DIST_DIR}
+    COMMAND cp -rp ${CMAKE_SOURCE_DIR}/lib/include ${QMICAD_DIST_DIR}
     COMMAND cp -rp ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h ${QMICAD_DIST_DIR}/include
     COMMAND rm -f ${QMICAD_DIST_DIR}/include/config.in.h
 )
 
 # doxygen
 if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/qmicad.in.doxy ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy @ONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lib/doc/qmicad.in.doxy ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy @ONLY)
 
     add_custom_target(doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy
@@ -162,9 +162,9 @@ endif(DOXYGEN_FOUND)
 
 # -------- <QMICAD Python Library> ---------------------------------------------
 # sources
-set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/python)
-file(GLOB_RECURSE PYQMICAD_SOURCES "python/*.cpp")
-file(GLOB_RECURSE PYQMICAD_HEADERS "python/*.h*")
+set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pylib)
+file(GLOB_RECURSE PYQMICAD_SOURCES "pylib/*.cpp")
+file(GLOB_RECURSE PYQMICAD_HEADERS "pylib/*.h*")
 include_directories(${PYQMICAD_INCLUDE_DIRS})
 add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
 
@@ -181,12 +181,17 @@ set_target_properties (pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
 # Prepare qmicad package
 add_custom_command(
     TARGET pyqmicad POST_BUILD
-    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/python
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/python/*.py ${QMICAD_DIST_DIR}/python
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/python/simulators ${QMICAD_DIST_DIR}/python
-    COMMAND cd        ${QMICAD_DIST_DIR} && ln -sf python qmicad
-    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad.so  ${QMICAD_DIST_DIR}/python
-    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad.so  ${QMICAD_DIST_DIR}/python
+    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/qmicad
+    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/qmicad/simulators
+    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/utils
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/pylib/python/*.py ${QMICAD_DIST_DIR}/qmicad
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/simulators/python/* ${QMICAD_DIST_DIR}/qmicad/simulators
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/utils/matlab ${QMICAD_DIST_DIR}/utils
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/tests ${QMICAD_DIST_DIR}/
+    COMMAND cd        ${QMICAD_DIST_DIR}/tests && ln -sf ../qmicad . && cd ${QMICAD_DIST_DIR}
+    #COMMAND cd        ${QMICAD_DIST_DIR} && ln -sf p qmicad
+    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad.so  ${QMICAD_DIST_DIR}/qmicad
+    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad.so  ${QMICAD_DIST_DIR}/qmicad
 )
 
 # -------- </QMICAD Python Library> ---------

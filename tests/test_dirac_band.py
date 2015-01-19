@@ -33,7 +33,7 @@ def simulate():
     bs.verbosity = vprint.MSG_NORMAL
     
     #Simulation parameters.
-    bs.VERSION_REQUIRED = "0.10.0"
+    bs.VERSION_REQUIRED = "0.11.0"
 
     bs.DryRun = False
     bs.AutoGenKp = False
