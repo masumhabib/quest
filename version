@@ -15,7 +15,7 @@ function usage(){
     exit 0
 }
 
-other_files="test/test_dirac_band.py test/test_dirac_transport.py"
+other_files="tests/test_dirac_band.py tests/test_dirac_transport.py"
 
 major_keyword="set(QMICAD_MAJOR"
 minor_keyword="set(QMICAD_MINOR"
