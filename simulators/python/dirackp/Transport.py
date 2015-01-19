@@ -192,51 +192,23 @@ class Transport(object):
 
         nprint("\n Creating atomistic geometry ...")
 
-        # TI k.p surface      
-        if (self.HamType == self.HAM_TI_SURF_KP):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+        # TI k.p surface
+        if not hasattr(self, "hp"): # if hp does not exist, create it.
+            if self.HamType == self.HAM_TI_SURF_KP:
                 self.hp = TISurfKpParams()
-            else:
-                if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TISurfKpParams()
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        elif (self.HamType == self.HAM_TI_SURF_KP4):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif self.HamType == self.HAM_TI_SURF_KP4:
                 self.hp = TISurfKpParams4()
-            else:
-                if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TISurfKpParams4()
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        elif (self.HamType == self.HAM_TI_3D_KP):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif self.HamType == self.HAM_TI_3D_KP:
                 self.hp = TI3DKpParams()
-            else:
-                if not isinstance(self.hp, TI3DKpParams): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TI3DKpParams()
-            # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        elif (self.HamType == self.HAM_GRAPHENE_KP):
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif self.HamType == self.HAM_GRAPHENE_KP:
                 self.hp = GrapheneKpParams()
             else:
-                if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
-                    self.hp = GrapheneKpParams()
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        else:
-            raise RuntimeError(" Unsupported Hamiltonian type. ")
-        
+                raise RuntimeError(" Unsupported Hamiltonian type. ")
+
+        self.geom = AtomicStruct(self.hp.ptable)
+        self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
+        self.nbw = [self.nw]*self.nb
+
         self.updateBoundingBox()
 
         nprint(" done.")
