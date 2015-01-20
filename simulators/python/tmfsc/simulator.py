@@ -5,6 +5,7 @@ from device import Device, nm, AA, EDGE_REFLECT, EDGE_ABSORB
 
 from math import cos, sin, tan, pi, sqrt, atan2
 import numpy as np
+import numpy.random as rnd
 
 class Simulator(object):
     def __init__(self, dev):
@@ -13,6 +14,45 @@ class Simulator(object):
         self.pts_per_cycles = 100
         self.num_dt_step = 1000
         self.vF = 1E6
+
+        self.dl = 50
+        self.nth = 50
+
+    def calc_transmission(self, B, EF, V, cont_num = 0, draw=False):
+        dev = self.dev
+        ie = dev.contacts[cont_num]
+        if dev.edge_types[ie] != EDGE_ABSORB:
+            raise Exception(" Edge # " + str(ie) + " is not a contact.")
+
+        npts = int(dev.edge_lengths[ie]/self.dl)
+        inj_pts = dev.get_ptsonedge(cont_num, npts)
+
+        edge_vec = dev.edge_vec[ie]
+        th0 = atan2(edge_vec[1], edge_vec[0])
+
+        ne = 0
+        for ip in range(npts):
+            ri = inj_pts[ip, :]*AA
+
+            th = rnd.normal(0, pi/5, self.nth)
+
+            for thi in th:
+                if abs(thi) < pi/2.0-pi/20.0:
+                    self.calc_trajectory(ri, th0 + thi + pi/2, B, EF, V)
+                    ne += 1
+                    if draw == True:
+                        dev.draw_trajectory(color='b', alpha=0.05)
+            print str(int(float(ip+1)*100.0/float(npts))) + "%"
+
+
+        T = {}
+        T[cont_num] = {}
+        for ic in range(len(dev.contacts)):
+            if ic != cont_num:
+                ie = dev.contacts[ic]
+                T[cont_num][ic] = float(dev.collected[ie])/float(ne)
+        return T
+
 
     def calc_trajectory(self, ri, thi, B, EF, V):
         r = []
