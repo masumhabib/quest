@@ -67,6 +67,8 @@ class Band(object):
         self.HAM_TI_SURF_KP4 = 11       # TI surface k.p hamiltonian with 4 spin basis set
         self.HAM_TI_3D_KP    = 15       # TI 3D k.p hamiltonian with 4 spin basis set
         self.HAM_GRAPHENE_KP = 20       # Graphene k.p Hamiltonian
+        self.HAM_GRAPHENE_TB    = 30       # 2D graphene
+        self.HAM_GNR_TB         = 40       # GNR type
         self.HamType         = self.HAM_TI_SURF_KP 
                         
         # Calculations
@@ -91,49 +93,30 @@ class Band(object):
     def createAtomicGeom(self):
         """ Creates atomistic geometry. """
         
-        # TI k.p surface      
-        if (self.HamType == self.HAM_TI_SURF_KP):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+        # Hamiltonian parameter
+        if not hasattr(self, "hp"):
+            if (self.HamType == self.HAM_TI_SURF_KP):    
                 self.hp = TISurfKpParams()
-            else:
-                if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TISurfKpParams()
-            # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
-        elif (self.HamType == self.HAM_TI_SURF_KP4):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif (self.HamType == self.HAM_TI_SURF_KP4):    
                 self.hp = TISurfKpParams4()
-            else:
-                if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TISurfKpParams4()
-            # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
-        elif (self.HamType == self.HAM_TI_3D_KP):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif (self.HamType == self.HAM_TI_3D_KP):    
                 self.hp = TI3DKpParams()
-            else:
-                if not isinstance(self.hp, TI3DKpParams): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TI3DKpParams()
-            # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
-        elif (self.HamType == self.HAM_GRAPHENE_KP):
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif (self.HamType == self.HAM_GRAPHENE_KP):
                 self.hp = GrapheneKpParams()
+            elif (self.HamType == self.HAM_GNR_TB):
+                self.hp = GrapheneTbParams()
             else:
-                if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
-                    self.hp = GrapheneKpParams()
-            # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.hp.ptable)
+                raise RuntimeError(" Unsupported Hamiltonian type. ")
+ 
+        # Create atomistic geometry of the device.
+        self.geom = AtomicStruct(self.hp.ptable)
+        if (self.HamType == self.HAM_TI_SURF_KP or 
+                self.HamType == self.HAM_TI_SURF_KP4 or 
+                self.HamType == self.HAM_TI_3D_KP or 
+                self.HamType == self.HAM_GRAPHENE_KP):
             self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nl, self.nw, self.nh)
-        else:
-            raise RuntimeError(" Unsupported Hamiltonian type. ")
+        elif self.HamType == self.HAM_GNR_TB:
+            self.geom.genGNR(self.hp.ptable[6], self.hp.acc, self.nl, self.nw, self.nh)
         
         # Save lattice vector
         self.lv = self.geom.LatticeVector                  
@@ -149,9 +132,10 @@ class Band(object):
             elif (self.Dim == 2):
                 # For rectangular lattice.
                 if (self.HamType == self.HAM_TI_SURF_KP or 
-                    self.HamType == self.HAM_TI_SURF_KP4 or 
-                    self.HamType == self.HAM_TI_3D_KP or 
-                    self.HamType == self.HAM_GRAPHENE_KP):
+                        self.HamType == self.HAM_TI_SURF_KP4 or 
+                        self.HamType == self.HAM_TI_3D_KP or 
+                        self.HamType == self.HAM_GRAPHENE_KP or
+                        self.HamType == self.HAM_GNR_TB):
                     # The nearest neighbors
                     self.lc.append(LCoord(0, 0, 0))                     # main cell
                     self.lc.append(LCoord(1, 0, 0))                     # neighbor on the right      

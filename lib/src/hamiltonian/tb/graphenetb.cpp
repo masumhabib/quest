@@ -26,6 +26,7 @@ string GrapheneTbParams::toString() const {
     stringstream ss;
     ss << cxhamparams::toString() << ": " << endl;
     ss << mPrefix << " dtol  = " << mdtol << endl;
+    ss << mPrefix << " acc   = " << mdi0 << endl;
     ss << mPrefix << " ec    = " << mec << endl;
     ss << mPrefix << " di0   = " << mdi0 << endl;
     ss << mPrefix << " ti0   = " << mti0 << endl;

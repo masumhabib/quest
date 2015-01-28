@@ -423,6 +423,14 @@ void AtomicStruct::genRectLattAtoms(uint nl, uint nw, double ax, double ay,
  
 }
 
+void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, uint nl, uint nw, uint nh){
+    double w = (nw-1)*a;                  // width (in A)
+    double l = (nl-1)*a;                  // length  (in A)
+    double h = (nh-1)*a;                  // length  (in A)
+    
+    genSimpleCubicStruct(atom, a, l, w, h);
+}
+
 void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, double l, double w, double h){
     // create grid along x, y and z axes.
     col X, Y, Z;
@@ -463,24 +471,30 @@ void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, double l, do
     mNe = computeNumOfElectrons();
 }
 
-void AtomicStruct::genGNR(const Atom &atom, double acc, double l, double w, double h)
-{
+void AtomicStruct::genGNR(const Atom &atom, double acc, double l, double w, double h){
     // No of primitive cell needed in x direction
-    double nbx = l/(3*acc);
+    double nl = l/(3*acc);
     
-    if( ceil(nbx)*3*acc - acc   <=   l ){
-        nbx = ceil(nbx);
+    if( ceil(nl)*3*acc - acc   <=   l ){
+        nl = ceil(nl);
     }else{
-        nbx = floor(nbx);
+        nl = floor(nl);
     }
     // No of primitive cell needed in y direction
-    double nby = w / ( sqrt(3)*acc );
+    double nw = w / ( sqrt(3)*acc );
     
-    if(  ceil(nby) * sqrt(3) * acc  -  sqrt(3) * acc / 2     <=    w  ){
-        nby = ceil(nby);
+    if(  ceil(nw) * sqrt(3) * acc  -  sqrt(3) * acc / 2     <=    w  ){
+        nw = ceil(nw);
     }else{
-        nby = floor(nby);
+        nw = floor(nw);
     }
+
+    // Generate GNR using the actual generator
+    genGNR(atom, acc, uint(nl), uint(nw), uint(h));
+
+}
+
+void AtomicStruct::genGNR(const Atom &atom, double acc, uint nl, uint nw, uint nh){
     // generating primitive cell
     AtomicStruct basisStructForGNR = this->genGNRPrimitiveCell( atom, acc );
     
@@ -488,8 +502,8 @@ void AtomicStruct::genGNR(const Atom &atom, double acc, double l, double w, doub
     wholeGNR.init();
     
     // Creating the GNR structure using the primitive cell and its lattice vector
-    for (long ix = 0; ix < nbx; ++ix){
-        for ( long iy=0; iy < nby; ++iy ){
+    for (long ix = 0; ix < nl; ++ix){
+        for ( long iy=0; iy < nw; ++iy ){
             AtomicStruct tempBasisStruct = basisStructForGNR;
             
             tempBasisStruct += ix * basisStructForGNR.mlv.a1; // shifting basisStruct
@@ -542,13 +556,6 @@ AtomicStruct AtomicStruct::genGNRPrimitiveCell(const Atom &atom, double acc){
 
 }
 
-void AtomicStruct::genSimpleCubicStruct(const Atom &atom, double a, uint nl, uint nw, uint nh){
-    double w = (nw-1)*a;                  // width (in A)
-    double l = (nl-1)*a;                  // length  (in A)
-    double h = (nh-1)*a;                  // length  (in A)
-    
-    genSimpleCubicStruct(atom, a, l, w, h);
-}
 
 int AtomicStruct::computeNumOfOrbitals(){
     int numOrbitals = 0;
