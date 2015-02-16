@@ -16,7 +16,7 @@ set(VERBOSE_MAKE off)
 set(LINK_STATIC off)
 
 # Add local usr path for locally compiled libraries
-set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
+#set(CMAKE_PREFIX_PATH $ENV{HOME}/usr)
 
 # Compiler flags
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
