@@ -42,7 +42,7 @@ class Simulator(object):
                     ne += 1
                     if draw == True:
                         dev.draw_trajectory(color='b', alpha=0.05)
-            print str(int(float(ip+1)*100.0/float(npts))) + "%"
+            print (str(int(float(ip+1)*100.0/float(npts))) + "%")
 
 
         T = {}
