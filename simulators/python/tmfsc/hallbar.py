@@ -10,6 +10,9 @@ import numpy as np
 from math import pi
 import sys
 import os
+import shutil
+
+import boost.mpi as mpi
 
 # Constants
 TWO_CONTS  	= 2 		# two contacts
@@ -17,25 +20,30 @@ FOUR_CONTS 	= 4   		# four contacts
 vf 			= 1E6		# Fermi velocity
 
 class HallBar(object):
-    def __init__(self):
-	    # simulation setup
-	    self.num_contacts = FOUR_CONTS
+    def __init__(self, mpiworld=None):
+        # simulation setup
+        self.num_contacts = FOUR_CONTS
 
-	    # bias
-	    self.EF = 0.0	    # Fermi level		
-	    self.Bmin = 1	    # Magnetic field
-	    self.Vmin = 0.15	# Gate bias
-	    self.NB = 1         # size of self.B
-	    self.NV = 1         # size of self.V
-	    self.m  = 0.99      # Resonance number (optional)
+        # bias
+        self.EF = 0.0	    # Fermi level		
+        self.Bmin = 1	    # Magnetic field
+        self.Vmin = 0.15	# Gate bias
+        self.NB = 1         # size of self.B
+        self.NV = 1         # size of self.V
+        self.m  = 0.99      # Resonance number (optional)
 
-	    # dimensions
-	    self.lx = 5000		# length
-	    self.ly = 5000		# width
-	    self.clx = 500		# contact width
-	    self.cly = 10		# contact length
+        # dimensions
+        self.lx = 5000		# length
+        self.ly = 5000		# width
+        self.clx = 500		# contact width
+        self.cly = 10		# contact length
 
-	    self.fontsize = 20
+        self.fontsize = 20
+
+        self.out_dir = './'
+        self.out_file = 'trans.npz'
+
+        self.mpiworld = mpiworld
 
     def setup_geom(self):
         """ Creates the goemetry """
@@ -76,7 +84,7 @@ class HallBar(object):
             self.dev.set_edge_type(11, device.EDGE_ABSORB)
 
         # Create simulator
-        self.sim = Simulator(self.dev)
+        self.sim = Simulator(self.dev, self.mpiworld)
         self.vF = vf
 
     def setup_bias(self):
@@ -84,11 +92,14 @@ class HallBar(object):
         if self.NV == 1:
             self.V = np.array([self.Vmin])
         else:
-            self.V = np.linspace(self.Vmin, self.Vmax, NV)
+            self.V = np.linspace(self.Vmin, self.Vmax, self.NV)
 
         if self.NB == 1:        
-            B0 = abs(self.EF-self.V)/vf/self.dc*2.0
-            self.B = self.m*B0
+            if self.m <= 0:
+                self.B = np.array([self.Bmin])
+            else:
+                B0 = abs(self.EF-self.V)/vf/self.dc*2.0
+                self.B = self.m*B0
         else:
             self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
 
@@ -141,7 +152,7 @@ class HallBar(object):
         T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
         if self.num_contacts == FOUR_CONTS:
 	        T13 = ' T13 = ' + '{0:.2f}'.format(T[0][2])
-	        T14 = ' T14= ' + '{0:.2f}'.format(T[0][3])
+	        T14 = ' T14 = ' + '{0:.2f}'.format(T[0][3])
         else:
 	        T13 = ''
 	        T14 = ''
@@ -170,6 +181,45 @@ class HallBar(object):
 
         self.dev.show_plot()
 
+    def calc_all_trans(self, dl=50, nth=50):
+        """ Transmission for all B and V """
+        self.sim.dl = dl
+        self.sim.nth = nth
+        
+        self.T12 = np.zeros((self.NB, self.NV))
+        self.T13 = np.zeros((self.NB, self.NV))
+        self.T14 = np.zeros((self.NB, self.NV))
+
+        ib = 0
+        for B in self.B:
+            iv = 0
+            for V in self.V:
+                T = self.sim.calc_transmission(B, self.EF, V, draw=False, show_progress=False)
+                self.T12[ib][iv] = T[0][1]
+                self.T13[ib][iv] = T[0][2]
+                self.T14[ib][iv] = T[0][3]
+        
+                # User feedback
+                T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
+                if self.num_contacts == FOUR_CONTS:
+	                T13 = ' T13 = ' + '{0:.2f}'.format(T[0][2])
+	                T14 = ' T14 = ' + '{0:.2f}'.format(T[0][3])
+                else:
+	                T13 = ''
+	                T14 = ''
+                print ('B = {0:.3f}'.format(self.B[ib]) + ' V = {0:.3f}'.format(self.V[iv]) + T12+T13+T14)
+ 
+                iv += 1
+            ib += 1
+
+    def save(self):
+        """ Saves results """
+        if not os.path.exists(self.out_dir):
+            os.makedirs(self.out_dir)
+        np.savez_compressed(self.out_dir+self.out_file, T12=self.T12, T13=self.T13, T14=self.T14, B=self.B, V=self.V) 
+
+
+
 
 
 """
@@ -180,17 +230,18 @@ def main(argv = None):
         argv = sys.argv
 
     if len(argv) > 1:
-        try:
-            simu_file = argv[1];
-            if not os.path.exists(simu_file):
-                raise Exception("File " + simu_file + " not found")
+        simu_file = argv[1];
+        if not os.path.exists(simu_file):
+            raise Exception("File " + simu_file + " not found")
 
-            hallbar = HallBar()
-            exec(open(simu_file).read(), locals())
+        hallbar = HallBar(mpi.world)
+        exec(open(simu_file).read(), globals(), locals())
 
-        except Exception as err:
-            print("ERROR: " + str(err)) 
-            raise err
+        if not os.path.exists(hallbar.out_dir):
+            os.makedirs(hallbar.out_dir)
+        shutil.copy2(simu_file, hallbar.out_dir+simu_file)
+        
+
     else:
         usage  = " Usage: hallbar.py simu.py\n"
         usage += "   simu.py: The python file defining the simulation parameters.\n"

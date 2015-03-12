@@ -8,7 +8,7 @@ import numpy as np
 import numpy.random as rnd
 
 class Simulator(object):
-    def __init__(self, dev):
+    def __init__(self, dev, mpiworld=None):
         self.dev = dev
         self.max_num_steps = 10000
         self.pts_per_cycles = 100
@@ -18,7 +18,9 @@ class Simulator(object):
         self.dl = 50
         self.nth = 50
 
-    def calc_transmission(self, B, EF, V, cont_num = 0, draw=False):
+        self.mpiworld = mpiworld
+
+    def calc_transmission(self, B, EF, V, cont_num = 0, draw=False, show_progress=True):
         dev = self.dev
         ie = dev.contacts[cont_num]
         if dev.edge_types[ie] != EDGE_ABSORB:
@@ -29,6 +31,10 @@ class Simulator(object):
 
         edge_vec = dev.edge_vec[ie]
         th0 = atan2(edge_vec[1], edge_vec[0])
+
+        # reset the bins
+        for ic in range(len(dev.collected)):
+            dev.collected[ic] = 0
 
         ne = 0
         for ip in range(npts):
@@ -42,7 +48,8 @@ class Simulator(object):
                     ne += 1
                     if draw == True:
                         dev.draw_trajectory(color='b', alpha=0.05)
-            print (str(int(float(ip+1)*100.0/float(npts))) + "%")
+            if show_progress == True:
+                print (str(int(float(ip+1)*100.0/float(npts))) + "%")
 
 
         T = {}
