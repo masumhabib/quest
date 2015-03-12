@@ -33,8 +33,10 @@ class Simulator(object):
         th0 = atan2(edge_vec[1], edge_vec[0])
 
         # reset the bins
-        for ic in range(len(dev.collected)):
-            dev.collected[ic] = 0
+        nc = len(dev.contacts)
+        for ic in range(nc):
+            ie = dev.contacts[ic]
+            dev.collected[ie] = 0
 
         ne = 0
         for ip in range(npts):
@@ -52,9 +54,8 @@ class Simulator(object):
                 print (str(int(float(ip+1)*100.0/float(npts))) + "%")
 
 
-        T = {}
-        T[cont_num] = {}
-        for ic in range(len(dev.contacts)):
+        T = np.zeros((nc,nc))
+        for ic in range(nc):
             if ic != cont_num:
                 ie = dev.contacts[ic]
                 T[cont_num][ic] = float(dev.collected[ie])/float(ne)

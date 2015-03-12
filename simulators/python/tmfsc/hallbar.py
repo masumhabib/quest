@@ -11,8 +11,11 @@ from math import pi
 import sys
 import os
 import shutil
+import operator as op
+import time
 
 import boost.mpi as mpi
+#import mpi
 
 # Constants
 TWO_CONTS  	= 2 		# two contacts
@@ -189,35 +192,57 @@ class HallBar(object):
         self.T12 = np.zeros((self.NB, self.NV))
         self.T13 = np.zeros((self.NB, self.NV))
         self.T14 = np.zeros((self.NB, self.NV))
+        
+        # MPI stuff
+        npts = self.NB*self.NV
+        ncpu = self.mpiworld.size
+        icpu = self.mpiworld.rank
+        quo = npts/ncpu
+        rem = npts%ncpu
+        my_start = icpu*quo
+        if icpu < rem:
+            my_start += icpu
+        else:
+            my_start += rem
+        my_end = my_start + quo
+        if icpu < rem:
+            my_end += 1
 
-        ib = 0
-        for B in self.B:
-            iv = 0
-            for V in self.V:
-                T = self.sim.calc_transmission(B, self.EF, V, draw=False, show_progress=False)
-                self.T12[ib][iv] = T[0][1]
+        for ipt in range(my_start, my_end):
+            ib = ipt/self.NV
+            iv = ipt%self.NV
+            T = self.sim.calc_transmission(self.B[ib], self.EF, self.V[iv], draw=False, show_progress=False)
+            
+       
+            self.T12[ib][iv] = T[0][1]
+            T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
+
+            if self.num_contacts == FOUR_CONTS:
                 self.T13[ib][iv] = T[0][2]
                 self.T14[ib][iv] = T[0][3]
-        
-                # User feedback
-                T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
-                if self.num_contacts == FOUR_CONTS:
-	                T13 = ' T13 = ' + '{0:.2f}'.format(T[0][2])
-	                T14 = ' T14 = ' + '{0:.2f}'.format(T[0][3])
-                else:
-	                T13 = ''
-	                T14 = ''
-                print ('B = {0:.3f}'.format(self.B[ib]) + ' V = {0:.3f}'.format(self.V[iv]) + T12+T13+T14)
  
-                iv += 1
-            ib += 1
-
+                T13 = ' T13 = ' + '{0:.2f}'.format(T[0][2])
+                T14 = ' T14 = ' + '{0:.2f}'.format(T[0][3])
+            else:
+                T13 = ''
+                T14 = ''
+            print ('B = {0:.3f}'.format(self.B[ib]) + ' V = {0:.3f}'.format(self.V[iv]) + T12+T13+T14)
+ 
+        if self.mpiworld.rank == 0:
+            self.T12 = mpi.reduce(self.mpiworld, self.T12, op.add, 0) 
+            self.T13 = mpi.reduce(self.mpiworld, self.T13, op.add, 0) 
+            self.T14 = mpi.reduce(self.mpiworld, self.T14, op.add, 0) 
+        else:
+            mpi.reduce(self.mpiworld, self.T12, op.add, 0) 
+            mpi.reduce(self.mpiworld, self.T13, op.add, 0) 
+            mpi.reduce(self.mpiworld, self.T14, op.add, 0) 
+ 
     def save(self):
         """ Saves results """
-        if not os.path.exists(self.out_dir):
-            os.makedirs(self.out_dir)
-        np.savez_compressed(self.out_dir+self.out_file, T12=self.T12, T13=self.T13, T14=self.T14, B=self.B, V=self.V) 
-
+        if self.mpiworld.rank == 0:
+            if not os.path.exists(self.out_dir):
+                os.makedirs(self.out_dir)
+            np.savez_compressed(self.out_dir+self.out_file, T12=self.T12, T13=self.T13, T14=self.T14, B=self.B, V=self.V) 
 
 
 
@@ -230,6 +255,8 @@ def main(argv = None):
         argv = sys.argv
 
     if len(argv) > 1:
+        start = time.time()
+
         simu_file = argv[1];
         if not os.path.exists(simu_file):
             raise Exception("File " + simu_file + " not found")
@@ -241,6 +268,9 @@ def main(argv = None):
             os.makedirs(hallbar.out_dir)
         shutil.copy2(simu_file, hallbar.out_dir+simu_file)
         
+        elapsed = time.time() - start
+        if mpi.world.rank == 0:
+            print(' RUNTIME: ' + str(int(elapsed)) + ' sec')
 
     else:
         usage  = " Usage: hallbar.py simu.py\n"
