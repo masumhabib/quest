@@ -64,6 +64,9 @@ find_package(MPI REQUIRED)
 # Python libs
 find_package(PythonLibs REQUIRED)
 
+# NumPy
+find_package(NumPy REQUIRED)
+
 # doxygen
 find_package(Doxygen)
 
@@ -167,6 +170,7 @@ set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pylib)
 file(GLOB_RECURSE PYQMICAD_SOURCES "pylib/*.cpp")
 file(GLOB_RECURSE PYQMICAD_HEADERS "pylib/*.h*")
 include_directories(${PYQMICAD_INCLUDE_DIRS})
+include_directories(${NUMPY_INCLUDE_DIRS})
 add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
 
 
