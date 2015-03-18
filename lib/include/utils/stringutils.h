@@ -28,8 +28,8 @@ inline int stoi(const string& ss){
     return lexical_cast<int>(trim(ss));
 }
 
-inline uint stou(const string& ss){
-    return lexical_cast<uint>(trim(ss));
+inline long stou(const string& ss){
+    return lexical_cast<long>(trim(ss));
 }  
 
 inline string dtos(double x){
@@ -41,15 +41,15 @@ inline string itos(int x){
 }
 
 inline string ttos(double sec){
-    uint tm = uint(sec);
-    uint days = tm/(3600*24);
+    long tm = long(sec);
+    long days = tm/(3600*24);
     tm = tm % (3600*24);
 
-    uint hr = tm/3600;
+    long hr = tm/3600;
     tm = tm % 3600;
 
-    uint min = tm/60;
-    double second = uint(tm%60) + (sec - uint(sec));
+    long min = tm/60;
+    double second = long(tm%60) + (sec - long(sec));
 
     stringstream times;
     times.precision(2);
