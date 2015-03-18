@@ -11,13 +11,6 @@
 #include "utils/std.hpp"
 #include "utils/Printable.hpp"
 
-#include <python2.6/Python.h>
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/tuple.hpp>
-#include <boost/python/str.hpp>
-
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
@@ -32,7 +25,6 @@
 namespace maths{
 namespace geometry{
 
-using namespace boost::python;
 namespace bg = boost::geometry;
 namespace bgi = boost::geometry::index;
 using namespace utils::stds;
@@ -46,7 +38,7 @@ typedef polygon::ring_type polyring;
 typedef bg::strategy::within::franklin<point, point, double> stwithin;
 
 /*
- * Quadrilateral for python guys
+ * Simple Quadrilateral
  */
 struct SimpleQuadrilateral: public Printable{
     point lb;
@@ -114,21 +106,6 @@ protected:
 
 typedef SimpleQuadrilateral squadrilateral;
 typedef SimpleQuadrilateral quadrilateral;
-
-
-
-
-struct PointPickler: public pickle_suite{
-    static tuple getinitargs(const point& p){
-        return make_tuple(p.get<0>(), p.get<1>());
-    }
-}; 
-
-struct QuadrilateralPickler: public pickle_suite{
-    static tuple getinitargs(const quadrilateral& ql){
-        return make_tuple(ql.lb, ql.rb, ql.rt, ql.lt);
-    }
-}; 
 
 
 }
