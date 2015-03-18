@@ -179,7 +179,7 @@ target_link_libraries (pyqmicad qmicad)
 target_link_libraries (pyqmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad ${Boost_PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
-set_target_properties (pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
+#set_target_properties (pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 set_target_properties (pyqmicad PROPERTIES PREFIX "")
 set_target_properties (pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
 
