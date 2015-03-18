@@ -127,6 +127,7 @@ file(GLOB_RECURSE QMICAD_HEADERS "lib/include/*.h*")
 add_library(qmicad SHARED ${QMICAD_SOURCES} ${QMICAD_HEADERS})
 
 # linking
+target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
 target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
