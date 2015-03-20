@@ -176,6 +176,7 @@ add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
 
 # linking
 target_link_libraries (pyqmicad qmicad)
+target_link_libraries (pyqmicad ${PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad ${Boost_PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
@@ -195,8 +196,8 @@ add_custom_command(
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/tests ${QMICAD_DIST_DIR}/
     COMMAND cd        ${QMICAD_DIST_DIR}/tests && ln -sf ../qmicad . && cd ${QMICAD_DIST_DIR}
     #COMMAND cd        ${QMICAD_DIST_DIR} && ln -sf p qmicad
-    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad.so  ${QMICAD_DIST_DIR}/qmicad
-    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad.so  ${QMICAD_DIST_DIR}/qmicad
+    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad
+    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad${CMAKE_SHARED_LIBRARY_SUFFIX} ${QMICAD_DIST_DIR}/qmicad
 )
 
 # -------- </QMICAD Python Library> ---------

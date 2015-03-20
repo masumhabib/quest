@@ -14,9 +14,15 @@ from    math import pi
 # Workaround for a bug involving Boost.MPI, OpenMPI and Python
 # in linux system. You can ignore these lines if you are not using
 # OpenMPI in linux.
-import DLFCN as dl
-import sys
-sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
+#import sys
+#if sys.platform == 'linux2':
+#    import DLFCN as dl
+#    flags = sys.getdlopenflags()
+#    sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
+#    import mpi
+#    sys.setdlopenflags(flags)
+#else:
+#    import mpi
 
 import  qmicad
 from    qmicad.simulators.dirackp import * 
