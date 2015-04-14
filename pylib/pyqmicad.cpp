@@ -80,6 +80,7 @@ void export_potential()
 
     export_Potential();
     export_LinearPot();
+    export_poissonPot(); // MIRZA POISSON
 }
 
 void export_hamiltonian()

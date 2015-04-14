@@ -48,6 +48,7 @@ void export_TI3DKpParams();
 
 void export_Potential();
 void export_LinearPot();
+void export_poissonPot(); // MIRZA POISSON
 
 void export_CohRgfLoop();
 
