@@ -1,7 +1,7 @@
 
 /*
- * File:   linearPot.cpp
- * Copyright (C) 2014  Mirza Elahi <mirza.monzur@gmail.com>
+ * File:   pypoissonPot.cpp
+ * Copyright (C) 2015  Mirza Elahi <mirza.monzur@gmail.com>
  *
  * Created on April 12, 2015, 2:56 AM
  */
@@ -21,7 +21,9 @@ namespace qmicad{
          */
         //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(poissonPot_VLR, VLR, 3, 5)
         void export_poissonPot(){
-            class_<poissonPot, bases<Potential>, shared_ptr<poissonPot>>("poissonPot", init< double, double >())
+            class_<poissonPot, bases<Potential>, shared_ptr<poissonPot>>("poissonPot", init< vec, vec >())
+            .def( init<double, double, double, double>() )
+            .def("setMaterialEps", &poissonPot::setMaterialEps)
             
             //.enable_pickling()
             //        .def("addLinearRegion", &LinearPot::addLinearRegion)
