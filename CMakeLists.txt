@@ -84,8 +84,8 @@ unset(Boost_PYTHON_LIBRARIES)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
-
+#find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
+find_package(Boost 1.55 REQUIRED serialization mpi)
 # Sources and headers
 # -----------------------------------------------------------------------------
 
@@ -199,6 +199,10 @@ add_custom_command(
     COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad
     COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad${CMAKE_SHARED_LIBRARY_SUFFIX} ${QMICAD_DIST_DIR}/qmicad
 )
+
+
+
+#CMAKE_INTDIR
 
 # -------- </QMICAD Python Library> ---------
 
