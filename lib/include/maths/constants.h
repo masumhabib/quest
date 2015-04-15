@@ -42,6 +42,7 @@ private:
     const double        hbar    = 1.054571726E-34;      // Reduced Planck constant: J.s
     const double        c       = 299792458;            // Speed of light: m/s
     const double        mub     = 9.27400968E-24;       // Bohr magneton
+    const double        kB      = 1.3806488E-23;        // Boltzman constant: m^2 kg s^-2 K^-1
     
     const double        e       = 1.60217657E-19;       // charge of an electron in: C
     const double        q       = 1.60217657E-19;       // charge of an electron in: C

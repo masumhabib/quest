@@ -1,7 +1,8 @@
 /* 
  * File:   arma.hpp
  * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
- *
+ * Contributors: Mirza Elahi <mirza.monzur@gmail.com>
+ * 
  * Created on February 8, 2014, 8:12 PM
  */
 
@@ -69,7 +70,12 @@ typedef arma::Mat<fcmplx>         cxfmat;    //!< Double precision complex matri
 typedef arma::Mat<int>            imat;      //!< Signed integer matrix.
 typedef arma::Mat<uint>           umat;      //!< Unsigned integer matrix.
 
-typedef arma::SpMat<double>       spmat;
+typedef arma::SpMat<double>       spmat;     //!< Double precision sparse matrix.
+typedef arma::SpMat<dcmplx>       cxspmat;   //!< Double precision complex sparse matrix.
+typedef arma::SpMat<float>        fspmat;    //!< Double precision sparse matrix.
+typedef arma::SpMat<fcmplx>       cxfspmat;  //!< Double precision complex sparse matrix.
+typedef arma::SpMat<int>          ispmat;    //!< Signed integer sparse matrix.
+typedef arma::SpMat<uint>         uspmat;    //!< Unsigned integer sparse matrix.
 
 typedef arma::Cube<double>         cube;       //!< Double precision matrix.
 typedef arma::Cube<dcmplx>         cxcube;     //!< Double precision complex matrix.

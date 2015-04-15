@@ -30,6 +30,10 @@ public:
     double nT = 300; //!< Temperature
     
 private:
+    const double weightEps = 0.5; //!< weightage between two adjacent points in grid with different dielectric constant
+    const double DELPHI = 1E-6; //!< potential gradient for calculating dRho/dPhi
+    const double vf = 1E6; //!< fermi velocity in graphene
+    const double Inf =  std::numeric_limits<double>::infinity();
     double nDELX; //!< minimum difference between points in X direction
     double nDELY; //!< minimum difference between points in Y direction
     double nLx; //!< Length in X direction
@@ -75,7 +79,7 @@ public:
 private:
     double getRho( double xi, double yj, double Potential );
     void calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus );
-    
+    void initAuxMatrices() ;
     
 };
     
