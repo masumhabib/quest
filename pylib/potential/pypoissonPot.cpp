@@ -32,7 +32,7 @@ void export_poissonPot() {
             .def("generateGrad2LambdaMatrix", &poissonPot::generateGrad2LambdaMatrix)
             .def("setInitialGuess", &poissonPot::setInitialGuess)
             .def("calculateLambdaSingleIteration", &poissonPot::calculateLambdaSingleIteration)
-            .def("getRho", &poissonPot::getRho)
+            //.def("getRho", &poissonPot::getRho)
             .def("getPotentialSliceAlongZ", &poissonPot::getPotentialSliceAlongZ)
             .def("getPotentialSliceAlongX", &poissonPot::getPotentialSliceAlongX)
             .def("helperDoping", &poissonPot::helperDoping)

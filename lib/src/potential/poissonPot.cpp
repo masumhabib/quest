@@ -11,10 +11,20 @@ namespace qmicad{
 namespace potential{
     
     
-poissonPot::poissonPot(vec Lx, vec Ly) {
+poissonPot::poissonPot(vec vecLx, vec vecLy) {
     using namespace utils::stds;
     this->mTitle = "Poisson Voltage Profile";
-    cout << Lx << endl;
+    
+    this->vecX = vecLx;
+    this->vecY = vecLy;
+    this->nNX = vecLx.n_elem;
+    this->nNY = vecLy.n_elem;
+    
+    this->nLx = vecLx( this->nNX - 1 );
+    this->nLy = vecLy( this->nNY - 1 );
+    
+    
+    
 }
     
 poissonPot::poissonPot(double nLx, double nLy, double DELX, double DELY) {

@@ -69,6 +69,8 @@ typedef arma::Mat<fcmplx>         cxfmat;    //!< Double precision complex matri
 typedef arma::Mat<int>            imat;      //!< Signed integer matrix.
 typedef arma::Mat<uint>           umat;      //!< Unsigned integer matrix.
 
+typedef arma::SpMat<double>       spmat;
+
 typedef arma::Cube<double>         cube;       //!< Double precision matrix.
 typedef arma::Cube<dcmplx>         cxcube;     //!< Double precision complex matrix.
 typedef arma::Cube<float>          fcube;      //!< Double precision matrix.
