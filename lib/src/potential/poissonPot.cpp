@@ -53,39 +53,41 @@ void poissonPot::initAuxMatrices() {
     this->vecd2V_by_dy2          = zeros<vec>( this->nNX * this->nNY );
     this->vecRho                 = zeros<vec>( this->nNX * this->nNY );
 }
-
-
-    
+  
 void poissonPot::setMaterialEps( double x1, double x2, double y1, double y2, double epsilonR ){
     
-    uvec tempXup = find ( this->vecX > x1 );
-    uvec tempXLow = find ( this->vecX <= y1 );
     uvec rowIndices;
-    maths::vintersection( tempXup, tempXLow, rowIndices );
-    
-    
-    uvec tempYup = find ( this->vecY > y1 );
-    uvec tempYLow = find ( this->vecY <= y2 );
     uvec colIndices;
-    maths::vintersection( tempYup, tempYLow, colIndices );
-    
+    this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
     this->mat2epsilon( rowIndices, colIndices ).fill( epsilonR );   
 }
-    
+
 void poissonPot::setMaterialni( double x1, double x2, double y1, double y2, double ni ){
-    
+    uvec rowIndices;
+    uvec colIndices;
+    this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
+    this->mat2ni( rowIndices, colIndices ).fill( ni ); 
 }
     
 void poissonPot::setDoping( double x1, double x2, double y1, double y2, double Nad ){
-    
+    uvec rowIndices;
+    uvec colIndices;
+    this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
+    this->mat2Doping( rowIndices, colIndices ).fill( Nad ); 
 }
 
 void poissonPot::setPotentialDirichlet( double x1, double x2, double y1, double y2, double V ){
-    
+    uvec rowIndices;
+    uvec colIndices;
+    this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
+    this->mat2PotentialDirichlet( rowIndices, colIndices ).fill( V ); 
 }
 
 void poissonPot::setPhiByFroce( double x1, double x2, double y1, double y2, double V ){
-    
+    uvec rowIndices;
+    uvec colIndices;
+    this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
+    this->mat2Phi( rowIndices, colIndices ).fill( V );
 }
 
 void poissonPot::generateGrad2LambdaMatrix( ){
@@ -123,6 +125,16 @@ void poissonPot::helperDoping( double x1, double x2, double y1, double y2, doubl
 
 void calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus ){
     
+}
+
+void poissonPot::helperGenRowColIndices( double x1, double x2, double y1, double y2, uvec &rowIndices, uvec &colIndices){
+    uvec tempXup = find ( this->vecX > x1 );
+    uvec tempXLow = find ( this->vecX <= y1 );
+    maths::vintersection( tempXup, tempXLow, rowIndices );
+    
+    uvec tempYup = find ( this->vecY > y1 );
+    uvec tempYLow = find ( this->vecY <= y2 );
+    maths::vintersection( tempYup, tempYLow, colIndices );
 }
     
 
