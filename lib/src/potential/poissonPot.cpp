@@ -58,7 +58,18 @@ void poissonPot::initAuxMatrices() {
     
 void poissonPot::setMaterialEps( double x1, double x2, double y1, double y2, double epsilonR ){
     
+    uvec tempXup = find ( this->vecX > x1 );
+    uvec tempXLow = find ( this->vecX <= y1 );
+    uvec rowIndices;
+    maths::vintersection( tempXup, tempXLow, rowIndices );
     
+    
+    uvec tempYup = find ( this->vecY > y1 );
+    uvec tempYLow = find ( this->vecY <= y2 );
+    uvec colIndices;
+    maths::vintersection( tempYup, tempYLow, colIndices );
+    
+    this->mat2epsilon( rowIndices, colIndices ).fill( epsilonR );   
 }
     
 void poissonPot::setMaterialni( double x1, double x2, double y1, double y2, double ni ){

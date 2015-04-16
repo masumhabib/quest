@@ -11,6 +11,7 @@
 #include "potential/terminal.h"
 #include "potential/potential.h"
 #include "utils/vout.h"
+#include "maths/vecop.hpp"
 
 #include <vector>
 #include <boost/geometry.hpp>
