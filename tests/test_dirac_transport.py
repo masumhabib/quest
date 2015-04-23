@@ -15,9 +15,9 @@ from    math import pi, tan, cos, sin
 # Workaround for a bug involving Boost.MPI, OpenMPI and Python
 # in linux system. You can ignore these lines if you are not using
 # OpenMPI in linux.
-import DLFCN as dl
-import sys
-sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
+#import DLFCN as dl
+#import sys
+#sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
 
 import  qmicad
 from    qmicad.linspace import linspace
@@ -35,7 +35,7 @@ def simulate():
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.11.0"
+    tr.VERSION_REQUIRED = "0.10.0"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False
@@ -83,7 +83,7 @@ def simulate():
 
     # Bias
     tr.VGG        = np.array([0.0])    # Gate voltage offset
-    tr.Vo         = 0.15               # Built-in voltage
+    tr.Vo         = 0.0               # Built-in voltage
 
     tr.VDD        = np.array([0.0])
     tr.rVS        =-0.5       # source ratio

@@ -605,7 +605,7 @@ inline void CohRgfa::glc::computeglc(cxmat& glci, const cxmat& glcim1, int ib){
     if(ib == iLc){
         double E = mnegf->mE;
         double VL = (*mnegf->mV(iLc))(0); // all the atoms on a contact have the save bias
-        computegs(glci, E+VL, *mnegf->mH0(iLc), *mnegf->mS0(iLc), Tiim1, mnegf->mieta, mnegf->SurfGTolX);
+        computegs(glci, E+VL, *mnegf->mH0(iLc), *mnegf->mS0(iLc), Tiim1, mnegf->mieta, CohRgfa::SurfGTolX);
     // calculate glc_i,i using recursive equation:
     // glc_i = [ES_ii - H_ii - U_ii - T_ii-1*glc_i-1*T_i-1i]^-1;
     // glc_i = [ES_ii - H_ii - U_ii - SigL_ii]^-1;
@@ -672,7 +672,7 @@ inline void CohRgfa::grc::computegrc(cxmat& grci, const cxmat& grcip1, int ib){
         double E = mnegf->mE;
         double VR = (*mnegf->mV(iRc))(0); // all the atoms on a contact have the save bias
         computegs(grci, E+VR, *mnegf->mH0(iRc), *mnegf->mS0(iRc), trans(Tip1i), mnegf->mieta, 
-                  mnegf->SurfGTolX);
+                  CohRgfa::SurfGTolX);
 
     // Calculate grc_i,i using recursive equation:
     // grc_i = [ES_ii - H_ii - U_ii - T_ii+1*grc_i+1*T_i+1i]^-1;

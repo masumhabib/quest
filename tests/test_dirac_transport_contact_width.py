@@ -24,7 +24,7 @@ def simulate():
     # some constants 
     # Transport simulator
     tr = Transport()
-    tr.HamType = tr.HAM_TI_SURF_KP
+    tr.HamType = tr.HAM_GRAPHENE_KP
     tr.DevType = tr.COH_RGF_NON_UNI
     tr.verbosity = vprint.MSG_NORMAL
     
@@ -42,6 +42,8 @@ def simulate():
 
     # Device structure
     tr.nw         = 21 
+    tr.nlc        = 11
+    tr.nrc        = 11
     tr.th         = 0
     tr.ng1        = 10 
     tr.ns1        = 0          

@@ -192,51 +192,51 @@ class Transport(object):
 
         nprint("\n Creating atomistic geometry ...")
 
-        # TI k.p surface      
-        if (self.HamType == self.HAM_TI_SURF_KP):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+        # TI k.p surface
+        if not hasattr(self, "hp"): # if hp does not exist, create it.
+            if self.HamType == self.HAM_TI_SURF_KP:
                 self.hp = TISurfKpParams()
-            else:
-                if not isinstance(self.hp, TISurfKpParams): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TISurfKpParams()
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        elif (self.HamType == self.HAM_TI_SURF_KP4):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif self.HamType == self.HAM_TI_SURF_KP4:
                 self.hp = TISurfKpParams4()
-            else:
-                if not isinstance(self.hp, TISurfKpParams4): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TISurfKpParams4()
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        elif (self.HamType == self.HAM_TI_3D_KP):    
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif self.HamType == self.HAM_TI_3D_KP:
                 self.hp = TI3DKpParams()
-            else:
-                if not isinstance(self.hp, TI3DKpParams): # if hp exists but not TISurfKpParams type, create it.
-                    self.hp = TI3DKpParams()
-            # Create atomistic geometry of the device.
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        elif (self.HamType == self.HAM_GRAPHENE_KP):
-            # Hamiltonian parameter
-            if not hasattr(self, "hp"): # if hp does not exist, create it.
+            elif self.HamType == self.HAM_GRAPHENE_KP:
                 self.hp = GrapheneKpParams()
             else:
-                if not isinstance(self.hp, GrapheneKpParams): # if hp exists but not GrapheneKpParams type, create it.
-                    self.hp = GrapheneKpParams()
-            self.geom = AtomicStruct(self.hp.ptable)
-            self.geom.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb, self.nw, self.nh)
-            self.nbw = [self.nw]*self.nb
-        else:
-            raise RuntimeError(" Unsupported Hamiltonian type. ")
-        
+                raise RuntimeError(" Unsupported Hamiltonian type. ")
+
+        dev = AtomicStruct(self.hp.ptable)
+        dev.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, self.nb-2, self.nw, self.nh)
+
+        if not hasattr(self, "nlc"):
+            self.nlc = self.nw
+
+        if not hasattr(self, "nrc"):
+            self.nrc = self.nw
+
+        cont_left = AtomicStruct(self.hp.ptable)
+        cont_left.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, 1, self.nlc, self.nh)
+        xs = dev.xmin
+        cont_left += np.array([xs, 0, 0])
+        cont_left += LCoord(-1, 0, 0)
+
+        cont_right = AtomicStruct(self.hp.ptable)
+        cont_right.genSimpleCubicStruct(self.hp.ptable[0], self.hp.a, 1, self.nrc, self.nh)
+        xs = dev.xmax
+        cont_right += np.array([xs, 0, 0])
+        cont_right += LCoord(1, 0, 0)
+
+        self.geom = cont_left + dev + cont_right
+        self.lyr_0 = cont_left
+        self.lyr_nbm1 = cont_right
+        cont_left += LCoord(-1, 0, 0)
+        cont_right += LCoord(1, 0, 0)
+        self.lyr_0m1 = cont_left
+        self.lyr_nb = cont_right
+
+        self.nbw = [self.nw]*self.nb
+        self.nbw[0] = self.nlc
+        self.nbw[self.nb-1] = self.nrc
         self.updateBoundingBox()
 
         nprint(" done.")
@@ -314,8 +314,8 @@ class Transport(object):
             # no k-loop, real space hamiltonian only
             if self.kp.N == 0:
                 
-                lyr0 = self.geom.span(0, self.nw*self.nh-1);               # extract block # 0
-                lyr1 = self.geom.span(self.nw*self.nh, 2*self.nw*self.nh-1);    # extract block # 1                
+                lyr0 = self.geom.span(0, self.nw*self.nh-1)               # extract block # 0
+                lyr1 = self.geom.span(self.nw*self.nh, 2*self.nw*self.nh-1)    # extract block # 1
                 
                 self.H0, self.S0 = generateHamOvl(self.hp, lyr0, lyr0)
 
@@ -336,17 +336,17 @@ class Transport(object):
                 
             # nearest neighbors in transverse direction for k-loop
             else:
-                self.H0 = [];
-                self.S0 = [];
-                self.Hl = [];
-                self.pv = []; 
-                self.pvl = []; 
+                self.H0 = []
+                self.S0 = []
+                self.Hl = []
+                self.pv = []
+                self.pvl = []
                 
                 lv = self.geom.LatticeVector
                 self.pv.append(lv*LCoord(0,0,0))
                 self.pvl.append(lv*LCoord(0,0,0))
-                lyr0 = self.geom.span(0, self.nw*self.nh-1);               # extract block # 0
-                lyr1 = self.geom.span(self.nw*self.nh, 2*self.nw*self.nh-1);    # extract block # 1
+                lyr0 = self.geom.span(0, self.nw*self.nh-1)               # extract block # 0
+                lyr1 = self.geom.span(self.nw*self.nh, 2*self.nw*self.nh-1)    # extract block # 1
                 
                 H, S = generateHamOvl(self.hp, lyr0, lyr0)
                 self.H0.append(H); self.S0.append(S)
@@ -372,30 +372,33 @@ class Transport(object):
                 self.Hl.append(H)
         # Non-uniform RGF blocks        
         elif (self.DevType == self.COH_RGF_NON_UNI):
-            self.H0 = [];
-            self.Hl = [];
+            self.H0 = []
+            self.S0 = []
+            self.Hl = []
             beg = 0
             for ib in range(0, self.nb):                    # setup the block hamiltonian
                 end = beg + self.nbw[ib] - 1
                 
                 # generate H_i,i and S_i,i
-                lyri = self.geom.span(beg, end);            # extract block # i             
+                lyri = self.geom.span(beg, end)            # extract block # i
                 H0,S0 = generateHamOvl(self.hp, lyri, lyri)
                 self.H0.append(H0)
+                self.S0.append(S0)
 
                 # generate H_i,i-1
-                if (ib > 0):
-                    #self.ham.genLowDiagBlock(lyri, lyrim1, ib) 
+                if ib > 0:
                     Hl,Sl = generateHamOvl(self.hp, lyri, lyrim1)
                     self.Hl.append(Hl)
-                    #self.np.Hl(self.Hl(ib), ib)              # Hl: 1 to N+1=nb-1                
-                else:
-                    self.S0 = S0
                 
                 lyrim1 = lyri
                 beg = end + 1
-            self.Hl.insert(0, self.Hl[0])
-            
+            # Coupling matrix between two blocks of left contact
+            Hl,Sl = generateHamOvl(self.hp, self.lyr_0, self.lyr_0m1)
+            self.Hl.insert(0, Hl)
+            # Coupling matrix between two blocks of right contact
+            Hl,Sl = generateHamOvl(self.hp, self.lyr_nb, self.lyr_nbm1)
+            self.Hl.append(Hl)
+
         nprint(" done.")
         
     def setupPotential(self):
@@ -596,11 +599,11 @@ class Transport(object):
         elif (self.DevType == self.COH_RGF_NON_UNI):  # Non-uniform RGF blocks        
             for ib in range(0, self.nb):                 # setup the block hamiltonian
                 self.rgf.H0(self.H0[ib], ib)             # H0: 0 to N+1=nb-1
-                self.rgf.S0(self.S0, ib)              # S0: just the identity matrix stored in S0(0)
-                if (ib > 0):
-                    self.rgf.Hl(self.Hl[ib], ib)     # Hl: 1 to N+1=nb-1                            
-            self.rgf.Hl(self.Hl[1], 0)               # Set H_0,-1 = H_1,0. Hl(0) = H_0,-1
-            self.rgf.Hl(self.Hl[ib], ib+1)           # Set H_N+2,N+1 = H_N+1,N            
+                self.rgf.S0(self.S0[ib], ib)              # S0: just the identity matrix stored in S0(0)
+                if ib > 0:
+                    self.rgf.Hl(self.Hl[ib], ib)     # Hl: 1 to N+1=nb-1
+            self.rgf.Hl(self.Hl[0], 0)               # Hl(0) = H_0,-1
+            self.rgf.Hl(self.Hl[ib+1], ib+1)           # Set H_N+2,N+1 = H_N+1,N
         # Clean up unused memory; we alredy have copies of these variables
         # in self.rgf.
         self.H0 = None

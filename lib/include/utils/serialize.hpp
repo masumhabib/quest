@@ -13,6 +13,7 @@
 #define	SERIALIZE_HPP
 
 #include "maths/svec.h"
+#include "maths/arma.hpp"
 
 #include <string>
 #include <sstream>
@@ -34,6 +35,7 @@
 
 namespace boost {
 namespace serialization {
+using maths::armadillo::uint;
 using std::stringstream;
 using std::string;
 using std::pair;
