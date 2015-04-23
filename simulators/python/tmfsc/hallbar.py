@@ -14,8 +14,8 @@ import shutil
 import operator as op
 import time
 
-import boost.mpi as mpi
-#import mpi
+#import boost.mpi as mpi
+import mpi
 
 # Constants
 TWO_CONTS  	= 2 		# two contacts
