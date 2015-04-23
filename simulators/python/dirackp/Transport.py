@@ -97,8 +97,6 @@ class Transport(object):
         self.HAM_TI_SURF_KP4 = 11       # TI surface k.p hamiltonian with 4 spin basis set
         self.HAM_TI_3D_KP    = 15       # TI 3D k.p hamiltonian with 4 spin basis set        
         self.HAM_GRAPHENE_KP = 20       # Graphene k.p Hamiltonian
-        self.HAM_GRAPHENE_TB    = 30       # 2D graphene
-        self.HAM_GNR_TB         = 40       # GNR type
         self.HamType         = self.HAM_TI_SURF_KP 
         
         # Device types
