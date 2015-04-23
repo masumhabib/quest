@@ -62,6 +62,7 @@ find_package(Armadillo REQUIRED)
 find_package(MPI REQUIRED)
 
 # Python libs
+find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
 
 # NumPy
