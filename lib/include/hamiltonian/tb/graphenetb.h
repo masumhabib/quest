@@ -28,6 +28,8 @@ public:
     
     void ec(double ec) { mec = ec; update(); }
     double ec() const { return mec; }
+    void acc(double acc) { mdi0 = acc; update(); }
+    double acc() const { return mdi0; }
     void di0(double di0) { mdi0 = di0; update(); }
     double di0() const { return mdi0; }
     void ti0(double do0) { mti0 = do0; update(); }

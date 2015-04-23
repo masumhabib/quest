@@ -24,6 +24,8 @@ using namespace hamiltonian;
 void export_GrapheneTbParams(){
     double (GrapheneTbParams::*GrapheneTbParams_getec)() const = &GrapheneTbParams::ec;
     void (GrapheneTbParams::*GrapheneTbParams_setec)(double) = &GrapheneTbParams::ec;
+    double (GrapheneTbParams::*GrapheneTbParams_getacc)() const = &GrapheneTbParams::acc;
+    void (GrapheneTbParams::*GrapheneTbParams_setacc)(double) = &GrapheneTbParams::acc;
     double (GrapheneTbParams::*GrapheneTbParams_getdi0)() const = &GrapheneTbParams::di0;
     void (GrapheneTbParams::*GrapheneTbParams_setdi0)(double) = &GrapheneTbParams::di0;
     double (GrapheneTbParams::*GrapheneTbParams_getti0)() const = &GrapheneTbParams::ti0;
@@ -45,6 +47,7 @@ void export_GrapheneTbParams(){
         "GrapheneTbParams", init<optional<const string &> >())
         .enable_pickling()
         .add_property("ec", GrapheneTbParams_getec, GrapheneTbParams_setec)
+        .add_property("acc", GrapheneTbParams_getacc, GrapheneTbParams_setacc)
         .add_property("di0", GrapheneTbParams_getdi0, GrapheneTbParams_setdi0)
         .add_property("ti0", GrapheneTbParams_getti0, GrapheneTbParams_setti0)   
         .add_property("do0", GrapheneTbParams_getdo0, GrapheneTbParams_setdo0)   

@@ -47,8 +47,11 @@ void export_PeriodicTable(){
  * Atomistic geometry of the device.
  */
 //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AtomicStruct_genSimpleCubicStruct1, genSimpleCubicStruct, 3, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AtomicStruct_genGNR1, genGNR, 4, 5);
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AtomicStruct_genGNR1, genGNR, 4, 5);
 void (AtomicStruct::*AtomicStruct_genSimpleCubicStruct1)(const Atom &, double, uint, uint, uint) = &AtomicStruct::genSimpleCubicStruct;
+//void (AtomicStruct::*AtomicStruct_genSimpleCubicStruct2)(const Atom &, double, double, double, double) = &AtomicStruct::genSimpleCubicStruct;
+void (AtomicStruct::*AtomicStruct_genGNR1)(const Atom &, double, uint, uint, uint) = &AtomicStruct::genGNR;
+//void (AtomicStruct::*AtomicStruct_genGNR2)(const Atom &, double, double, double, double) = &AtomicStruct::genGNR;
 lvec (AtomicStruct::*AtomicStruct_LatticeVector1)() const = &AtomicStruct::LatticeVector;
 void export_AtomicStruct(){
     class_<AtomicStruct, bases<Printable>, shared_ptr<AtomicStruct> >("AtomicStruct", 
@@ -73,7 +76,9 @@ void export_AtomicStruct(){
         .def("span", &AtomicStruct::span)
         .def("genRectLattAtoms", &AtomicStruct::genRectLattAtoms)
         .def("genSimpleCubicStruct", AtomicStruct_genSimpleCubicStruct1)
-        .def("genGNR", &AtomicStruct::genGNR, AtomicStruct_genGNR1())
+        //.def("genSimpleCubicStruct", AtomicStruct_genSimpleCubicStruct2)
+        .def("genGNR", AtomicStruct_genGNR1)
+        //.def("genGNR", AtomicStruct_genGNR2)
         .def("exportGjf", &AtomicStruct::exportGjf)
         .def("importGjf", &AtomicStruct::importGjf)
         .def(self + self)
