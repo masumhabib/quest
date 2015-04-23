@@ -14,6 +14,9 @@
 namespace maths{
 namespace armadillo{
 
+/* Apparently Armadillo renamed uint to uword */
+typedef unsigned int uint;  //! To cope with armadillo's change.
+
 typedef std::complex<double>      dcmplx;   //!< Double precision complex
 typedef std::complex<float>       fcmplx;   //!< Single precision complex
 

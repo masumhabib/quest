@@ -64,6 +64,9 @@ find_package(MPI REQUIRED)
 # Python libs
 find_package(PythonLibs REQUIRED)
 
+# NumPy
+find_package(NumPy REQUIRED)
+
 # doxygen
 find_package(Doxygen)
 
@@ -127,10 +130,11 @@ file(GLOB_RECURSE QMICAD_HEADERS "lib/include/*.h*")
 add_library(qmicad SHARED ${QMICAD_SOURCES} ${QMICAD_HEADERS})
 
 # linking
+target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
 target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
-set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
+#set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # Prepare qmicad package
 add_custom_command(
@@ -166,15 +170,17 @@ set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pylib)
 file(GLOB_RECURSE PYQMICAD_SOURCES "pylib/*.cpp")
 file(GLOB_RECURSE PYQMICAD_HEADERS "pylib/*.h*")
 include_directories(${PYQMICAD_INCLUDE_DIRS})
+include_directories(${NUMPY_INCLUDE_DIRS})
 add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
 
 
 # linking
 target_link_libraries (pyqmicad qmicad)
+target_link_libraries (pyqmicad ${PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad ${Boost_MPI_PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad ${Boost_PYTHON_LIBRARIES})
 target_link_libraries (pyqmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
-set_target_properties (pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
+#set_target_properties (pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 set_target_properties (pyqmicad PROPERTIES PREFIX "")
 set_target_properties (pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
 
@@ -189,9 +195,8 @@ add_custom_command(
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/utils/matlab ${QMICAD_DIST_DIR}/utils
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/tests ${QMICAD_DIST_DIR}/
     COMMAND cd        ${QMICAD_DIST_DIR}/tests && ln -sf ../qmicad . && cd ${QMICAD_DIST_DIR}
-    #COMMAND cd        ${QMICAD_DIST_DIR} && ln -sf p qmicad
-    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad.so  ${QMICAD_DIST_DIR}/qmicad
-    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad.so  ${QMICAD_DIST_DIR}/qmicad
+    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad/qmicad.so
+    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad${CMAKE_SHARED_LIBRARY_SUFFIX} ${QMICAD_DIST_DIR}/qmicad
 )
 
 # -------- </QMICAD Python Library> ---------

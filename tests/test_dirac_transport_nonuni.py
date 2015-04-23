@@ -12,7 +12,6 @@ import  numpy as np
 import  math
 from    math import pi, tan, cos, sin
 
-import  mpi
 import  qmicad
 from    qmicad.linspace import linspace
 from    qmicad.simulators.dirackp import *
@@ -20,11 +19,11 @@ from    qmicad.simulators.dirackp import *
 
 ##
 # Run the simulation
-def simulate(workers):
+def simulate():
 
     # some constants 
     # Transport simulator
-    tr = Transport(workers)
+    tr = Transport()
     tr.HamType = tr.HAM_TI_SURF_KP
     tr.DevType = tr.COH_RGF_NON_UNI
     tr.verbosity = vprint.MSG_NORMAL
@@ -195,10 +194,8 @@ def main(argv = None):
     if argv is None:
         argv = sys.argv
 
-    # get MPI communicator
-    workers = mpi.world
     # Run the simulator
-    simulate(workers)
+    simulate()
         
     return 0
 

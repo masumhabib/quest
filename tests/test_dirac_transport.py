@@ -15,9 +15,9 @@ from    math import pi, tan, cos, sin
 # Workaround for a bug involving Boost.MPI, OpenMPI and Python
 # in linux system. You can ignore these lines if you are not using
 # OpenMPI in linux.
-import DLFCN as dl
-import sys
-sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
+#import DLFCN as dl
+#import sys
+#sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)  
 
 import  qmicad
 from    qmicad.linspace import linspace
