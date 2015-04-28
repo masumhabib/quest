@@ -9,7 +9,12 @@
 #ifndef INTERSECT_H
 #define INTERSECT_H
 
-namespace tmfsc{ namespace intesect {
+#include "maths/arma.hpp"
+#include "maths/svec.h"
+
+
+namespace tmfsc{ namespace geometry {
+    using maths::spvec::svec;
 
 
 

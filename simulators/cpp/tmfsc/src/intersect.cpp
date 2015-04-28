@@ -1,21 +1,23 @@
 
 #include "intersect.h"
+namespace tmfsc { namespace geometry {
 
-namespace tmfsc { namespace intersect {
-
-static constexpr tol = 1E-10;
+static constexpr double tol = 1E-10;
 
 /** Represents a line joining (p,q) in terms of co-efficients
  * a,b and c */
 
-    def line(p, q):
-        a = (p[1] - q[1])
-        b = (q[0] - p[0])
-        c = p[0]*q[1] - q[0]*p[1]
-        return a, b, -c
+svec line(const svec &p, const svec &q){
+    double a = p[1] - q[1];
+    double b = q[0] - p[0];
+    double c = p[0]*q[1] - q[0]*p[1];
+
+    svec l = {a, b, -c};
+    return l;
+}
 
 
-def intersection(p1, q1, p2, q2):
+/*def intersection(p1, q1, p2, q2):
     """
     Finds intersection point of two lines.
     Blatantly copied from SO: http://stackoverflow.com/questions/20677795/find-the-point-of-intersecting-lines
@@ -31,6 +33,7 @@ def intersection(p1, q1, p2, q2):
         return x, y
     else:
         return False
+*/
 
 /*
 def intersects(p1, q1, p2, q2, collinear=True):
