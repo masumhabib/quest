@@ -7,39 +7,45 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(qmicad CXX)
-
 # Version
 set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 10)
 set(QMICAD_PATCH 0)
 
 # Options
-set(VERBOSE_MAKE off)
-set(LINK_STATIC off)
-#set(CMAKE_BUILD_TYPE "Debug")
+option(VERBOSE_MAKE "Verbose cmake for debugging" off)
+option(LINK_STATIC "Link everything statically" off)
+
+# For custom cmake scripts
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 # Add machine specific local usr path for locally compiled libraries
 #include(cmake/machines/fir)
 
-# Compiler flags
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # optimization
 set(CMAKE_CXX_FLAGS_RELEASE " -m64 -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
 # Linker flags
 #set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 
-if (VERBOSE_MAKE)
-    set(CMAKE_VERBOSE_MAKEFILE      on)
-endif()
-
 # Start configuration
 set(QMICAD_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
 message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
 message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "--------------------------------------------------------------")
 
-# For custom cmake scripts
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+# Ensure that we have a C++11 compiler.
+include(cmake/CXX11.cmake)
+check_for_cxx11_compiler(HAS_CXX11)
+if(NOT HAS_CXX11)
+  message(FATAL_ERROR "No C++11 compiler available!")
+endif(NOT HAS_CXX11)
+enable_cxx11()
+
+
+if (VERBOSE_MAKE)
+    set(CMAKE_VERBOSE_MAKEFILE      on)
+endif()
 
 #Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -57,16 +63,20 @@ endif()
 
 # Armadillo
 find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 # MPI mpich2
 find_package(MPI REQUIRED)
+include_directories(${MPI_INCLUDE_PATH})
 
 # Python libs
 find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 # NumPy
 find_package(NumPy REQUIRED)
+include_directories(${NUMPY_INCLUDE_DIRS})
 
 # doxygen
 find_package(Doxygen)
@@ -86,30 +96,7 @@ if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
 find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
-
-# Sources and headers
-# -----------------------------------------------------------------------------
-
-# Prepare distribution directory
-set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
-set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
-
-# version header
-configure_file (
-    "${CMAKE_SOURCE_DIR}/lib/include/config.in.h"
-    "${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h"
-)
-
-# includes
-set(QMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/lib/include)
-list(REMOVE_DUPLICATES QMICAD_INCLUDE_DIRS)
-list(APPEND QMICAD_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include)
-
-include_directories(${QMICAD_INCLUDE_DIRS})
-include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${MPI_INCLUDE_PATH})
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Release")
     set(QMICAD_FLAGS ${CMAKE_CXX_FLAGS_RELEASE})
@@ -123,85 +110,15 @@ message(STATUS "Compiler flags: ${QMICAD_FLAGS}")
 message(STATUS "Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
 message(STATUS "Installation location: ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR}")
 
-# -------- <QMICAD C++ Library> ------------------------------------------------
-
-# sources
-file(GLOB_RECURSE QMICAD_SOURCES "lib/src/*.cpp")
-file(GLOB_RECURSE QMICAD_HEADERS "lib/include/*.h*")
-add_library(qmicad SHARED ${QMICAD_SOURCES} ${QMICAD_HEADERS})
-
-# linking
-target_link_libraries (qmicad ${MPI_LIBRARIES})
-target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
-target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
-target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
-#set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
-
-# Prepare qmicad package
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND cp -rp ${CMAKE_SOURCE_DIR}/lib/include ${QMICAD_DIST_DIR}
-    COMMAND cp -rp ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include/config.h ${QMICAD_DIST_DIR}/include
-    COMMAND rm -f ${QMICAD_DIST_DIR}/include/config.in.h
-)
-
-# doxygen
-if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lib/doc/qmicad.in.doxy ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy @ONLY)
-
-    add_custom_target(doc
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/qmicad.doxy
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-    )
-
-    add_custom_command(
-        TARGET doc  POST_BUILD
-        COMMAND mkdir -p ${QMICAD_DIST_DIR}/doc
-        COMMAND cp -rf ${CMAKE_BINARY_DIR}/CMakeFiles/doc.dir/html ${QMICAD_DIST_DIR}/doc 
-        COMMAND cd ${QMICAD_DIST_DIR}/doc && ln -sf html/index.html index.html
-    )
-endif(DOXYGEN_FOUND)
-
-# -------- </QMICAD C++ Library> -----------------------------------------------
-
-# -------- <QMICAD Python Library> ---------------------------------------------
-# sources
-set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pylib)
-file(GLOB_RECURSE PYQMICAD_SOURCES "pylib/*.cpp")
-file(GLOB_RECURSE PYQMICAD_HEADERS "pylib/*.h*")
-include_directories(${PYQMICAD_INCLUDE_DIRS})
-include_directories(${NUMPY_INCLUDE_DIRS})
-add_library(pyqmicad SHARED ${PYQMICAD_SOURCES} ${PYQMICAD_HEADERS})
-
-
-# linking
-target_link_libraries (pyqmicad qmicad)
-target_link_libraries (pyqmicad ${PYTHON_LIBRARIES})
-target_link_libraries (pyqmicad ${Boost_MPI_PYTHON_LIBRARIES})
-target_link_libraries (pyqmicad ${Boost_PYTHON_LIBRARIES})
-target_link_libraries (pyqmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
-#set_target_properties (pyqmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
-set_target_properties (pyqmicad PROPERTIES PREFIX "")
-set_target_properties (pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
-
-# Prepare qmicad package
-add_custom_command(
-    TARGET pyqmicad POST_BUILD
-    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/qmicad
-    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/qmicad/simulators
-    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/utils
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/pylib/python/*.py ${QMICAD_DIST_DIR}/qmicad
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/simulators/python/* ${QMICAD_DIST_DIR}/qmicad/simulators
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/utils/matlab ${QMICAD_DIST_DIR}/utils
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/tests ${QMICAD_DIST_DIR}/
-    COMMAND cd        ${QMICAD_DIST_DIR}/tests && ln -sf ../qmicad . && cd ${QMICAD_DIST_DIR}
-    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad/qmicad.so
-    COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad${CMAKE_SHARED_LIBRARY_SUFFIX} ${QMICAD_DIST_DIR}/qmicad
-)
-
-# -------- </QMICAD Python Library> ---------
+# Prepare distribution directory
+set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
+set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 
 # installation
 install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
+
+# QMICAD C++ Library
+add_subdirectory(lib)
+add_subdirectory(pylib)
+
 
