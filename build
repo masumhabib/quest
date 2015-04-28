@@ -14,6 +14,8 @@ function usage(){
     echo "  When no option is given, builds qmicad using make."
     echo "  options: " 
     echo "    config: configures qmicad using cmake."
+    echo "    debug: make with debugging information."
+    echo "    release: make with debugging information."
     echo "    install [path]: installs qmicad."
     echo "    doc: build documentation."
     echo "    clean: deletes compiled object files in the build folder."
@@ -24,7 +26,11 @@ function usage(){
 function doconfig(){
     mkdir -p $build_dir
     cd $build_dir
-    cmake ../
+    if [[ "$1" ]]; then
+        cmake -DCMAKE_BUILD_TYPE=$1 ../
+    else
+        cmake ../
+    fi
     cd ../
 }
 
@@ -56,6 +62,12 @@ elif [[ $# -ge 1 ]]; then
         usage
     elif [[ $opt == "config" ]]; then 
         doconfig
+    elif [[ $opt == "debug" ]]; then 
+        doconfig "Debug"
+        domake
+    elif [[ $opt == "release" ]]; then 
+        doconfig "Release"
+        domake
     elif [[ $opt == "clean" ]]; then 
         domake "clean"
     elif [[ $opt == "superclean" ]]; then
