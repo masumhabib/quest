@@ -1,8 +1,14 @@
+# Mac temp files
 .DS_Store
-sync
+
+# Intermediate object files
 obj/
+*.pyc
+
+# IDE related
 .project
 .externalToolBuilders
 .idea
+.ycm_extra_conf.py
 nbproject/
-*.pyc
+sync
