@@ -7,6 +7,7 @@
 
 #include "potential/poissonPot.h"
 
+
 namespace qmicad{
 namespace potential{
     
@@ -52,57 +53,232 @@ void poissonPot::initAuxMatrices() {
     this->vecd2V_by_dx2          = zeros<vec>( this->nNX * this->nNY );
     this->vecd2V_by_dy2          = zeros<vec>( this->nNX * this->nNY );
     this->vecRho                 = zeros<vec>( this->nNX * this->nNY );
+    this->vecdRho_dV             = zeros<vec>( this->nNX * this->nNY );
 }
   
 void poissonPot::setMaterialEps( double x1, double x2, double y1, double y2, double epsilonR ){
     
-    uvec rowIndices;
-    uvec colIndices;
+    uwcol rowIndices;
+    uwcol colIndices;
     this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
     this->mat2epsilon( rowIndices, colIndices ).fill( epsilonR );   
 }
 
 void poissonPot::setMaterialni( double x1, double x2, double y1, double y2, double ni ){
-    uvec rowIndices;
-    uvec colIndices;
+    uwcol rowIndices;
+    uwcol colIndices;
     this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
     this->mat2ni( rowIndices, colIndices ).fill( ni ); 
 }
     
 void poissonPot::setDoping( double x1, double x2, double y1, double y2, double Nad ){
-    uvec rowIndices;
-    uvec colIndices;
+    uwcol rowIndices;
+    uwcol colIndices;
     this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
     this->mat2Doping( rowIndices, colIndices ).fill( Nad ); 
 }
 
 void poissonPot::setPotentialDirichlet( double x1, double x2, double y1, double y2, double V ){
-    uvec rowIndices;
-    uvec colIndices;
+    uwcol rowIndices;
+    uwcol colIndices;
     this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
     this->mat2PotentialDirichlet( rowIndices, colIndices ).fill( V ); 
 }
 
 void poissonPot::setPhiByFroce( double x1, double x2, double y1, double y2, double V ){
-    uvec rowIndices;
-    uvec colIndices;
+    uwcol rowIndices;
+    uwcol colIndices;
     this->helperGenRowColIndices( x1, x2, y1, y2, rowIndices, colIndices);
     this->mat2Phi( rowIndices, colIndices ).fill( V );
 }
 
 void poissonPot::generateGrad2LambdaMatrix( ){
-    
+    int i, j, pos;
+    double hxMinus1, hxPlus1, hyMinus1, hyPlus1, A, tempEps, EpsNeigh;
+    for( j=0; j < this->nNY; j++ ){
+        for( i=0; i < this->nNX; i++ ){
+            // row or column position in the equation matrix
+            pos = i + (j-1) * this->nNX;
+            // condition for dirichlet boundary
+            if( this->mat2PotentialDirichlet( i, j ) != this->Inf ){
+                this->mat2SparseGrad2Lambda( pos, pos ) = 1;
+                continue;
+            }
+            // grid dependent parameters
+            this->calculateh(i, j, hxMinus1, hxPlus1, hyMinus1, hyPlus1);
+            // other than dirichlet condition
+            ////// X Dimension
+            if( this->nNX > 1 ){
+                // delx i-1
+                if( i > 0 ){
+                    A = 1 / (  hxMinus1 * ( hxMinus1/2 + hxPlus1/2 )  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i-1, j );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->mat2SparseGrad2Lambda( pos, pos-1 ) = A * tempEps;
+                    this->mat2SparseGrad2Lambda(pos, pos) -= A * tempEps;
+                }
+                // delx i+1
+                if( i+1 < this->nNX ){
+                    A = 1 / (  hxPlus1 * ( hxMinus1/2 + hxPlus1/2 )  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i+1, j );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->mat2SparseGrad2Lambda( pos, pos+1 ) = A * tempEps;
+                    this->mat2SparseGrad2Lambda( pos, pos ) -= A * tempEps;
+                }
+            }
+            ///// Y Dimension
+            if( this->nNY > 1 ){
+                // dely j-1
+                if( j > 0 ){
+                    A = 1 / (  hyMinus1 * ( hyMinus1/2 + hyPlus1/2 )  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i, j-1 );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->mat2SparseGrad2Lambda( pos, pos - this->nNX ) = A * tempEps;
+                    this->mat2SparseGrad2Lambda( pos, pos ) -= A * tempEps;
+                }
+                // dely j+1
+                if( j+1 < this->nNY ){
+                    A = 1 / (  hyPlus1 * ( hyMinus1/2 + hyPlus1/2 )  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i, j+1 );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->mat2SparseGrad2Lambda( pos, pos + this->nNX ) = A * tempEps;
+                    this->mat2SparseGrad2Lambda( pos, pos ) -= A * tempEps;
+                }
+            }
+            
+        }
+    } 
 }
 
 mat poissonPot::setInitialGuess( ){
-    mat A;
-    return A;
+    mat tempmat2Phi;
+    vec tempLambda;
+    int i, j, pos;
+    bool statusSolver;
+    for( j=0; j<this->nNY; j++ ){
+        for( i=0; i<this->nNX; i++ ){
+            pos = i + (j-1) * this->nNX;
+            if( this->mat2PotentialDirichlet( i, j ) != this->Inf ){
+                this->vecRHS( pos ) = this->mat2Phi( i, j );
+            }
+        }
+    }
+    statusSolver = arma::spsolve(tempLambda, this->mat2SparseGrad2Lambda, this->vecRHS);  // use default solver
+    //tempLambda = arma::spsolve( this->mat2SparseGrad2Lambda, this->vecRHS);
+    
+    if( statusSolver == false ){
+        cout << "WARNING : Sparse solver found no solution" << endl; 
+    }
+    tempmat2Phi = mat( tempLambda );
+    tempmat2Phi.reshape( this->nNX, this->nNY );
+    return tempmat2Phi;
 }
 
 mat poissonPot::calculateLambdaSingleIteration( ){
-    mat A;
-    return A;
+    int i, j, pos;
+    double hxMinus1, hxPlus1, hyMinus1, hyPlus1, A, tempEps, EpsNeigh, f1, f2;
+    vec tempLambda;
+    bool statusSolver;
+    mat tempMat2Lambda;
+    
+    this->vecd2V_by_dx2.zeros();
+    this->vecd2V_by_dy2.zeros();
+    this->vecRho.zeros();
+    this->vecRHS.zeros();
+    this->vecdRho_dV.zeros();
+    
+    for( j=0; j<this->nNX; j++ ){
+        for( i=0; i<this->nNY; i++ ){
+           pos = i + (j-1) * this->nNX;
+           // condition for dirichlet boundary
+            if( this->mat2PotentialDirichlet( i, j ) != this->Inf ){
+                continue;
+            }
+            // grid dependent parameters
+            this->calculateh(i, j, hxMinus1, hxPlus1, hyMinus1, hyPlus1);
+            // X Dimension 
+            if( this->nNX > 1 ){
+                // delx i-1
+                if( i > 0 ){
+                    A = 1 / (  hxMinus1 * ( hxMinus1 + hxPlus1 ) / 2  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i-1 , j );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->vecd2V_by_dx2( pos ) += A * tempEps * this->mat2Phi( i-1, j ) - A * tempEps * this->mat2Phi( i, j );
+                }
+                // delx i+1
+                if( i+1 < this->nNX ){
+                    A = 1 / (  hxPlus1 * ( hxMinus1 + hxPlus1 ) / 2  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i+1 , j );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->vecd2V_by_dx2( pos ) += A * tempEps * this->mat2Phi( i+1, j ) - A * tempEps * this->mat2Phi( i, j );
+                }
+            }
+            if( this->nNY > 1 ){
+                // dely j-1
+                if( j > 0 ){
+                    A = 1 / (  hyMinus1 * ( hyMinus1 + hyPlus1 ) / 2  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i , j-1 );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->vecd2V_by_dy2( pos ) += A * tempEps * this->mat2Phi( i, j-1 ) - A * tempEps * this->mat2Phi( i, j );
+                }
+                // dely j+1
+                if( j+1 < this->nNY ){
+                    A = 1 / (  hyPlus1 * ( hyMinus1 + hyPlus1 ) / 2  );
+                    tempEps = this->mat2epsilon( i, j );
+                    EpsNeigh = this->mat2epsilon( i , j+1 );
+                    if( tempEps != EpsNeigh ){
+                        tempEps = tempEps = tempEps * EpsNeigh / (   weightEps * EpsNeigh + ( 1 - weightEps ) * tempEps   );
+                    }
+                    this->vecd2V_by_dy2( pos ) += A * tempEps * this->mat2Phi( i, j+1 ) - A * tempEps * this->mat2Phi( i, j );
+                
+                }
+                
+            }
+            // terms for RHS
+            if ( (  this->nNX > 1 && ( i > 0 && i+1 < this->nNX)  ) || (  this->nNY > 1 && ( j > 0 && j+1 < this->nNY )   )) {
+                double tempV = this->mat2Phi(i, j);
+                this->vecRho( pos, 1 ) = this->getRho(i, j, tempV);
+                f1 = this->getRho( i, j, tempV + this->DELPHI );
+                f2 = this->getRho( i, j, tempV - this->DELPHI );
+                this->vecdRho_dV( pos ) = ( f1 - f2 ) / ( 2 * this->DELPHI );
+            }
+        }
+    }
+    this->vecRHS = - ( this->vecd2V_by_dx2 + this->vecd2V_by_dy2 + this->vecRho );
+    spmat tempMat2SparseGrad2Lambda = this->mat2SparseGrad2Lambda;
+    tempMat2SparseGrad2Lambda.diag(0) += this->vecdRho_dV;
+    
+    statusSolver = arma::spsolve(tempLambda, tempMat2SparseGrad2Lambda, this->vecRHS);  // use default solver
+   
+    if( statusSolver == false ){
+        cout << "WARNING : Sparse solver found no solution" << endl; 
+    }
+    tempMat2Lambda = mat( tempLambda );
+    tempMat2Lambda.reshape( this->nNX, this->nNY );
+    return tempMat2Lambda;
 }
+
 
 double poissonPot::getRho( double xi, double yj, double Potential ){
     
@@ -123,17 +299,17 @@ void poissonPot::helperDoping( double x1, double x2, double y1, double y2, doubl
     
 }
 
-void calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus ){
+void poissonPot::calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus ){
     
 }
 
-void poissonPot::helperGenRowColIndices( double x1, double x2, double y1, double y2, uvec &rowIndices, uvec &colIndices){
-    uvec tempXup = find ( this->vecX > x1 );
-    uvec tempXLow = find ( this->vecX <= y1 );
+void poissonPot::helperGenRowColIndices( double x1, double x2, double y1, double y2, uwcol &rowIndices, uwcol &colIndices){
+    uwcol tempXup = find ( this->vecX > x1 );
+    uwcol tempXLow = find ( this->vecX <= y1 );
     maths::vintersection( tempXup, tempXLow, rowIndices );
     
-    uvec tempYup = find ( this->vecY > y1 );
-    uvec tempYLow = find ( this->vecY <= y2 );
+    uwcol tempYup = find ( this->vecY > y1 );
+    uwcol tempYLow = find ( this->vecY <= y2 );
     maths::vintersection( tempYup, tempYLow, colIndices );
 }
     

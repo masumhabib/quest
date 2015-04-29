@@ -42,6 +42,8 @@ using arma::sqrt;
 using arma::square;
 using arma::abs;
 
+using arma::uword; // @TODO: Armadillo 5.000.1
+
 typedef arma::Col<double>         vec;       //!< Double precision column vector.
 typedef arma::Col<dcmplx>         cxvec;     //!< Double precision complex column vector.
 typedef arma::Col<float>          fvec;      //!< Double precision column vector.
@@ -55,6 +57,8 @@ typedef arma::Col<float>          fcol;      //!< Double precision column vector
 typedef arma::Col<fcmplx>         cxfcol;    //!< Double precision complex column vector.
 typedef arma::Col<int>            icol;      //!< Signed integer column vector.
 typedef arma::Col<uint>           ucol;      //!< Unsigned integer column vector.
+
+typedef arma::Col<uword>          uwcol;  //POISSON
 
 typedef arma::Row<double>         row;       //!< Double precision row vector.
 typedef arma::Row<dcmplx>         cxrow;     //!< Double precision complex row vector.

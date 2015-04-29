@@ -81,7 +81,7 @@ private:
     double getRho( double xi, double yj, double Potential );
     void calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus );
     void initAuxMatrices() ;
-    void helperGenRowColIndices( double x1, double x2, double y1, double y2, uvec &rowIndices, uvec &colIndices);
+    void helperGenRowColIndices( double x1, double x2, double y1, double y2, uwcol &rowIndices, uwcol &colIndices);
     
 };
     

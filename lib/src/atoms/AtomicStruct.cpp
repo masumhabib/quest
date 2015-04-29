@@ -228,10 +228,13 @@ AtomicStruct& AtomicStruct::operator+= (const svec& rvec){
 AtomicStruct AtomicStruct::operator ()(const ucol& index) const{
     
     //get only the atoms we are interested in
-    icol atomId = mia.elem(index);   
-    ucol cols;
+    uwcol tempindex = arma::conv_to<uwcol>::from(index);
+    icol atomId = mia.elem(tempindex);   
+    //ucol cols;
+    uwcol cols;
     cols << coord::X << coord::Y << coord::Z;
-    mat coordinate = mXyz(index,cols);        
+    //mat coordinate = mXyz(index,cols);        
+    mat coordinate = mXyz(tempindex,cols);        
 
     return AtomicStruct(atomId, coordinate, mlv, mpt);
 }
