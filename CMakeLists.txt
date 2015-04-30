@@ -95,7 +95,7 @@ unset(Boost_PYTHON_LIBRARIES)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
+find_package(Boost 1.55 REQUIRED serialization random mpi mpi_python)
 include_directories(${Boost_INCLUDE_DIR})
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Release")
