@@ -24,6 +24,7 @@ using namespace potential;
 void export_poissonPot() {
     class_<poissonPot, bases<Potential>, shared_ptr < poissonPot >> ("poissonPot", init< vec, vec >())
             .def(init<double, double, double, double>())
+            .enable_pickling()
             .def("setMaterialEps", &poissonPot::setMaterialEps)
             .def("setMaterialni", &poissonPot::setMaterialni)
             .def("setDoping", &poissonPot::setDoping)
@@ -32,16 +33,11 @@ void export_poissonPot() {
             .def("generateGrad2LambdaMatrix", &poissonPot::generateGrad2LambdaMatrix)
             .def("setInitialGuess", &poissonPot::setInitialGuess)
             .def("calculateLambdaSingleIteration", &poissonPot::calculateLambdaSingleIteration)
-            //.def("getRho", &poissonPot::getRho)
             .def("getPotentialSliceAlongZ", &poissonPot::getPotentialSliceAlongZ)
             .def("getPotentialSliceAlongX", &poissonPot::getPotentialSliceAlongX)
             .def("helperDoping", &poissonPot::helperDoping)
-            
-            
-            //.enable_pickling()
-            //        .def("addLinearRegion", &LinearPot::addLinearRegion)
-            //        .add_property("NLR", &LinearPot::NLR)
-            //        .def("VLR", &LinearPot::VLR, LinearPot_VLR()) 
+            .add_property("nT", &poissonPot::nT)
+            .add_property("mat2Phi", &poissonPot::mat2Phi) 
             ;
 }
 

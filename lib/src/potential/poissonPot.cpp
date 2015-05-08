@@ -325,13 +325,19 @@ double poissonPot::getRho( int xi, int yj, double Potential ){
 }
 
 vec poissonPot::getPotentialSliceAlongZ( double DistanceX ){
-    vec A;
-    return A;
+    uwcol tempY = find( this->vecX >= DistanceX, 1, "first" );
+    if( tempY.n_elem == 0 ){
+        return NULL;
+    }   
+    return this->mat2Phi.row( tempY(0) );
 }
 
 vec poissonPot::getPotentialSliceAlongX( double DepthZ ){
-    vec A;
-    return A;
+    uwcol tempX = find( this->vecX >= DepthZ, 1, "first" );
+    if( tempX.n_elem == 0 ){
+        return NULL;
+    }   
+    return this->mat2Phi.col( tempX(0) );
 }
 
 void poissonPot::helperDoping( double x1, double x2, double y1, double y2, double Doping, mat &mat2Doping ){
@@ -339,12 +345,39 @@ void poissonPot::helperDoping( double x1, double x2, double y1, double y2, doubl
 }
 
 void poissonPot::calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus ){
+    double hxMinus1, hxPlus1, hyMinus1, hyPlus1;
+    hxMinus1 = hxPlus1 = hyMinus1 = hyPlus1 = 0;
+    if( this->nNX > 1 ){
+        if( xi == 0 ){
+            hxMinus1 = abs( this->vecX(xi+1) - this->vecX(xi) );
+        }else{
+            hxMinus1 = abs( this->vecX(xi-1) - this->vecX(xi)  );
+        }
+        if( xi == this->nNX-1 ){
+            hxPlus1 = abs( this->vecX(xi-1) - this->vecX(xi) );
+        }else{
+            hxPlus1 = abs( this->vecX(xi+1) - this->vecX(xi)  );
+        }
+    }
     
+    if( this->nNY > 1 ){
+        if( yj == 0 ){
+            hyMinus1 = abs( this->vecY(yj+1) - this->vecY(yj) );
+        }else{
+            hyMinus1 = abs( this->vecY(yj-1) - this->vecY(yj)  );
+        }
+        if( yj == this->nNY-1 ){
+            hyPlus1 = abs( this->vecY(yj-1) - this->vecY(yj) );
+        }else{
+            hyPlus1 = abs( this->vecY(yj+1) - this->vecY(yj)  );
+        }
+        
+    }
 }
 
 void poissonPot::helperGenRowColIndices( double x1, double x2, double y1, double y2, uwcol &rowIndices, uwcol &colIndices){
     uwcol tempXup = find ( this->vecX > x1 );
-    uwcol tempXLow = find ( this->vecX <= y1 );
+    uwcol tempXLow = find ( this->vecX <= x2 );
     maths::vintersection( tempXup, tempXLow, rowIndices );
     
     uwcol tempYup = find ( this->vecY > y1 );
@@ -362,29 +395,9 @@ string poissonPot::toString() const
     ss << mPrefix << " Total Length in y direction " << this->nLy << endl;
     ss << mPrefix << " Minimum difference in x direction " << this->nDELX << endl;
     ss << mPrefix << " Minimum difference in y direction " << this->nDELY << endl;
-//    ss << mPrefix << " Number of linear regions: " << NLR() << endl;
-//    for (vector<contact>::const_iterator it = ms.begin(); it != ms.end(); ++it){
-//        ss << mPrefix << *it << endl;
-//    }
-//    
-//    for (vector<gate>::const_iterator it = mg.begin(); it != mg.end(); ++it){
-//        ss << mPrefix << *it << endl;
-//    }
-//    for (vector<linear_region>::const_iterator it = mlr.begin(); it != mlr.end(); ++it){
-//        ss << mPrefix << *it << endl;
-//    }
-//    
-//    for (vector<contact>::const_iterator it = md.begin(); it != md.end(); ++it){
-//        ss << mPrefix << *it << endl;
-//    }
-    
-    return ss.str();
-}
-    
 
     
-    
-    
-    
+    return ss.str();
+}   
 }
 }
