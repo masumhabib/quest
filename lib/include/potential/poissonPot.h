@@ -12,13 +12,17 @@
 #include "potential/potential.h"
 #include "utils/vout.h"
 #include "maths/vecop.hpp"
+#include "maths/constants.h"
+#include "maths/fermi.hpp"
 
+#include <math.h>
 #include <vector>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
 
 using namespace utils::stds;
+using namespace maths::constants;
 
 namespace qmicad{
 namespace potential{
@@ -31,29 +35,30 @@ public:
     double nT = 300; //!< Temperature
     
 private:
-    const double weightEps = 0.5; //!< weightage between two adjacent points in grid with different dielectric constant
-    const double DELPHI = 1E-6; //!< potential gradient for calculating dRho/dPhi
-    const double vf = 1E6; //!< fermi velocity in graphene
+    const double weightEps = 0.5; 	//!< weightage between two adjacent points in grid with different dielectric constant
+    const double DELPHI = 1E-6; 	//!< potential gradient for calculating dRho/dPhi
+    const double vf = 1E6; 			//!< fermi velocity in graphene
+    const double Ef = 0; 			//!< fermi energy level
     const double Inf =  std::numeric_limits<double>::infinity();
-    double nDELX; //!< minimum difference between points in X direction
-    double nDELY; //!< minimum difference between points in Y direction
-    double nLx; //!< Length in X direction
-    double nLy; //!< Length in Y direction
-    uint nNX; //!< No of points in X direction
-    uint nNY; //!< No of points in Y direction
-    vec vecX; //!< Grid points in X direction
-    vec vecY; //!< Grid points in Y direction
-    mat mat2epsilon; //!< Dielectric constants of materials in the whole structure
-    mat mat2PotentialDirichlet; //!< Dirichlet Conditions in the whole structure
-    mat mat2Rho; //!< Charge density for the whole structure
-    spmat mat2SparseGrad2Lambda; //!< Sparse matrix d2Lambda/dx2
-    mat mat2ni; //!< intrinsic career concentration for the whole structure
-    mat mat2Doping; //!< Doping concentration for the whole structure
-    vec vecRHS; //!< Total Right Hand Side = Rho + d2Phi0/dx2
-    vec vecd2V_by_dx2; //!< Partial Right hand side - x component
-    vec vecd2V_by_dy2; //!< Partial Right hand side - y component
-    vec vecRho; //!< Charge density for the whole structure in vector format
-    vec vecdRho_dV; //!< Changable term in Left hand side for each iteration along 0 diagonal
+    double nDELX; 					//!< minimum difference between points in X direction
+    double nDELY; 					//!< minimum difference between points in Y direction
+    double nLx; 					//!< Length in X direction
+    double nLy; 					//!< Length in Y direction
+    uint nNX; 						//!< No of points in X direction
+    uint nNY; 						//!< No of points in Y direction
+    vec vecX; 						//!< Grid points in X direction
+    vec vecY; 						//!< Grid points in Y direction
+    mat mat2epsilon; 				//!< Dielectric constants of materials in the whole structure
+    mat mat2PotentialDirichlet; 	//!< Dirichlet Conditions in the whole structure
+    mat mat2Rho; 					//!< Charge density for the whole structure
+    spmat mat2SparseGrad2Lambda; 	//!< Sparse matrix d2Lambda/dx2
+    mat mat2ni; 					//!< intrinsic career concentration for the whole structure
+    mat mat2Doping; 				//!< Doping concentration for the whole structure
+    vec vecRHS; 					//!< Total Right Hand Side = Rho + d2Phi0/dx2
+    vec vecd2V_by_dx2; 				//!< Partial Right hand side - x component
+    vec vecd2V_by_dy2; 				//!< Partial Right hand side - y component
+    vec vecRho; 					//!< Charge density for the whole structure in vector format
+    vec vecdRho_dV; 				//!< Changable term in Left hand side for each iteration along 0 diagonal
     //vec RHS;
     
 public:
@@ -78,7 +83,7 @@ public:
     virtual string  toString() const;
 
 private:
-    double getRho( double xi, double yj, double Potential );
+    double getRho( int xi, int yj, double Potential );
     void calculateh( double xi, double yj, double &hxMinus, double &hxPlus, double &hyMinus, double &hyPlus );
     void initAuxMatrices() ;
     void helperGenRowColIndices( double x1, double x2, double y1, double y2, uwcol &rowIndices, uwcol &colIndices);

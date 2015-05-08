@@ -192,7 +192,6 @@ mat poissonPot::calculateLambdaSingleIteration( ){
     vec tempLambda;
     bool statusSolver;
     mat tempMat2Lambda;
-    
     this->vecd2V_by_dx2.zeros();
     this->vecd2V_by_dy2.zeros();
     this->vecRho.zeros();
@@ -280,9 +279,49 @@ mat poissonPot::calculateLambdaSingleIteration( ){
 }
 
 
-double poissonPot::getRho( double xi, double yj, double Potential ){
+double poissonPot::getRho( int xi, int yj, double Potential ){
     
-    return 5.0;
+    double rho;
+    rho = 0;
+    if (  this->mat2ni( xi, yj ) > 0  ){
+    	double Vt;
+    	Vt = kB * this->nT / q;
+    	rho = q * this->mat2Doping( xi, yj );
+    	rho = rho + q * ( -2 * this->mat2ni( xi, yj ) * sinh( Potential / Vt ) );
+    }
+    else if( this->mat2ni(xi, yj) == -1 ){
+    	double sheet_Thickness = 0.67079E-9 / 2;
+    	double Ed = this->Ef - q * Potential;
+    	double n = 0;
+    	double p = 0;
+    	double LimitCorrection = 10;
+    	if( this->Ef > Ed ){
+    		vec E = linspace<double> ( Ed   ,   this->Ef + LimitCorrection * kB * this->nT  ,  0.01 * kB * this->nT);
+    		double DEL_E = E(1) - E(0);
+    		vec nArray = zeros<vec>( E.n_elem );
+    		double DOS, f;
+    		for( int pos = 0; pos < E.n_elem; pos++ ){
+    			DOS = 2 * abs( E(pos) - Ed ) / ( pi * pow( hbar * this->vf, 2 ) );
+    			f = fermi( E(pos), this->Ef, kB*this->nT ) ;
+    			nArray( pos ) = DOS * f * DEL_E;
+    		}
+    		n = accu( nArray );
+    	}
+    	else if( this->Ef < Ed ){
+    		vec E = linspace<double> ( this->Ef - LimitCorrection * kB * this->nT,  Ed  ,  0.01 * kB * this->nT);
+    		double DEL_E = E(1) - E(0);
+    		double DOS, f;
+    		vec pArray = zeros<vec>( E.n_elem );
+    		for( int pos = 0; pos < E.n_elem; pos++ ){
+    		    DOS = 2 * abs( E(pos) - Ed ) / ( pi * pow( hbar * this->vf, 2 ) );
+    		    f = fermi( E(pos), this->Ef, kB*this->nT ) ;
+    		    pArray( pos ) = DOS * f * DEL_E;
+    		}
+    		p = accu( pArray );
+    	}
+    	rho = q * ( p - n ) / sheet_Thickness;
+    }
+    return rho;
 }
 
 vec poissonPot::getPotentialSliceAlongZ( double DistanceX ){
