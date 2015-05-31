@@ -120,6 +120,6 @@ install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
 # QMICAD C++ Library
 add_subdirectory(lib)
 add_subdirectory(pylib)
-add_subdirectory(simulators/cpp/tmfsc)
+add_subdirectory(contrib/tmfsc)
 
 
