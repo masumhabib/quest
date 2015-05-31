@@ -6,8 +6,8 @@
 "
  */
 
-#ifndef TMFSC_SEGMENT_H
-#define TMFSC_SEGMENT_H
+#ifndef TMFSC_LIB_SEGMENT_H
+#define TMFSC_LIB_SEGMENT_H
 
 #include "utils/Printable.hpp"
 #include "maths/arma.hpp"

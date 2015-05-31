@@ -4,8 +4,8 @@
  * Dimensions are in angstroms
  */
 
-#ifndef TMFSC_DEVICE_H
-#define TMFSC_DEVICE_H
+#ifndef TMFSC_LIB_DEVICE_H
+#define TMFSC_LIB_DEVICE_H
 
 #include "utils/Printable.hpp"
 #include "maths/arma.hpp"
@@ -40,7 +40,6 @@ protected:
 class Device : public Printable {
 public:
     Device();
-    void test() { std::cout << "Hey" << std::endl; }
     void addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
     void edgeType(int iEdge, int type);

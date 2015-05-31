@@ -8,10 +8,11 @@
  * 
  */
 
-#ifndef PYTMFSC_H
-#define	PYTMFSC_H
+#ifndef TMFSC_PYLIB_PYTMFSC_H
+#define	TMFSC_PYLIB_PYTMFSC_H
 
 #include "pydevice.h"
+#include "pysimulator.h"
 
 namespace qmicad{
 namespace python{
@@ -19,4 +20,5 @@ namespace python{
 
 }}
 
+#endif
 

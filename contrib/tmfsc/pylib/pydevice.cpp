@@ -1,4 +1,7 @@
-/** Python wrapper for Device class */
+/** 
+ * Python wrapper for the Device class 
+ * author: K M Masum Habib
+ */
 
 #include "pydevice.h"
 
@@ -11,7 +14,6 @@ void export_Device(){
             init<>())
         .def("addPoint", &Device::addPoint)
         .def("addPoints", &Device::addPoints)
-        .def("test", &Device::test)
     ;
 }
 

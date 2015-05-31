@@ -104,7 +104,7 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
     return r;
 }
 
-mat Simulator::calcTtran(double B, double E, double V, int injCont){
+mat Simulator::calcTran(double B, double E, double V, int injCont){
     int nc = mDev.numConts();
     if (injCont < 0 || injCont >= nc){
         throw invalid_argument("Contact number out of bounds");

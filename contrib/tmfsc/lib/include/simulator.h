@@ -3,8 +3,8 @@
  * author: K M Masum Habib
  */
 
-#ifndef TMFSC_SIMULATOR_H
-#define TMFSC_SIMULATOR_H
+#ifndef TMFSC_LIB_SIMULATOR_H
+#define TMFSC_LIB_SIMULATOR_H
 
 #include "device.h"
 #include "maths/constants.h"
@@ -27,7 +27,7 @@ class Simulator : public Printable {
 public:
     Simulator(Device &dev);
 
-    mat calcTtran(double B, double E, double V, int injCont = 0);
+    mat calcTran(double B, double E, double V, int injCont = 0);
     vector<point> calcTraj(point ri, double thi, double B, 
             double EF, double V, bool saveTraj = true);
 private:
