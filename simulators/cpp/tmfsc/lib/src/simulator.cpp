@@ -5,7 +5,7 @@
 
 #include "simulator.h"
 
-namespace tmfsc {
+namespace qmicad { namespace tmfsc {
 
 Simulator::Simulator(Device &dev)
 :mDev(dev) {
@@ -162,5 +162,5 @@ void Simulator::resetElectCounts() {
 
 
 
-}
+}}
 

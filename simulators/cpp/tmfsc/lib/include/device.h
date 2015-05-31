@@ -13,7 +13,7 @@
 
 #include <vector>
 
-namespace tmfsc {
+namespace qmicad{ namespace tmfsc {
 using utils::Printable;
 using maths::armadillo::linspace;
 using maths::armadillo::vec;
@@ -40,6 +40,7 @@ protected:
 class Device : public Printable {
 public:
     Device();
+    void test() { std::cout << "Hey" << std::endl; }
     void addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
     void edgeType(int iEdge, int type);
@@ -67,7 +68,8 @@ private:
 };
 
 
-}
+}}
+
 #endif
 
 

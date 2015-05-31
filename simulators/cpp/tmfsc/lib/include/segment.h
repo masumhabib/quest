@@ -15,7 +15,7 @@
 #include <stdexcept>
 
 
-namespace tmfsc{
+namespace qmicad{ namespace tmfsc{
 using utils::Printable;
 using maths::spvec::svec;
 typedef maths::spvec::svec point;
@@ -56,6 +56,6 @@ protected:
     static constexpr double TOL = 1E-10;
 };
 
-}
+}}
 
 #endif

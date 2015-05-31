@@ -12,7 +12,7 @@
 #include <tuple>
 #include <iostream>
 
-namespace tmfsc{
+namespace qmicad{ namespace tmfsc{
 using std::tuple;
 using std::make_tuple;
 using std::tie;
@@ -54,7 +54,7 @@ private:
     static constexpr double ETOL = 1E-6;
 };
 
-}
+}}
 
 #endif
 

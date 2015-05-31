@@ -1,6 +1,6 @@
 
 #include "segment.h"
-namespace tmfsc {
+namespace qmicad { namespace tmfsc {
 
 /** Creates a line segment joining (p,q) also provides an alternet 
  * representation in terms of co-efficients a,b and c */
@@ -129,4 +129,5 @@ bool Segment::onSegment(const point &p, const point &q, const point &r) {
     plt.plot(l2[:,0],l2[:,1])
     plt.show()
 */
-}
+
+}}

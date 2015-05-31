@@ -5,7 +5,7 @@
 
 #include "device.h"
 
-namespace tmfsc{
+namespace qmicad{ namespace tmfsc{
 
 /** Constructor */
 Device::Device() {
@@ -99,7 +99,7 @@ Edge::Edge(const point &p, const point &q, int type)
 
 }
 
-}
+}}
 
 
 
