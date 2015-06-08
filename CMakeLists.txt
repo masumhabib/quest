@@ -15,6 +15,7 @@ set(QMICAD_PATCH 0)
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
+#set(CMAKE_BUILD_TYPE "Debug")
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")

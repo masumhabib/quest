@@ -14,6 +14,9 @@
 #include <vector>
 
 namespace qmicad{ namespace tmfsc {
+static constexpr double nm = 1E-9;   // nanometer
+static constexpr double AA = 1E-10;  //  Angstrom
+
 using utils::Printable;
 using maths::armadillo::linspace;
 using maths::armadillo::vec;
@@ -28,9 +31,9 @@ public:
 
 public:
     // edge types
-    static constexpr double EDGE_REFLECT = 1;
-    static constexpr double EDGE_ABSORB = 2;
-    static constexpr double EDGE_TRANSMIT = 3;
+    static constexpr int EDGE_REFLECT = 1;
+    static constexpr int EDGE_ABSORB = 2;
+    static constexpr int EDGE_TRANSMIT = 3;
 
 protected:
     int mType;
@@ -53,13 +56,13 @@ public:
     int numConts() { return mCnts.size(); };
     double contDirctn(int iCnt) { return mEdgs[mCnts[iCnt]].angle(); }
 
+    int edgeType(int iEdge) { return mEdgs[iEdge].type(); };
     bool isReflectEdge(int iEdge);
     bool isAbsorbEdge(int iEdge);
     const svec& edgeUnitVect(int indx) { return mEdgs[indx].unitVect(); };
+    const svec edgeVect(int indx) { return mEdgs[indx].vect(); };
 
 public:
-    static constexpr double nm = 1E-9;   // nanometer
-    static constexpr double AA = 1E-10;  //  Angstrom
 private:
     vector<point> mPts; //!< vertices.
     vector<Edge> mEdgs; //!< edges.

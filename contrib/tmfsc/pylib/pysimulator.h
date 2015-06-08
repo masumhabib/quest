@@ -10,8 +10,21 @@
 
 #include "boostpython.hpp"
 #include "simulator.h"
+#include "pydevice.h"
 
 namespace qmicad { namespace python {
+
+using tmfsc::Simulator;
+using tmfsc::Device;
+using tmfsc::point;
+using maths::armadillo::mat;
+
+class PySimulator : public Simulator {
+public:
+    PySimulator(PyDevice &dev) : Simulator(dev){};
+    mat calcTrajPy(point ri, double thi, double B, 
+            double EF, double V, bool saveTraj = true);
+};
 
 void export_Simulator();
 

@@ -13,6 +13,7 @@
 
 """
 from qmicad import * 
+import tmfsc
 import linspace 
 import vprint
 import simulators

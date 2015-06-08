@@ -28,7 +28,7 @@ inline tuple<svec, svec, double> Simulator::doStep(const svec &vi, double thi,
 
 vector<point> Simulator::calcTraj(point ri, double thi, double B, 
             double EF, double V, bool saveTraj) {
-    if (EF-V < ETOL) {
+    if (fabs(EF-V) < ETOL) {
         throw invalid_argument("EF and V are too close.");
     }
 
@@ -42,13 +42,16 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
  
     vector<point> r; // trajectory
     if (saveTraj) {
-        r.push_back(ri/Device::AA);
+        r.push_back(ri/AA);
     }
 
     int ii = 0;
     while (ii < mNSteps) {
+        cout << "ii " << ii << endl;
+        cout << "ri " << ri/nm << endl;
         // get the next step
         tie(vf, rf, thf) = doStep(vi, thi, ri, dth, dt);
+        cout << "rf " << rf/nm << endl;
 
         // check if electron crossed an edge
         int iEdge = mDev.intersects(ri, rf);
@@ -88,7 +91,7 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
 
         // reset ourselves, ready for the next step
         if (saveTraj) {
-            r.push_back(rf/Device::AA);
+            r.push_back(rf/AA);
         }
         ri = rf;
         thi = thf;
@@ -98,7 +101,7 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
 
     // last point that we have missed.
     if (saveTraj) {
-        r.push_back(rf/Device::AA);
+        r.push_back(rf/AA);
     }
  
     return r;
@@ -119,7 +122,7 @@ mat Simulator::calcTran(double B, double E, double V, int injCont){
     int npts = injPts.size();
 
     for (int ip = 0; ip < npts; ip += 1) {
-        point ri = injPts[ip]*Device::AA;
+        point ri = injPts[ip]*AA;
         vector<double> th(mNth);
         genNormalDist(th, 0, pi/5);
 

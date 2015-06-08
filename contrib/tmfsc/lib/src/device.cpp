@@ -7,6 +7,10 @@
 
 namespace qmicad{ namespace tmfsc{
 
+constexpr int Edge::EDGE_REFLECT;
+constexpr int Edge::EDGE_ABSORB;
+constexpr int Edge::EDGE_TRANSMIT;
+
 /** Constructor */
 Device::Device() {
 }
@@ -16,7 +20,7 @@ Device::Device() {
 void Device::addPoint(const point &pt) {
     mPts.push_back(pt);
     if (mPts.size() > 1){
-        mEdgs.push_back(Edge(mPts[mPts.size() - 1], pt));
+        mEdgs.push_back(Edge(mPts[mPts.size() - 2], pt));
     }
 }
 
@@ -43,7 +47,9 @@ int Device::intersects(point p, point q) {
     // convert to angstrom
     p = p/AA;
     q = q/AA;
+    std::cout << "p " << p << "q " << q << std::endl;
     for (int i = 0; i < mEdgs.size(); i += 1) {
+        std::cout << "i " << i << std::endl;
         if (mEdgs[i].intersects(p, q)) {
             return i;
         }
