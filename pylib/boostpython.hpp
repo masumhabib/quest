@@ -18,6 +18,7 @@
 #include <boost/python/str.hpp>
 #include <boost/python/detail/wrap_python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/list.hpp>
 #include <boost/mpi/python.hpp>
 #include <memory>
 
