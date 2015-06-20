@@ -105,7 +105,7 @@ class HallBar(object):
             self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
 
 
-    def calc_single_traject(self, filename=None, animate=False, shiftxy=(0,0), shiftth=0):
+    def calc_single_traject(self, shiftxy=(0,0), shiftth=0):
         """ Calculate trajectory for single injection event """
         thi = pi/2 + shiftth
         ri = np.array([-self.lx/2+self.coffx+self.clx/2+shiftxy[0]+1E-3, -self.ly/2-self.cly+shiftxy[1]+1E-3])
@@ -113,28 +113,17 @@ class HallBar(object):
         print ("Injecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
-        self.trajectory = self.sim.calcTraj(ri, thi, self.B[0], self.EF, self.V[0])
-
-        # show the trajectory
-        self.draw_trajectory()
-
-        if animate == True:
-	        self.start_animation()
-
-        self.show_plot()
-        		
-        #if filename is not None:
-        #    if animate == True:
-	    #        self.dev.save_animation(filename)
-        #    else:
-        #        self.dev.save_trajectory(filename)
-
+        self.trajs = [];
+        self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
+            self.V[0]))
     
-    def calc_single_trans(self, dl=50, nth=50, draw=False):
+    def calc_single_trans(self, dl=50, nth=50, saveTrajectory=False, 
+            contId = 0):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        T = self.sim.calc_transmission(self.B[0], self.EF, self.V[0], draw=draw)
+        T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, self.V[0], 
+                contId, saveTrajectory)
         
         T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
         if self.num_contacts == FOUR_CONTS:
@@ -147,27 +136,6 @@ class HallBar(object):
         
         return T
     
-    def calc_all_traject(self, filename=None, dl=50, nth=50):  
-        """ Calculates all the trajectories from one contact """      
-        T = self.calc_single_trans(dl=dl, nth=nth, draw=True)
-
-        T12 = '$T_{12}= ' + '{0:.2f}$'.format(T[0][1])
-        if self.num_contacts == FOUR_CONTS:
-	        T13 = '$T_{13}= ' + '{0:.2f}$'.format(T[0][2])
-	        T14 = '$T_{14}= ' + '{0:.2f}$'.format(T[0][3])
-        else:
-	        T13 = ""
-	        T14 = ""
-
-        xt = -3500
-        yt = (self.ly/2+200)
-        self.axes.text(xt, yt, T12 + " " + T13 + " " + T14, fontsize=self.fontsize)
-
-        if filename is not None:
-	        self.dev.save_trajectory(filename)
-
-        self.dev.show_plot()
-
     def calc_all_trans(self, dl=50, nth=50):
         """ Transmission for all B and V """
         self.sim.dl = dl
@@ -259,23 +227,25 @@ class HallBar(object):
 
 
     def draw_trajectory(self, color=None, alpha=1.0, width=2.0):
-        if color is None:
-            self.axes.plot(self.trajectory[:, 0], self.trajectory[:, 1], 
-                    linewidth=width, alpha=alpha)
-        else:                                                                   
-            self.axes.plot(self.trajectory[:, 0], self.trajectory[:, 1], 
-                    linewidth=width, color=color, alpha=alpha)
-                                                                                
+        for traj in self.trajs:
+            if color is None:
+                self.axes.plot(traj[:, 0], traj[:, 1], 
+                        linewidth=width, alpha=alpha)
+            else:
+                self.axes.plot(traj[:, 0], self.traj[:, 1], 
+                        linewidth=width, color=color, alpha=alpha)
+ 
+    def animate(self, filename=None):
+	    self._start_animation()
+        #if filename is not None:
+	    #    self.dev.save_animation(filename)
+
     def show_plot(self):                                                        
         plt.show()
 
-    def start_animation(self):                                                    
-        fig = self.fig                                                          
-        ax = self.axes                                                          
-        self.line, = ax.plot([], [], 'ro')                                      
-        self.ani = animation.FuncAnimation(fig, self._set_anim_pos, 
-            self._anim_data, blit=False, interval=10, repeat=True)                                                        
-        plt.show()    
+
+    def save_trajectory(self, file_name):
+        plt.savefig(file_name, dpi=300)
 
     def save(self):
         """ Saves results """
@@ -301,8 +271,17 @@ class HallBar(object):
     def banner(self):
         pass
 
+    def _start_animation(self): 
+        fig = self.fig                                                          
+        ax = self.axes                                                          
+        self.line, = ax.plot([], [], 'ro')                                      
+        self.ani = animation.FuncAnimation(fig, self._set_anim_pos, 
+            self._anim_data, blit=False, interval=10, repeat=True) 
+        plt.show()    
+
     def _anim_data(self):
-        for xy in self.trajectory:
+        traj = self.trajs[0]
+        for xy in traj:
             yield xy[0], xy[1]
 
     def _set_anim_pos(self, data): 
