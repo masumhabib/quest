@@ -18,7 +18,7 @@ hallbar.NV = 2
 
 hallbar.Bmin = 1.5
 hallbar.Vmin = 0.3
-hallbar.m = -1
+hallbar.m = 1
 hallbar.NB = 1
 hallbar.NV = 1
 
