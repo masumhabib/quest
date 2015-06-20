@@ -23,11 +23,15 @@ using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::genNormalDist;
 
+typedef vector<point> Trajectory;
+typedef vector<Trajectory> TrajectoryVect;
+
 class Simulator : public Printable {
 public:
     Simulator(Device &dev);
 
-    mat calcTran(double B, double E, double V, int injCont = 0);
+    tuple<mat, TrajectoryVect> calcTran(double B, double E, double V, 
+            int injCont = 0, bool saveTraj = false);
     vector<point> calcTraj(point ri, double thi, double B, 
             double EF, double V, bool saveTraj = true);
     void setMaxNumTimeStep(int nsteps) { mNSteps = nsteps; };
@@ -46,11 +50,9 @@ private:
     double mvF; //!< Fermi velocity.
     double mdl; //!< distance between two injection points in a contact
     double mNth; //!< number of random directions for each contact.
-    bool mSaveTraj; //!< save trajectory?
     bool mShowProgress; //!< show calculation progress?
 
     vector<int> mElects; //!< Collected electrons.
-    vector<vector<point> > mTraj; //!< Saved trajectory.
 
     static constexpr double ETOL = 1E-6;
 };

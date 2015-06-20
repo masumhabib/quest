@@ -26,7 +26,7 @@ inline tuple<svec, svec, double> Simulator::doStep(const svec &vi, double thi,
     return make_tuple(vf, rf, thf);
 }
 
-vector<point> Simulator::calcTraj(point ri, double thi, double B, 
+Trajectory Simulator::calcTraj(point ri, double thi, double B, 
             double EF, double V, bool saveTraj) {
     if (fabs(EF-V) < ETOL) {
         throw invalid_argument("EF and V are too close.");
@@ -40,7 +40,7 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
     svec vf = vi;
     double thf = thi;
 
-    vector<point> r; // trajectory
+    Trajectory r; // trajectory
     if (saveTraj) {
         r.push_back(ri);
     }
@@ -104,14 +104,16 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
     return r;
 }
 
-mat Simulator::calcTran(double B, double E, double V, int injCont){
+tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V, 
+        int injCont, bool saveTraj){
     int nc = mDev.numConts();
     if (injCont < 0 || injCont >= nc){
         throw invalid_argument("Contact number out of bounds");
     }
         
     vector<point> injPts = mDev.createPointsOnCont(injCont, mdl);
-    double th0 = mDev.contDirctn(injCont);
+    double th0 = mDev.contDirctn(injCont) + pi/2;
+    TrajectoryVect trajs;
 
     // reset the bins
     resetElectCounts();
@@ -124,11 +126,12 @@ mat Simulator::calcTran(double B, double E, double V, int injCont){
         genNormalDist(th, 0, pi/5);
 
         for (double thi:th){
-            if (abs(thi) < pi/2.0-pi/20.0) {
-                vector<point> r = calcTraj(ri, th0 + thi + pi/2, B, E, V, 
-                        mSaveTraj);
-                if (mSaveTraj) {
-                    mTraj.push_back(r);
+            if (abs(thi) < (pi/2.0-pi/20.0)) {
+                std::cout << "thi= " << (th0+thi)*180/pi << std::endl;
+                Trajectory r = calcTraj(ri, th0 + thi, B, E, V, 
+                        saveTraj);
+                if (saveTraj) {
+                    trajs.push_back(r);
                 }
                 ne += 1;
             }
@@ -146,7 +149,7 @@ mat Simulator::calcTran(double B, double E, double V, int injCont){
         TE(injCont, ic) = double(mElects[ie])/double(ne);
         TE(ic, injCont) = double(mElects[ie])/double(ne);
     }
-    return TE;
+    return make_tuple(TE, trajs);
 }
 
 void Simulator::putElectron(int iEdge, int n){
