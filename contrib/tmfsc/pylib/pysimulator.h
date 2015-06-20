@@ -11,19 +11,26 @@
 #include "boostpython.hpp"
 #include "simulator.h"
 #include "pydevice.h"
+#include <vector>
 
 namespace qmicad { namespace python {
 
 using tmfsc::Simulator;
 using tmfsc::Device;
 using tmfsc::point;
+using tmfsc::TrajectoryVect;
+using tmfsc::Trajectory;
 using maths::armadillo::mat;
+using std::vector;
 
 class PySimulator : public Simulator {
 public:
     PySimulator(PyDevice &dev) : Simulator(dev){};
     mat calcTrajPy(point ri, double thi, double B, 
             double EF, double V, bool saveTraj = true);
+    tuple calcTranPy(double B, double E, double V, 
+            int injCont = 0, bool saveTraj = false);
+ 
 };
 
 void export_Simulator();
