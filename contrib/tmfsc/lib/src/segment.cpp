@@ -116,18 +116,4 @@ bool Segment::onSegment(const point &p, const point &q, const point &r) {
 }
 
 
-/*def test(l1, l2):
-    import matplotlib.pyplot as plt
-    print ("Line 1:" + str(l1))
-    print ("Line 2:" + str(l2))
-    ints = intersects(l1[0,:], l1[1,:], l2[0,:], l2[1,:],False)
-    if ints:
-        print ("Intersection at: " + str(intersection(l1[0,:],l1[1,:],l2[0,:],l2[1,:])))
-    else:
-        print ("No intersection.")
-
-    plt.plot(l2[:,0],l2[:,1])
-    plt.show()
-*/
-
 }}
