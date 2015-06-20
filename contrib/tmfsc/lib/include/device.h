@@ -1,7 +1,7 @@
 /** 
  * File: device.h
  * Author: K M Masum Habib
- * Dimensions are in angstroms
+ * All dimensions assumed to be in nano-meters (nm);
  */
 
 #ifndef TMFSC_LIB_DEVICE_H
@@ -43,6 +43,8 @@ protected:
 class Device : public Printable {
 public:
     Device();
+    /** Adds point to the device. The device has a closed polygon, so add 
+     *  first point again. */
     void addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
     void edgeType(int iEdge, int type);

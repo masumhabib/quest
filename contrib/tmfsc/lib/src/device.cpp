@@ -45,11 +45,7 @@ void Device::edgeType(int iEdge, int type) {
  *  p and q. p and q are in angstrom. */
 int Device::intersects(point p, point q) {
     // convert to angstrom
-    p = p/AA;
-    q = q/AA;
-    std::cout << "p " << p << "q " << q << std::endl;
     for (int i = 0; i < mEdgs.size(); i += 1) {
-        std::cout << "i " << i << std::endl;
         if (mEdgs[i].intersects(p, q)) {
             return i;
         }
@@ -62,8 +58,6 @@ int Device::intersects(point p, point q) {
  * by p and q. p and q are in angstrom. */
 point Device::intersection(int iEdge, point p, point q) {
     // convert to angstrom
-    p = p/AA;
-    q = q/AA;
     return mEdgs[iEdge].intersection(p, q);
 }
 

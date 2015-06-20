@@ -30,6 +30,7 @@ public:
     mat calcTran(double B, double E, double V, int injCont = 0);
     vector<point> calcTraj(point ri, double thi, double B, 
             double EF, double V, bool saveTraj = true);
+    void setMaxNumTimeStep(int nsteps) { mNSteps = nsteps; };
 private:
     inline tuple<svec, svec, double> doStep(const svec &vi, double thi, 
         const svec &ri, double dth, double dt);

@@ -12,7 +12,7 @@ Simulator::Simulator(Device &dev)
     mNSteps = 10000;
     mPtsPerCycle = 100;
     mNdtStep = 1000;
-    mvF = 1E6;
+    mvF = 1E6/nm; // Fermi velocity: nm/s
 
     mdl = 50;
     mNth = 50;
@@ -33,25 +33,22 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
     }
 
     svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
-    double wc = mvF*mvF*B/(EF-V); //cyclotron frequency
+    double wc = mvF*nm*mvF*nm*B/(EF-V); //cyclotron frequency
     double dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
     double dth = wc*dt; // angle step in cyclotron cycle
     point rf = ri;
     svec vf = vi;
     double thf = thi;
- 
+
     vector<point> r; // trajectory
     if (saveTraj) {
-        r.push_back(ri/AA);
+        r.push_back(ri);
     }
 
     int ii = 0;
     while (ii < mNSteps) {
-        cout << "ii " << ii << endl;
-        cout << "ri " << ri/nm << endl;
         // get the next step
         tie(vf, rf, thf) = doStep(vi, thi, ri, dth, dt);
-        cout << "rf " << rf/nm << endl;
 
         // check if electron crossed an edge
         int iEdge = mDev.intersects(ri, rf);
@@ -71,8 +68,8 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
                 while (dt2 > 0) {
                     double dth2 = wc*dt2;
                     tie(vf, rf, thf) = doStep(vi, thi, ri, dth2, dt2);
-                    iEdge = mDev.intersects(ri, rf);
-                    if (iEdge == -1) {
+                    int iEdge2 = mDev.intersects(ri, rf);
+                    if (iEdge2 == -1) {
                         break;
                     }
                     dt2 = dt2 - dt/mNdtStep;
@@ -91,7 +88,7 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
 
         // reset ourselves, ready for the next step
         if (saveTraj) {
-            r.push_back(rf/AA);
+            r.push_back(rf);
         }
         ri = rf;
         thi = thf;
@@ -101,7 +98,7 @@ vector<point> Simulator::calcTraj(point ri, double thi, double B,
 
     // last point that we have missed.
     if (saveTraj) {
-        r.push_back(rf/AA);
+        r.push_back(rf);
     }
  
     return r;
@@ -122,7 +119,7 @@ mat Simulator::calcTran(double B, double E, double V, int injCont){
     int npts = injPts.size();
 
     for (int ip = 0; ip < npts; ip += 1) {
-        point ri = injPts[ip]*AA;
+        point ri = injPts[ip];
         vector<double> th(mNth);
         genNormalDist(th, 0, pi/5);
 

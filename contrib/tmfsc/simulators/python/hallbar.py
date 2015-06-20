@@ -3,6 +3,7 @@
 from qmicad.tmfsc import Device, Simulator
 from qmicad.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
 import matplotlib.pyplot as plt
+from matplotlib import animation
 
 import numpy as np
 from math import pi
@@ -34,10 +35,10 @@ class HallBar(object):
         self.m  = 0.99      # Resonance number (optional)
 
         # dimensions
-        self.lx = 5000.0		# length
-        self.ly = 5000.0		# width
-        self.clx = 500.0		# contact width
-        self.cly = 10.0		    # contact length
+        self.lx = 500.0		# length
+        self.ly = 500.0		# width
+        self.clx = 50.0		# contact width
+        self.cly = 1.0		    # contact length
 
         self.fontsize = 20
 
@@ -53,7 +54,7 @@ class HallBar(object):
         clx = self.clx
         cly = self.cly
         self.coffx = self.lx/10
-        self.dc = (self.lx - 2.0*self.coffx - self.clx)*AA # distance between contacts
+        self.dc = (self.lx - 2.0*self.coffx - self.clx) # distance between contacts
 	
         coffx = self.coffx
         dc = self.dc
@@ -98,7 +99,7 @@ class HallBar(object):
             if self.m <= 0:
                 self.B = np.array([self.Bmin])
             else:
-                B0 = abs(self.EF-self.V)/vf/self.dc*2.0
+                B0 = abs(self.EF-self.V)/vf/nm/self.dc*2.0
                 self.B = self.m*B0
         else:
             self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
@@ -107,8 +108,9 @@ class HallBar(object):
     def calc_single_traject(self, filename=None, animate=False, shiftxy=(0,0), shiftth=0):
         """ Calculate trajectory for single injection event """
         thi = pi/2 + shiftth
-        ri = np.array([-self.lx/2+self.coffx+self.clx/2+shiftxy[0], -self.ly/2-self.cly+shiftxy[1]])*AA
+        ri = np.array([-self.lx/2+self.coffx+self.clx/2+shiftxy[0]+1E-3, -self.ly/2-self.cly+shiftxy[1]+1E-3])
         
+        print ("Injecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
         self.trajectory = self.sim.calcTraj(ri, thi, self.B[0], self.EF, self.V[0])
@@ -116,11 +118,10 @@ class HallBar(object):
         # show the trajectory
         self.draw_trajectory()
 
-        #if animate == True:
-	    #    self.dev.start_animation()
+        if animate == True:
+	        self.start_animation()
 
         self.show_plot()
-        #plt.show()
         		
         #if filename is not None:
         #    if animate == True:
@@ -158,8 +159,8 @@ class HallBar(object):
 	        T13 = ""
 	        T14 = ""
 
-        xt = -3500/10
-        yt = (self.ly/2+200)/10
+        xt = -3500
+        yt = (self.ly/2+200)
         self.axes.text(xt, yt, T12 + " " + T13 + " " + T14, fontsize=self.fontsize)
 
         if filename is not None:
@@ -226,13 +227,13 @@ class HallBar(object):
         self.axes = self.fig.add_subplot(111)
        
         nedges = self.dev.numEdges()
-        pt1 = np.array([-self.lx/2, -self.ly/2])/10
+        pt1 = np.array([-self.lx/2, -self.ly/2])
         for ie in range(0, nedges):                                    
             if self.dev.edgeType(ie) == EDGE_ABSORB:
                 width = 4.0
             else:
                 width = 1.5 
-            edgeVec = self.dev.edgeVect(ie)/10
+            edgeVec = self.dev.edgeVect(ie)
             pt2 = pt1 + edgeVec
             X = np.array([pt1[0], pt2[0]])
             Y = np.array([pt1[1], pt2[1]])
@@ -242,30 +243,39 @@ class HallBar(object):
         self.axes.set_xlabel('x (nm)')                                          
         self.axes.set_ylabel('y (nm)')       
 
-        xc1 = (-self.lx/2+self.coffx+self.clx/2-100)/10
-        yc1 = (-self.ly/2-self.cly-600)/10
+        xc1 = (-self.lx/2+self.coffx+self.clx/2-10)
+        yc1 = (-self.ly/2-self.cly-60)
         self.axes.text(xc1, yc1, '1', fontsize=self.fontsize)
-        xc2 = (self.lx/2-self.coffx-self.clx+100)/10
-        yc2 = (-self.ly/2-self.cly*50-600)/10
+        xc2 = (self.lx/2-self.coffx-self.clx+10)
+        yc2 = (-self.ly/2-self.cly*50-60)
         self.axes.text(xc2, yc2, '2', fontsize=self.fontsize)
         if self.num_contacts == FOUR_CONTS:
-            xc3 = (self.lx/2+300.0)/10
-            yc3 = (-100.0)/10
+            xc3 = (self.lx/2+30.0)
+            yc3 = (-10.0)
             self.axes.text(xc3, yc3, '3', fontsize=self.fontsize)
-            xc4 = (-self.lx/2-500.0)/10
-            yc4 = (-100.0)/10
+            xc4 = (-self.lx/2-50.0)
+            yc4 = (-10.0)
             self.axes.text(xc4, yc4, '4', fontsize=self.fontsize)
 
 
     def draw_trajectory(self, color=None, alpha=1.0, width=2.0):
         if color is None:
-            self.axes.plot(self.trajectory[:, 0]/10, self.trajectory[:, 1]/10, linewidth=width, alpha=alpha)
+            self.axes.plot(self.trajectory[:, 0], self.trajectory[:, 1], 
+                    linewidth=width, alpha=alpha)
         else:                                                                   
-            self.axes.plot(self.trajectory[:, 0]/10, self.trajectory[:, 1]/10, linewidth=width, color=color, alpha=alpha)
+            self.axes.plot(self.trajectory[:, 0], self.trajectory[:, 1], 
+                    linewidth=width, color=color, alpha=alpha)
                                                                                 
     def show_plot(self):                                                        
         plt.show()
 
+    def start_animation(self):                                                    
+        fig = self.fig                                                          
+        ax = self.axes                                                          
+        self.line, = ax.plot([], [], 'ro')                                      
+        self.ani = animation.FuncAnimation(fig, self._set_anim_pos, 
+            self._anim_data, blit=False, interval=10, repeat=True)                                                        
+        plt.show()    
 
     def save(self):
         """ Saves results """
@@ -286,10 +296,19 @@ class HallBar(object):
     def print_traject(self):
         print("")
         print("Trajectory:")
-        print(self.trajectory/10)
+        print(self.trajectory)
 
     def banner(self):
         pass
+
+    def _anim_data(self):
+        for xy in self.trajectory:
+            yield xy[0], xy[1]
+
+    def _set_anim_pos(self, data): 
+        x, y = data[0], data[1]                                                 
+        self.line.set_data(x, y)                                                
+        return self.line      
 
 """
 The main() function.
