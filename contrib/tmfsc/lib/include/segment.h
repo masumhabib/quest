@@ -30,6 +30,7 @@ public:
     Segment(const point &p, const point &q);
 
     const svec& unitVect() const { return mn; };
+    svec normal() const { return svec ({-mn(1), mn(0)}); };
     const svec vect() const { return svec(mr*mn); };
     double length() const { return mr; };
     double angle() const { return mth; };
