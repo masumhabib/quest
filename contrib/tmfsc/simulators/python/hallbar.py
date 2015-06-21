@@ -163,8 +163,8 @@ class HallBar(object):
         for ipt in range(my_start, my_end):
             ib = ipt/self.NV
             iv = ipt%self.NV
-            T = self.sim.calc_transmission(self.B[ib], self.EF, self.V[iv], draw=False, show_progress=False)
-            
+            T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, self.V[iv], 
+                False, 0)
        
             self.T12[ib][iv] = T[0][1]
             T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
