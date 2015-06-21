@@ -84,7 +84,7 @@ vector<point> Device::createPointsOnCont(int iCnt, int n) {
 /** Returns N points on the contact contTndx.
  */
 vector<point> Device::createPointsOnCont(int iCnt, double dl) {
-    int npts = int(mEdgs[iCnt].length()/dl);
+    int npts = int(mEdgs[mCnts[iCnt]].length()/dl);
     return createPointsOnCont(iCnt, npts);
 }
  
