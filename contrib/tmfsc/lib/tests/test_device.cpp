@@ -128,9 +128,9 @@ BOOST_AUTO_TEST_CASE(pointsOnEdge)
     dev.addPoint(D);
     dev.addPoint(A);
     
-    dev.edgeType(0, Edge::EDGE_ABSORB);
+    dev.edgeType(1, Edge::EDGE_ABSORB);
 
-    Edge e = dev.edge(0);
+    Edge e = dev.edge(1);
     cout << "Edge#0 p=(" << e.p()[0] << "," << e.p()[1] << ")" 
                  << " q=(" << e.q()[0] << "," << e.q()[1] << ")" 
                  << endl << endl; 
