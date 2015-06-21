@@ -16,6 +16,8 @@ Simulator::Simulator(Device &dev)
 
     mdl = 5;
     mNth = 50;
+
+    mShowProgress = false;
 }
 
 inline tuple<svec, svec, double> Simulator::doStep(const svec &vi, double thi, 
