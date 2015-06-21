@@ -14,7 +14,7 @@ Simulator::Simulator(Device &dev)
     mNdtStep = 1000;
     mvF = 1E6/nm; // Fermi velocity: nm/s
 
-    mdl = 50;
+    mdl = 5;
     mNth = 50;
 }
 
@@ -123,11 +123,10 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
         vector<double> th(mNth);
-        genNormalDist(th, 0, pi/5);
+        genNormalDist(th, pi/5, 0);
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-pi/20.0)) {
-                std::cout << "thi= " << (th0+thi)*180/pi << std::endl;
                 Trajectory r = calcTraj(ri, th0 + thi, B, E, V, 
                         saveTraj);
                 if (saveTraj) {

@@ -39,7 +39,7 @@ private:
     inline tuple<svec, svec, double> doStep(const svec &vi, double thi, 
         const svec &ri, double dth, double dt);
     void resetElectCounts();
-    void putElectron(int indx, int n = 0);
+    void putElectron(int indx, int n = 1);
  
 
 private:
