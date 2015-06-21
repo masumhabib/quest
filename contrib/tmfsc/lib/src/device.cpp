@@ -71,8 +71,11 @@ vector<point> Device::createPointsOnCont(int iCnt, int n) {
     vec y = linspace<vec>(p[1], q[1], n+2);
 
     vector<point> pts;
-    for (int i = 0; i < n; i += 1){
-        pts.push_back(svec({x[i], y[i]}));
+    for (int i = 1; i < n+1; i += 1){
+        // shift the point a bit along the normal of the edge to avoid
+        // registering on the injecting contact.
+        // FIXME: probably this is not a good place for doing this.
+        pts.push_back(svec({x[i], y[i]}) + edge.normal()/1E6);
     }
 
     return pts;

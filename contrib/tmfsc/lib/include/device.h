@@ -63,6 +63,7 @@ public:
     bool isAbsorbEdge(int iEdge);
     const svec& edgeUnitVect(int indx) { return mEdgs[indx].unitVect(); };
     const svec edgeVect(int indx) { return mEdgs[indx].vect(); };
+    const Edge& edge(int indx) { return mEdgs[indx]; };
 
 public:
 private:
