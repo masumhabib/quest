@@ -113,5 +113,34 @@ BOOST_AUTO_TEST_CASE(intersection)
     BOOST_CHECK_CLOSE(ints(1), 10, 1E-4);
 }
 
+BOOST_AUTO_TEST_CASE(pointsOnEdge)
+{
+
+    point A = {0, 0};    
+    point B = {20, 0};    
+    point C = {20, 10};    
+    point D = {0, 10};    
+
+    Device dev;
+    dev.addPoint(A);
+    dev.addPoint(B);
+    dev.addPoint(C);
+    dev.addPoint(D);
+    dev.addPoint(A);
+    
+    dev.edgeType(0, Edge::EDGE_ABSORB);
+
+    Edge e = dev.edge(0);
+    cout << "Edge#0 p=(" << e.p()[0] << "," << e.p()[1] << ")" 
+                 << " q=(" << e.q()[0] << "," << e.q()[1] << ")" 
+                 << endl << endl; 
+
+    vector<point> pts = dev.createPointsOnCont(0, 11);
+    for (int i = 0; i < pts.size(); i += 1) {
+        cout << "pt#" << i << pts[i];
+    }
+}
+
+
 
 
