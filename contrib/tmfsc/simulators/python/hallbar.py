@@ -225,12 +225,10 @@ class HallBar(object):
 
 
     def printBias(self):
-        print("")
-        print("Bias List:")
-        print(self.V)
-        print("")
+        print("\nBias List:")
+        print(str(self.V) + "\n")
         print("B Field List:")
-        print(self.B)
+        print(str(self.B) + "\n")
 
     def printTraj(self):
         print("")
@@ -248,7 +246,7 @@ class HallBar(object):
  
     def banner(self):
         print(greet())
-        print("\n    ***    Running semiclassical analysis for graphene   ***")
+        print("\n ***  Running semiclassical analysis for graphene")
 
     def _start_animation(self): 
         fig = self.fig                                                          
@@ -292,7 +290,7 @@ def main(argv = None):
         
         elapsed = time.time() - start
         if mpi.world.rank == 0:
-            print(' RUNTIME: ' + str(int(elapsed)) + ' sec')
+            print("\n ***  RUNTIME: " + str(int(elapsed)) + " sec")
 
     else:
         usage  = " Usage: hallbar.py simu.py\n"
