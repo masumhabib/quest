@@ -57,7 +57,6 @@ Trajectory Simulator::calcTraj(point ri, double thi, double B,
         if (iEdge != -1) { 
             // crossed an edge, get the intersection point
             point intp = mDev.intersection(iEdge, ri, rf);
-
             if (mDev.isReflectEdge(iEdge)) {
                 // this is a reflective edge, find the intersection point 
                 // and get the time it needs to reach that point
@@ -154,7 +153,9 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
 }
 
 void Simulator::putElectron(int iEdge, int n){
-    mElects[iEdge] += n;
+    if (iEdge < mElects.size()) {
+        mElects[iEdge] += n;
+    }
 }
 
 void Simulator::resetElectCounts() {
