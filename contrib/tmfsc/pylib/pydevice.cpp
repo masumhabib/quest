@@ -30,16 +30,18 @@ void export_Device(){
         .def("addPoints", &PyDevice::addPoints)
         .def("edgeType", PyDevice_edgeType1)
         .def("edgeType", PyDevice_edgeType2)
-        .def("numEdges", &PyDevice::numEdges)
-        .def("numConts", &PyDevice::numConts)
-        .def("isReflectEdge", &PyDevice::isReflectEdge)
-        .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
         .def("edgeUnitVect", &PyDevice::edgeUnitVectPy)
         .def("edgeNormVect", &PyDevice::edgeNormVect)
         .def("edgeVect", &PyDevice::edgeVect)
         .def("edgeMidPoint", &PyDevice::edgeMidPointPy)
         .def("contMidPoint", &PyDevice::contMidPointPy)
         .def("contNormVect", &PyDevice::contNormVect)
+        .def("contDirctn", &PyDevice::contDirctn)
+        .def("numEdges", &PyDevice::numEdges)
+        .def("numConts", &PyDevice::numConts)
+        .def("isReflectEdge", &PyDevice::isReflectEdge)
+        .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
+ 
     ;
 }
 
