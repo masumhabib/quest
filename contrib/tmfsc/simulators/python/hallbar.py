@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from qmicad import greet
 from qmicad.tmfsc import Device, Simulator
 from qmicad.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
 import matplotlib.pyplot as plt
@@ -107,7 +108,7 @@ class HallBar(object):
     def calcSingleTraject(self, shiftxy=(0,0), shiftth=0, contId=0):
         """ Calculate trajectory for single injection event from the
             midpoint of contId"""
-        thi = pi/2 + shiftth
+        thi = self.dev.contDirctn(contId) + pi/2 + shiftth
         ri = self.dev.contMidPoint(contId) + 1E-3*self.dev.contNormVect(contId) + np.array([shiftxy[0], shiftxy[1]])
         
         print ("Injecting electron from " + str(ri) + " ")
@@ -122,20 +123,19 @@ class HallBar(object):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, self.V[0], 
+        self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, self.V[0], 
                 contId, saveTrajectory)
-        self.printTrans(T, contId, self.B[0], self.V[0])
+        self.printTrans(Tij, contId, self.B[0], self.V[0])
         
-        return T
+        return self.T
     
     def calcAllTrans(self, dl=50, nth=50, contId=0):
         """ Transmission for all B and V """
         self.sim.dl = dl
         self.sim.nth = nth
         
-        self.T12 = np.zeros((self.NB, self.NV))
-        self.T13 = np.zeros((self.NB, self.NV))
-        self.T14 = np.zeros((self.NB, self.NV))
+        nconts = self.dev.numConts()
+        self.T = np.zeros((self.NB, self.NV, nconts, nconts))
         
         # MPI stuff
         npts = self.NB*self.NV
@@ -158,15 +158,12 @@ class HallBar(object):
             T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, self.V[iv], 
                 False, contId)
             self.printTrans(T, contId, self.B[ib], self.V[iv])
+            self.T[ib,iv,:,:] = T
  
         if self.mpiworld.rank == 0:
-            self.T12 = mpi.reduce(self.mpiworld, self.T12, op.add, 0) 
-            self.T13 = mpi.reduce(self.mpiworld, self.T13, op.add, 0) 
-            self.T14 = mpi.reduce(self.mpiworld, self.T14, op.add, 0) 
+            self.T = mpi.reduce(self.mpiworld, self.T, op.add, 0) 
         else:
-            mpi.reduce(self.mpiworld, self.T12, op.add, 0) 
-            mpi.reduce(self.mpiworld, self.T13, op.add, 0) 
-            mpi.reduce(self.mpiworld, self.T14, op.add, 0) 
+            mpi.reduce(self.mpiworld, self.T, op.add, 0) 
  
     def drawGeom(self):
         """ Draws the device outline """
@@ -216,7 +213,7 @@ class HallBar(object):
         plt.show()
 
 
-    def save_trajectory(self, file_name):
+    def saveTraj(self, file_name):
         plt.savefig(file_name, dpi=300)
 
     def save(self):
@@ -224,7 +221,7 @@ class HallBar(object):
         if self.mpiworld.rank == 0:
             if not os.path.exists(self.outDir):
                 os.makedirs(self.outDir)
-            np.savez_compressed(self.outDir+self.outFile, T12=self.T12, T13=self.T13, T14=self.T14, B=self.B, V=self.V) 
+            np.savez_compressed(self.outDir+self.outFile, T=self.T, B=self.B, V=self.V) 
 
 
     def printBias(self):
@@ -235,7 +232,7 @@ class HallBar(object):
         print("B Field List:")
         print(self.B)
 
-    def print_traject(self):
+    def printTraj(self):
         print("")
         print("Trajectory:")
         print(self.trajectory)
@@ -250,7 +247,8 @@ class HallBar(object):
         print (msg)
  
     def banner(self):
-        pass
+        print(greet())
+        print("\n    ***    Running semiclassical analysis for graphene   ***")
 
     def _start_animation(self): 
         fig = self.fig                                                          
@@ -285,6 +283,7 @@ def main(argv = None):
             raise Exception("File " + simu_file + " not found")
 
         hallbar = HallBar(mpi.world)
+        hallbar.banner()
         exec(open(simu_file).read(), globals(), locals())
 
         if not os.path.exists(hallbar.outDir):

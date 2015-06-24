@@ -38,9 +38,12 @@ const string version = QMICAD_VERSION;
  */
 char const* greet(){   
     static string msg;
-    msg  = "      QMICAD: Quantum Mechanics Inspired Computer Aided Design";
-    msg += "\n                             v" + qmicad::version + "\n";
-    msg += " ------------------------------------------------------------------";
+    msg += "\n **************************************************************";
+    msg += "\n ***                         QMICAD                         ***";
+    msg += "\n ***    Quantum Mechanics Inspired Computer Aided Design    ***";
+    msg += "\n ***                         v" + qmicad::version 
+                                               + "                        ***";
+    msg += "\n **************************************************************";
     return msg.c_str();
 }
 
