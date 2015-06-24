@@ -17,14 +17,30 @@ import time
 import mpi
 
 # Constants
-TWO_CONTS  	= 2 		# two contacts
-FOUR_CONTS 	= 4   		# four contacts
 vf 			= 1E6		# Fermi velocity
 
 class HallBar(object):
     def __init__(self, mpiworld=None):
-        # simulation setup
-        self.num_contacts = FOUR_CONTS
+        """Constructs a HallBar structure with four contacts."""
+
+        self.fontSize = 20
+
+        self.outDir = './'
+        self.outFile = 'trans.npz'
+
+        self.mpiworld = mpiworld
+       
+        self.vF = vf
+
+        # Create device
+        self.dev = Device()
+        self.setupDefault()
+
+        # Create simulator
+        self.sim = Simulator(self.dev)
+ 
+    def setupDefault(self):
+        """Sets up a default simulation with a default goemetry."""
 
         # bias
         self.EF = 0.0	    # Fermi level		
@@ -34,61 +50,44 @@ class HallBar(object):
         self.NV = 1         # size of self.V
         self.m  = 0.99      # Resonance number (optional)
 
-        # dimensions
-        self.lx = 500.0		# length
-        self.ly = 500.0		# width
-        self.clx = 50.0		# contact width
-        self.cly = 1.0		    # contact length
-
-        self.fontsize = 20
-
-        self.out_dir = './'
-        self.out_file = 'trans.npz'
-
-        self.mpiworld = mpiworld
-
-    def setup_geom(self):
-        """ Creates the goemetry """
-        lx = self.lx
-        ly = self.ly
-        clx = self.clx
-        cly = self.cly
-        self.coffx = self.lx/10
-        self.dc = (self.lx - 2.0*self.coffx - self.clx) # distance between contacts
+        # Create the goemetry with the following dimensions
+        lx = 500.0		# length
+        ly = 500.0		# width
+        clx = 50.0		# contact width
+        cly = 1.0		# contact length
+        coffx = lx/10
+        dc = (lx - 2.0*coffx - clx) # distance between contacts
+        self.dc = dc;
 	
-        coffx = self.coffx
-        dc = self.dc
-
         # Create device and add vertices
-        self.dev = Device()
-        self.dev.addPoint(np.array([-lx/2, -ly/2]))
-        self.dev.addPoint(np.array([-lx/2+coffx, -ly/2]))
-        self.dev.addPoint(np.array([-lx/2+coffx, -ly/2-cly]))
-        self.dev.addPoint(np.array([-lx/2+coffx+clx, -ly/2-cly]))
-        self.dev.addPoint(np.array([-lx/2+coffx+clx, -ly/2]))
-        self.dev.addPoint(np.array([lx/2-coffx-clx, -ly/2]))
-        self.dev.addPoint(np.array([lx/2-coffx-clx, -ly/2-cly*50]))
-        self.dev.addPoint(np.array([lx/2-coffx, -ly/2-cly*50]))
-        self.dev.addPoint(np.array([lx/2-coffx, -ly/2]))
-        self.dev.addPoint(np.array([lx/2, -ly/2]))
-        self.dev.addPoint(np.array([lx/2, ly/2]))
-        self.dev.addPoint(np.array([-lx/2, ly/2]))
-        self.dev.addPoint(np.array([-lx/2, -ly/2]))
+        self.addPoint([-lx/2, -ly/2])
+        self.addPoint([-lx/2+coffx, -ly/2])
+        self.addPoint([-lx/2+coffx, -ly/2-cly])
+        self.addPoint([-lx/2+coffx+clx, -ly/2-cly])
+        self.addPoint([-lx/2+coffx+clx, -ly/2])
+        self.addPoint([lx/2-coffx-clx, -ly/2])
+        self.addPoint([lx/2-coffx-clx, -ly/2-cly*50])
+        self.addPoint([lx/2-coffx, -ly/2-cly*50])
+        self.addPoint([lx/2-coffx, -ly/2])
+        self.addPoint([lx/2, -ly/2])
+        self.addPoint([lx/2, ly/2])
+        self.addPoint([-lx/2, ly/2])
+        self.addPoint([-lx/2, -ly/2])
 
         # Contacts 1 and 2
-        self.dev.edgeType(2, EDGE_ABSORB)
-        self.dev.edgeType(6, EDGE_ABSORB)
-
+        self.setEdgeType(2, EDGE_ABSORB)
+        self.setEdgeType(6, EDGE_ABSORB)
         # Csontacts 3 and 4
-        if self.num_contacts == FOUR_CONTS:
-            self.dev.edgeType(9, EDGE_ABSORB)
-            self.dev.edgeType(11, EDGE_ABSORB)
+        self.setEdgeType(9, EDGE_ABSORB)
+        self.setEdgeType(11, EDGE_ABSORB)
 
-        # Create simulator
-        self.sim = Simulator(self.dev)
-        self.vF = vf
+    def addPoint(self, p):
+        self.dev.addPoint(np.array([p[0], p[1]]))
 
-    def setup_bias(self):
+    def setEdgeType(self, id, type):
+        self.dev.edgeType(id, type)
+
+    def setupBias(self):
         """ Sets the bias points """
         if self.NV == 1:
             self.V = np.array([self.Vmin])
@@ -105,10 +104,11 @@ class HallBar(object):
             self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
 
 
-    def calc_single_traject(self, shiftxy=(0,0), shiftth=0):
-        """ Calculate trajectory for single injection event """
+    def calcSingleTraject(self, shiftxy=(0,0), shiftth=0, contId=0):
+        """ Calculate trajectory for single injection event from the
+            midpoint of contId"""
         thi = pi/2 + shiftth
-        ri = np.array([-self.lx/2+self.coffx+self.clx/2+shiftxy[0]+1E-3, -self.ly/2-self.cly+shiftxy[1]+1E-3])
+        ri = self.dev.contMidPoint(contId) + 1E-3*self.dev.contNormVect(contId) + np.array([shiftxy[0], shiftxy[1]])
         
         print ("Injecting electron from " + str(ri) + " ")
         
@@ -117,26 +117,18 @@ class HallBar(object):
         self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
             self.V[0]))
     
-    def calc_single_trans(self, dl=50, nth=50, saveTrajectory=False, 
+    def calcSingleTrans(self, dl=5, nth=50, saveTrajectory=False, 
             contId = 0):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
         T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, self.V[0], 
                 contId, saveTrajectory)
-        
-        T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
-        if self.num_contacts == FOUR_CONTS:
-	        T13 = ' T13 = ' + '{0:.2f}'.format(T[0][2])
-	        T14 = ' T14 = ' + '{0:.2f}'.format(T[0][3])
-        else:
-	        T13 = ''
-	        T14 = ''
-        print ('B = {0:.3f}'.format(self.B[0]) + ' V = {0:.3f}'.format(self.V[0]) + T12+T13+T14)
+        self.printTrans(T, contId, self.B[0], self.V[0])
         
         return T
     
-    def calc_all_trans(self, dl=50, nth=50):
+    def calcAllTrans(self, dl=50, nth=50, contId=0):
         """ Transmission for all B and V """
         self.sim.dl = dl
         self.sim.nth = nth
@@ -164,21 +156,8 @@ class HallBar(object):
             ib = ipt/self.NV
             iv = ipt%self.NV
             T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, self.V[iv], 
-                False, 0)
-       
-            self.T12[ib][iv] = T[0][1]
-            T12 = ' T12 = ' + '{0:.2f}'.format(T[0][1])
-
-            if self.num_contacts == FOUR_CONTS:
-                self.T13[ib][iv] = T[0][2]
-                self.T14[ib][iv] = T[0][3]
- 
-                T13 = ' T13 = ' + '{0:.2f}'.format(T[0][2])
-                T14 = ' T14 = ' + '{0:.2f}'.format(T[0][3])
-            else:
-                T13 = ''
-                T14 = ''
-            print ('B = {0:.3f}'.format(self.B[ib]) + ' V = {0:.3f}'.format(self.V[iv]) + T12+T13+T14)
+                False, contId)
+            self.printTrans(T, contId, self.B[ib], self.V[iv])
  
         if self.mpiworld.rank == 0:
             self.T12 = mpi.reduce(self.mpiworld, self.T12, op.add, 0) 
@@ -189,14 +168,15 @@ class HallBar(object):
             mpi.reduce(self.mpiworld, self.T13, op.add, 0) 
             mpi.reduce(self.mpiworld, self.T14, op.add, 0) 
  
-    def draw_geom(self):
+    def drawGeom(self):
         """ Draws the device outline """
         self.fig = plt.figure()
         self.axes = self.fig.add_subplot(111)
        
         nedges = self.dev.numEdges()
-        pt1 = np.array([-self.lx/2, -self.ly/2])
-        for ie in range(0, nedges):                                    
+        edgeVec = self.dev.edgeVect(0)
+        pt1 = self.dev.edgeMidPoint(0) - edgeVec/2.0
+        for ie in range(nedges):                                    
             if self.dev.edgeType(ie) == EDGE_ABSORB:
                 width = 4.0
             else:
@@ -207,26 +187,18 @@ class HallBar(object):
             Y = np.array([pt1[1], pt2[1]])
             self.axes.plot(X, Y, 'r-', linewidth=width) 
             pt1 = pt2
+
         self.axes.set_aspect('equal', 'datalim')                                
         self.axes.set_xlabel('x (nm)')                                          
         self.axes.set_ylabel('y (nm)')       
 
-        xc1 = (-self.lx/2+self.coffx+self.clx/2-10)
-        yc1 = (-self.ly/2-self.cly-60)
-        self.axes.text(xc1, yc1, '1', fontsize=self.fontsize)
-        xc2 = (self.lx/2-self.coffx-self.clx+10)
-        yc2 = (-self.ly/2-self.cly*50-60)
-        self.axes.text(xc2, yc2, '2', fontsize=self.fontsize)
-        if self.num_contacts == FOUR_CONTS:
-            xc3 = (self.lx/2+30.0)
-            yc3 = (-10.0)
-            self.axes.text(xc3, yc3, '3', fontsize=self.fontsize)
-            xc4 = (-self.lx/2-50.0)
-            yc4 = (-10.0)
-            self.axes.text(xc4, yc4, '4', fontsize=self.fontsize)
+        ncnts = self.dev.numConts();
+        for ic in range(ncnts):
+            pt = self.dev.contMidPoint(ic) - 30*self.dev.contNormVect(ic)
+            self.axes.text(pt[0], pt[1], str(ic+1), fontsize=self.fontSize)
 
 
-    def draw_trajectory(self, color=None, alpha=1.0, width=2.0):
+    def drawTrajectory(self, color=None, alpha=1.0, width=2.0):
         for traj in self.trajs:
             if color is None:
                 self.axes.plot(traj[:, 0], traj[:, 1], 
@@ -240,7 +212,7 @@ class HallBar(object):
         #if filename is not None:
 	    #    self.dev.save_animation(filename)
 
-    def show_plot(self):                                                        
+    def showPlot(self):                                                        
         plt.show()
 
 
@@ -250,12 +222,12 @@ class HallBar(object):
     def save(self):
         """ Saves results """
         if self.mpiworld.rank == 0:
-            if not os.path.exists(self.out_dir):
-                os.makedirs(self.out_dir)
-            np.savez_compressed(self.out_dir+self.out_file, T12=self.T12, T13=self.T13, T14=self.T14, B=self.B, V=self.V) 
+            if not os.path.exists(self.outDir):
+                os.makedirs(self.outDir)
+            np.savez_compressed(self.outDir+self.outFile, T12=self.T12, T13=self.T13, T14=self.T14, B=self.B, V=self.V) 
 
 
-    def print_bias(self):
+    def printBias(self):
         print("")
         print("Bias List:")
         print(self.V)
@@ -267,7 +239,16 @@ class HallBar(object):
         print("")
         print("Trajectory:")
         print(self.trajectory)
-
+    
+    def printTrans(self, T, contId, B=0, V=0):
+        msg  = 'B = {0:.3f}'.format(B)
+        msg += ' V = {0:.3f}'.format(V)
+        for ic in range(self.dev.numConts()):
+            if ic != contId:
+                msg += ' T' + str(contId+1) + str(ic+1)
+                msg += ' = {0:.2f}'.format(T[contId][ic])
+        print (msg)
+ 
     def banner(self):
         pass
 
@@ -306,9 +287,9 @@ def main(argv = None):
         hallbar = HallBar(mpi.world)
         exec(open(simu_file).read(), globals(), locals())
 
-        if not os.path.exists(hallbar.out_dir):
-            os.makedirs(hallbar.out_dir)
-        shutil.copy2(simu_file, hallbar.out_dir+simu_file)
+        if not os.path.exists(hallbar.outDir):
+            os.makedirs(hallbar.outDir)
+        shutil.copy2(simu_file, hallbar.outDir+simu_file)
         
         elapsed = time.time() - start
         if mpi.world.rank == 0:

@@ -15,11 +15,15 @@ namespace qmicad { namespace python {
 
 using tmfsc::Device;
 using tmfsc::svec;
+using tmfsc::point;
+using tmfsc::Edge;
 
 class PyDevice : public Device {
 public:
     PyDevice() : Device () {};
     svec edgeUnitVectPy(int indx) { return edgeUnitVect(indx); };
+    point contMidPointPy(int indx);
+    point edgeMidPointPy(int indx);
 };
 
 void export_Device();

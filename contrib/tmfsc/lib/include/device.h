@@ -53,17 +53,25 @@ public:
     vector<point> createPointsOnCont(int iCnt, int n);
     vector<point> createPointsOnCont(int iCnt, double dl);
     
-    int contToEdgeIndx(int iCnt) { return mCnts[iCnt]; };
+    int contToEdgeIndx(int iCnt) const { return mCnts[iCnt]; };
     int numEdges() { return mEdgs.size(); };
     int numConts() { return mCnts.size(); };
-    double contDirctn(int iCnt) { return mEdgs[mCnts[iCnt]].angle(); }
+
 
     int edgeType(int iEdge) { return mEdgs[iEdge].type(); };
     bool isReflectEdge(int iEdge);
     bool isAbsorbEdge(int iEdge);
-    const svec& edgeUnitVect(int indx) { return mEdgs[indx].unitVect(); };
-    const svec edgeVect(int indx) { return mEdgs[indx].vect(); };
-    const Edge& edge(int indx) { return mEdgs[indx]; };
+    const svec& edgeUnitVect(int indx) const { return mEdgs[indx].unitVect(); };
+    svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
+    svec edgeVect(int indx) const { return mEdgs[indx].vect(); };
+    const Edge& edge(int indx) const { return mEdgs[indx]; };
+    
+    
+    svec contNormVect(int indx) const { 
+        return edgeNormVect(contToEdgeIndx(indx)); };
+    const svec& contUnitVect(int indx) const { 
+        return edgeUnitVect(contToEdgeIndx(indx)); };
+    double contDirctn(int iCnt) { return mEdgs[mCnts[iCnt]].angle(); }
 
 public:
 private:
