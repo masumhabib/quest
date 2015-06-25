@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 
 import numpy as np
-from math import pi
+from math import pi, sqrt, sin, cos, tan
 import sys
 import os
 import shutil
@@ -33,16 +33,19 @@ class HallBar(object):
        
         self.vF = vf
 
+        self.clear()
+        self.setupDefaults()
+
+    def clear(self):
+        """ Clears ourselves """
         # Create device
         self.dev = Device()
-        self.setupDefault()
 
         # Create simulator
         self.sim = Simulator(self.dev)
  
-    def setupDefault(self):
+    def setupDefaults(self):
         """Sets up a default simulation with a default goemetry."""
-
         # bias
         self.EF = 0.0	    # Fermi level		
         self.Bmin = 1.0	    # Magnetic field
@@ -61,19 +64,19 @@ class HallBar(object):
         self.dc = dc;
 	
         # Create device and add vertices
-        self.addPoint([-lx/2, -ly/2])
-        self.addPoint([-lx/2+coffx, -ly/2])
-        self.addPoint([-lx/2+coffx, -ly/2-cly])
-        self.addPoint([-lx/2+coffx+clx, -ly/2-cly])
-        self.addPoint([-lx/2+coffx+clx, -ly/2])
-        self.addPoint([lx/2-coffx-clx, -ly/2])
-        self.addPoint([lx/2-coffx-clx, -ly/2-cly*50])
-        self.addPoint([lx/2-coffx, -ly/2-cly*50])
-        self.addPoint([lx/2-coffx, -ly/2])
-        self.addPoint([lx/2, -ly/2])
-        self.addPoint([lx/2, ly/2])
-        self.addPoint([-lx/2, ly/2])
-        self.addPoint([-lx/2, -ly/2])
+        self.addPoint(-lx/2, -ly/2)
+        self.addPoint(-lx/2+coffx, -ly/2)
+        self.addPoint(-lx/2+coffx, -ly/2-cly)
+        self.addPoint(-lx/2+coffx+clx, -ly/2-cly)
+        self.addPoint(-lx/2+coffx+clx, -ly/2)
+        self.addPoint(lx/2-coffx-clx, -ly/2)
+        self.addPoint(lx/2-coffx-clx, -ly/2-cly*50)
+        self.addPoint(lx/2-coffx, -ly/2-cly*50)
+        self.addPoint(lx/2-coffx, -ly/2)
+        self.addPoint(lx/2, -ly/2)
+        self.addPoint(lx/2, ly/2)
+        self.addPoint(-lx/2, ly/2)
+        self.addPoint(-lx/2, -ly/2)
 
         # Contacts 1 and 2
         self.setEdgeType(2, EDGE_ABSORB)
@@ -82,8 +85,8 @@ class HallBar(object):
         self.setEdgeType(9, EDGE_ABSORB)
         self.setEdgeType(11, EDGE_ABSORB)
 
-    def addPoint(self, p):
-        self.dev.addPoint(np.array([p[0], p[1]]))
+    def addPoint(self, x, y):
+        return self.dev.addPoint(np.array([x, y]))
 
     def setEdgeType(self, id, type):
         self.dev.edgeType(id, type)
@@ -125,7 +128,7 @@ class HallBar(object):
         self.sim.nth = nth
         self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, self.V[0], 
                 contId, saveTrajectory)
-        self.printTrans(Tij, contId, self.B[0], self.V[0])
+        self.printTrans(self.T, contId, self.B[0], self.V[0])
         
         return self.T
     
@@ -191,7 +194,7 @@ class HallBar(object):
 
         ncnts = self.dev.numConts();
         for ic in range(ncnts):
-            pt = self.dev.contMidPoint(ic) - 30*self.dev.contNormVect(ic)
+            pt = self.dev.contMidPoint(ic) - 0*self.dev.contNormVect(ic)
             self.axes.text(pt[0], pt[1], str(ic+1), fontsize=self.fontSize)
 
 

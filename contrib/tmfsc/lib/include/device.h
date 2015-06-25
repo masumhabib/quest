@@ -45,7 +45,7 @@ public:
     Device();
     /** Adds point to the device. The device has a closed polygon, so add 
      *  first point again. */
-    void addPoint(const point &pt);
+    int addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
     void edgeType(int iEdge, int type);
     int intersects(point p, point q);

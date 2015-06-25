@@ -17,11 +17,13 @@ Device::Device() {
 
 /** Add a vertex to this device 
  */
-void Device::addPoint(const point &pt) {
+int Device::addPoint(const point &pt) {
     mPts.push_back(pt);
     if (mPts.size() > 1){
         mEdgs.push_back(Edge(mPts[mPts.size() - 2], pt));
+        return mEdgs.size() - 1;
     }
+    return -1;
 }
 
 /** Add vertices to this device. 
