@@ -9,13 +9,15 @@ namespace qmicad { namespace tmfsc {
 
 Simulator::Simulator(Device &dev)
 :mDev(dev) {
-    mNSteps = 10000;
-    mPtsPerCycle = 100;
+    mMaxStepsPerTraj = 10000;
+    mPtsPerCycle = 2000; //100
     mNdtStep = 1000;
     mvF = 1E6/nm; // Fermi velocity: nm/s
 
     mdl = 5;
     mNth = 50;
+
+    particleType = ParticleType::DiracCyclotron;
 }
 
 Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
@@ -29,7 +31,7 @@ Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
     }
 
     int ii = 0;
-    while (ii < mNSteps) {
+    while (ii < mMaxStepsPerTraj) {
         // get the next position
         rf = particle.nextPos();
 
@@ -92,16 +94,20 @@ Trajectory Simulator::calcTraj(point ri, double thi, double B,
     if (fabs(EF-V) < ETOL) {
         throw invalid_argument("EF and V are too close.");
     }
-    
 
     svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
-    RelativisticParticle particle = RelativisticParticle(ri, vi, EF, V, B);
-
     double wc = mvF*nm*mvF*nm*B/(EF-V); //cyclotron frequency
     double dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
-    particle.setTimeStep(dt);
+
+    shared_ptr<Particle> particle;
+    if (particleType == ParticleType::DiracCyclotron) {
+        particle = make_shared<DiracCyclotron>(ri, vi, EF, V, B);
+    } else {
+        particle = make_shared<DiracElectron>(ri, vi, EF, V, B);
+    }
+    particle->setTimeStep(dt);
  
-    return calcTraj(particle, saveTraj);
+    return calcTraj(*particle, saveTraj);
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V, 
