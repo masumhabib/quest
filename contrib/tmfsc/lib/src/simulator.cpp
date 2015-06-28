@@ -9,15 +9,6 @@ namespace qmicad { namespace tmfsc {
 
 Simulator::Simulator(Device &dev)
 :mDev(dev) {
-    mMaxStepsPerTraj = 10000;
-    mPtsPerCycle = 2000; //100
-    mNdtStep = 1000;
-    mvF = 1E6/nm; // Fermi velocity: nm/s
-
-    mdl = 5;
-    mNth = 50;
-
-    particleType = ParticleType::DiracCyclotron;
 }
 
 Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {

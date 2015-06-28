@@ -62,17 +62,17 @@ private:
 
 private:
     Device &mDev; //!< Device structure.
-    int mMaxStepsPerTraj;  //!< maximum number of time steps before fail.
-    int mPtsPerCycle; //!< number of points per cyclotron cycle.
-    int mNdtStep; //!< maximum number of steps for determining reflection dt.
-    double mvF; //!< Fermi velocity.
-    double mdl; //!< distance between two injection points in a contact
-    int mNth; //!< number of random directions for each contact.
+    int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
+    int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
+    int mNdtStep = 1000; //!< maximum number of steps for determining reflection dt.
+    double mvF = 1E6/nm; //!< Fermi velocity.
+    double mdl = 0.0; //!< distance between two injection points in a contact
+    int mNth = 50; //!< number of random directions for each contact.
 
     vector<double> mElectBins; //!< Electron bins.
     double mnElects; //!< Total electrons injected.
 
-    ParticleType particleType; //!< particle type.
+    ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
 
     static constexpr double ETOL = 1E-6;
 };
