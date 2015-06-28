@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(basics)
     dev.edgeType(1, Edge::EDGE_ABSORB);
 
     Simulator sim(dev);
-    sim.setMaxNumTimeStep(100);
+    sim.setMaxNumStepsPerTraj(100);
 
     point p = {10, 5};
     vector<point> pts;
