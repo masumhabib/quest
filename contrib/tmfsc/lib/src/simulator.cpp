@@ -153,7 +153,7 @@ void Simulator::collectElectron(int iCont, double n){
 
 void Simulator::resetElectBins() {
     mElectBins.resize(mDev.numConts());
-    for (auto bin : mElectBins) {
+    for (auto &bin : mElectBins) {
         bin = 0;
     }
     mnElects = 0;
