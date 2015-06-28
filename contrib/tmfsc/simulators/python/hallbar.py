@@ -155,9 +155,11 @@ class HallBar(object):
         if icpu < rem:
             my_end += 1
 
+        print("  B         V        EF        T        T         T  ")
         for ipt in range(my_start, my_end):
             ib = ipt/self.NV
             iv = ipt%self.NV
+            #print("B = {0:.3f} V = {1:.3f} EF = {2:.3f}".format(self.B[ib], self.V[iv], self.EF))
             T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, self.V[iv], 
                 False, contId)
             self.printTrans(T, contId, self.B[ib], self.V[iv])
@@ -239,12 +241,12 @@ class HallBar(object):
         print(self.trajs)
     
     def printTrans(self, T, contId, B=0, V=0):
-        msg  = 'B = {0:.3f}'.format(B)
-        msg += ' V = {0:.3f}'.format(V)
+        msg  = '{0:.3f}'.format(B)
+        msg += '     {0:.3f}'.format(V)
         for ic in range(self.dev.numConts()):
             if ic != contId:
-                msg += ' T' + str(contId+1) + str(ic+1)
-                msg += ' = {0:.2f}'.format(T[contId][ic])
+                #msg += ' ' + str(contId+1) + str(ic+1)
+                msg += '    {0:.3f}'.format(T[contId][ic])
         print (msg)
  
     def banner(self):
