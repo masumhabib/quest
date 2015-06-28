@@ -23,7 +23,7 @@ Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
     svec vi = particle.getVel();
     svec rf = ri;
 
-    Trajectory r; // trajectory
+    Trajectory r;
     if (saveTraj) {
         r.push_back(ri);
     }
