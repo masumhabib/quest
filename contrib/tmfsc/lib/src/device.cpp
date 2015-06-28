@@ -40,6 +40,7 @@ void Device::edgeType(int iEdge, int type) {
     mEdgs[iEdge].type(type);
     if (type == Edge::EDGE_ABSORB){
         mCnts.push_back(iEdge);
+        mEdg2Cnt[iEdge] = mCnts.size()-1;
     }
 }
 

@@ -12,12 +12,14 @@
 #include "segment.h"
 
 #include <vector>
+#include <map>
 
 namespace qmicad{ namespace tmfsc {
 using utils::Printable;
 using maths::armadillo::linspace;
 using maths::armadillo::vec;
 using std::vector;
+using std::map;
 
 class Edge : public Segment {
 public:
@@ -51,6 +53,7 @@ public:
     vector<point> createPointsOnCont(int iCnt, double dl);
     
     int contToEdgeIndx(int iCnt) const { return mCnts[iCnt]; };
+    int edgeToContIndx(int iEdge) const { return mEdg2Cnt.at(iEdge); };
     int numEdges() { return mEdgs.size(); };
     int numConts() { return mCnts.size(); };
 
@@ -74,7 +77,8 @@ public:
 private:
     vector<point> mPts; //!< vertices.
     vector<Edge> mEdgs; //!< edges.
-    vector<int> mCnts;  //!< contacts: index of absorbing edges.
+    vector<int> mCnts;  //!< Contact to edge map.
+    map<int, int> mEdg2Cnt; //!< Egde to contact map.
 };
 
 
