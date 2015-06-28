@@ -49,22 +49,24 @@ Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
                 // see if we are close engough to the edge, if not 
                 // chenge the time continue until we are inside the device
                 // FIXME: the following loop might need optimization.
-                while (dt2 > 0) {
+                int idtStep = 0;
+                while (dt2 > 0 && idtStep < mNdtStep) {
                     particle.setTimeStep(dt2);
                     rf = particle.nextPos();
                     int iEdge2 = mDev.intersects(ri, rf);
                     if (iEdge2 == -1) {
                         particle.doStep();
-                        particle.setTimeStep(dt);
                         break;
                     }
                     dt2 = dt2 - dt/mNdtStep;
+                    idtStep += 1;
                 }
 
                 // reflect electron by changing their velocity direction
+                particle.setTimeStep(dt);
                 particle.reflect(mDev.edgeNormVect(iEdge));
             } else if (mDev.isAbsorbEdge(iEdge)) {
-                putElectron(iEdge);
+                collectElectron(mDev.edgeToContIndx(iEdge));
                 break;
             }
         }    
@@ -114,8 +116,7 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
     TrajectoryVect trajs;
 
     // reset the bins
-    resetElectCounts();
-    int ne = 0;
+    resetElectBins();
     int npts = injPts.size();
 
     for (int ip = 0; ip < npts; ip += 1) {
@@ -130,7 +131,6 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
                 if (saveTraj) {
                     trajs.push_back(r);
                 }
-                ne += 1;
             }
         }
     }
@@ -138,24 +138,25 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
     mat TE = zeros<mat>(nc,nc);
 
     for (int ic = 0; ic < nc; ic += 1) {
-        int ie = mDev.contToEdgeIndx(ic);
-        TE(injCont, ic) = double(mElects[ie])/double(ne);
-        TE(ic, injCont) = double(mElects[ie])/double(ne);
+        TE(injCont, ic) = mElectBins[ic]/mnElects;
+        TE(ic, injCont) = mElectBins[ic]/mnElects;
     }
     return make_tuple(TE, trajs);
 }
 
-void Simulator::putElectron(int iEdge, int n){
-    if (iEdge < mElects.size()) {
-        mElects[iEdge] += n;
+void Simulator::collectElectron(int iCont, double n){
+    if (iCont < mElectBins.size()) {
+        mElectBins[iCont] += n;
+        mnElects += n;
     }
 }
 
-void Simulator::resetElectCounts() {
-    mElects.resize(mDev.numEdges());
-    for (int i = 0; i < mElects.size(); i += 1) {
-        mElects[i] = 0;
+void Simulator::resetElectBins() {
+    mElectBins.resize(mDev.numConts());
+    for (auto bin : mElectBins) {
+        bin = 0;
     }
+    mnElects = 0;
 }
 
 

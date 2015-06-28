@@ -42,8 +42,8 @@ public:
 private:
     inline tuple<svec, svec, double> doStep(const svec &vi, double thi, 
         const svec &ri, double dth, double dt);
-    void resetElectCounts();
-    void putElectron(int indx, int n = 1);
+    void resetElectBins();
+    void collectElectron(int iCont, double n = 1);
  
 
 private:
@@ -55,7 +55,8 @@ private:
     double mdl; //!< distance between two injection points in a contact
     double mNth; //!< number of random directions for each contact.
 
-    vector<int> mElects; //!< Collected electrons.
+    vector<double> mElectBins; //!< Electron bins.
+    double mnElects;
 
     static constexpr double ETOL = 1E-6;
 };
