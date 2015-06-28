@@ -38,6 +38,13 @@ tuple PySimulator::calcTranPy(double B, double E, double V,
     return make_tuple(TE, trajList);
 }
  
+int PySimulator::getParticleTypePy() {
+    return static_cast<int>(getParticleType());
+}
+
+void PySimulator::setParticleTypePy(int type) {
+    setParticleType(static_cast<ParticleType>(type));
+}
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTrajPy, calcTrajPy, 5, 6)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTranPy, calcTranPy, 3, 5)
@@ -48,6 +55,11 @@ void export_Simulator(){
             init<PyDevice&>())
         .def("calcTraj", &PySimulator::calcTrajPy, PySimulator_calcTrajPy())
         .def("calcTrans", &PySimulator::calcTranPy, PySimulator_calcTranPy())
+        .add_property("ParticleType", &PySimulator::getParticleTypePy, 
+                &PySimulator::setParticleTypePy)
+        .add_property("NumPointsPerCycle", &PySimulator::getNumPointsPerCycle, 
+                &PySimulator::getNumPointsPerCycle)
+
     ;
 }
 

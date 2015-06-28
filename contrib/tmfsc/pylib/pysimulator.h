@@ -30,6 +30,8 @@ public:
             double EF, double V, bool saveTraj = true);
     tuple calcTranPy(double B, double E, double V, 
             int injCont = 0, bool saveTraj = false);
+    int getParticleTypePy();
+    void setParticleTypePy(int type);
  
 };
 

@@ -107,6 +107,14 @@ class HallBar(object):
         else:
             self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
 
+    def enableDirectCalc(self): 
+        self.sim.ParticleType = 1
+
+    def enableCyclotronCalc(self): 
+        self.sim.ParticleType = 0
+
+    def numPointsPerCycle(self, npts):
+        self.sim.NumPointsPerCycle = npts
 
     def calcSingleTraject(self, shiftxy=(0,0), shiftth=0, contId=0):
         """ Calculate trajectory for single injection event from the
