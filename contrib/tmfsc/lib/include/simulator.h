@@ -56,7 +56,7 @@ private:
     double mNth; //!< number of random directions for each contact.
 
     vector<double> mElectBins; //!< Electron bins.
-    double mnElects;
+    double mnElects; //!< Total electrons injected.
 
     static constexpr double ETOL = 1E-6;
 };
