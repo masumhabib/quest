@@ -7,6 +7,8 @@
 #define TMFSC_LIB_SIMULATOR_H
 
 #include "device.h"
+#include "particle.hpp"
+#include "relativisticparticle.hpp"
 #include "maths/constants.h"
 #include "utils/random.h"
 #include <tuple>
@@ -34,7 +36,9 @@ public:
             int injCont = 0, bool saveTraj = false);
     vector<point> calcTraj(point ri, double thi, double B, 
             double EF, double V, bool saveTraj = true);
+    Trajectory calcTraj(Particle& particle, bool saveTraj);
     void setMaxNumTimeStep(int nsteps) { mNSteps = nsteps; };
+
 private:
     inline tuple<svec, svec, double> doStep(const svec &vi, double thi, 
         const svec &ri, double dth, double dt);
@@ -50,7 +54,6 @@ private:
     double mvF; //!< Fermi velocity.
     double mdl; //!< distance between two injection points in a contact
     double mNth; //!< number of random directions for each contact.
-    bool mShowProgress; //!< show calculation progress?
 
     vector<int> mElects; //!< Collected electrons.
 

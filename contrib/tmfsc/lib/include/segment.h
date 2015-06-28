@@ -9,6 +9,7 @@
 #ifndef TMFSC_LIB_SEGMENT_H
 #define TMFSC_LIB_SEGMENT_H
 
+#include "tmfsc.h"
 #include "utils/Printable.hpp"
 #include "maths/arma.hpp"
 #include "maths/svec.h"
@@ -17,9 +18,6 @@
 
 namespace qmicad{ namespace tmfsc{
 using utils::Printable;
-using maths::spvec::svec;
-typedef maths::spvec::svec point;
-
 using std::invalid_argument;
 using std::max;
 using std::min;

@@ -86,7 +86,7 @@ class HallBar(object):
         self.setEdgeType(11, EDGE_ABSORB)
 
     def addPoint(self, x, y):
-        return self.dev.addPoint(np.array([x, y]))
+        self.dev.addPoint(np.array([x, y]))
 
     def setEdgeType(self, id, type):
         self.dev.edgeType(id, type)
@@ -194,14 +194,14 @@ class HallBar(object):
 
         ncnts = self.dev.numConts();
         for ic in range(ncnts):
-            pt = self.dev.contMidPoint(ic) - 0*self.dev.contNormVect(ic)
+            pt = self.dev.contMidPoint(ic) - 30*self.dev.contNormVect(ic)
             self.axes.text(pt[0], pt[1], str(ic+1), fontsize=self.fontSize)
 
 
     def drawTrajectory(self, color=None, alpha=1.0, width=2.0):
         for traj in self.trajs:
             if color is None:
-                self.axes.plot(traj[:, 0], traj[:, 1], 
+                self.axes.plot(traj[:, 0], traj[:, 1],
                         linewidth=width, alpha=alpha)
             else:
                 self.axes.plot(traj[:, 0], self.traj[:, 1], 
@@ -236,7 +236,7 @@ class HallBar(object):
     def printTraj(self):
         print("")
         print("Trajectory:")
-        print(self.trajectory)
+        print(self.trajs)
     
     def printTrans(self, T, contId, B=0, V=0):
         msg  = 'B = {0:.3f}'.format(B)

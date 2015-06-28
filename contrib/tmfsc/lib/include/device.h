@@ -14,9 +14,6 @@
 #include <vector>
 
 namespace qmicad{ namespace tmfsc {
-static constexpr double nm = 1E-9;   // nanometer
-static constexpr double AA = 1E-10;  //  Angstrom
-
 using utils::Printable;
 using maths::armadillo::linspace;
 using maths::armadillo::vec;

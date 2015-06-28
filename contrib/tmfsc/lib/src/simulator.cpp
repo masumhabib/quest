@@ -16,31 +16,12 @@ Simulator::Simulator(Device &dev)
 
     mdl = 5;
     mNth = 50;
-
-    mShowProgress = false;
 }
 
-inline tuple<svec, svec, double> Simulator::doStep(const svec &vi, double thi, 
-        const svec &ri, double dth, double dt) {
-    double thf = thi + dth;
-    svec vf = {mvF*cos(thf), mvF*sin(thf)};
-    svec rf = ri + (vi + vf)/2*dt;
-    return make_tuple(vf, rf, thf);
-}
-
-Trajectory Simulator::calcTraj(point ri, double thi, double B, 
-            double EF, double V, bool saveTraj) {
-    if (fabs(EF-V) < ETOL) {
-        throw invalid_argument("EF and V are too close.");
-    }
-
-    svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
-    double wc = mvF*nm*mvF*nm*B/(EF-V); //cyclotron frequency
-    double dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
-    double dth = wc*dt; // angle step in cyclotron cycle
-    point rf = ri;
-    svec vf = vi;
-    double thf = thi;
+Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
+    point ri = particle.getPos();
+    svec vi = particle.getVel();
+    svec rf = ri;
 
     Trajectory r; // trajectory
     if (saveTraj) {
@@ -49,38 +30,39 @@ Trajectory Simulator::calcTraj(point ri, double thi, double B,
 
     int ii = 0;
     while (ii < mNSteps) {
-        // get the next step
-        tie(vf, rf, thf) = doStep(vi, thi, ri, dth, dt);
+        // get the next position
+        rf = particle.nextPos();
 
         // check if electron crossed an edge
         int iEdge = mDev.intersects(ri, rf);
-        if (iEdge != -1) { 
+        if (iEdge == -1) { // no crossing, continue
+            particle.doStep();
+        } else { // crossing, check wchich boundary is crossed
             // crossed an edge, get the intersection point
             point intp = mDev.intersection(iEdge, ri, rf);
             if (mDev.isReflectEdge(iEdge)) {
                 // this is a reflective edge, find the intersection point 
                 // and get the time it needs to reach that point
-                double dt2 = sqrt(pow(intp[0]-ri[0],2) 
-                        + pow(intp[1]-ri[1], 2))/mvF;
+                double dt = particle.getTimeStep();
+                double dt2 = particle.timeToReach(intp)*0.999;
 
                 // see if we are close engough to the edge, if not 
                 // chenge the time continue until we are inside the device
                 // FIXME: the following loop might need optimization.
                 while (dt2 > 0) {
-                    double dth2 = wc*dt2;
-                    tie(vf, rf, thf) = doStep(vi, thi, ri, dth2, dt2);
+                    particle.setTimeStep(dt2);
+                    rf = particle.nextPos();
                     int iEdge2 = mDev.intersects(ri, rf);
                     if (iEdge2 == -1) {
+                        particle.doStep();
+                        particle.setTimeStep(dt);
                         break;
                     }
                     dt2 = dt2 - dt/mNdtStep;
                 }
 
                 // reflect electron by changing their velocity direction
-                svec a1 = dot(vf, mDev.edgeUnitVect(iEdge))*mDev.edgeUnitVect(iEdge);
-                svec a2 = vf - a1;
-                vf = a1 - a2;
-                thf = atan2(vf[1], vf[0]);
+                particle.reflect(mDev.edgeNormVect(iEdge));
             } else if (mDev.isAbsorbEdge(iEdge)) {
                 putElectron(iEdge);
                 break;
@@ -92,8 +74,6 @@ Trajectory Simulator::calcTraj(point ri, double thi, double B,
             r.push_back(rf);
         }
         ri = rf;
-        thi = thf;
-        vi = vf;
         ii += 1;
     }
 
@@ -103,6 +83,23 @@ Trajectory Simulator::calcTraj(point ri, double thi, double B,
     }
  
     return r;
+}
+
+Trajectory Simulator::calcTraj(point ri, double thi, double B, 
+            double EF, double V, bool saveTraj) {
+    if (fabs(EF-V) < ETOL) {
+        throw invalid_argument("EF and V are too close.");
+    }
+    
+
+    svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
+    RelativisticParticle particle = RelativisticParticle(ri, vi, EF, V, B);
+
+    double wc = mvF*nm*mvF*nm*B/(EF-V); //cyclotron frequency
+    double dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
+    particle.setTimeStep(dt);
+ 
+    return calcTraj(particle, saveTraj);
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V, 
@@ -135,10 +132,6 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
                 }
                 ne += 1;
             }
-        }
-        if (mShowProgress == true) {
-            int percent = ((ip+1)*100)/npts; 
-            cout << percent << "%" << endl;
         }
     }
 

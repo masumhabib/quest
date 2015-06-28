@@ -24,17 +24,17 @@ hallbar.printBias()
 
 hallbar.drawGeom()
 #hallbar.calcSingleTraject(shiftxy=(20.0,0.0), shiftth=-30.0/180.0*pi)
-#hallbar.calcSingleTraject(contId = 3)
+hallbar.calcSingleTraject(contId = 3)
 #hallbar.printTraj()
 #hallbar.calcSingleTrans(saveTrajectory=True, contId=0)
 #hallbar.calcSingleTrans(saveTrajectory=True, contId=3)
-#hallbar.drawTrajectory()
+hallbar.drawTrajectory()
 #hallbar.animate()
-#hallbar.showPlot()
-hallbar.calcAllTrans()
+hallbar.showPlot()
+#hallbar.calcAllTrans()
 
 # Save to a file
-hallbar.save()
+#hallbar.save()
 
 
 
