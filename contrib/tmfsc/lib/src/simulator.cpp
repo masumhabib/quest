@@ -9,6 +9,7 @@ namespace qmicad { namespace tmfsc {
 
 Simulator::Simulator(Device &dev)
 :mDev(dev) {
+    std::cout << std::endl << " Simu " << std::endl;
 }
 
 Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
@@ -87,8 +88,13 @@ Trajectory Simulator::calcTraj(point ri, double thi, double B,
     }
 
     svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
-    double wc = mvF*nm*mvF*nm*B/(EF-V); //cyclotron frequency
-    double dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
+    if (isAutoDt) {
+        double wc = mvF*nm*mvF*nm*B/(EF-V); //cyclotron frequency
+        dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
+        if (dt > 1E-3) {
+            std::cout << "W:  Too big time step" << std::endl;
+        }
+    }
 
     shared_ptr<Particle> particle;
     if (particleType == ParticleType::DiracCyclotron) {

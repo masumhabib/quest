@@ -54,6 +54,8 @@ public:
     void getFermiVelo(double vF) { mvF = vF; };
     ParticleType getParticleType() const { return particleType; };
     void setParticleType(ParticleType type) { particleType = type; };
+    double getTimeStep() const { return dt; };
+    void setTimeStep(double dt) { isAutoDt = false; this->dt = dt; };
 
 private:
     Trajectory calcTraj(Particle& particle, bool saveTraj);
@@ -66,8 +68,10 @@ private:
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
     int mNdtStep = 1000; //!< maximum number of steps for determining reflection dt.
     double mvF = 1E6/nm; //!< Fermi velocity.
-    double mdl = 0.0; //!< distance between two injection points in a contact
+    double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.
+    double dt = 1/(1E6/nm); //!< default time step.
+    bool isAutoDt = false; //!< Switch for automatic dt calculation
 
     vector<double> mElectBins; //!< Electron bins.
     double mnElects; //!< Total electrons injected.

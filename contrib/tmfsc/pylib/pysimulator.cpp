@@ -58,8 +58,9 @@ void export_Simulator(){
         .add_property("ParticleType", &PySimulator::getParticleTypePy, 
                 &PySimulator::setParticleTypePy)
         .add_property("NumPointsPerCycle", &PySimulator::getNumPointsPerCycle, 
-                &PySimulator::getNumPointsPerCycle)
-
+                &PySimulator::setNumPointsPerCycle)
+        .add_property("TimeStep", &PySimulator::getTimeStep, 
+                &PySimulator::setTimeStep)
     ;
 }
 

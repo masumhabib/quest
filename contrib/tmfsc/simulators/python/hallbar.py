@@ -167,7 +167,7 @@ class HallBar(object):
         for ipt in range(my_start, my_end):
             ib = ipt/self.NV
             iv = ipt%self.NV
-            #print("B = {0:.3f} V = {1:.3f} EF = {2:.3f}".format(self.B[ib], self.V[iv], self.EF))
+            print("B = {0:.3f} V = {1:.3f} EF = {2:.3f}".format(self.B[ib], self.V[iv], self.EF))
             T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, self.V[iv], 
                 False, contId)
             self.printTrans(T, contId, self.B[ib], self.V[iv])
