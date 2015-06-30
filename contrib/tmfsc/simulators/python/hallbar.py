@@ -198,11 +198,11 @@ class HallBar(object):
             self.axes.plot(X, Y, 'r-', linewidth=width) 
             pt1 = pt2
 
-        self.axes.set_aspect('equal', 'datalim')                                
-        self.axes.set_xlabel('x (nm)')                                          
-        self.axes.set_ylabel('y (nm)')       
+        self.axes.set_aspect('equal', 'datalim')
+        self.axes.set_xlabel('x (nm)')
+        self.axes.set_ylabel('y (nm)')
 
-        ncnts = self.dev.numConts();
+        ncnts = self.dev.numConts()
         for ic in range(ncnts):
             pt = self.dev.contMidPoint(ic) - 30*self.dev.contNormVect(ic)
             self.axes.text(pt[0], pt[1], str(ic+1), fontsize=self.fontSize)
@@ -222,7 +222,7 @@ class HallBar(object):
         #if filename is not None:
 	    #    self.dev.save_animation(filename)
 
-    def showPlot(self):                                                        
+    def showPlot(self):
         plt.show()
 
 
