@@ -16,28 +16,28 @@ Potential::Potential(AtomicStruct::ptr atoms, const string &prefix):
         Printable(" " + prefix), ma(atoms)
 {
     if (ma){
-        mV.set_size(ma->NumOfAtoms());
-        mV.zeros();
-
-        mRho.set_size(ma->NumOfAtoms());
-        mRho.zeros();
+        mgrid = ma->XYZ();
     }
+    mV.set_size(mgrid.n_rows);
+    mV.zeros();
 
+    mRho.set_size(mgrid.n_rows);
+    mRho.zeros();
 }
 
 
 string Potential::toString() const{
     stringstream ss;
     ss << Printable::toString() << ":" << endl;
-    for (vector<contact>::const_iterator it = ms.begin(); it != ms.end(); ++it){
+    for (auto it = ms.begin(); it != ms.end(); ++it){
         ss << mPrefix << *it << endl;
     }
 
-    for (vector<gate>::const_iterator it = mg.begin(); it != mg.end(); ++it){
+    for (auto it = mg.begin(); it != mg.end(); ++it){
         ss << mPrefix << *it << endl;
     }
 
-    for (vector<contact>::const_iterator it = md.begin(); it != md.end(); ++it){
+    for (auto it = md.begin(); it != md.end(); ++it){
         ss << mPrefix << *it;
     }
    
@@ -46,6 +46,10 @@ string Potential::toString() const{
 
 // Convert atomic potential to orbital potential
 shared_ptr<vec> Potential::toOrbPot(span s){
+    if (ma == nullptr) {
+        throw runtime_error("Potential::toOrbPot(): I do not have an atomistic object");
+    }
+
     AtomicStruct a = (*ma)(s);
     int no = a.NumOfOrbitals();
     int na = a.NumOfAtoms();
@@ -69,10 +73,18 @@ vec Potential::toOrbPot(uint start, uint end){
 }
 
 double Potential::Vatom(uint ia){
+    if (ma == nullptr) {
+        throw runtime_error("Potential::toOrbPot(): I do not have an atomistic object");
+    }
+
     return mV(ia);
 }
 
 void Potential::Vatom(uint ia, double V){
+    if (ma == nullptr) {
+        throw runtime_error("Potential::toOrbPot(): I do not have an atomistic object");
+    }
+
     mV(ia) = V;
 }
 
@@ -112,13 +124,13 @@ void Potential::exportSvg(const string& path){
 }
 
 void Potential::exportPotential(const string& path){
-    int na = ma->NumOfAtoms();
-    mat Va(na, 4);
-    Va.cols(coord::X, coord::Z) = ma->XYZ();
-    Va.col(coord::Z+1) = mV;
+    int npt = mgrid.n_rows;
+    mat V(npt, 4);
+    V.cols(coord::X, coord::Z) = mgrid;
+    V.col(coord::Z+1) = mV;
     
     ofstream potf(path.c_str());
-    potf << Va << endl;
+    potf << V << endl;
 }
 
 void Potential::addSource(const squadrilateral &sq){
