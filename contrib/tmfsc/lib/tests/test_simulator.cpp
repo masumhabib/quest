@@ -9,6 +9,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <iostream>
+#include <memory>
 
 using namespace qmicad::tmfsc;
 using namespace std;
@@ -21,14 +22,14 @@ BOOST_AUTO_TEST_CASE(basics)
     point C = {20, 20};    
     point D = {0, 20};    
 
-    Device dev;
-    dev.addPoint(A);
-    dev.addPoint(B);
-    dev.addPoint(C);
-    dev.addPoint(D);
-    dev.addPoint(A);
+    Device::ptr dev = make_shared<Device>();
+    dev->addPoint(A);
+    dev->addPoint(B);
+    dev->addPoint(C);
+    dev->addPoint(D);
+    dev->addPoint(A);
 
-    dev.edgeType(1, Edge::EDGE_ABSORB);
+    dev->edgeType(1, Edge::EDGE_ABSORB);
 
     Simulator sim(dev);
     sim.setMaxNumStepsPerTraj(100);
