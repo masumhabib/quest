@@ -4,6 +4,8 @@ from qmicad import greet
 from qmicad.tmfsc import Device, Simulator
 from qmicad.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
 import matplotlib.pyplot as plt
+from matplotlib.path import Path
+import matplotlib.patches as patches
 from matplotlib import animation
 
 import numpy as np
@@ -53,6 +55,10 @@ class HallBar(object):
         self.NB = 1         # size of self.B
         self.NV = 1         # size of self.V
         self.m  = 0.99      # Resonance number (optional)
+        self.VgRatios = []  # ratio of V applied to a given gate
+        self.VGG = 0        # gate voltage applied to all gates
+
+        self.singleResonance = False #calculates B for resonant condition if true
 
         # Create the goemetry with the following dimensions
         lx = 500.0		# length
@@ -85,8 +91,17 @@ class HallBar(object):
         self.setEdgeType(9, EDGE_ABSORB)
         self.setEdgeType(11, EDGE_ABSORB)
 
+        self.gates = [] # gate geometries for drawing
+
     def addPoint(self, x, y):
         self.dev.addPoint(np.array([x, y]))
+
+    def addGate(self, lb, rb, rt, lt, VgRatio = 1):
+        self.VgRatios.append(VgRatio)
+        gate = (np.array([lb[0], lb[1]]), np.array([rb[0], rb[1]]), 
+                np.array([rt[0], rt[1]]), np.array([lt[0], lt[1]]))
+        self.gates.append(gate)
+        return self.dev.addGate(gate[0], gate[1], gate[2], gate[3]);
 
     def setEdgeType(self, id, type):
         self.dev.edgeType(id, type)
@@ -99,14 +114,14 @@ class HallBar(object):
             self.V = np.linspace(self.Vmin, self.Vmax, self.NV)
 
         if self.NB == 1:        
-            if self.m <= 0:
-                self.B = np.array([self.Bmin])
-            else:
-                B0 = abs(self.EF-self.V)/vf/nm/self.dc*2.0
-                self.B = self.m*B0
+            self.B = np.array([self.Bmin])
         else:
             self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
 
+        if self.singleResonance == True:
+            B0 = abs(self.EF-self.V)/vf/nm/self.dc*2.0
+            self.B = self.m*B0
+ 
     def enableDirectCalc(self): 
         self.sim.ParticleType = 1
 
@@ -126,21 +141,31 @@ class HallBar(object):
         
         # calculate the trajectory
         self.trajs = [];
-        self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
-            self.V[0]))
+        if self.dev.NumGates > 0:
+            VGs = self._getGateVoltages(self.V[0])
+            self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
+                VGs))
+        else:
+            self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
+                self.V[0]))
     
     def calcSingleTrans(self, dl=5, nth=50, saveTrajectory=False, 
             contId = 0):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, self.V[0], 
-                contId, saveTrajectory)
+        if self.dev.NumGates > 0:
+            VGs = self._getGateVoltages(self.V[0])
+            self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, 
+                    VGs, contId, saveTrajectory)
+        else:
+            self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, 
+                    self.V[0], contId, saveTrajectory)
         self.printTrans(self.T, contId, self.B[0], self.V[0])
         
         return self.T
     
-    def calcAllTrans(self, dl=50, nth=50, contId=0):
+    def calcAllTrans(self, dl=5, nth=50, contId=0):
         """ Transmission for all B and V """
         self.sim.dl = dl
         self.sim.nth = nth
@@ -167,9 +192,15 @@ class HallBar(object):
         for ipt in range(my_start, my_end):
             ib = ipt/self.NV
             iv = ipt%self.NV
-            print("B = {0:.3f} V = {1:.3f} EF = {2:.3f}".format(self.B[ib], self.V[iv], self.EF))
-            T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, self.V[iv], 
-                False, contId)
+            print("B = {0:.3f} V = {1:.3f} EF = {2:.3f}".format(self.B[ib], 
+                self.V[iv], self.EF))
+            if self.dev.NumGates > 0:
+                VGs = self._getGateVoltages(self.V[iv])
+                T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, 
+                        VGs, False, contId)
+            else:
+                T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, 
+                        self.V[iv], False, contId)
             self.printTrans(T, contId, self.B[ib], self.V[iv])
             self.T[ib,iv,:,:] = T
  
@@ -197,6 +228,19 @@ class HallBar(object):
             Y = np.array([pt1[1], pt2[1]])
             self.axes.plot(X, Y, 'r-', linewidth=width) 
             pt1 = pt2
+        # draw gates
+        codes = [Path.MOVETO,
+            Path.LINETO,
+            Path.LINETO,
+            Path.LINETO,
+            Path.CLOSEPOLY,
+         ]
+        for gate in self.gates:
+            gate = gate + (np.array([0,0]),)
+            path = Path(gate, codes)
+            patch = patches.PathPatch(path, alpha=0.5, facecolor='yellow', 
+                lw=1)
+            self.axes.add_patch(patch)
 
         self.axes.set_aspect('equal', 'datalim')
         self.axes.set_xlabel('x (nm)')
@@ -211,7 +255,7 @@ class HallBar(object):
     def drawTrajectory(self, color=None, alpha=1.0, width=2.0):
         for traj in self.trajs:
             if color is None:
-                self.axes.plot(traj[:, 0], traj[:, 1],
+                self.axes.plot(traj[:, 0], traj[:, 1], 
                         linewidth=width, alpha=alpha)
             else:
                 self.axes.plot(traj[:, 0], self.traj[:, 1], 
@@ -260,6 +304,12 @@ class HallBar(object):
     def banner(self):
         print(greet())
         print("\n ***  Running semiclassical analysis for graphene ... ")
+
+    def _getGateVoltages(self, V):
+        VGs = []
+        for VgRatio in self.VgRatios:
+            VGs.append(self.VGG + V*VgRatio)
+        return VGs
 
     def _start_animation(self): 
         fig = self.fig                                                          
