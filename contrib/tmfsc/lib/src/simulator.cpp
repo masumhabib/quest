@@ -173,13 +173,14 @@ Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
             particle.doStep();
             particle.setTimeStep(dt);
             // set potential
-            if (mDev->getNumGates() > 0 ){
+            if (mDev->getNumGates() > 0 ) {
                 particle.setPot(mDev->getPotAt(particle.getPos()));
             }
 
             // crossed an edge, get the intersection point
             if (mDev->isReflectEdge(iEdge)) {
                 particle.reflect(mDev->edgeNormVect(iEdge));
+            } else if (mDev->isTransmitEdge(iEdge)) {
             } else if (mDev->isAbsorbEdge(iEdge)) {
                 collectElectron(mDev->edgeToContIndx(iEdge));
                 break;

@@ -70,6 +70,7 @@ public:
     int edgeType(int iEdge) { return mEdgs[iEdge].type(); };
     bool isReflectEdge(int iEdge);
     bool isAbsorbEdge(int iEdge);
+    bool isTransmitEdge(int iEdge);
     const svec& edgeUnitVect(int indx) const { return mEdgs[indx].unitVect(); };
     svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };

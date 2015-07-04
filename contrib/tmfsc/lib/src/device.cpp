@@ -92,12 +92,16 @@ vector<point> Device::createPointsOnCont(int iCnt, double dl) {
     return createPointsOnCont(iCnt, npts);
 }
  
-bool Device::isReflectEdge(int iEdge){
+bool Device::isReflectEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_REFLECT;
 }
 
-bool Device::isAbsorbEdge(int iEdge){
+bool Device::isAbsorbEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_ABSORB;
+}
+
+bool Device::isTransmitEdge(int iEdge) {
+    return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
 int Device::addGate(const point& lb, const point& rb, const point& rt, 
