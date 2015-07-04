@@ -12,6 +12,7 @@
 #include "DiracCyclotron.hpp"
 #include "maths/constants.h"
 #include "utils/random.h"
+#include "potential/potential.h"
 #include <tuple>
 #include <iostream>
 #include <memory>
@@ -34,11 +35,15 @@ class Simulator : public Printable {
 public:
     enum class ParticleType {DiracCyclotron = 0, DiracElectron = 1 };
 
-    Simulator(Device &dev);
+    Simulator(Device::ptr dev);
     tuple<mat, TrajectoryVect> calcTran(double B, double E, double V, 
             int injCont = 0, bool saveTraj = false);
     vector<point> calcTraj(point ri, double thi, double B, 
-            double EF, double V, bool saveTraj = true);
+            double E, double V, bool saveTraj = true);
+    tuple<mat, TrajectoryVect> calcTran(double B, double E, 
+            const vector<double>& VG, int injCont = 0, bool saveTraj = false);
+    vector<point> calcTraj(point ri, double thi, double B, 
+            double E, const vector<double>& VG, bool saveTraj = true);
 
     int getMaxNumStepsPerTraj() const { return mMaxStepsPerTraj; };
     void setMaxNumStepsPerTraj(int nsteps) { mMaxStepsPerTraj = nsteps; };
@@ -58,12 +63,16 @@ public:
     void setTimeStep(double dt) { isAutoDt = false; this->dt = dt; };
 
 private:
+    tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
+    Trajectory calcTraj(point ri, double thi, bool saveTraj);
     Trajectory calcTraj(Particle& particle, bool saveTraj);
+    inline bool getCloseToEdge(Particle& particle, point& rf, const point& ri, 
+            const point& intp);
     void resetElectBins();
     void collectElectron(int iCont, double n = 1);
 
 private:
-    Device &mDev; //!< Device structure.
+    Device::ptr mDev; //!< Device structure.
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
     int mNdtStep = 1000; //!< maximum number of steps for determining reflection dt.
@@ -72,12 +81,14 @@ private:
     int mNth = 50; //!< number of random directions for each contact.
     double dt = 1/(1E6/nm); //!< default time step.
     bool isAutoDt = false; //!< Switch for automatic dt calculation
+    double mB = 0; //!< Magnetic field.
+    double mV = 0; //!< Electric potential.
+    double mE = 0; //!< Energy of electron.
 
     vector<double> mElectBins; //!< Electron bins.
     double mnElects; //!< Total electrons injected.
 
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
-
     static constexpr double ETOL = 1E-6;
 };
 
