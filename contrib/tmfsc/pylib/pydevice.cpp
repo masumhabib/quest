@@ -28,6 +28,7 @@ void export_Device(){
             init<>())
         .def("addPoint", &PyDevice::addPoint)
         .def("addPoints", &PyDevice::addPoints)
+        .def("addGate", &PyDevice::addGate)
         .def("edgeType", PyDevice_edgeType1)
         .def("edgeType", PyDevice_edgeType2)
         .def("edgeUnitVect", &PyDevice::edgeUnitVectPy)
@@ -41,6 +42,7 @@ void export_Device(){
         .def("numConts", &PyDevice::numConts)
         .def("isReflectEdge", &PyDevice::isReflectEdge)
         .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
+        .def_readonly("NumGates", &PyDevice::getNumGates);
  
     ;
 }

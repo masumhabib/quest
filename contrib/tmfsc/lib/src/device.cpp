@@ -13,6 +13,7 @@ constexpr int Edge::EDGE_TRANSMIT;
 
 /** Constructor */
 Device::Device() {
+    mPot = make_shared<LinearPot>();
 }
 
 /** Add a vertex to this device 
@@ -99,6 +100,23 @@ bool Device::isAbsorbEdge(int iEdge){
     return mEdgs[iEdge].type() == Edge::EDGE_ABSORB;
 }
 
+int Device::addGate(const point& lb, const point& rb, const point& rt, 
+        const point& lt) 
+{
+    typedef maths::geometry::point gpoint;
+    return mPot->addGate(squadrilateral(gpoint(lb[0], lb[1]), 
+                gpoint(rb[0], rb[1]), gpoint(rt[0], rt[1]), 
+                gpoint(lt[0], lt[1])));
+}
+
+void Device::setGatePotential(int igate, double V) {
+    mPot->VG(igate, V);
+}
+
+double Device::getPotAt(const point& position) {
+    typedef maths::geometry::point gpoint;
+    return mPot->getPotAt(gpoint(position[0], position[1]));
+}
 
 Edge::Edge(const point &p, const point &q, int type)
 : Segment(p,q), mType(type){

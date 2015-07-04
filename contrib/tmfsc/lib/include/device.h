@@ -9,17 +9,26 @@
 
 #include "utils/Printable.hpp"
 #include "maths/arma.hpp"
+#include "maths/geometry.hpp"
+#include "potential/potential.h"
+#include "potential/linearPot.h"
 #include "segment.h"
 
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace qmicad{ namespace tmfsc {
 using utils::Printable;
 using maths::armadillo::linspace;
 using maths::armadillo::vec;
+using maths::geometry::squadrilateral;
+using potential::Potential;
+using potential::LinearPot;
 using std::vector;
 using std::map;
+using std::shared_ptr;
+using std::make_shared;
 
 class Edge : public Segment {
 public:
@@ -41,6 +50,7 @@ protected:
 
 class Device : public Printable {
 public:
+    typedef shared_ptr<Device> ptr;
     Device();
     /** Adds point to the device. The device has a closed polygon, so add 
      *  first point again. */
@@ -57,7 +67,6 @@ public:
     int numEdges() { return mEdgs.size(); };
     int numConts() { return mCnts.size(); };
 
-
     int edgeType(int iEdge) { return mEdgs[iEdge].type(); };
     bool isReflectEdge(int iEdge);
     bool isAbsorbEdge(int iEdge);
@@ -66,15 +75,21 @@ public:
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };
     const Edge& edge(int indx) const { return mEdgs[indx]; };
     
-    
     svec contNormVect(int indx) const { 
         return edgeNormVect(contToEdgeIndx(indx)); };
     const svec& contUnitVect(int indx) const { 
         return edgeUnitVect(contToEdgeIndx(indx)); };
     double contDirctn(int iCnt) { return mEdgs[mCnts[iCnt]].angle(); }
 
+    int addGate(const point& lb, const point& rb, const point& rt, 
+            const point& lt);
+    int getNumGates() const { return mPot->NG(); };
+    void setGatePotential(int igate, double V);
+    double getPotAt(const point& position);
+
 public:
 private:
+    shared_ptr<LinearPot> mPot; //!< Potential solver.
     vector<point> mPts; //!< vertices.
     vector<Edge> mEdgs; //!< edges.
     vector<int> mCnts;  //!< Contact to edge map.
