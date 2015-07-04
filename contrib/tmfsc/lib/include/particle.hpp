@@ -16,7 +16,7 @@ public:
     virtual const svec& getAcc() const { return a; };
     virtual double getTimeStep() const { return dt; };
 
-    virtual void setPotEnergy(double newV) { V = newV; update(); };
+    virtual void setPot(double newV) { V = newV; update(); };
     virtual void setMagField(const svec& newB) { B = newB; update(); };
     virtual void setEnergy(double newEn) { En = newEn; update(); };
     virtual void setTimeStep(double dt) { this->dt = dt; update(); };
