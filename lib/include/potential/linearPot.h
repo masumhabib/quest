@@ -61,7 +61,7 @@ protected:
     
 public:
     LinearPot(AtomicStruct::ptr atoms = AtomicStruct::ptr(), const string &prefix = "");
-    void addLinearRegion(const squadrilateral& sq);
+    int addLinearRegion(const squadrilateral& sq);
     void VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0);
     
     virtual void    compute();  

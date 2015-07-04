@@ -67,7 +67,7 @@ public:
     //!<
     void addSource(const squadrilateral &sq);
     void addDrain(const squadrilateral &sq);
-    void addGate(const squadrilateral &sq);
+    int addGate(const squadrilateral &sq);
     
     //!< Sets the gate voltage.
     void VG(int ig, double VG);

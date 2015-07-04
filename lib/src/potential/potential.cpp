@@ -155,11 +155,12 @@ void Potential::addDrain(const squadrilateral &sq) {
     md[0].Prefix(md[0].Prefix() + mPrefix);
 }
 
-void Potential::addGate(const squadrilateral& sq){
+int Potential::addGate(const squadrilateral& sq){
     mg.push_back(gate(sq.lb, sq.rb, sq.rt, sq.lt)); 
     int it = mg.size() - 1;
     mg[it].Title("Gate # " + itos(it+1));
     mg[it].Prefix(mg[it].Prefix() + mPrefix);
+    return it;
 }
 
 void Potential::VG(int ig, double VG){

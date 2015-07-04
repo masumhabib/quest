@@ -34,11 +34,12 @@ LinearPot::LinearPot(AtomicStruct::ptr atoms, const string &prefix):
     mTitle = "Linear Voltage Profile";
 }
 
-void LinearPot::addLinearRegion(const squadrilateral& sq){
+int LinearPot::addLinearRegion(const squadrilateral& sq){
     mlr.push_back(linear_region(sq.lb, sq.rb, sq.rt, sq.lt));    
     int it = mlr.size() - 1;
     mlr[it].Title("Linear Region # " + itos(it+1));
     mlr[it].Prefix(mlr[it].Prefix() + mPrefix);
+    return it;
 }
 
 
