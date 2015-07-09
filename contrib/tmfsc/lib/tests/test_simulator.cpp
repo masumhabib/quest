@@ -35,11 +35,12 @@ BOOST_AUTO_TEST_CASE(basics)
     sim.setMaxNumStepsPerTraj(100);
 
     point p = {10, 5};
-    vector<point> pts;
-    pts = sim.calcTraj(p, 0.0, 10, 0, 0.15);
+    TrajectoryVect trajs = sim.calcTraj(p, 0.0, 10, 0, 0.15);
     cout << " *** TRAJECTORY *** " << endl;
-    for (int ip = 0; ip < pts.size(); ip += 1) {
-        cout << "[" << ip << "]" << pts[ip] << endl;
+    for (auto traj : trajs) {
+        for (int ip = 0; ip < traj.path.size(); ip += 1) {
+            cout << "[" << ip << "]" << traj.path[ip] << endl;
+        }
     }
 
 

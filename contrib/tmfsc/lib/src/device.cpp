@@ -20,11 +20,11 @@ Device::Device() {
  */
 int Device::addPoint(const point &pt) {
     mPts.push_back(pt);
-    if (mPts.size() > 1){
+    /*if (mPts.size() > 1){
         mEdgs.push_back(Edge(mPts[mPts.size() - 2], pt));
         return mEdgs.size() - 1;
-    }
-    return -1;
+    }*/
+    return mPts.size() - 1;
 }
 
 /** Add vertices to this device. 
@@ -33,6 +33,15 @@ void Device::addPoints(const vector<point> &pts) {
     for (point pt : pts){
         addPoint(pt);
     }
+}
+
+/** Adds an edge devined by two point indices. */
+int Device::addEdge(int ipt1, int ipt2, int type) {
+    if (ipt1 >= mPts.size() || ipt2 >= mPts.size()) {
+        throw invalid_argument(" Device::addEdge(): indices out of bounds");
+    }
+    mEdgs.push_back(Edge(mPts[ipt1], mPts[ipt2], type));
+    return mEdgs.size() - 1;
 }
 
 /** Add contact (edge with absorbing boundary)

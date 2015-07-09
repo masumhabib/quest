@@ -16,6 +16,7 @@
 #include <tuple>
 #include <iostream>
 #include <memory>
+#include <queue>
 
 namespace qmicad{ namespace tmfsc{
 using std::tuple;
@@ -23,12 +24,17 @@ using std::make_tuple;
 using std::tie;
 using std::make_shared;
 using std::shared_ptr;
+using std::queue;
 using maths::armadillo::mat;
 using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::genNormalDist;
 
-typedef vector<point> Trajectory;
+typedef vector<point> Path;
+struct Trajectory {
+    Path path;
+    double occupation = 1.0;
+};
 typedef vector<Trajectory> TrajectoryVect;
 
 class Simulator : public Printable {
@@ -38,11 +44,11 @@ public:
     Simulator(Device::ptr dev);
     tuple<mat, TrajectoryVect> calcTran(double B, double E, double V, 
             int injCont = 0, bool saveTraj = false);
-    vector<point> calcTraj(point ri, double thi, double B, 
+    TrajectoryVect calcTraj(point ri, double thi, double B, 
             double E, double V, bool saveTraj = true);
     tuple<mat, TrajectoryVect> calcTran(double B, double E, 
             const vector<double>& VG, int injCont = 0, bool saveTraj = false);
-    vector<point> calcTraj(point ri, double thi, double B, 
+    TrajectoryVect calcTraj(point ri, double thi, double B, 
             double E, const vector<double>& VG, bool saveTraj = true);
 
     int getMaxNumStepsPerTraj() const { return mMaxStepsPerTraj; };
@@ -64,12 +70,14 @@ public:
 
 private:
     tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
-    Trajectory calcTraj(point ri, double thi, bool saveTraj);
-    Trajectory calcTraj(Particle& particle, bool saveTraj);
-    inline bool getCloseToEdge(Particle& particle, point& rf, const point& ri, 
+    TrajectoryVect calcTraj(point ri, double thi, bool saveTraj);
+    Trajectory calcTraj(bool saveTraj);
+    inline void applyPotential(Particle::ptr electron);
+    inline bool getCloseToEdge(Particle& electron, point& rf, const point& ri, 
             const point& intp);
+    inline void crossEdge(Particle& electron, const point& intp);
     void resetElectBins();
-    void collectElectron(int iCont, double n = 1);
+    void collectElectron(const Particle &electron, int iCont);
 
 private:
     Device::ptr mDev; //!< Device structure.
@@ -87,9 +95,13 @@ private:
 
     vector<double> mElectBins; //!< Electron bins.
     double mnElects; //!< Total electrons injected.
+    queue<Particle::ptr> mElectsQu; //!< Deck of electrons.
 
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
     static constexpr double ETOL = 1E-6;
+    static constexpr double REFLECTION_TOL = 1E-3;
+    static constexpr double TRANSMISSION_TOL = 1E-3;
+    static constexpr double OCCUPATION_TOL = 1E-3;
 };
 
 }}

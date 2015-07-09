@@ -28,6 +28,7 @@ void export_Device(){
             init<>())
         .def("addPoint", &PyDevice::addPoint)
         .def("addPoints", &PyDevice::addPoints)
+        .def("addEdge", &PyDevice::addEdge)
         .def("addGate", &PyDevice::addGate)
         .def("edgeType", PyDevice_edgeType1)
         .def("edgeType", PyDevice_edgeType2)

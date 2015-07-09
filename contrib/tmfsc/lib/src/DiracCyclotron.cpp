@@ -36,6 +36,11 @@ void DiracCyclotron::reflect(const svec& normal) {
     th = atan2(v[1], v[0]);
 }
 
+DiracCyclotron::ptr DiracCyclotron::clone() {
+    auto newElect = make_shared<DiracCyclotron>(*this);
+    return newElect;
+}
+
 void DiracCyclotron::update() {
     double Bz = B[2];
     wc = speed*nm*speed*nm*Bz/(En-V); //cyclotron frequency

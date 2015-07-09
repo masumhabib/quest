@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from qmicad import greet
-from qmicad.tmfsc import Device, Simulator
+from qmicad.tmfsc import Device, Simulator, Trajectory
 from qmicad.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
@@ -81,20 +81,30 @@ class HallBar(object):
         self.addPoint(lx/2-coffx, -ly/2)
         self.addPoint(lx/2, -ly/2)
         self.addPoint(lx/2, ly/2)
-        self.addPoint(-lx/2, ly/2)
-        self.addPoint(-lx/2, -ly/2)
-
+        npts = self.addPoint(-lx/2, ly/2)
+        npts = npts + 1
+        # add reflecting edges
+        for ip in range(npts):
+            self.addEdge(ip, (ip+1) % npts);
         # Contacts 1 and 2
         self.setEdgeType(2, EDGE_ABSORB)
         self.setEdgeType(6, EDGE_ABSORB)
-        # Csontacts 3 and 4
+        # Contacts 3 and 4
         self.setEdgeType(9, EDGE_ABSORB)
         self.setEdgeType(11, EDGE_ABSORB)
+
+        # Add the transmitting edge
+        ipt1 = self.addPoint(0, -ly/2)
+        ipt2 = self.addPoint(0, ly/2)
+        self.addEdge(ipt1, ipt2, EDGE_TRANSMIT)
 
         self.gates = [] # gate geometries for drawing
 
     def addPoint(self, x, y):
-        self.dev.addPoint(np.array([x, y]))
+        return self.dev.addPoint(np.array([x, y]))
+
+    def addEdge(self, ipt1, ipt2, type = EDGE_REFLECT):
+        return self.dev.addEdge(ipt1, ipt2, type);
 
     def addGate(self, lb, rb, rt, lt, VgRatio = 1):
         self.VgRatios.append(VgRatio)
@@ -140,14 +150,11 @@ class HallBar(object):
         print ("Injecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
-        self.trajs = [];
         if self.dev.NumGates > 0:
             VGs = self._getGateVoltages(self.V[0])
-            self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
-                VGs))
+            self.trajs = self.sim.calcTraj(ri, thi, self.B[0], self.EF, VGs)
         else:
-            self.trajs.append(self.sim.calcTraj(ri, thi, self.B[0], self.EF, 
-                self.V[0]))
+            self.trajs = self.sim.calcTraj(ri, thi, self.B[0], self.EF, self.V[0])
     
     def calcSingleTrans(self, dl=5, nth=50, saveTrajectory=False, 
             contId = 0):
@@ -255,10 +262,10 @@ class HallBar(object):
     def drawTrajectory(self, color=None, alpha=1.0, width=2.0):
         for traj in self.trajs:
             if color is None:
-                self.axes.plot(traj[:, 0], traj[:, 1], 
-                        linewidth=width, alpha=alpha)
+                self.axes.plot(traj.path[:, 0], traj.path[:, 1], 
+                        linewidth=width, alpha=traj.occupation)
             else:
-                self.axes.plot(traj[:, 0], self.traj[:, 1], 
+                self.axes.plot(traj.path[:, 0], self.traj.path[:, 1], 
                         linewidth=width, color=color, alpha=alpha)
  
     def animate(self, filename=None):

@@ -24,23 +24,30 @@ using tmfsc::Trajectory;
 using maths::armadillo::mat;
 using std::vector;
 
+struct PyTrajectory {
+    mat path;
+    double occupation = 1.0;
+    mat getPath() const { return path; }; // just to export mat to python as numpy array
+};
+
 class PySimulator : public Simulator {
 public:
     PySimulator(Device::ptr dev) : Simulator(dev){};
-    mat calcTrajPy(point ri, double thi, double B, 
-            double EF, double V, bool saveTraj = true);
-    tuple calcTranPy(double B, double E, double V, 
-            int injCont = 0, bool saveTraj = false);
-    mat calcTrajPy2(point ri, double thi, double B, double E, const list& VG, 
+    list calcTrajPy(point ri, double thi, double B, double EF, double V, 
             bool saveTraj = true);
-    tuple calcTranPy2(double B, double E, const list& VG, 
-            int injCont = 0, bool saveTraj = false);
+    tuple calcTranPy(double B, double E, double V, int injCont = 0, 
+            bool saveTraj = false);
+    list calcTrajPy2(point ri, double thi, double B, double E, const list& VG, 
+            bool saveTraj = true);
+    tuple calcTranPy2(double B, double E, const list& VG, int injCont = 0, 
+            bool saveTraj = false);
 
     int getParticleTypePy();
     void setParticleTypePy(int type);
 
 private:
-    mat Traj2Mat (const Trajectory& traj);
+     PyTrajectory Traj2PyTraj (const Trajectory& traj);
+     list TrajVect2List(const TrajectoryVect& trajs);
  
 };
 

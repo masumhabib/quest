@@ -56,6 +56,7 @@ public:
      *  first point again. */
     int addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
+    int addEdge(int ipt1, int ipt2, int type = Edge::EDGE_REFLECT);
     void edgeType(int iEdge, int type);
     int intersects(point p, point q);
     point intersection(int iEdge, point p, point q);
@@ -75,6 +76,8 @@ public:
     svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };
     const Edge& edge(int indx) const { return mEdgs[indx]; };
+    double getTransProb(int iEdge) const { return 0.5; };
+    double getReflctProb(int iEdge) const { return 0.5; };
     
     svec contNormVect(int indx) const { 
         return edgeNormVect(contToEdgeIndx(indx)); };

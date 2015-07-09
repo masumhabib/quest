@@ -6,11 +6,21 @@
 
 namespace qmicad{ namespace python{
 
-mat PySimulator::calcTrajPy(point ri, double thi, double B, 
+list PySimulator::calcTrajPy(point ri, double thi, double B, 
             double EF, double V, bool saveTraj)
 {
-    auto points = calcTraj(ri, thi, B, EF, V, saveTraj);
-    return Traj2Mat(points);
+    TrajectoryVect trajs = calcTraj(ri, thi, B, EF, V, saveTraj);
+    return TrajVect2List(trajs);
+}
+
+list PySimulator::calcTrajPy2(point ri, double thi, double B, double E, 
+        const list& VG, bool saveTraj) 
+{
+    vector<double> VGs = list2vect<double> (VG);
+    TrajectoryVect trajs = calcTraj(ri, thi, B, E, VGs, saveTraj);
+
+    return TrajVect2List(trajs);
+
 }
 
 tuple PySimulator::calcTranPy(double B, double E, double V, 
@@ -20,24 +30,9 @@ tuple PySimulator::calcTranPy(double B, double E, double V,
     mat TE;
     tie(TE, trajs) = calcTran(B, E, V, injCont, saveTraj);
 
-    list trajList; 
-    int ntraj = trajs.size();
-    for(int itraj = 0; itraj < ntraj; itraj += 1){
-        trajList.append(Traj2Mat(trajs[itraj]));
-    }
-    
-    return make_tuple(TE, trajList);
+    return make_tuple(TE, TrajVect2List(trajs));
 }
  
-mat PySimulator::calcTrajPy2(point ri, double thi, double B, double E, 
-        const list& VG, bool saveTraj) 
-{
-    vector<double> VGs = list2vect<double> (VG);
-    auto points = calcTraj(ri, thi, B, E, VGs, saveTraj);
-
-    return Traj2Mat(points);
-
-}
 
 tuple PySimulator::calcTranPy2(double B, double E, const list& VG, 
         int injCont, bool saveTraj) 
@@ -47,14 +42,7 @@ tuple PySimulator::calcTranPy2(double B, double E, const list& VG,
     vector<double> VGs = list2vect<double> (VG);
     tie(TE, trajs) = calcTran(B, E, VGs, injCont, saveTraj);
 
-    list trajList; 
-    int ntraj = trajs.size();
-    for(int itraj = 0; itraj < ntraj; itraj += 1){
-        trajList.append(Traj2Mat(trajs[itraj]));
-    }
-    
-    return make_tuple(TE, trajList);
-
+    return make_tuple(TE, TrajVect2List(trajs));
 }
 
 int PySimulator::getParticleTypePy() {
@@ -65,12 +53,24 @@ void PySimulator::setParticleTypePy(int type) {
     setParticleType(static_cast<ParticleType>(type));
 }
 
-mat PySimulator::Traj2Mat (const Trajectory& traj) {
-    mat m(traj.size(), 2);
-    for (int itr = 0; itr < traj.size(); ++itr){
-        m.row(itr) = traj[itr];
+list PySimulator::TrajVect2List(const TrajectoryVect& trajs) {
+    list trajList; 
+    int ntraj = trajs.size();
+    for(int itraj = 0; itraj < ntraj; itraj += 1){
+        trajList.append(Traj2PyTraj(trajs[itraj]));
     }
-    return m;
+
+    return trajList;
+}
+
+PyTrajectory PySimulator::Traj2PyTraj (const Trajectory& traj) {
+    PyTrajectory pytraj;
+    pytraj.path.set_size(traj.path.size(),2);
+    for (int itr = 0; itr < traj.path.size(); ++itr){
+        pytraj.path.row(itr) = traj.path[itr];
+    }
+    pytraj.occupation = traj.occupation;
+    return pytraj;
 }
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTrajPy, calcTrajPy, 5, 6)
@@ -79,6 +79,11 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTrajPy2, calcTrajPy2, 5, 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTranPy2, calcTranPy2, 3, 5)
 void export_Simulator(){
     using namespace qmicad::tmfsc;
+
+    class_<PyTrajectory, shared_ptr<PyTrajectory> >("Trajectory")
+        .add_property("path", &PyTrajectory::getPath)
+        .def_readwrite("occupation", &PyTrajectory::occupation)
+    ;
 
     class_<PySimulator, bases<Printable>, shared_ptr<PySimulator> >("Simulator", 
             init<shared_ptr<PyDevice> >())

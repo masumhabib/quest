@@ -32,6 +32,10 @@ void DiracElectron::reflect(const svec& normal) {
     update();
 }
 
+DiracElectron::ptr DiracElectron::clone() {
+    return make_shared<DiracElectron>(*this); 
+}
+
 void DiracElectron::update() {
     double Bz = B[2];
     F = {q*v[1]*Bz, -q*v[0]*Bz};

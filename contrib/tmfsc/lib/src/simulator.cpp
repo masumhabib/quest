@@ -25,7 +25,7 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V,
     return calcTran(injCont, saveTraj);
 }
 
-Trajectory Simulator::calcTraj(point ri, double thi, double B, 
+TrajectoryVect Simulator::calcTraj(point ri, double thi, double B, 
             double E, double V, bool saveTraj) {
     if (fabs(E-V) < ETOL) {
         throw invalid_argument("EF and V are too close.");
@@ -61,7 +61,7 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E,
     return calcTran(injCont, saveTraj);
 }
 
-Trajectory Simulator::calcTraj(point ri, double thi, double B, 
+TrajectoryVect Simulator::calcTraj(point ri, double thi, double B, 
             double E, const vector<double>& VG, bool saveTraj) {
  
     if (VG.size() != mDev->getNumGates()) {
@@ -95,9 +95,9 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-pi/20.0)) {
-                Trajectory r = calcTraj(ri, th0 + thi, saveTraj);
+                TrajectoryVect traj = calcTraj(ri, th0 + thi, saveTraj);
                 if (saveTraj) {
-                    trajs.push_back(r);
+                    trajs.insert(trajs.end(), traj.begin(), traj.end());
                 }
             }
         }
@@ -113,7 +113,7 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
     return make_tuple(TE, trajs);
 }
 
-Trajectory Simulator::calcTraj(point ri, double thi, bool saveTraj) {
+TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
     double V = mV;
     if (mDev->getNumGates() > 0) {
         V = mDev->getPotAt(ri);
@@ -128,68 +128,90 @@ Trajectory Simulator::calcTraj(point ri, double thi, bool saveTraj) {
         }
     }
 
-    shared_ptr<Particle> particle;
+    shared_ptr<Particle> electron;
     if (particleType == ParticleType::DiracCyclotron) {
-        particle = make_shared<DiracCyclotron>(ri, vi, mE, V, mB);
+        electron = make_shared<DiracCyclotron>(ri, vi, mE, V, mB);
     } else {
-        particle = make_shared<DiracElectron>(ri, vi, mE, V, mB);
+        electron = make_shared<DiracElectron>(ri, vi, mE, V, mB);
     }
-    particle->setTimeStep(dt);
+    electron->setTimeStep(dt);
+    mElectsQu.push(electron);
+
+    // loop over all the electron paths created when electrons cross 
+    // a transmitting boundary
+    TrajectoryVect trajs;
+    while(!mElectsQu.empty()) {
+        trajs.push_back(calcTraj(saveTraj));
+    }
  
-    return calcTraj(*particle, saveTraj);
+    return trajs; 
 }
 
-Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
-    point ri = particle.getPos();
-    svec vi = particle.getVel();
+Trajectory Simulator::calcTraj(bool saveTraj) {
+    Particle::ptr electron = mElectsQu.front();
+    point ri = electron->getPos();
+    svec vi = electron->getVel();
     svec rf = ri;
 
-    Trajectory r;
+    Trajectory traj;
     if (saveTraj) {
-        r.push_back(ri);
+        traj.path.push_back(ri);
     }
 
     int ii = 0;
     while (ii < mMaxStepsPerTraj) {
         // get the next position
-        rf = particle.nextPos();
+        rf = electron->nextPos();
 
         // check if electron crossed an edge
         int iEdge = mDev->intersects(ri, rf);
         if (iEdge == -1) { // no crossing, continue
-            particle.doStep();
-            // set potential
-            if (mDev->getNumGates() > 0 ){
-                particle.setPot(mDev->getPotAt(particle.getPos()));
-            }
+            electron->doStep();
+            applyPotential(electron);
         } else { // crossing, check wchich boundary is crossed
             point intp = mDev->intersection(iEdge, ri, rf);
-            double dt = particle.getTimeStep();
-            if (!getCloseToEdge(particle, rf, ri, intp)){
+            double dt = electron->getTimeStep();
+            if (!getCloseToEdge(*electron, rf, ri, intp)){
                 std::cout << "-W- Could not get close to edge !" << std::endl;
                 break;
             }
 
-            particle.doStep();
-            particle.setTimeStep(dt);
-            // set potential
-            if (mDev->getNumGates() > 0 ) {
-                particle.setPot(mDev->getPotAt(particle.getPos()));
-            }
+            electron->doStep();
+            electron->setTimeStep(dt);
+            applyPotential(electron);
 
             // crossed an edge, get the intersection point
             if (mDev->isReflectEdge(iEdge)) {
-                particle.reflect(mDev->edgeNormVect(iEdge));
+                electron->reflect(mDev->edgeNormVect(iEdge));
             } else if (mDev->isTransmitEdge(iEdge)) {
+                double occu = electron->getOccupation();
+                double refProb = mDev->getReflctProb(iEdge);
+                if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
+                    Particle::ptr refElect = electron->clone();
+                    refElect->reflect(mDev->edgeNormVect(iEdge));
+                    refElect->setOccupation(refProb*occu);
+                    applyPotential(refElect);
+                    mElectsQu.push(refElect);
+                }
+                //transmit
+                double transProb = mDev->getTransProb(iEdge);
+                if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
+                    Particle::ptr transElect = electron->clone();
+                    crossEdge(*transElect, intp);
+                    transElect->setOccupation(transProb*occu);
+                    applyPotential(transElect);
+                    mElectsQu.push(transElect);
+                }
+                break;
             } else if (mDev->isAbsorbEdge(iEdge)) {
-                collectElectron(mDev->edgeToContIndx(iEdge));
+                collectElectron(*electron, mDev->edgeToContIndx(iEdge));
                 break;
             }
         }    
 
         // reset ourselves, ready for the next step
         if (saveTraj) {
-            r.push_back(rf);
+            traj.path.push_back(rf);
         }
         ri = rf;
         ii += 1;
@@ -197,26 +219,44 @@ Trajectory Simulator::calcTraj(Particle& particle, bool saveTraj) {
 
     // last point that we have missed.
     if (saveTraj) {
-        r.push_back(rf);
+        traj.path.push_back(rf);
+        traj.occupation = electron->getOccupation();
     }
  
-    return r;
+    mElectsQu.pop();
+    return traj;
 }
 
-inline bool Simulator::getCloseToEdge(Particle& particle, point& rf, 
+inline void Simulator::applyPotential(Particle::ptr electron) {
+    if (mDev->getNumGates() > 0 ) {
+        electron->setPot(mDev->getPotAt(electron->getPos()));
+    }
+}
+
+inline void Simulator::crossEdge(Particle& electron, const point& intp) {
+    double dt = electron.getTimeStep();
+    double dt2 = electron.timeToReach(intp)*1.001;
+    electron.setTimeStep(dt2);
+    electron.nextPos();
+    electron.doStep();
+    electron.setTimeStep(dt);
+ 
+}
+
+inline bool Simulator::getCloseToEdge(Particle& electron, point& rf, 
         const point& ri, const point& intp) 
 {
     // we crossed an edge, find the intersection point 
     // and get the time it needs to reach that point
-    double dt2 = particle.timeToReach(intp)*0.999;
+    double dt2 = electron.timeToReach(intp)*0.999;
 
     // see if we are close engough to the edge, if not 
     // chenge the time continue until we are inside the device
     // FIXME: the following loop might need optimization.
     int idtStep = 0;
     while (dt2 > 0 && idtStep < mNdtStep) {
-        particle.setTimeStep(dt2);
-        rf = particle.nextPos();
+        electron.setTimeStep(dt2);
+        rf = electron.nextPos();
         int iEdge2 = mDev->intersects(ri, rf);
         if (iEdge2 == -1) {
             return true;
@@ -229,10 +269,10 @@ inline bool Simulator::getCloseToEdge(Particle& particle, point& rf,
     return false;
 }
 
-void Simulator::collectElectron(int iCont, double n){
+void Simulator::collectElectron(const Particle &electron, int iCont){
     if (iCont < mElectBins.size()) {
-        mElectBins[iCont] += n;
-        mnElects += n;
+        mElectBins[iCont] += electron.getOccupation();
+        mnElects += electron.getOccupation();
     }
 }
 

@@ -8,9 +8,11 @@
 #include "particle.hpp"
 #include "maths/constants.h"
 #include "maths/arma.hpp"
+#include <memory>
 
 namespace qmicad { namespace tmfsc {
 using maths::constants::e;
+using std::make_shared;
 
 class DiracCyclotron : public Particle {
 public:
@@ -19,6 +21,7 @@ public:
     virtual const svec& nextPos();
     virtual void doStep();
     virtual void reflect(const svec& normal);
+    virtual ptr clone();
 
 protected:
     virtual void update();
