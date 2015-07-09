@@ -16,13 +16,13 @@ hallbar.NV = 2
 
 hallbar.Bmin = 1.5
 hallbar.Vmin = 0.15
-hallbar.m = 2.5
+hallbar.m = 5.7
 hallbar.NB = 1
 hallbar.NV = 1
 hallbar.singleResonance = True
 hallbar.setupBias()
 hallbar.printBias()
-hallbar.sim.TimeStep = 1/(1E6/1E-9)
+#hallbar.sim.TimeStep = 1/(1E6/1E-9)
 
 # FOR GATES
 lx = 500.0		# length

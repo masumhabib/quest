@@ -34,6 +34,7 @@ public:
     virtual ptr clone() = 0;
     virtual void reflect(const svec& normal);
     virtual double timeToReach(const svec& pos);
+    virtual const svec& stepCloseToPoint(const svec& pos, double distanceTol);
 
 protected:
     virtual void update() = 0;

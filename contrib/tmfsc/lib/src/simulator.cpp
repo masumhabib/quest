@@ -168,17 +168,17 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
         if (iEdge == -1) { // no crossing, continue
             electron->doStep();
             applyPotential(electron);
-        } else { // crossing, check wchich boundary is crossed
+        } else { 
+            // crossed and edge, find the intersection. 
             point intp = mDev->intersection(iEdge, ri, rf);
-            double dt = electron->getTimeStep();
-            if (!getCloseToEdge(*electron, rf, ri, intp)){
-                std::cout << "-W- Could not get close to edge !" << std::endl;
+            if (!getCloseToEdge(*electron, ri, intp, iEdge)){
+                std::cout << "-W- Could not get close to edge!" << std::endl;
                 break;
             }
 
             electron->doStep();
-            electron->setTimeStep(dt);
-            applyPotential(electron);
+            rf = electron->getPos();
+            ri = rf;
 
             // crossed an edge, get the intersection point
             if (mDev->isReflectEdge(iEdge)) {
@@ -188,16 +188,21 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 double refProb = mDev->getReflctProb(iEdge);
                 if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
                     Particle::ptr refElect = electron->clone();
+                    refElect->doStep();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
-                    applyPotential(refElect);
+                    //applyPotential(refElect);
                     mElectsQu.push(refElect);
                 }
                 //transmit
                 double transProb = mDev->getTransProb(iEdge);
                 if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
                     Particle::ptr transElect = electron->clone();
-                    crossEdge(*transElect, intp);
+                    if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
+                        std::cout << "-W- Could not cross the edge!" << std::endl;
+                        break;
+                    }
+                    transElect->doStep();
                     transElect->setOccupation(transProb*occu);
                     applyPotential(transElect);
                     mElectsQu.push(transElect);
@@ -233,39 +238,22 @@ inline void Simulator::applyPotential(Particle::ptr electron) {
     }
 }
 
-inline void Simulator::crossEdge(Particle& electron, const point& intp) {
-    double dt = electron.getTimeStep();
-    double dt2 = electron.timeToReach(intp)*1.001;
-    electron.setTimeStep(dt2);
-    electron.nextPos();
-    electron.doStep();
-    electron.setTimeStep(dt);
- 
+inline bool Simulator::justCrossEdge(Particle& electron, 
+        const point& ri, const point& intp, int iEdge) {
+    point rf = electron.stepCloseToPoint(intp, CLOSENESS_TOL);
+    if (mDev->intersects(ri, rf) == iEdge) {
+        return true;
+    }
+    return false;
 }
 
-inline bool Simulator::getCloseToEdge(Particle& electron, point& rf, 
-        const point& ri, const point& intp) 
+inline bool Simulator::getCloseToEdge(Particle& electron, 
+        const point& ri, const point& intp, int iEdge) 
 {
-    // we crossed an edge, find the intersection point 
-    // and get the time it needs to reach that point
-    double dt2 = electron.timeToReach(intp)*0.999;
-
-    // see if we are close engough to the edge, if not 
-    // chenge the time continue until we are inside the device
-    // FIXME: the following loop might need optimization.
-    int idtStep = 0;
-    while (dt2 > 0 && idtStep < mNdtStep) {
-        electron.setTimeStep(dt2);
-        rf = electron.nextPos();
-        int iEdge2 = mDev->intersects(ri, rf);
-        if (iEdge2 == -1) {
-            return true;
-        }
-        dt2 = dt2 - dt/mNdtStep;
-        idtStep += 1;
+    point rf = electron.stepCloseToPoint(intp, -CLOSENESS_TOL);
+    if (mDev->intersects(ri, rf) != iEdge) {
+        return true;
     }
-
-    // reflect electron by changing their velocity direction
     return false;
 }
 

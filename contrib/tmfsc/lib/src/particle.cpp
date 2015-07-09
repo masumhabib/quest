@@ -17,6 +17,19 @@ double Particle::timeToReach(const svec& pos) {
     return t;
 }
 
+const svec& Particle::stepCloseToPoint(const svec& pos, double distanceTol) {
+    double dtOld = getTimeStep();
+    double timeTol = distanceTol/speed;
+    // get the time we need to reach the point
+    setTimeStep(timeToReach(pos) + timeTol);
+    // got to that point
+    nextPos();
+    // reset time step
+    setTimeStep(dtOld);
+
+    return nxtr;
+}
+
 void Particle::reflect(const svec& normal) {
     svec vparallel =  dot(v, normal)*normal;
     svec vparpendicular = v - vparallel;

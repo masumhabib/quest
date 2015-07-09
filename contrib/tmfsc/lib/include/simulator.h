@@ -73,9 +73,10 @@ private:
     TrajectoryVect calcTraj(point ri, double thi, bool saveTraj);
     Trajectory calcTraj(bool saveTraj);
     inline void applyPotential(Particle::ptr electron);
-    inline bool getCloseToEdge(Particle& electron, point& rf, const point& ri, 
-            const point& intp);
-    inline void crossEdge(Particle& electron, const point& intp);
+    inline bool justCrossEdge(Particle& electron, const point& ri, 
+            const point& intp, int iEdge);
+    inline bool getCloseToEdge(Particle& electron, const point& ri, 
+            const point& intp, int iEdge);
     void resetElectBins();
     void collectElectron(const Particle &electron, int iCont);
 
@@ -99,9 +100,10 @@ private:
 
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
     static constexpr double ETOL = 1E-6;
-    static constexpr double REFLECTION_TOL = 1E-3;
-    static constexpr double TRANSMISSION_TOL = 1E-3;
-    static constexpr double OCCUPATION_TOL = 1E-3;
+    static constexpr double REFLECTION_TOL = 1E-4;
+    static constexpr double TRANSMISSION_TOL = 1E-4;
+    static constexpr double OCCUPATION_TOL = 1E-9;
+    static constexpr double CLOSENESS_TOL = 1E-2;
 };
 
 }}
