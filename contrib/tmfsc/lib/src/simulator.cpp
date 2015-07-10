@@ -204,7 +204,11 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                     }
                     transElect->doStep();
                     transElect->setOccupation(transProb*occu);
+
+                    //double V1 = transElect->getPot();
                     applyPotential(transElect);
+                    //double V2 = transElect->getPot();
+                    //double tht = getTransAngle(transElect, V1, V2);
                     mElectsQu.push(transElect);
                 }
                 break;

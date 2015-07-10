@@ -16,7 +16,7 @@ hallbar.NV = 2
 
 hallbar.Bmin = 1.5
 hallbar.Vmin = 0.15
-hallbar.m = 5.7
+hallbar.m = 2.5
 hallbar.NB = 1
 hallbar.NV = 1
 hallbar.singleResonance = True
