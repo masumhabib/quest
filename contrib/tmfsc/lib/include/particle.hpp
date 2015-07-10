@@ -22,6 +22,7 @@ public:
     virtual double getTimeStep() const { return dt; };
 
     virtual void setPot(double newV) { V = newV; update(); };
+    virtual double getPot() const { return V; };
     virtual void setMagField(const svec& newB) { B = newB; update(); };
     virtual void setEnergy(double newEn) { En = newEn; update(); };
     virtual void setTimeStep(double dt) { this->dt = dt; update(); };
