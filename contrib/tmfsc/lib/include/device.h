@@ -17,6 +17,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <tuple>
 
 namespace qmicad{ namespace tmfsc {
 using utils::Printable;
@@ -29,6 +30,8 @@ using std::vector;
 using std::map;
 using std::shared_ptr;
 using std::make_shared;
+using std::tuple;
+using std::make_tuple;
 
 class Edge : public Segment {
 public:
@@ -76,8 +79,8 @@ public:
     svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };
     const Edge& edge(int indx) const { return mEdgs[indx]; };
-    double getTransProb(int iEdge) const { return 0.5; };
-    double getReflctProb(int iEdge) const { return 0.5; };
+    tuple<double, double, double> calcProbab(double V1, double V2, 
+            const svec& vel, double En, int iEdge);
     
     svec contNormVect(int indx) const { 
         return edgeNormVect(contToEdgeIndx(indx)); };

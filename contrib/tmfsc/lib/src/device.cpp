@@ -113,6 +113,17 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
+tuple<double, double, double> Device::calcProbab(double V1, double V2, 
+            const svec& vel, double En, int iEdge) 
+{
+    double th, transProb, refProb;
+    // replace the following three lines with formula
+    th = 0;
+    transProb = 0.5;
+    refProb = 0.5;
+    return make_tuple(th, transProb, refProb);
+}
+ 
 int Device::addGate(const point& lb, const point& rb, const point& rt, 
         const point& lt) 
 {

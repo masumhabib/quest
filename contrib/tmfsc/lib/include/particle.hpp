@@ -25,6 +25,7 @@ public:
     virtual double getPot() const { return V; };
     virtual void setMagField(const svec& newB) { B = newB; update(); };
     virtual void setEnergy(double newEn) { En = newEn; update(); };
+    virtual double getEnergy() const { return En; };
     virtual void setTimeStep(double dt) { this->dt = dt; update(); };
     
     virtual void setOccupation(double newOcc) { occupation = newOcc; };

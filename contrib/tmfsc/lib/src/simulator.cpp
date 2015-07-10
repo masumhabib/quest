@@ -160,55 +160,60 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
 
     int ii = 0;
     while (ii < mMaxStepsPerTraj) {
-        // get the next position
+        // get the next position we are about to take, but do not step yet
         rf = electron->nextPos();
-
         // check if electron crossed an edge
         int iEdge = mDev->intersects(ri, rf);
-        if (iEdge == -1) { // no crossing, continue
+        if (iEdge == -1) { 
+            // no crossing, continue
             electron->doStep();
             applyPotential(electron);
         } else { 
-            // crossed and edge, find the intersection. 
+            // about to crossed an edge, find the intersection and probe 
+            // how close we can get to the intersection point
             point intp = mDev->intersection(iEdge, ri, rf);
             if (!getCloseToEdge(*electron, ri, intp, iEdge)){
                 std::cout << "-W- Could not get close to edge!" << std::endl;
                 break;
             }
-
+            // we are now close enough, now step to the point
             electron->doStep();
+            // update our location
             rf = electron->getPos();
             ri = rf;
 
-            // crossed an edge, get the intersection point
             if (mDev->isReflectEdge(iEdge)) {
+                // we were about to cross a reflecting edge, NO WAY,
+                // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
             } else if (mDev->isTransmitEdge(iEdge)) {
+                // about to cross a transmitting edge/gate boundary, let's first
+                // calculate what would be transmission probability. To do so,
+                // first just cross the boundary and get the potential.
+                Particle::ptr transElect = electron->clone();
+                if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
+                    std::cout << "-W- Could not cross the edge!" << std::endl;
+                    break;
+                }
+                transElect->doStep();
+                double V1 = transElect->getPot(); // potential before edge
+                applyPotential(transElect);
+                double V2 = transElect->getPot(); // potential after edge
+
+                double thf, transProb, refProb;
+                tie(thf, transProb, refProb) = mDev->calcProbab(V1, V2, 
+                        transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
-                double refProb = mDev->getReflctProb(iEdge);
+                // reflect?
                 if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
-                    Particle::ptr refElect = electron->clone();
-                    refElect->doStep();
+                    Particle::ptr refElect = electron;
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
-                    //applyPotential(refElect);
                     mElectsQu.push(refElect);
                 }
-                //transmit
-                double transProb = mDev->getTransProb(iEdge);
+                // transmit?
                 if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
-                    Particle::ptr transElect = electron->clone();
-                    if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
-                        std::cout << "-W- Could not cross the edge!" << std::endl;
-                        break;
-                    }
-                    transElect->doStep();
                     transElect->setOccupation(transProb*occu);
-
-                    //double V1 = transElect->getPot();
-                    applyPotential(transElect);
-                    //double V2 = transElect->getPot();
-                    //double tht = getTransAngle(transElect, V1, V2);
                     mElectsQu.push(transElect);
                 }
                 break;
