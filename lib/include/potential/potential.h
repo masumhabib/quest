@@ -35,23 +35,29 @@ class Potential:public Printable{
 
 public:
 protected:
-    AtomicStruct::ptr   ma;     //!< Atomistic geometry of the device.
+    mat                 mgrid;  //!< Grid coordinates.
     vec                 mV;     //!< Electrostatic potential.
     vec                 mRho;   //!< Electric charge.
     vector<contact>     ms;     //!< Source contact.
     vector<contact>     md;     //!< Drain contact.
     vector<gate>        mg;     //!< Gates.  
+    AtomicStruct::ptr   ma;     //!< Atomistic geometry of the device.
     
 public:
-    //<!< Constructor.
+    //<!< Constructs potential using the atomistic grid.
     Potential(AtomicStruct::ptr atoms = AtomicStruct::ptr(), const string &prefix = "");
     //!< Convert atomic potential to orbital potential.
     shared_ptr<vec> toOrbPot(span s = span::all);
     vec toOrbPot(uint start, uint end);
+    // The following two methods will be deprecated in the future.
     double Vatom(uint ia);
     void Vatom(uint ia, double V);
     //!< Calculate electrostatic potential.
-    virtual void compute(){};
+    virtual void compute() {};
+    //!< Returns potential at point p.
+    virtual double  getPotAt(const point& p) { return 0; };
+    //!< Returns potential at point (x,y).
+    virtual double  getPotAt(double x, double y) {return 0; };
     //!< Convert to string for cout.
     virtual string toString() const;
     //!< Export geometry to SVG file.
@@ -61,7 +67,7 @@ public:
     //!<
     void addSource(const squadrilateral &sq);
     void addDrain(const squadrilateral &sq);
-    void addGate(const squadrilateral &sq);
+    int addGate(const squadrilateral &sq);
     
     //!< Sets the gate voltage.
     void VG(int ig, double VG);

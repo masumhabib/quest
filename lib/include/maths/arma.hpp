@@ -40,6 +40,7 @@ using arma::sum;
 using arma::sqrt;
 using arma::square;
 using arma::abs;
+using arma::cross;
 
 typedef arma::Col<double>         vec;       //!< Double precision column vector.
 typedef arma::Col<dcmplx>         cxvec;     //!< Double precision complex column vector.

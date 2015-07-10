@@ -15,6 +15,8 @@ set(QMICAD_PATCH 0)
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
+#set(CMAKE_BUILD_TYPE "Debug")
+enable_testing()
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -95,7 +97,7 @@ unset(Boost_PYTHON_LIBRARIES)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-find_package(Boost 1.55 REQUIRED serialization mpi mpi_python)
+find_package(Boost 1.55 REQUIRED serialization random mpi mpi_python unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Release")
@@ -120,5 +122,6 @@ install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
 # QMICAD C++ Library
 add_subdirectory(lib)
 add_subdirectory(pylib)
+add_subdirectory(contrib/tmfsc)
 
 

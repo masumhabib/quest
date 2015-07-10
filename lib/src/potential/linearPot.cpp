@@ -34,22 +34,33 @@ LinearPot::LinearPot(AtomicStruct::ptr atoms, const string &prefix):
     mTitle = "Linear Voltage Profile";
 }
 
+int LinearPot::addLinearRegion(const squadrilateral& sq){
+    mlr.push_back(linear_region(sq.lb, sq.rb, sq.rt, sq.lt));    
+    int it = mlr.size() - 1;
+    mlr[it].Title("Linear Region # " + itos(it+1));
+    mlr[it].Prefix(mlr[it].Prefix() + mPrefix);
+    return it;
+}
+
+
+void LinearPot::VLR(int ilr, double Vl, double Vr, double Vt, double Vb){
+    mlr[ilr].Vl = Vl;
+    mlr[ilr].Vr = Vr;
+    mlr[ilr].Vt = Vt;
+    mlr[ilr].Vb = Vb;
+}
+
 /*
  * Calculates linear potential.
  */
 void LinearPot::compute(){
-    using namespace bg;
-    using namespace bgi;
-    using namespace std;
-    
     // loop over all the atoms
     int na = ma->NumOfAtoms();
     for(int ia = 0; ia < na; ++ia){
-        double V = 0;
         double x = ma->X(ia);
         double y = ma->Y(ia);
         
-        // source
+/*        // source
         if(!ms.empty() && ms[0].contains(x, y)){
             V = ms[0].V;
         // drain
@@ -92,10 +103,73 @@ void LinearPot::compute(){
                     V = (Vlr + Vbt);
                 }
             }
-        }
-        mV(ia) = V;
+        }*/
+        mV(ia) = getPotAt(x, y);
     }
 }
+
+double LinearPot::getPotAt(const point& p){
+    return getPotAt(p.get<0>(), p.get<1>());
+}
+
+double LinearPot::getPotAt(double x, double y){
+    using namespace bg;
+    using namespace bgi;
+    using namespace std;
+    
+    double V = 0;
+    
+    // source
+    if(!ms.empty() && ms[0].contains(x, y)){
+        V = ms[0].V;
+        return V;
+    }
+    // drain
+    if (!md.empty() && md[0].contains(x, y)){
+        V = md[0].V;
+        return V;
+    }
+
+    // not found in source/drain, search x,y inside the gates
+    auto itg = find_if(mg.begin(), mg.end(), Contains(x,y));
+    // found inside a gate
+    if (itg != mg.end()){
+        gate g = *itg;
+        V = g.V;
+        return V;
+    }
+
+    // not found inside any gate, search it on linear regions
+    auto itl = find_if(mlr.begin(), mlr.end(), Contains(x,y));
+    // found inside linear region
+    if(itl  != mlr.end()){
+        // get four points: lb, rb, rt, lt
+        polyring points = itl->geom.outer();
+        double xlb = points[0].get<0>();
+        double ylb = points[0].get<1>();
+        double xrb = points[1].get<0>();
+        double yrb = points[1].get<1>();
+        double xrt = points[2].get<0>();
+        double yrt = points[2].get<1>();
+        double xlt = points[3].get<0>();
+        double ylt = points[3].get<1>();
+        // perform a linear interpolation 
+        double xl = xlb + (xlt - xlb)/(ylt - ylb)*(y-ylb);
+        double xr = xrb + (xrt - xrb)/(yrt - yrb)*(y-yrb);
+        double Vlr = itl->Vl + (itl->Vr - itl->Vl)/(xr - xl)*(x - xl);
+
+        double yb = ylb + (yrb - ylb)/(xrb - xlb)*(x-xlb);                                                            
+        double yt = ylt + (yrt - ylt)/(xrt - xlt)*(x-xlt);
+        double Vbt = itl->Vb + (itl->Vt - itl->Vb)/(yt - yb)*(y - yb);
+        
+        V = (Vlr + Vbt);
+        return V;
+    }
+
+    // Not found anywhere, return 0
+    return V;
+}
+
 
 void LinearPot::exportSvg(const string& path){
     using namespace std;
@@ -162,20 +236,6 @@ string LinearPot::toString() const{
 }
 
 
-void LinearPot::addLinearRegion(const squadrilateral& sq){
-    mlr.push_back(linear_region(sq.lb, sq.rb, sq.rt, sq.lt));    
-    int it = mlr.size() - 1;
-    mlr[it].Title("Linear Region # " + itos(it+1));
-    mlr[it].Prefix(mlr[it].Prefix() + mPrefix);
-}
-
-
-void LinearPot::VLR(int ilr, double Vl, double Vr, double Vt, double Vb){
-    mlr[ilr].Vl = Vl;
-    mlr[ilr].Vr = Vr;
-    mlr[ilr].Vt = Vt;
-    mlr[ilr].Vb = Vb;
-}
 
 
 /*

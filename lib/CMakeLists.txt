@@ -16,14 +16,15 @@ include_directories(${QMICAD_INCLUDE_DIRS})
 set(QMICAD_INCLUDE_DIRS ${QMICAD_INCLUDE_DIRS} PARENT_SCOPE)
 
 # sources
-file(GLOB_RECURSE QMICAD_SOURCES "src/*.cpp")
-file(GLOB_RECURSE QMICAD_HEADERS "include/*.h*")
+file(GLOB_RECURSE QMICAD_SOURCES ${CMAKE_SOURCE_DIR}/lib/src/*.cpp)
+file(GLOB_RECURSE QMICAD_HEADERS ${CMAKE_SOURCE_DIR}/lib/include/*.h*)
 add_library(qmicad SHARED ${QMICAD_SOURCES})
 
 # linking
 target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
+target_link_libraries (qmicad ${Boost_RANDOM_LIBRARIES}) 
 target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
 #set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
@@ -54,3 +55,30 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 # -------- </QMICAD C++ Library> -----------------------------------------------
+
+# Tests
+file(GLOB QMICAD_TEST_SRCS ${CMAKE_SOURCE_DIR}/lib/tests/*.cpp)
+
+#Run through each source
+foreach(testSrc ${QMICAD_TEST_SRCS})
+        #Extract the filename without an extension (NAME_WE)
+        get_filename_component(testName ${testSrc} NAME_WE)
+
+        #Add compile target
+        add_executable(${testName} ${testSrc})
+
+        #link to Boost libraries AND your targets and dependencies
+        target_link_libraries(${testName} ${Boost_LIBRARIES} qmicad)
+
+        #I like to move testing binaries into a testBin directory
+        set_target_properties(${testName} PROPERTIES 
+            RUNTIME_OUTPUT_DIRECTORY ${QMICAD_DIST_DIR}/tests)
+
+        #Finally add it to test execution - 
+        #Notice the WORKING_DIRECTORY and COMMAND
+        add_test(NAME ${testName} 
+                 WORKING_DIRECTORY ${QMICAD_DIST_DIR}/tests 
+                 COMMAND ${QMICAD_DIST_DIR}/tests/${testName} )
+endforeach(testSrc)
+
+

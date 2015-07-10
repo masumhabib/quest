@@ -3,6 +3,7 @@
 # -------- <QMICAD Python Library> ---------------------------------------------
 # sources
 set(PYQMICAD_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pylib)
+set(PYQMICAD_INCLUDE_DIRS ${PYQMICAD_INCLUDE_DIRS} PARENT_SCOPE)
 file(GLOB_RECURSE PYQMICAD_SOURCES "./*.cpp")
 file(GLOB_RECURSE PYQMICAD_HEADERS "./*.h*")
 
@@ -32,7 +33,7 @@ add_custom_command(
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/utils/matlab ${QMICAD_DIST_DIR}/utils
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/tests ${QMICAD_DIST_DIR}/
     COMMAND cd        ${QMICAD_DIST_DIR}/tests && ln -sf ../qmicad . && cd ${QMICAD_DIST_DIR}
-    COMMAND mv        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad/qmicad.so
+    COMMAND cp        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad/qmicad.so
     COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad${CMAKE_SHARED_LIBRARY_SUFFIX} ${QMICAD_DIST_DIR}/qmicad
 )
 

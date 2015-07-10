@@ -61,15 +61,16 @@ protected:
     
 public:
     LinearPot(AtomicStruct::ptr atoms = AtomicStruct::ptr(), const string &prefix = "");
-    
-    virtual string  toString() const;
-    virtual void    exportSvg(const string &path);
-    virtual void    compute();  
-    
-    void addLinearRegion(const squadrilateral& sq);
+    int addLinearRegion(const squadrilateral& sq);
     void VLR(int ilr, double Vl, double Vr, double Vt = 0, double Vb = 0);
     
+    virtual void    compute();  
+    virtual double  getPotAt(const point& p);
+    virtual double  getPotAt(double x, double y);
+    
     uint NLR() const { return mlr.size(); };
+    virtual string  toString() const;
+    virtual void    exportSvg(const string &path);
 
 };
 
