@@ -36,6 +36,20 @@ void Particle::reflect(const svec& normal) {
     v = vparpendicular - vparallel;
 }
 
+void Particle::rotateVel(double thti){
+	//TODO calculation can be made faster if manual calculation is used instead
+	// of matrix multiplication
+	mat rotationMat;
+	// Building rotation matrix
+	rotationMat << cos(thti) << -sin(thti) << 0 << endr
+				<< sin(thti) <<  cos(thti) << 0 << endr
+				<<         0 <<         0  << 0 << endr;
+	// converting row vector to column vector for matrix multiplication
+	col vcol = conv_to< col >::from(this->v);
+	col rotv = rotationMat * vcol;
+	//TODO whether to update nxtv or current v
+	this->v = conv_to< svec >::from(rotv);
+}
 
 }}
 
