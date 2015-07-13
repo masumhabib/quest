@@ -201,7 +201,8 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 double V2 = transElect->getPot(); // potential after edge
 
                 double thf, transProb, refProb;
-                tie(thf, transProb, refProb) = mDev->calcProbab(V1, V2, 
+                double thti;
+                tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
                 // reflect?
@@ -213,7 +214,14 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 }
                 // transmit?
                 if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
+
+                	//double thti = pi - ( std::acos( dot(arma::normalise(transElect->getVel()), mDev->edgeNormVect(iEdge)) ) );
                     transElect->setOccupation(transProb*occu);
+                    std::cout << "Rotation Angle = " << std::endl << (-thti - thf)*180/pi << std::endl;
+//                    std::cout << "Before Rotation vel = " << std::endl <<  transElect->getVel() << std::endl;
+                    transElect->rotateVel(-thti - thf);
+//                    std::cout << "After Rotation vel = " << std::endl <<  transElect->getVel() << std::endl;
+
                     mElectsQu.push(transElect);
                 }
                 break;

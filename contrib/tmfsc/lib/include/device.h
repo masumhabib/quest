@@ -9,6 +9,7 @@
 
 #include "utils/Printable.hpp"
 #include "maths/arma.hpp"
+#include "maths/constants.h"
 #include "maths/geometry.hpp"
 #include "potential/potential.h"
 #include "potential/linearPot.h"
@@ -22,6 +23,8 @@
 namespace qmicad{ namespace tmfsc {
 using utils::Printable;
 using maths::armadillo::linspace;
+using maths::constants::pi;
+using maths::armadillo::dcmplx;
 using maths::armadillo::vec;
 using maths::geometry::squadrilateral;
 using potential::Potential;
@@ -32,6 +35,10 @@ using std::shared_ptr;
 using std::make_shared;
 using std::tuple;
 using std::make_tuple;
+using std::complex;
+using std::exp;
+using std::acos;
+using std::conj;
 
 class Edge : public Segment {
 public:
@@ -79,7 +86,7 @@ public:
     svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };
     const Edge& edge(int indx) const { return mEdgs[indx]; };
-    tuple<double, double, double> calcProbab(double V1, double V2, 
+    tuple<double, double, double, double> calcProbab(double V1, double V2,
             const svec& vel, double En, int iEdge);
     
     svec contNormVect(int indx) const { 

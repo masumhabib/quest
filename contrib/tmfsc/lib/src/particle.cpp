@@ -41,13 +41,14 @@ void Particle::rotateVel(double thti){
 	// of matrix multiplication
 	mat rotationMat;
 	// Building rotation matrix
-	rotationMat << cos(thti) << -sin(thti) << 0 << endr
-				<< sin(thti) <<  cos(thti) << 0 << endr
-				<<         0 <<         0  << 0 << endr;
+//	rotationMat << cos(thti) << -sin(thti) << 0 << endr
+//				<< sin(thti) <<  cos(thti) << 0 << endr
+//				<<         0 <<         0  << 0 << endr;
+	rotationMat << cos(thti) << -sin(thti) << endr
+					<< sin(thti) <<  cos(thti) <<  endr;
 	// converting row vector to column vector for matrix multiplication
 	col vcol = conv_to< col >::from(this->v);
 	col rotv = rotationMat * vcol;
-	//TODO whether to update nxtv or current v
 	this->v = conv_to< svec >::from(rotv);
 }
 

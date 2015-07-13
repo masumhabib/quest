@@ -42,6 +42,7 @@ using arma::square;
 using arma::abs;
 using arma::cross;
 using arma::conv_to;
+using arma::normalise;
 
 typedef arma::Col<double>         vec;       //!< Double precision column vector.
 typedef arma::Col<dcmplx>         cxvec;     //!< Double precision complex column vector.

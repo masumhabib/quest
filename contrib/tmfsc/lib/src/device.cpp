@@ -113,15 +113,59 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
-tuple<double, double, double> Device::calcProbab(double V1, double V2, 
+tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
             const svec& vel, double En, int iEdge) 
 {
-    double th, transProb, refProb;
-    // replace the following three lines with formula
-    th = 0;
-    transProb = 0.5;
-    refProb = 0.5;
-    return make_tuple(th, transProb, refProb);
+    double th, thti, TransProb, RefProb;
+
+//    std::cout << "Norm Vector = " << std::endl << this->edgeNormVect(iEdge) << std::endl;
+//    thti = ( std::acos( dot(arma::normalise(vel), -this->edgeNormVect(iEdge)) ) );
+    svec NormVec = this->edgeNormVect(iEdge);
+    thti = atan2( vel[1], vel[0] ) - atan2( NormVec[1], NormVec[0]);
+    // correcting theta incidence due to vector complication
+    if( abs(thti) > pi/2 ){
+    	thti += pi;
+    }
+    double angle_critical = std::asin( abs(En+V2) / abs(En+V1) );
+    if( abs(En+V2) / abs(En/V2) > 1 ){
+    	angle_critical = pi/2;
+    }
+//    std::cout << "IncAngle = " << std::endl << thti*180/pi << std::endl;
+    th = asin(abs((En+V1)/(En+V2)) * sin(thti));
+    if( abs( thti ) < angle_critical ){
+        	TransProb = std::cos( thti )   *   std::cos( th ) \
+        				/   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
+    }
+    else{
+        	TransProb = 1E-8;
+    }
+//    if ( ~( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+//    	//TODO
+//    	return make_tuple(0, 0, 0, 0);
+//    }
+//    if( En+V2 > En+V1 )
+//    {
+//    	//TODO
+//
+//    }
+//    std::cout << "TransAngle = " << std::endl << th*180/pi << std::endl;
+    //th = 0;
+//    int si = ( En+V1 > 0 ) - ( En+V1 < 0 ); // sign function
+//    int st = ( En+V2 > 0 ) - ( En+V2 < 0 ); // sign function
+//    std::cout << "En = " << std::endl << En << std::endl;
+//    std::cout << "V1 = " << std::endl << V1 << std::endl;
+//    std::cout << "V2 = " << std::endl << V2 << std::endl;
+//    std::cout << "si = " << std::endl << si << std::endl;
+
+//    std::cout << "st = " << std::endl << st << std::endl;
+//    dcmplx transProb = ((dcmplx)si*exp(dcmplx(0, abs(thti))) + (dcmplx)si*exp(dcmplx(0, -abs(thti))))\
+//    		         /((dcmplx)si*exp(dcmplx(0, -abs(thti)))+ (dcmplx)st*exp(dcmplx(0, abs(th))));
+//    std::cout << "transProb = " << std::endl << transProb << std::endl;
+//    std::cout << "coeff = " << std::endl << (transProb * conj(transProb))  << std::endl;
+//    TransProb = abs( (cos(th)/cos(thti))*(transProb * conj(transProb)) );
+    std::cout << "TransProb = " << std::endl << TransProb << std::endl;
+    RefProb = 1 - TransProb;
+    return make_tuple(th, thti, TransProb, RefProb);
 }
  
 int Device::addGate(const point& lb, const point& rb, const point& rt, 
