@@ -1,5 +1,6 @@
 /**
  * @author K M Masum Habib <masumhabib.com
+ * @co-author Mirza Elahi <mirza.monzur@gmail.com
  */
 
 #include "particle.hpp"
@@ -41,9 +42,6 @@ void Particle::rotateVel(double thti){
 	// of matrix multiplication
 	mat rotationMat;
 	// Building rotation matrix
-//	rotationMat << cos(thti) << -sin(thti) << 0 << endr
-//				<< sin(thti) <<  cos(thti) << 0 << endr
-//				<<         0 <<         0  << 0 << endr;
 	rotationMat << cos(thti) << -sin(thti) << endr
 					<< sin(thti) <<  cos(thti) <<  endr;
 	// converting row vector to column vector for matrix multiplication

@@ -1,6 +1,7 @@
 /**
  * file: simulator.cpp
  * author: K M Masum Habib
+ * co-author : Mirza Elahi
  */
 
 #include "simulator.h"
@@ -214,14 +215,8 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 }
                 // transmit?
                 if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
-
-                	//double thti = pi - ( std::acos( dot(arma::normalise(transElect->getVel()), mDev->edgeNormVect(iEdge)) ) );
                     transElect->setOccupation(transProb*occu);
-                    std::cout << "Rotation Angle = " << std::endl << (-thti - thf)*180/pi << std::endl;
-//                    std::cout << "Before Rotation vel = " << std::endl <<  transElect->getVel() << std::endl;
                     transElect->rotateVel(-thti - thf);
-//                    std::cout << "After Rotation vel = " << std::endl <<  transElect->getVel() << std::endl;
-
                     mElectsQu.push(transElect);
                 }
                 break;
@@ -244,7 +239,6 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
         traj.path.push_back(rf);
         traj.occupation = electron->getOccupation();
     }
- 
     mElectsQu.pop();
     return traj;
 }
