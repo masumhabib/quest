@@ -4,12 +4,15 @@
 
 #ifndef TMFSC_PARTICLE_H
 #define TMFSC_PARTICLE_H
-
 #include "tmfsc.h"
 #include <memory>
 
 namespace qmicad { namespace tmfsc {
 
+using maths::armadillo::mat;
+using maths::armadillo::col;
+using arma::conv_to;
+using arma::endr;
 using std::shared_ptr;
 
 class Particle {
@@ -20,7 +23,6 @@ public:
     virtual const svec& getVel() const { return v; };
     virtual const svec& getAcc() const { return a; };
     virtual double getTimeStep() const { return dt; };
-
     virtual void setPot(double newV) { V = newV; update(); };
     virtual double getPot() const { return V; };
     virtual void setMagField(const svec& newB) { B = newB; update(); };
@@ -35,6 +37,7 @@ public:
     virtual void doStep() = 0;
     virtual ptr clone() = 0;
     virtual void reflect(const svec& normal);
+    virtual void rotateVel(double thti); //!< Rotate the Particle by thti
     virtual double timeToReach(const svec& pos);
     virtual const svec& stepCloseToPoint(const svec& pos, double distanceTol);
 

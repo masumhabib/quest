@@ -1,6 +1,6 @@
 /**
  * @author K M Masum Habib <masumhabib.com>
- *
+ * @co-author Mirza Elahi <mirza.monzur@gmail.com>
  */
 
 #include "DiracCyclotron.hpp"
@@ -20,7 +20,6 @@ const svec& DiracCyclotron::nextPos() {
     nxtth = th + dth;
     nxtv = svec({speed*cos(nxtth), speed*sin(nxtth)});
     nxtr = r + (v + nxtv)/2*dt;
-
     return nxtr;
 }
 
@@ -35,6 +34,13 @@ void DiracCyclotron::reflect(const svec& normal) {
 
     th = atan2(v[1], v[0]);
 }
+
+void DiracCyclotron::rotateVel(double thti) {
+    Particle::rotateVel(thti);
+
+    th = atan2(v[1], v[0]);
+}
+
 
 DiracCyclotron::ptr DiracCyclotron::clone() {
     auto newElect = make_shared<DiracCyclotron>(*this);

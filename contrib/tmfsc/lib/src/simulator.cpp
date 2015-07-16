@@ -1,6 +1,7 @@
 /**
  * file: simulator.cpp
  * author: K M Masum Habib
+ * co-author : Mirza Elahi
  */
 
 #include "simulator.h"
@@ -201,7 +202,8 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 double V2 = transElect->getPot(); // potential after edge
 
                 double thf, transProb, refProb;
-                tie(thf, transProb, refProb) = mDev->calcProbab(V1, V2, 
+                double thti;
+                tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
                 // reflect?
@@ -214,6 +216,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 // transmit?
                 if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
                     transElect->setOccupation(transProb*occu);
+                    transElect->rotateVel(-thti - thf);
                     mElectsQu.push(transElect);
                 }
                 break;
@@ -236,7 +239,6 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
         traj.path.push_back(rf);
         traj.occupation = electron->getOccupation();
     }
- 
     mElectsQu.pop();
     return traj;
 }

@@ -1,5 +1,6 @@
 /**
  * @author K M Masum Habib <masumhabib.com
+ * @co-author Mirza Elahi <mirza.monzur@gmail.com
  */
 
 #include "particle.hpp"
@@ -36,6 +37,18 @@ void Particle::reflect(const svec& normal) {
     v = vparpendicular - vparallel;
 }
 
+void Particle::rotateVel(double thti){
+	//TODO calculation can be made faster if manual calculation is used instead
+	// of matrix multiplication
+	mat rotationMat;
+	// Building rotation matrix
+	rotationMat << cos(thti) << -sin(thti) << endr
+					<< sin(thti) <<  cos(thti) <<  endr;
+	// converting row vector to column vector for matrix multiplication
+	col vcol = conv_to< col >::from(this->v);
+	col rotv = rotationMat * vcol;
+	this->v = conv_to< svec >::from(rotv);
+}
 
 }}
 
