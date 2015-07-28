@@ -30,6 +30,9 @@ using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::genNormalDist;
 
+using maths::constants::pi;
+using maths::armadillo::dcmplx;
+
 typedef vector<point> Path;
 struct Trajectory {
     Path path;

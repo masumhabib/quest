@@ -1,6 +1,7 @@
 /**
  * File: device.cpp
  * Author: K M Masum Habib
+ * Co-Author: Mirza Elahi
  */
 
 #include "device.h"
@@ -113,15 +114,46 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
-tuple<double, double, double> Device::calcProbab(double V1, double V2, 
+tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
             const svec& vel, double En, int iEdge) 
 {
-    double th, transProb, refProb;
-    // replace the following three lines with formula
-    th = 0;
-    transProb = 0.5;
-    refProb = 0.5;
-    return make_tuple(th, transProb, refProb);
+	double th, thti, TransProb, RefProb;
+	svec NormVec = this->edgeNormVect(iEdge);
+	double incidentAbsoluteAngle = atan2( vel[1], vel[0] );
+	//TODO have to think about a generalized formula
+	if(incidentAbsoluteAngle<=pi && incidentAbsoluteAngle>=-pi/2){
+		thti = incidentAbsoluteAngle - atan2( NormVec[1], NormVec[0]);
+		if( abs(thti) > pi/2 ){
+			thti += pi;
+		}
+	}
+	else{
+		thti = atan2( NormVec[1], NormVec[0]) + incidentAbsoluteAngle;
+	}
+	// correcting theta incidence due to vector complication
+	double angle_critical = std::asin( abs(En+V2) / abs(En+V1) );
+	if( abs(En+V2) / abs(En/V2) > 1 ){
+		angle_critical = pi/2;
+	}
+	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
+	if( abs( thti ) < angle_critical ){
+			TransProb = std::cos( thti )   *   std::cos( th ) \
+						/   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
+	}
+	else{
+			TransProb = 1E-8;
+	}
+//    if ( ~( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+//    	//TODO
+//    	return make_tuple(0, 0, 0, 0);
+//    }
+//    if( En+V2 > En+V1 )
+//    {
+//    	//TODO
+//
+//    }
+	RefProb = 1 - TransProb;
+	return make_tuple(th, thti, TransProb, RefProb);
 }
  
 int Device::addGate(const point& lb, const point& rb, const point& rt, 
