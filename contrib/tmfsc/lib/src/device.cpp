@@ -179,6 +179,14 @@ Edge::Edge(const point &p, const point &q, int type)
 
 }
 
+double Device::getSplitLen(){
+	return this->splitLen;
+}
+
+void Device::setSplitLen(double len){
+	this->splitLen = len;
+}
+
 }}
 
 

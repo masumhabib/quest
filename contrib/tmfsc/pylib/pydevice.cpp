@@ -43,7 +43,9 @@ void export_Device(){
         .def("numConts", &PyDevice::numConts)
         .def("isReflectEdge", &PyDevice::isReflectEdge)
         .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
-        .def_readonly("NumGates", &PyDevice::getNumGates);
+        .def_readonly("NumGates", &PyDevice::getNumGates)
+    	.def("getSplitLen", &PyDevice::getSplitLen)
+    	.def("setSplitLen", &PyDevice::setSplitLen);
  
     ;
 }
