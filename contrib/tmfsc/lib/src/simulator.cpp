@@ -124,7 +124,7 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
     if (isAutoDt) {
         double wc = mvF*nm*mvF*nm*mB/(mE-mV); //cyclotron frequency
         dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
-        if (dt > 1E-3) {
+        if (debug && dt > 1E-3) {
             std::cout << "-W-  Too big time step" << std::endl;
         }
     }
@@ -174,7 +174,9 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
             // how close we can get to the intersection point
             point intp = mDev->intersection(iEdge, ri, rf);
             if (!getCloseToEdge(*electron, ri, intp, iEdge)){
-                std::cout << "-W- Could not get close to edge!" << std::endl;
+                if (debug) {
+                    std::cout << "-W- Could not get close to edge!" << std::endl;
+                }
                 break;
             }
             // we are now close enough, now step to the point
@@ -193,7 +195,9 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 // first just cross the boundary and get the potential.
                 Particle::ptr transElect = electron->clone();
                 if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
-                    std::cout << "-W- Could not cross the edge!" << std::endl;
+                    if (debug) {
+                        std::cout << "-W- Could not cross the edge!" << std::endl;
+                    }
                     break;
                 }
                 transElect->doStep();
