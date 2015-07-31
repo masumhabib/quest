@@ -110,7 +110,7 @@ private:
     vector<Edge> mEdgs; //!< edges.
     vector<int> mCnts;  //!< Contact to edge map.
     map<int, int> mEdg2Cnt; //!< Egde to contact map.
-    double splitLen; //!< Split length between gates
+    double splitLen = 0.0; //!< Split length between gates
 };
 
 
