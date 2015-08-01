@@ -134,10 +134,14 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
 	}
 	// correcting theta incidence due to vector complication
 	double angle_critical = std::asin( abs(En+V2) / abs(En+V1) );
-	if( abs(En+V2) / abs(En/V2) > 1 ){
+	if( abs(En+V2) / abs(En/V1) > 1 ){
 		angle_critical = pi/2;
 	}
 	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
+	//TODO FIX for nn'
+	if ( ~( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+		th = -th;
+	}
 	if( abs( thti ) < angle_critical ){
 			TransProb = std::cos( thti )   *   std::cos( th ) \
 						/   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
