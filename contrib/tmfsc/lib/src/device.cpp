@@ -139,7 +139,7 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
 	}
 	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
 	//TODO FIX for nn'
-	if ( ~( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+	if ( !( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
 		th = -th;
 	}
 	if( abs( thti ) < angle_critical ){
