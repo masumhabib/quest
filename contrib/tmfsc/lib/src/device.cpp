@@ -117,6 +117,8 @@ bool Device::isTransmitEdge(int iEdge) {
 tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
             const svec& vel, double En, int iEdge) 
 {
+	using maths::constants::e;
+	using maths::constants::hbar;
 	double th, thti, TransProb, RefProb;
 	svec NormVec = this->edgeNormVect(iEdge);
 	double incidentAbsoluteAngle = atan2( vel[1], vel[0] );
@@ -132,10 +134,14 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
 	}
 	// correcting theta incidence due to vector complication
 	double angle_critical = std::asin( abs(En+V2) / abs(En+V1) );
-	if( abs(En+V2) / abs(En/V2) > 1 ){
+	if( abs(En+V2) / abs(En/V1) > 1 ){
 		angle_critical = pi/2;
 	}
 	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
+	//TODO FIX for nn'
+	if ( !( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+		th = -th;
+	}
 	if( abs( thti ) < angle_critical ){
 			TransProb = std::cos( thti )   *   std::cos( th ) \
 						/   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
@@ -143,10 +149,20 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
 	else{
 			TransProb = 1E-8;
 	}
-//    if ( ~( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
-//    	//TODO
-//    	return make_tuple(0, 0, 0, 0);
-//    }
+	double t_graded;
+    if ( ( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+    	double vF = 1E6;
+    	double kf1, ky, d_eff, S;
+    	kf1 = e * abs(En - (-V1)) / (hbar * vF);
+    	ky = kf1 * sin ( thti );
+    	d_eff = hbar * vF * abs(ky) * (this->splitLen*nm) / ( e*abs(V1-V2) );
+    	S = pi * (d_eff/2) * abs(ky);
+    	t_graded = std::exp( -2*S );
+    }
+    else{
+    	t_graded = 1.0;
+    }
+    TransProb *= t_graded;
 //    if( En+V2 > En+V1 )
 //    {
 //    	//TODO
@@ -177,6 +193,14 @@ double Device::getPotAt(const point& position) {
 Edge::Edge(const point &p, const point &q, int type)
 : Segment(p,q), mType(type){
 
+}
+
+double Device::getSplitLen(){
+	return this->splitLen;
+}
+
+void Device::setSplitLen(double len){
+	this->splitLen = len;
 }
 
 }}

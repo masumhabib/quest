@@ -115,6 +115,11 @@ class HallBar(object):
 
     def setEdgeType(self, id, type):
         self.dev.edgeType(id, type)
+        
+    def setSplitLen(self, len):
+        self.dev.setSplitLen(len)
+    def getSplitLen(self):
+        return self.dev.getSplitLen()
 
     def setupBias(self):
         """ Sets the bias points """
@@ -266,10 +271,10 @@ class HallBar(object):
                 if alpha > 1:
                     alpha = 1
                 self.axes.plot(traj.path[:, 0], traj.path[:, 1],
-                        linewidth=width, alpha=alpha)
+                    linewidth=width, alpha=alpha)
             else:
-                self.axes.plot(traj.path[:, 0], self.traj.path[:, 1], 
-                        linewidth=width, color=color, alpha=alpha)
+                 self.axes.plot(traj.path[:, 0], self.traj.path[:, 1], 
+                         linewidth=width, color=color, alpha=alpha)
  
     def animate(self, filename=None):
 	    self._start_animation()
