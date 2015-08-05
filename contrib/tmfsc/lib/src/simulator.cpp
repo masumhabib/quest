@@ -206,9 +206,10 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
+
                 // reflect?
                 if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
-                    Particle::ptr refElect = electron;
+                    Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
                     mElectsQu.push(refElect);
