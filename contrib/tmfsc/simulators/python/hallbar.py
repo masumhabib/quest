@@ -94,9 +94,9 @@ class HallBar(object):
         self.setEdgeType(11, EDGE_ABSORB)
 
         # Add the transmitting edge
-        ipt1 = self.addPoint(0, -ly/2)
-        ipt2 = self.addPoint(0, ly/2)
-        self.addEdge(ipt1, ipt2, EDGE_TRANSMIT)
+        #ipt1 = self.addPoint(0, -ly/2)
+        #ipt2 = self.addPoint(0, ly/2)
+        #self.addEdge(ipt1, ipt2, EDGE_TRANSMIT)
 
         self.gates = [] # gate geometries for drawing
 

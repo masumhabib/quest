@@ -101,6 +101,8 @@ private:
     double mnElects; //!< Total electrons injected.
     queue<Particle::ptr> mElectsQu; //!< Deck of electrons.
 
+    bool debug = false; //!< Prints debug message if true.
+
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
     static constexpr double ETOL = 1E-6;
     static constexpr double REFLECTION_TOL = 1E-4;
