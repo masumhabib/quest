@@ -22,18 +22,53 @@ import mpi
 # Constants
 vf 			= 1E6		# Fermi velocity
 
+class Bias(object):
+    def __init__(self, biasVars = {}):
+        self.biasVars = biasVars
+        self.sizes = {}
+        for key in self.biasVars:
+            self.sizes[key] = len(self.biasVars[key]);
+
+    def clear(self):
+        self.biasVars = {}
+        self.sizes = {}
+
+    def append(self, bias, key):
+        self.biasVars[key] = bias
+        self.sizes[key] = len(self.biasVars[key]);
+
+    def get(self, ib):
+        biases = []
+        for key in self.biasVars:
+            bias = self.biasVars[key]
+            size = self.sizes[key];
+            indx = ib % size 
+            biases.append(bias[indx])
+            ib = ib/size
+        return biases
+
+    def __str__(self):
+        msg = ""
+        for key in self.biasVars:
+            msg += "\nBias List " + str(key) + ": "
+            msg += '  '.join('%.3f' % bias for bias in self.biasVars[key])
+        return msg
+
+    def numBiases(self):
+        n = 1
+        for key in self.biasVars:
+            n = n*self.sizes[key]
+        return n
+
 class HallBar(object):
     def __init__(self, mpiworld=None):
         """Constructs a HallBar structure with four contacts."""
-
         self.fontSize = 20
-
         self.outDir = './'
         self.outFile = 'trans.npz'
-
         self.mpiworld = mpiworld
-       
         self.vF = vf
+        self.bias = Bias()
 
         self.clear()
         self.setupDefaults()
@@ -42,23 +77,13 @@ class HallBar(object):
         """ Clears ourselves """
         # Create device
         self.dev = Device()
-
         # Create simulator
         self.sim = Simulator(self.dev)
  
     def setupDefaults(self):
         """Sets up a default simulation with a default goemetry."""
-        # bias
+        # Fermi level is set to 0, you wont probably need to change this
         self.EF = 0.0	    # Fermi level		
-        self.Bmin = 1.0	    # Magnetic field
-        self.Vmin = 0.15	# Gate bias
-        self.NB = 1         # size of self.B
-        self.NV = 1         # size of self.V
-        self.m  = 0.99      # Resonance number (optional)
-        self.VgRatios = []  # ratio of V applied to a given gate
-        self.VGG = 0        # gate voltage applied to all gates
-
-        self.singleResonance = False #calculates B for resonant condition if true
 
         # Create the goemetry with the following dimensions
         lx = 500.0		# length
@@ -98,7 +123,11 @@ class HallBar(object):
         #ipt2 = self.addPoint(0, ly/2)
         #self.addEdge(ipt1, ipt2, EDGE_TRANSMIT)
 
+        # No gates for default device
         self.gates = [] # gate geometries for drawing
+
+        # default bias setup 
+        self.setupBias(1.0, 0.15)
 
     def addPoint(self, x, y):
         return self.dev.addPoint(np.array([x, y]))
@@ -107,7 +136,6 @@ class HallBar(object):
         return self.dev.addEdge(ipt1, ipt2, type);
 
     def addGate(self, lb, rb, rt, lt, VgRatio = 1):
-        self.VgRatios.append(VgRatio)
         gate = (np.array([lb[0], lb[1]]), np.array([rb[0], rb[1]]), 
                 np.array([rt[0], rt[1]]), np.array([lt[0], lt[1]]))
         self.gates.append(gate)
@@ -121,21 +149,28 @@ class HallBar(object):
     def getSplitLen(self):
         return self.dev.getSplitLen()
 
-    def setupBias(self):
-        """ Sets the bias points """
-        if self.NV == 1:
-            self.V = np.array([self.Vmin])
+    def setupBias(self, B, V, m = 1, singleResonance = True, 
+            Bmax = None, NB = 1, Vmax = None, NV = 1):
+        """ Sets up the bias points """
+        VV = [] 
+        BB = [] 
+        if NV == 1:
+            VV = np.array([V])
         else:
-            self.V = np.linspace(self.Vmin, self.Vmax, self.NV)
+            assert Vmax is not None, "Vmax is None"
+            VV = np.linspace(V, Vmax, NV)
 
-        if self.NB == 1:        
-            self.B = np.array([self.Bmin])
+        if NB == 1:   
+            BB = np.array([B])
         else:
-            self.B = np.linspace(self.Bmin, self.Bmax, self.NB)
-
-        if self.singleResonance == True:
-            B0 = abs(self.EF-self.V)/vf/nm/self.dc*2.0
-            self.B = self.m*B0
+            assert Bmax is not None, "Vmax is None"
+            BB = np.linspace(B, Bmax, NB)
+        if singleResonance == True:
+            B0 = abs(self.EF-V)/vf/nm/self.dc*2.0
+            BB = m*np.array([B0])
+        self.bias.clear()
+        self.bias.append(BB, 'B')
+        self.bias.append(VV, 'V')
  
     def enableDirectCalc(self): 
         self.sim.ParticleType = 1
@@ -152,28 +187,33 @@ class HallBar(object):
         thi = self.dev.contDirctn(contId) + pi/2 + shiftth
         ri = self.dev.contMidPoint(contId) + 1E-3*self.dev.contNormVect(contId) + np.array([shiftxy[0], shiftxy[1]])
         
-        print ("Injecting electron from " + str(ri) + " ")
+        print ("\nInjecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
+        biases = self.bias.get(0);
+        self.printBias(biases, 0)
+        print ""
         if self.dev.NumGates > 0:
-            VGs = self._getGateVoltages(self.V[0])
-            self.trajs = self.sim.calcTraj(ri, thi, self.B[0], self.EF, VGs)
+            self.trajs = self.sim.calcTraj(ri, thi, biases[0], self.EF, 
+                    biases[1:])
         else:
-            self.trajs = self.sim.calcTraj(ri, thi, self.B[0], self.EF, self.V[0])
+            self.trajs = self.sim.calcTraj(ri, thi, biases[0], self.EF, 
+                    biases[1])
     
     def calcSingleTrans(self, dl=5, nth=50, saveTrajectory=False, 
             contId = 0):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
+        biases = self.bias.get(0);
+        self.printBias(biases, 0)
         if self.dev.NumGates > 0:
-            VGs = self._getGateVoltages(self.V[0])
-            self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, 
-                    VGs, contId, saveTrajectory)
+            self.T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
+                    biases[1:], contId, saveTrajectory)
         else:
-            self.T,self.trajs = self.sim.calcTrans(self.B[0], self.EF, 
-                    self.V[0], contId, saveTrajectory)
-        self.printTrans(self.T, contId, self.B[0], self.V[0])
+            self.T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
+                    biases[1], contId, saveTrajectory)
+            self.printTrans(contId, self.T)
         
         return self.T
     
@@ -183,10 +223,10 @@ class HallBar(object):
         self.sim.nth = nth
         
         nconts = self.dev.numConts()
-        self.T = np.zeros((self.NB, self.NV, nconts, nconts))
+        npts = self.bias.numBiases()
+        self.T = np.zeros((npts, nconts, nconts))
         
         # MPI stuff
-        npts = self.NB*self.NV
         ncpu = self.mpiworld.size
         icpu = self.mpiworld.rank
         quo = npts/ncpu
@@ -200,21 +240,18 @@ class HallBar(object):
         if icpu < rem:
             my_end += 1
 
-        print("  B         V        EF        T        T         T  ")
+        print "\nTransmission loop ..."
         for ipt in range(my_start, my_end):
-            ib = ipt/self.NV
-            iv = ipt%self.NV
-            print("B = {0:.3f} V = {1:.3f} EF = {2:.3f}".format(self.B[ib], 
-                self.V[iv], self.EF))
+            biases = self.bias.get(ipt)
+            self.printBias(biases, ipt)
             if self.dev.NumGates > 0:
-                VGs = self._getGateVoltages(self.V[iv])
-                T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, 
-                        VGs, False, contId)
+                T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
+                        biases[1:], False, contId)
             else:
-                T,self.trajs = self.sim.calcTrans(self.B[ib], self.EF, 
-                        self.V[iv], False, contId)
-            self.printTrans(T, contId, self.B[ib], self.V[iv])
-            self.T[ib,iv,:,:] = T
+                T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
+                        biases[1], False, contId)
+                self.printTrans(contId, T)
+            self.T[ipt,:,:] = T
  
         if self.mpiworld.rank == 0:
             self.T = mpi.reduce(self.mpiworld, self.T, op.add, 0) 
@@ -296,35 +333,37 @@ class HallBar(object):
             np.savez_compressed(self.outDir+self.outFile, T=self.T, B=self.B, V=self.V) 
 
 
-    def printBias(self):
-        print("\nBias List:")
-        print(str(self.V) + "\n")
-        print("B Field List:")
-        print(str(self.B) + "\n")
+    def printBiasList(self):
+        print (self.bias)
 
     def printTraj(self):
         print("")
         print("Trajectory:")
         print(self.trajs)
     
-    def printTrans(self, T, contId, B=0, V=0):
-        msg  = '{0:.3f}'.format(B)
-        msg += '     {0:.3f}'.format(V)
+    def printBias(self, biases, ipt):
+        msg = "Bias# " + str(ipt) + ": "
+        biasIndx = range(1, len(biases));
+        msg += "B={0:.3f}".format(biases[0])
+        msg += '  '.join('  V{0}={1:.3f}'.format(ib, biases[ib]) for ib in biasIndx)
+        print msg,
+ 
+    def printTrans(self, contId, T):
+        msg = " ==>"
         for ic in range(self.dev.numConts()):
             if ic != contId:
-                #msg += ' ' + str(contId+1) + str(ic+1)
-                msg += '    {0:.3f}'.format(T[contId][ic])
+                msg += '  T{0}{1}={2:.3f}'.format(contId, ic, T[contId][ic])
         print (msg)
  
     def banner(self):
         print(greet())
         print("\n ***  Running semiclassical analysis for graphene ... ")
 
-    def _getGateVoltages(self, V):
-        VGs = []
-        for VgRatio in self.VgRatios:
-            VGs.append(self.VGG + V*VgRatio)
-        return VGs
+#    def _getGateVoltages(self, V):
+#        VGs = []
+#        for VgRatio in self.VgRatios:
+#            VGs.append(self.VGG + V*VgRatio)
+#        return VGs
 
     def _start_animation(self): 
         fig = self.fig                                                          

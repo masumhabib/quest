@@ -6,22 +6,11 @@ import os
 hallbar.outFile = "trans.npz"
 hallbar.outDir = 'tmfsc_out/'
 
-hallbar.Bmin = 0.0#0.001
-hallbar.Bmax = 0.0
-hallbar.Vmin = 0.001#0.001
-hallbar.Vmax = 0.001
-hallbar.m = 1
-hallbar.NB = 2
-hallbar.NV = 2
+#hallbar.setupBias(0.0, 0.001, m=1, singleResonance=False,
+#        Bmax=0.0, NB=2, Vmax=0.001, NV=2)
 
-hallbar.Bmin = 1.5
-hallbar.Vmin = 0.15
-hallbar.m = 2.5
-hallbar.NB = 1
-hallbar.NV = 1
-hallbar.singleResonance = True
-hallbar.setupBias()
-hallbar.printBias()
+hallbar.setupBias(1.5, 0.15)
+hallbar.printBiasList()
 #hallbar.sim.TimeStep = 1/(1E6/1E-9)
 
 # FOR GATES
@@ -34,10 +23,10 @@ coffx = lx/10
 #hallbar.addGate((-lx/2,-ly/2-cly*50), (lx/2, -ly/2-cly*50),
 #                (lx/2, ly/2), (-lx/2, ly/2))
 # double gate, pn junction
-hallbar.addGate((-lx/2,-ly/2-cly*50), (0, -ly/2-cly*50),
-                (0, ly/2), (-lx/2, ly/2), 1)
-hallbar.addGate((0,-ly/2-cly*50), (lx/2, -ly/2-cly*50),
-                (lx/2, ly/2), (0, ly/2), -1)
+#hallbar.addGate((-lx/2,-ly/2-cly*50), (0, -ly/2-cly*50),
+#                (0, ly/2), (-lx/2, ly/2), 1)
+#hallbar.addGate((0,-ly/2-cly*50), (lx/2, -ly/2-cly*50),
+#                (lx/2, ly/2), (0, ly/2), -1)
 
 #hallbar.enableDirectCalc()
 hallbar.enableCyclotronCalc()
