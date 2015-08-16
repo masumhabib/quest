@@ -17,37 +17,57 @@ import os
 import shutil
 import operator as op
 import time
+import argparse
 
 #import boost.mpi as mpi
 import mpi
 
 # Constants
 vf 			= 1E6		# Fermi velocity
+q           = 1.6E-19 
+hbar        = 1.0546E-34
 
 class Bias(object):
-    def __init__(self, biasVars = {}):
-        self.biasVars = biasVars
-        self.sizes = {}
-        for key in self.biasVars:
-            self.sizes[key] = len(self.biasVars[key]);
+    def __init__(self):
+        self.clear()
 
     def clear(self):
         self.biasVars = {}
         self.sizes = {}
+        self.Bkeys = []
+        self.Vkeys = []
 
-    def append(self, bias, key):
+    def append(self, bias, kind):
+        key = ""
+        if kind == 'B':
+            key = kind + str(len(self.Bkeys)+1)
+            self.Bkeys.append(key)
+        elif kind == 'V':
+            key = kind + str(len(self.Vkeys)+1)
+            self.Vkeys.append(key)
+        else:
+            raise Exception("Unknown bias type "+str(kind)
+                    +", should be either B or V")
         self.biasVars[key] = bias
         self.sizes[key] = len(self.biasVars[key]);
 
     def get(self, ib):
-        biases = []
-        for key in self.biasVars:
-            bias = self.biasVars[key]
-            size = self.sizes[key];
-            indx = ib % size 
-            biases.append(bias[indx])
-            ib = ib/size
-        return biases
+        B = []
+        for key in self.Bkeys:
+            bias, ib = self._getBias(ib, key)
+            B.append(bias)
+        V = []
+        for key in self.Vkeys:
+            bias, ib = self._getBias(ib, key)
+            V.append(bias)
+        return B, V
+    
+    def _getBias(self, ib, key):
+        bias = self.biasVars[key]
+        size = self.sizes[key];
+        indx = ib % size 
+        ib = ib/size
+        return bias[indx], ib
 
     def __str__(self):
         msg = ""
@@ -67,15 +87,15 @@ class HallBar(object):
         """Constructs a HallBar structure with four contacts."""
         self.fontSize = 20
         self.outDir = './'
-        self.outFile = 'trans.npz'
+        self.outFile = 'trans.pkl'
         self.tmpFile = '.tmp'
         self.mpiworld = mpiworld
         self.vF = vf
         self.checkPointTime = 30 # time interval at which state is saved
         self.elapsedTime = time.time() # for the time keeper
         self.cleanRun = False # If true, does not load previous state from CWD
-        self.bias = Bias()
 
+        self.bias = Bias()
         self.clear()
         self.setupDefaults()
 
@@ -196,29 +216,27 @@ class HallBar(object):
         print ("\nInjecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
-        biases = self.bias.get(0);
-        self.printBias(biases, 0)
+        B,V = self.bias.get(0);
+        self.printBias(B, V, 0)
         print ""
         if self.dev.NumGates > 0:
-            self.trajs = self.sim.calcTraj(ri, thi, biases[0], self.EF, 
-                    biases[1:])
+            self.trajs = self.sim.calcTraj(ri, thi, self.EF, B, V)
         else:
-            self.trajs = self.sim.calcTraj(ri, thi, biases[0], self.EF, 
-                    biases[1])
+            self.trajs = self.sim.calcTraj(ri, thi, self.EF, B[0], V[0])
     
     def calcSingleTrans(self, dl=5, nth=50, saveTrajectory=False, 
             contId = 0):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        biases = self.bias.get(0);
-        self.printBias(biases, 0)
+        B,V = self.bias.get(0);
+        self.printBias(B, V, 0)
         if self.dev.NumGates > 0:
-            self.T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
-                    biases[1:], contId, saveTrajectory)
+            self.T,self.trajs = self.sim.calcTrans(self.EF, B, V, contId, 
+                    saveTrajectory)
         else:
-            self.T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
-                    biases[1], contId, saveTrajectory)
+            self.T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], contId, 
+                    saveTrajectory)
             self.printTrans(contId, self.T)
         
         return self.T
@@ -244,14 +262,13 @@ class HallBar(object):
         doneIndx = []
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
-            biases = self.bias.get(ib)
-            self.printBias(biases, ib)
+            B,V = self.bias.get(ib)
+            self.printBias(B, V, ib)
             if self.dev.NumGates > 0:
-                T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
-                        biases[1:], False, contId)
+                T,self.trajs = self.sim.calcTrans(self.EF, B, V, False, contId)
             else:
-                T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
-                        biases[1], False, contId)
+                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], False, 
+                        contId)
             self.printTrans(contId, T)
             self.T[ib,:,:] = T
             doneIndx.append(ib)
@@ -339,7 +356,9 @@ class HallBar(object):
         if self.mpiworld.rank == 0:
             if not os.path.exists(self.outDir):
                 os.makedirs(self.outDir)
-            np.savez_compressed(self.outDir+self.outFile, T=self.T, bias=self.bias) 
+            outFile = open(self.outDir+self.outFile, 'wb')
+            pickle.dump({'T':self.T, 'bias':self.bias}, outFile)
+            #np.savez_compressed(self.outDir+self.outFile, T=self.T, bias=self.bias) 
 
 
     def printBiasList(self):
@@ -350,11 +369,14 @@ class HallBar(object):
         print("Trajectory:")
         print(self.trajs)
     
-    def printBias(self, biases, ipt):
+    def printBias(self, B, V, ipt):
         msg = "Bias# " + str(ipt) + ": "
-        biasIndx = range(1, len(biases));
-        msg += "B={0:.3f}".format(biases[0])
-        msg += '  '.join('  V{0}={1:.3f}'.format(ib, biases[ib]) for ib in biasIndx)
+        #biasIndx = range(1, len(biases));
+        #msg += "B={0:.3f}".format(biases[0])
+        msg += '  '.join('  B{0}={1:.3f}'.format(ib+1, B[ib]) for ib in 
+                range(len(B)))
+        msg += '  '.join('  V{0}={1:.3f}'.format(iv+1, V[iv]) for iv in 
+                range(len(V)))
         print msg,
  
     def printTrans(self, contId, T):
@@ -454,36 +476,79 @@ class HallBar(object):
         self.line.set_data(x, y)                                                
         return self.line      
 
+def plotTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
+    """Plots transmission as a function of magnetic field and gate voltage"""
+    transFile = open(transFileName, 'rb')
+    out = pickle.load(transFile) 
+
+    biases = out['bias']
+    x = biases.biasVars[X]
+    y = biases.biasVars[Y]
+    T = out['T']
+    z = T[:,int(Z[1])-1, int(Z[2])-1]
+    z = np.reshape(z, (len(y), len(x)), order='F')
+
+    x,y = np.meshgrid(x,y);
+    x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
+    fig = plt.figure()
+    axes = fig.add_subplot(111)
+    plt.pcolor(x, y, z, vmin=z.min(),vmax=z.max())
+    axes.set_xlabel('${n (cm^{-2})}$')
+    axes.set_ylabel('B (T)')
+    plt.colorbar()
+    pngFile, junk = os.path.splitext(transFileName)
+    pngFile = pngFile + ".png"
+    plt.savefig(pngFile, dpi=100)
+    plt.show()
+
+def plotTransVsBn(transFileName, T='T12'):
+    plotTrans2D(transFileName, Z=T)
+
+
 """
 The main() function.
 """
 def main(argv = None):
-    if argv is None:
-        argv = sys.argv
+    # parse commandline arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input_file", 
+            help="Parameters file (for simulation) or result file (for plotting).")
+    parser.add_argument("--clean", action="store_true", 
+            help="Does not load previous state.")
+    parser.add_argument("--calc", type=str, choices=["onetraj", "alltraj", "onetrans", "alltrans"],
+            help="Does not load previous state.")
+    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn"],
+            help="Does not load previous state.")
+    args = parser.parse_args()
 
-    if len(argv) > 1:
-        start = time.time()
+    # check if the simulation file exists
+    input_file = args.input_file;
+    if not os.path.exists(input_file):
+        raise Exception("File " + input_file + " not found")
 
-        simu_file = argv[1];
-        if not os.path.exists(simu_file):
-            raise Exception("File " + simu_file + " not found")
+    if args.plot == "TBn":
+        plotTransVsBn(input_file)
+        return 0
 
-        hallbar = HallBar(mpi.world)
-        hallbar.banner()
-        exec(open(simu_file).read(), globals(), locals())
+    # get current time, used later for obtaining elapsed time
+    start = time.time()
 
-        if not os.path.exists(hallbar.outDir):
-            os.makedirs(hallbar.outDir)
-        shutil.copy2(simu_file, hallbar.outDir+simu_file)
-        
-        elapsed = time.time() - start
-        if mpi.world.rank == 0:
-            print("\n ***  RUNTIME: " + str(int(elapsed)) + " s.")
+    # Create hallbar object, run the simulation parameters file
+    hallbar = HallBar(mpi.world)
+    hallbar.banner()
+    if args.clean:
+        hallbar.cleanRun = True
+    exec(open(input_file).read(), globals(), locals())
 
-    else:
-        usage  = " Usage: hallbar.py simu.py\n"
-        usage += "   simu.py: The python file defining the simulation parameters.\n"
-        print(usage)
+    # copy the simulation paramter file for future use
+    if not os.path.exists(hallbar.outDir):
+        os.makedirs(hallbar.outDir)
+    shutil.copy2(input_file, hallbar.outDir+input_file)
+    
+    # done, show elapsed time
+    elapsed = time.time() - start
+    if mpi.world.rank == 0:
+        print("\n ***  RUNTIME: " + str(int(elapsed)) + " s.")
 
     return 0
 
