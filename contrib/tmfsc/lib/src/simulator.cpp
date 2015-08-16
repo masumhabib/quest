@@ -12,34 +12,34 @@ Simulator::Simulator(Device::ptr dev)
 :mDev(dev) {
 }
 
-tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, double V, 
+tuple<mat, TrajectoryVect> Simulator::calcTran(double E, double B, double V, 
         int injCont, bool saveTraj){
     int nc = mDev->numConts();
     if (injCont < 0 || injCont >= nc){
         throw invalid_argument("Contact number out of bounds");
     }
 
-    mB = B;
     mE = E;
+    mB = B;
     mV = V;
 
     return calcTran(injCont, saveTraj);
 }
 
-TrajectoryVect Simulator::calcTraj(point ri, double thi, double B, 
-            double E, double V, bool saveTraj) {
+TrajectoryVect Simulator::calcTraj(point ri, double thi, double E, 
+            double B, double V, bool saveTraj) {
     if (fabs(E-V) < ETOL) {
         throw invalid_argument("EF and V are too close.");
     }
     
-    mB = B;
     mE = E;
+    mB = B;
     mV = V;
 
     return calcTraj(ri, thi, saveTraj);
 }
 
-tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E, 
+tuple<mat, TrajectoryVect> Simulator::calcTran(double E, double B, 
         const vector<double>& VG, int injCont, bool saveTraj)
 {
     int nc = mDev->numConts();
@@ -52,8 +52,8 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E,
                 "number of gates");
     }
 
-    mB = B;
     mE = E;
+    mB = B;
 
     for(int ig = 0; ig < VG.size(); ig += 1) {
         mDev->setGatePotential(ig, VG[ig]);
@@ -62,16 +62,16 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(double B, double E,
     return calcTran(injCont, saveTraj);
 }
 
-TrajectoryVect Simulator::calcTraj(point ri, double thi, double B, 
-            double E, const vector<double>& VG, bool saveTraj) {
+TrajectoryVect Simulator::calcTraj(point ri, double thi, double E, 
+            double B, const vector<double>& VG, bool saveTraj) {
  
     if (VG.size() != mDev->getNumGates()) {
         throw invalid_argument(" Number of gate voltages does not match"
                 "number of gates");
     }
 
-    mB = B;
     mE = E;
+    mB = B;
 
     for(int ig = 0; ig < VG.size(); ig += 1) {
         mDev->setGatePotential(ig, VG[ig]);

@@ -45,14 +45,14 @@ public:
     enum class ParticleType {DiracCyclotron = 0, DiracElectron = 1 };
 
     Simulator(Device::ptr dev);
-    tuple<mat, TrajectoryVect> calcTran(double B, double E, double V, 
+    tuple<mat, TrajectoryVect> calcTran(double E, double B, double V, 
             int injCont = 0, bool saveTraj = false);
-    TrajectoryVect calcTraj(point ri, double thi, double B, 
-            double E, double V, bool saveTraj = true);
-    tuple<mat, TrajectoryVect> calcTran(double B, double E, 
+    TrajectoryVect calcTraj(point ri, double thi, double E, 
+            double B, double V, bool saveTraj = true);
+    tuple<mat, TrajectoryVect> calcTran(double E, double B, 
             const vector<double>& VG, int injCont = 0, bool saveTraj = false);
-    TrajectoryVect calcTraj(point ri, double thi, double B, 
-            double E, const vector<double>& VG, bool saveTraj = true);
+    TrajectoryVect calcTraj(point ri, double thi, double E, 
+            double B, const vector<double>& VG, bool saveTraj = true);
 
     int getMaxNumStepsPerTraj() const { return mMaxStepsPerTraj; };
     void setMaxNumStepsPerTraj(int nsteps) { mMaxStepsPerTraj = nsteps; };
