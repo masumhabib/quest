@@ -10,6 +10,8 @@ from matplotlib import animation
 
 import numpy as np
 from math import pi, sqrt, sin, cos, tan
+from sets import Set
+import pickle
 import sys
 import os
 import shutil
@@ -66,8 +68,12 @@ class HallBar(object):
         self.fontSize = 20
         self.outDir = './'
         self.outFile = 'trans.npz'
+        self.tmpFile = '.tmp'
         self.mpiworld = mpiworld
         self.vF = vf
+        self.checkPointTime = 1 # time interval at which state is saved
+        self.elapsedTime = 0 # for the time keeper
+        self.cleanRun = False # If true, does not load previous state from CWD
         self.bias = Bias()
 
         self.clear()
@@ -221,37 +227,40 @@ class HallBar(object):
         """ Transmission for all B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        
         nconts = self.dev.numConts()
-        npts = self.bias.numBiases()
-        self.T = np.zeros((npts, nconts, nconts))
         
+        # load previously saved state
+        biasIndx, self.T = self._loadTransCalcState();
+        npts = len(biasIndx)
+       
         # MPI stuff
-        ncpu = self.mpiworld.size
-        icpu = self.mpiworld.rank
-        quo = npts/ncpu
-        rem = npts%ncpu
-        my_start = icpu*quo
-        if icpu < rem:
-            my_start += icpu
-        else:
-            my_start += rem
-        my_end = my_start + quo
-        if icpu < rem:
-            my_end += 1
+        myStart, myEnd = self._getMyJobList(mpi, npts)
+        myNpts = myEnd - myStart + 1
 
-        print "\nTransmission loop ..."
-        for ipt in range(my_start, my_end):
-            biases = self.bias.get(ipt)
-            self.printBias(biases, ipt)
+        print "\nCalculating transmission:",npts, "bias point(s) on",\
+            self.mpiworld.size, "CPU(s) ..."
+
+        elapsedTime = 0.0;
+        doneIndx = []
+        for ipt in range(myStart, myEnd):
+            ib = biasIndx[ipt]
+            biases = self.bias.get(ib)
+            self.printBias(biases, ib)
             if self.dev.NumGates > 0:
                 T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
                         biases[1:], False, contId)
             else:
                 T,self.trajs = self.sim.calcTrans(biases[0], self.EF, 
                         biases[1], False, contId)
-                self.printTrans(contId, T)
-            self.T[ipt,:,:] = T
+            self.printTrans(contId, T)
+            self.T[ib,:,:] = T
+            doneIndx.append(ib)
+
+            # save our state in each minute
+            elapsedTime += self._getElapsedTime()
+            if elapsedTime >= self.checkPointTime:
+                self._saveTransCalcState(doneIndx)
+                elapsedTime = 0.0
  
         if self.mpiworld.rank == 0:
             self.T = mpi.reduce(self.mpiworld, self.T, op.add, 0) 
@@ -330,7 +339,7 @@ class HallBar(object):
         if self.mpiworld.rank == 0:
             if not os.path.exists(self.outDir):
                 os.makedirs(self.outDir)
-            np.savez_compressed(self.outDir+self.outFile, T=self.T, B=self.B, V=self.V) 
+            np.savez_compressed(self.outDir+self.outFile, T=self.T, bias=self.bias) 
 
 
     def printBiasList(self):
@@ -359,11 +368,69 @@ class HallBar(object):
         print(greet())
         print("\n ***  Running semiclassical analysis for graphene ... ")
 
-#    def _getGateVoltages(self, V):
-#        VGs = []
-#        for VgRatio in self.VgRatios:
-#            VGs.append(self.VGG + V*VgRatio)
-#        return VGs
+    def _getElapsedTime(self):
+        self.elapsedTime = time.time() - self.elapsedTime
+        return self.elapsedTime
+
+    def _saveTransCalcState(self, doneIndx):
+        icpu = self.mpiworld.rank
+        ncpu = self.mpiworld.size
+        if icpu == 0 and not os.path.exists(self.outDir):
+            os.makedirs(self.outDir)
+        filename = self.outDir + self.tmpFile + str(icpu) + ".pkl"
+        pklFile = open(filename, 'wb')
+        transCalcState = {'ncpu': ncpu, 'doneIndx': doneIndx, 'T': self.T}
+        pickle.dump(transCalcState, pklFile)
+
+    def _loadTransCalcState(self):
+        npts = self.bias.numBiases()
+        nconts = self.dev.numConts()
+        self.T = np.zeros((npts, nconts, nconts))
+        biasIndx = range(npts)
+
+        if not self.cleanRun and self.mpiworld.rank == 0:
+            print "\nChecking if previous state is available ..."
+            doneSet = Set()
+            ifile = 0
+            nfiles = 1
+            while(ifile < nfiles):
+                filename = self.outDir + self.tmpFile + str(ifile) + ".pkl"
+                if os.path.exists(filename):
+                    print "Loading ... " + filename
+                    pklFile = open(filename, 'rb')
+                    transCalcState = pickle.load(pklFile)
+                    if ifile == 0:
+                        nfiles = transCalcState['ncpu']
+                    doneIndx = transCalcState['doneIndx']
+                    T = transCalcState['T']
+                    for indx in doneIndx:
+                        self.T[indx,:,:] = T[indx, :, :]
+                        doneSet.add(indx)
+                ifile += 1
+            biasIndx = []
+            for ib in range(npts):
+                if ib not in doneSet:
+                    biasIndx.append(ib)
+        mpi.broadcast(self.mpiworld, self.T, 0)
+        mpi.broadcast(self.mpiworld, biasIndx, 0)
+
+        return (biasIndx, self.T)
+
+        
+    def _getMyJobList(self, mpi, npts):
+        ncpu = mpi.size
+        icpu = mpi.rank
+        quo = npts/ncpu
+        rem = npts%ncpu
+        myStart = icpu*quo
+        if icpu < rem:
+            myStart += icpu
+        else:
+            myStart += rem
+        myEnd = myStart + quo
+        if icpu < rem:
+            myEnd += 1
+        return myStart, myEnd
 
     def _start_animation(self): 
         fig = self.fig                                                          
