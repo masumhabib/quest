@@ -105,6 +105,7 @@ class HallBar(object):
         self.dev = Device()
         # Create simulator
         self.sim = Simulator(self.dev)
+        self.T = None
  
     def setupDefaults(self):
         """Sets up a default simulation with a default goemetry."""
@@ -220,7 +221,7 @@ class HallBar(object):
         self.printBias(B, V, 0)
         print ""
         if self.dev.NumGates > 0:
-            self.trajs = self.sim.calcTraj(ri, thi, self.EF, B, V)
+            self.trajs = self.sim.calcTraj(ri, thi, self.EF, B[0], V)
         else:
             self.trajs = self.sim.calcTraj(ri, thi, self.EF, B[0], V[0])
     
@@ -232,7 +233,7 @@ class HallBar(object):
         B,V = self.bias.get(0);
         self.printBias(B, V, 0)
         if self.dev.NumGates > 0:
-            self.T,self.trajs = self.sim.calcTrans(self.EF, B, V, contId, 
+            self.T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, contId, 
                     saveTrajectory)
         else:
             self.T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], contId, 
@@ -265,7 +266,8 @@ class HallBar(object):
             B,V = self.bias.get(ib)
             self.printBias(B, V, ib)
             if self.dev.NumGates > 0:
-                T,self.trajs = self.sim.calcTrans(self.EF, B, V, False, contId)
+                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, False, 
+                        contId)
             else:
                 T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], False, 
                         contId)
