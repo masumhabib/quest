@@ -71,8 +71,8 @@ class HallBar(object):
         self.tmpFile = '.tmp'
         self.mpiworld = mpiworld
         self.vF = vf
-        self.checkPointTime = 1 # time interval at which state is saved
-        self.elapsedTime = 0 # for the time keeper
+        self.checkPointTime = 30 # time interval at which state is saved
+        self.elapsedTime = time.time() # for the time keeper
         self.cleanRun = False # If true, does not load previous state from CWD
         self.bias = Bias()
 
@@ -397,17 +397,21 @@ class HallBar(object):
                 filename = self.outDir + self.tmpFile + str(ifile) + ".pkl"
                 if os.path.exists(filename):
                     print "Loading ... " + filename
-                    pklFile = open(filename, 'rb')
-                    transCalcState = pickle.load(pklFile)
-                    if ifile == 0:
-                        nfiles = transCalcState['ncpu']
-                    doneIndx = transCalcState['doneIndx']
-                    T = transCalcState['T']
-                    for indx in doneIndx:
-                        self.T[indx,:,:] = T[indx, :, :]
-                        doneSet.add(indx)
+                    try:
+                        pklFile = open(filename, 'rb')
+                        transCalcState = pickle.load(pklFile)
+                        if ifile == 0:
+                            nfiles = transCalcState['ncpu']
+                        doneIndx = transCalcState['doneIndx']
+                        T = transCalcState['T']
+                        for indx in doneIndx:
+                            self.T[indx,:,:] = T[indx, :, :]
+                            doneSet.add(indx)
+                    except EOFError:
+                        print "Error loading file ..., skipping."
                 ifile += 1
             biasIndx = []
+            print "Out of",npts,"bias points,",len(doneSet),"are done."
             for ib in range(npts):
                 if ib not in doneSet:
                     biasIndx.append(ib)
