@@ -355,6 +355,8 @@ class HallBar(object):
 
     def save(self):
         """ Saves results """
+        if self.T is None:
+            return
         if self.mpiworld.rank == 0:
             if not os.path.exists(self.outDir):
                 os.makedirs(self.outDir)
@@ -392,6 +394,10 @@ class HallBar(object):
         print(greet())
         print("\n ***  Running semiclassical analysis for graphene ... ")
 
+    #def print(self, args):
+    #    if self.mpiworld.rank == 0:
+    #        print args
+        
     def _getElapsedTime(self):
         self.elapsedTime = time.time() - self.elapsedTime
         return self.elapsedTime
@@ -478,7 +484,7 @@ class HallBar(object):
         self.line.set_data(x, y)                                                
         return self.line      
 
-def plotTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
+def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
     """Plots transmission as a function of magnetic field and gate voltage"""
     transFile = open(transFileName, 'rb')
     out = pickle.load(transFile) 
@@ -487,16 +493,21 @@ def plotTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
     x = biases.biasVars[X]
     y = biases.biasVars[Y]
     T = out['T']
-    z = T[:,int(Z[1])-1, int(Z[2])-1]
-    z = np.reshape(z, (len(y), len(x)), order='F')
+    z = T[:,int(Z[1])-1, int(Z[2])-1] - T[:,int(Z[1])-1, 3]
 
+    print "-D-: len(x) =",len(x), "len(y) =",len(y), "len(z)", z.shape[0]
+
+    z = np.reshape(z, (len(y), len(x)), order='F')
     x,y = np.meshgrid(x,y);
-    x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
+    return x,y,z
+
+
+def plot2D(x, y, z, xlabel, ylabel, transFileName):
     fig = plt.figure()
     axes = fig.add_subplot(111)
     plt.pcolor(x, y, z, vmin=z.min(),vmax=z.max())
-    axes.set_xlabel('${n (cm^{-2})}$')
-    axes.set_ylabel('B (T)')
+    axes.set_xlabel(xlabel)
+    axes.set_ylabel(ylabel)
     plt.colorbar()
     pngFile, junk = os.path.splitext(transFileName)
     pngFile = pngFile + ".png"
@@ -504,7 +515,14 @@ def plotTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
     plt.show()
 
 def plotTransVsBn(transFileName, T='T12'):
-    plotTrans2D(transFileName, Z=T)
+    x,y,z = loadTrans2D(transFileName, Z=T)
+    x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
+    plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)')
+
+def plotTransVsV1V2(transFileName, T='T12'):
+    x,y,z = loadTrans2D(transFileName, X='V1', Y='V2', Z=T)
+    plot2D(x,y,z, 'V1 (V)', 'V2 (V)', transFileName)
+
 
 
 """
@@ -519,7 +537,7 @@ def main(argv = None):
             help="Does not load previous state.")
     parser.add_argument("--calc", type=str, choices=["onetraj", "alltraj", "onetrans", "alltrans"],
             help="Does not load previous state.")
-    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn"],
+    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn", "TV1V2"],
             help="Does not load previous state.")
     args = parser.parse_args()
 
@@ -530,6 +548,8 @@ def main(argv = None):
 
     if args.plot == "TBn":
         plotTransVsBn(input_file)
+    elif args.plot == "TV1V2":
+        plotTransVsV1V2(input_file)
         return 0
 
     # get current time, used later for obtaining elapsed time
