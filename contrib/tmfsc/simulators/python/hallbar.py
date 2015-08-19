@@ -249,7 +249,7 @@ class HallBar(object):
         nconts = self.dev.numConts()
         
         # load previously saved state
-        biasIndx, self.T = self._loadTransCalcState();
+        biasIndx, doneIndx, self.T = self._loadTransCalcState();
         npts = len(biasIndx)
        
         # MPI stuff
@@ -260,7 +260,6 @@ class HallBar(object):
             self.mpiworld.size, "CPU(s) ..."
 
         elapsedTime = 0.0;
-        doneIndx = []
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
             B,V = self.bias.get(ib)
@@ -277,7 +276,7 @@ class HallBar(object):
 
             # save our state in each minute
             elapsedTime += self._getElapsedTime()
-            if int(elapsedTime) >= self.checkPointTime:
+            if int(elapsedTime) >= self.checkPointTime or ipt == myEnd-1:
                 self._saveTransCalcState(doneIndx)
                 elapsedTime = 0.0
  
@@ -421,6 +420,7 @@ class HallBar(object):
         nconts = self.dev.numConts()
         T = np.zeros((npts, nconts, nconts))
         biasIndx = range(npts)
+        doneIndx = []
 
         if not self.cleanRun and self.mpiworld.rank == 0:
             print "\nChecking if previous state is available ..."
@@ -449,10 +449,14 @@ class HallBar(object):
             for ib in range(npts):
                 if ib not in doneSet:
                     biasIndx.append(ib)
+            doneIndx = []
+            for key in doneSet:
+                doneIndx.append(key)
         T = mpi.broadcast(self.mpiworld, T, 0)
         biasIndx = mpi.broadcast(self.mpiworld, biasIndx, 0)
+        doneIndx = mpi.broadcast(self.mpiworld, doneIndx, 0)
 
-        return (biasIndx, T)
+        return (biasIndx, doneIndx, T)
 
         
     def _getMyJobList(self, mpi, npts):
