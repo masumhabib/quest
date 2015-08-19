@@ -91,8 +91,8 @@ class HallBar(object):
         self.tmpFile = '.tmp'
         self.mpiworld = mpiworld
         self.vF = vf
-        self.checkPointTime = 30 # time interval at which state is saved
-        self.elapsedTime = time.time() # for the time keeper
+        self.checkPointTime = 10 # time interval at which state is saved
+        self.currentTime = time.time() # for the time keeper
         self.cleanRun = False # If true, does not load previous state from CWD
 
         self.bias = Bias()
@@ -277,7 +277,7 @@ class HallBar(object):
 
             # save our state in each minute
             elapsedTime += self._getElapsedTime()
-            if elapsedTime >= self.checkPointTime:
+            if int(elapsedTime) >= self.checkPointTime:
                 self._saveTransCalcState(doneIndx)
                 elapsedTime = 0.0
  
@@ -399,14 +399,18 @@ class HallBar(object):
     #        print args
         
     def _getElapsedTime(self):
-        self.elapsedTime = time.time() - self.elapsedTime
-        return self.elapsedTime
+        currentTime = time.time();
+        elapsedTime = currentTime - self.currentTime
+        self.currentTime = currentTime
+        return elapsedTime
 
     def _saveTransCalcState(self, doneIndx):
         icpu = self.mpiworld.rank
         ncpu = self.mpiworld.size
-        if icpu == 0 and not os.path.exists(self.outDir):
-            os.makedirs(self.outDir)
+        if not os.path.exists(self.outDir):
+            if icpu == 0: 
+                os.makedirs(self.outDir)
+            self.mpiworld.barrier()
         filename = self.outDir + self.tmpFile + str(icpu) + ".pkl"
         pklFile = open(filename, 'wb')
         transCalcState = {'ncpu': ncpu, 'doneIndx': doneIndx, 'T': self.T}
@@ -415,7 +419,7 @@ class HallBar(object):
     def _loadTransCalcState(self):
         npts = self.bias.numBiases()
         nconts = self.dev.numConts()
-        self.T = np.zeros((npts, nconts, nconts))
+        T = np.zeros((npts, nconts, nconts))
         biasIndx = range(npts)
 
         if not self.cleanRun and self.mpiworld.rank == 0:
@@ -435,7 +439,7 @@ class HallBar(object):
                         doneIndx = transCalcState['doneIndx']
                         T = transCalcState['T']
                         for indx in doneIndx:
-                            self.T[indx,:,:] = T[indx, :, :]
+                            T[indx,:,:] = T[indx, :, :]
                             doneSet.add(indx)
                     except EOFError:
                         print "Error loading file ..., skipping."
@@ -445,10 +449,10 @@ class HallBar(object):
             for ib in range(npts):
                 if ib not in doneSet:
                     biasIndx.append(ib)
-        mpi.broadcast(self.mpiworld, self.T, 0)
-        mpi.broadcast(self.mpiworld, biasIndx, 0)
+        T = mpi.broadcast(self.mpiworld, T, 0)
+        biasIndx = mpi.broadcast(self.mpiworld, biasIndx, 0)
 
-        return (biasIndx, self.T)
+        return (biasIndx, T)
 
         
     def _getMyJobList(self, mpi, npts):
