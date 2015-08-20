@@ -23,12 +23,12 @@ public:
     virtual const svec& getVel() const { return v; };
     virtual const svec& getAcc() const { return a; };
     virtual double getTimeStep() const { return dt; };
-    virtual void setPot(double newV) { V = newV; update(); };
-    virtual double getPot() const { return V; };
-    virtual void setMagField(const svec& newB) { B = newB; update(); };
-    virtual void setEnergy(double newEn) { En = newEn; update(); };
-    virtual double getEnergy() const { return En; };
     virtual void setTimeStep(double dt) { this->dt = dt; update(); };
+    virtual double getPot() const { return V; };
+    virtual void setPot(double newV) { V = newV; update(); };
+    virtual void setMagField(const svec& newB) { B = newB; update(); };
+    virtual double getEnergy() const { return En; };
+    virtual void setEnergy(double newEn) { En = newEn; update(); };
     
     virtual void setOccupation(double newOcc) { occupation = newOcc; };
     virtual double getOccupation() const { return occupation; };
