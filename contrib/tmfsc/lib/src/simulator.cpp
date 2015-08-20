@@ -188,7 +188,8 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 Particle::ptr transElect = electron->clone();
                 if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
                     if (debug) {
-                        std::cout << "-W- Could not cross the edge!" << std::endl;
+                        std::cout << "-W- Could not cross the edge!" 
+                            << std::endl;
                     }
                     break;
                 }
@@ -202,6 +203,11 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
+                if (debug){
+                    std::cout << "-D- V1 = " << V1 << " V2 = " << V2 
+                        << " T(E) = " << transProb 
+                        << " R(E) = " << refProb << std::endl;
+                }
 
                 // reflect?
                 if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
@@ -268,33 +274,12 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
 
 inline bool Simulator::justCrossEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) {
-//    point rf = intp;
-//    int itr = 0;
-//    while (itr < mNdtStep) {
-//        rf = electron.stepCloseToPoint(intp, CLOSENESS_TOL);
-//        if (mDev->intersects(ri, rf) == iEdge) {
-//            return true;
-//        }
-//    }
-//    
-//    return false;
     return stepNearEdge(electron, ri, intp, iEdge, CLOSENESS_TOL); 
 }
 
 inline bool Simulator::getCloseToEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) 
 {
-//    point rf = intp;
-//    int itr = 0;
-//    while (itr < mNdtStep) {
-//        rf = electron.stepCloseToPoint(rf, -CLOSENESS_TOL);
-//        if (mDev->intersects(ri, rf) == -1) {
-//            return true;
-//        }
-//        itr += 1;
-//    }
-//
-//    return false;
     return stepNearEdge(electron, ri, intp, -1, -CLOSENESS_TOL); 
 }
 

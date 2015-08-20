@@ -90,7 +90,7 @@ private:
     Device::ptr mDev; //!< Device structure.
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
-    int mNdtStep = 100; //!< maximum number of steps for determining reflection dt.
+    int mNdtStep = 10; //!< maximum number of steps for determining reflection dt.
     double mvF = 1E6/nm; //!< Fermi velocity.
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.
