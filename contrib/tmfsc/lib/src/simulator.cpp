@@ -121,21 +121,13 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
     }
 
     svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
-    if (isAutoDt) {
-        double wc = mvF*mvF*nm2*mB/(mE-mV); //cyclotron frequency
-        dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
-        if (debug && dt > 1E-3) {
-            std::cout << "-W-  Too big time step" << std::endl;
-        }
-    }
-
     shared_ptr<Particle> electron;
     if (particleType == ParticleType::DiracCyclotron) {
         electron = make_shared<DiracCyclotron>(ri, vi, mE, V, mB);
     } else {
         electron = make_shared<DiracElectron>(ri, vi, mE, V, mB);
     }
-    electron->setTimeStep(dt);
+    refreshTimeStepSize(electron);
     mElectsQu.push(electron);
 
     // loop over all the electron paths created when electrons cross 
@@ -168,7 +160,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
         if (iEdge == -1) { 
             // no crossing, continue
             electron->doStep();
-            applyPotential(electron);
+            //applyPotential(electron);
         } else { 
             // about to crossed an edge, find the intersection and probe 
             // how close we can get to the intersection point
@@ -222,6 +214,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
                     transElect->setOccupation(transProb*occu);
                     transElect->rotateVel(-thti - thf);
+                    refreshTimeStepSize(transElect);
                     mElectsQu.push(transElect);
                 }
                 break;
@@ -253,6 +246,26 @@ inline void Simulator::applyPotential(Particle::ptr electron) {
         electron->setPot(mDev->getPotAt(electron->getPos()));
     }
 }
+
+inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
+    double mydt = dt;
+    if (isAutoDt) {
+        // TODO: mB, mV and mE should not be a part of this class
+        // TODO: get these values directly from electron. 
+        double V = electron->getPot();
+        double wc = mvF*mvF*nm2*mB/(mE-V); //cyclotron frequency
+        mydt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
+        std::cout << "-D- dt=" << mydt << std::endl;
+        if (mydt > maxdt){
+            mydt = maxdt;
+            if (debug) {
+                std::cout << "-W-  Too big time step, using default" << std::endl;
+            }
+        }
+    }
+    electron->setTimeStep(mydt);
+}
+
 
 inline bool Simulator::justCrossEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) {

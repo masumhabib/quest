@@ -76,6 +76,7 @@ private:
     TrajectoryVect calcTraj(point ri, double thi, bool saveTraj);
     Trajectory calcTraj(bool saveTraj);
     inline void applyPotential(Particle::ptr electron);
+    inline void refreshTimeStepSize(Particle::ptr electron);
     inline bool justCrossEdge(Particle& electron, const point& ri, 
             const point& intp, int iEdge);
     inline bool getCloseToEdge(Particle& electron, const point& ri, 
@@ -91,8 +92,9 @@ private:
     double mvF = 1E6/nm; //!< Fermi velocity.
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.
-    double dt = 1/(1E6/nm); //!< default time step.
-    bool isAutoDt = false; //!< Switch for automatic dt calculation
+    double dt = 10/(1E6/nm); //!< default time step. 
+    double maxdt = 100/(1E6/nm); //!< maximum time step size
+    bool isAutoDt = true; //!< Switch for automatic dt calculation
     double mB = 0; //!< Magnetic field.
     double mV = 0; //!< Electric potential.
     double mE = 0; //!< Energy of electron.
