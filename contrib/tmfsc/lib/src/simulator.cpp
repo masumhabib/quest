@@ -255,7 +255,6 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
         double V = electron->getPot();
         double wc = mvF*mvF*nm2*mB/(mE-V); //cyclotron frequency
         mydt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
-        std::cout << "-D- dt=" << mydt << std::endl;
         if (mydt > maxdt){
             mydt = maxdt;
             if (debug) {
@@ -269,19 +268,47 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
 
 inline bool Simulator::justCrossEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) {
-    point rf = electron.stepCloseToPoint(intp, CLOSENESS_TOL);
-    if (mDev->intersects(ri, rf) == iEdge) {
-        return true;
-    }
-    return false;
+//    point rf = intp;
+//    int itr = 0;
+//    while (itr < mNdtStep) {
+//        rf = electron.stepCloseToPoint(intp, CLOSENESS_TOL);
+//        if (mDev->intersects(ri, rf) == iEdge) {
+//            return true;
+//        }
+//    }
+//    
+//    return false;
+    return stepNearEdge(electron, ri, intp, iEdge, CLOSENESS_TOL); 
 }
 
 inline bool Simulator::getCloseToEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) 
 {
-    point rf = electron.stepCloseToPoint(intp, -CLOSENESS_TOL);
-    if (mDev->intersects(ri, rf) != iEdge) {
-        return true;
+//    point rf = intp;
+//    int itr = 0;
+//    while (itr < mNdtStep) {
+//        rf = electron.stepCloseToPoint(rf, -CLOSENESS_TOL);
+//        if (mDev->intersects(ri, rf) == -1) {
+//            return true;
+//        }
+//        itr += 1;
+//    }
+//
+//    return false;
+    return stepNearEdge(electron, ri, intp, -1, -CLOSENESS_TOL); 
+}
+
+inline bool Simulator::stepNearEdge(Particle& electron, 
+        const point& ri, const point& intp, int iEdge, double closenessTol) 
+{
+    point rf = intp;
+    int itr = 0;
+    while (itr < mNdtStep) {
+        rf = electron.stepCloseToPoint(rf, closenessTol);
+        if (mDev->intersects(ri, rf) == iEdge) {
+            return true;
+        }
+        itr += 1;
     }
     return false;
 }

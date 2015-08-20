@@ -81,6 +81,8 @@ private:
             const point& intp, int iEdge);
     inline bool getCloseToEdge(Particle& electron, const point& ri, 
             const point& intp, int iEdge);
+    inline bool stepNearEdge(Particle& electron, const point& ri, 
+            const point& intp, int iEdge, double closenessTol);
     void resetElectBins();
     void collectElectron(const Particle &electron, int iCont);
 
@@ -88,7 +90,7 @@ private:
     Device::ptr mDev; //!< Device structure.
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
-    int mNdtStep = 1000; //!< maximum number of steps for determining reflection dt.
+    int mNdtStep = 100; //!< maximum number of steps for determining reflection dt.
     double mvF = 1E6/nm; //!< Fermi velocity.
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.
@@ -103,7 +105,7 @@ private:
     double mnElects; //!< Total electrons injected.
     queue<Particle::ptr> mElectsQu; //!< Deck of electrons.
 
-    bool debug = false; //!< Prints debug message if true.
+    bool debug = true; //!< Prints debug message if true.
 
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
     static constexpr double ETOL = 1E-6;
