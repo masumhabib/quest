@@ -332,6 +332,7 @@ class HallBar(object):
     def drawTrajectory(self, color=None, alpha=1.0, width=2.0):
         for traj in self.trajs:
             alpha = traj.occupation
+            alpha = 2
             if color is None:
                 if alpha > 1:
                     alpha = 1

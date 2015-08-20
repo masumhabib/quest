@@ -49,7 +49,7 @@ DiracCyclotron::ptr DiracCyclotron::clone() {
 
 void DiracCyclotron::update() {
     double Bz = B[2];
-    wc = speed*nm*speed*nm*Bz/(En-V); //cyclotron frequency
+    wc = speed2*nm2*Bz/(En-V); //cyclotron frequency
     dth = wc*dt; // angle step in cyclotron cycle
 }
 

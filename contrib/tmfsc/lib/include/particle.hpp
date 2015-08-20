@@ -50,6 +50,7 @@ protected:
     svec r, v;
     svec a = {0,0};
     double speed = 0;
+    double speed2 = 0; // speed^2
     double occupation = 1.0;
 
     double V = 0;

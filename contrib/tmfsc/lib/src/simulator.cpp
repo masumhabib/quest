@@ -122,7 +122,7 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
 
     svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
     if (isAutoDt) {
-        double wc = mvF*nm*mvF*nm*mB/(mE-mV); //cyclotron frequency
+        double wc = mvF*mvF*nm2*mB/(mE-mV); //cyclotron frequency
         dt = abs(2*pi/wc/mPtsPerCycle); // time step in cyclotron cycle
         if (debug && dt > 1E-3) {
             std::cout << "-W-  Too big time step" << std::endl;
