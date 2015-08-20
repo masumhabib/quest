@@ -72,7 +72,7 @@ class Bias(object):
     def __str__(self):
         msg = ""
         for key in self.biasVars:
-            msg += "\nBias List " + str(key) + ": "
+            msg += "\n\nBias List " + str(key) + ": "
             msg += '  '.join('%.3f' % bias for bias in self.biasVars[key])
         return msg
 
@@ -256,8 +256,8 @@ class HallBar(object):
         myStart, myEnd = self._getMyJobList(mpi, npts)
         myNpts = myEnd - myStart + 1
 
-        print "\nCalculating transmission:",npts, "bias point(s) on",\
-            self.mpiworld.size, "CPU(s) ..."
+        self.mprint("\nCalculating transmission:",npts, "bias point(s) on",\
+            self.mpiworld.size, "CPU(s) ...")
 
         elapsedTime = 0.0;
         for ipt in range(myStart, myEnd):
@@ -280,6 +280,7 @@ class HallBar(object):
                 self._saveTransCalcState(doneIndx)
                 elapsedTime = 0.0
  
+        self.mprint("\n\nCalculations are done, collecting data ...")
         if self.mpiworld.rank == 0:
             self.T = mpi.reduce(self.mpiworld, self.T, op.add, 0) 
         else:
@@ -365,12 +366,12 @@ class HallBar(object):
 
 
     def printBiasList(self):
-        print (self.bias)
+        self.mprint (self.bias)
 
     def printTraj(self):
-        print("")
-        print("Trajectory:")
-        print(self.trajs)
+        self.mprint("")
+        self.mprint("Trajectory:")
+        self.mprint(self.trajs)
     
     def printBias(self, B, V, ipt):
         msg = "Bias# " + str(ipt) + ": "
@@ -380,22 +381,26 @@ class HallBar(object):
                 range(len(B)))
         msg += '  '.join('  V{0}={1:.3f}'.format(iv+1, V[iv]) for iv in 
                 range(len(V)))
-        print msg,
+        self.mprint (msg)
  
     def printTrans(self, contId, T):
         msg = " ==>"
         for ic in range(self.dev.numConts()):
             if ic != contId:
                 msg += '  T{0}{1}={2:.3f}'.format(contId, ic, T[contId][ic])
-        print (msg)
+        self.mprint (msg + "\n")
  
     def banner(self):
-        print(greet())
-        print("\n ***  Running semiclassical analysis for graphene ... ")
+        self.mprint(greet())
+        self.mprint("\n\n ***  Running semiclassical analysis for graphene ... \n")
 
     #def print(self, args):
     #    if self.mpiworld.rank == 0:
     #        print args
+    def mprint(self, *args):
+        if self.mpiworld.rank == 0:
+            for arg in args:
+                print arg,
         
     def _getElapsedTime(self):
         currentTime = time.time();
@@ -423,7 +428,7 @@ class HallBar(object):
         doneIndx = []
 
         if not self.cleanRun and self.mpiworld.rank == 0:
-            print "\nChecking if previous state is available ..."
+            print "\n\nChecking if previous state is available ..."
             doneSet = Set()
             ifile = 0
             nfiles = 1
