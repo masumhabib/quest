@@ -129,28 +129,24 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
 			thti += pi;
 		}
 	}
+	// correcting theta incidence due to vector complication
 	else{
 		thti = atan2( NormVec[1], NormVec[0]) + incidentAbsoluteAngle;
 	}
-	// correcting theta incidence due to vector complication
-	double angle_critical = std::asin( abs(En+V2) / abs(En+V1) );
-	if( abs(En+V2) / abs(En/V1) > 1 ){
-		angle_critical = pi/2;
-	}
+
+	// handle the critical angle case
+	double sininv = abs((En+V1)/(En+V2)) * sin(thti);
+	if (abs(sininv) > 1) {
+	    return make_tuple(std::nan("NaN"), thti, 0.0, 1.0);
+    }
+
 	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
-	//TODO FIX for nn'
-	if ( !( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+    // if pn case, calculate exponential term and apply negative refraction
+	double t_graded = 1.0;
+	if ( !( (En > -V1 && En < -V2) || (En > -V2 && En < -V1) ) ){
 		th = -th;
-	}
-	if( abs( thti ) < angle_critical ){
-			TransProb = std::cos( thti )   *   std::cos( th ) \
-						/   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
-	}
-	else{
-			TransProb = 1E-8;
-	}
-	double t_graded;
-    if ( ( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
+	} else {
+	    //FIXME: REMOVE hardcoded vF, else, it is gonna cause major headache
     	double vF = 1E6;
     	double kf1, ky, d_eff, S;
     	kf1 = e * abs(En - (-V1)) / (hbar * vF);
@@ -159,10 +155,10 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
     	S = pi * (d_eff/2) * abs(ky);
     	t_graded = std::exp( -2*S );
     }
-    else{
-    	t_graded = 1.0;
-    }
-    TransProb *= t_graded;
+
+	TransProb = t_graded*std::cos( thti )*std::cos( th ) 
+	    /   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
+
 //    if( En+V2 > En+V1 )
 //    {
 //    	//TODO
