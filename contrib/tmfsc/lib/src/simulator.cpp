@@ -210,14 +210,14 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 //}
 
                 // reflect?
-                if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
+                if (refProb > mReflectionTol && occu > mOccupationTol) {
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
                     mElectsQu.push(refElect);
                 }
                 // transmit?
-                if (transProb > TRANSMISSION_TOL && occu > OCCUPATION_TOL) {
+                if (transProb > mTransmissionTol && occu > mOccupationTol) {
                     transElect->setOccupation(transProb*occu);
                     transElect->rotateVel(-thti - thf);
                     refreshTimeStepSize(transElect);
@@ -274,13 +274,13 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
 
 inline bool Simulator::justCrossEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) {
-    return stepNearEdge(electron, ri, intp, iEdge, CLOSENESS_TOL); 
+    return stepNearEdge(electron, ri, intp, iEdge, mClosenessTol); 
 }
 
 inline bool Simulator::getCloseToEdge(Particle& electron, 
         const point& ri, const point& intp, int iEdge) 
 {
-    return stepNearEdge(electron, ri, intp, -1, -CLOSENESS_TOL); 
+    return stepNearEdge(electron, ri, intp, -1, -mClosenessTol); 
 }
 
 inline bool Simulator::stepNearEdge(Particle& electron, 

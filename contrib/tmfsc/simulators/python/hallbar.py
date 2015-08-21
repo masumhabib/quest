@@ -173,8 +173,25 @@ class HallBar(object):
         
     def setSplitLen(self, len):
         self.dev.setSplitLen(len)
+
     def getSplitLen(self):
         return self.dev.getSplitLen()
+
+    def enableDirectCalc(self): 
+        self.sim.ParticleType = 1
+
+    def enableCyclotronCalc(self): 
+        self.sim.ParticleType = 0
+
+    def numPointsPerCycle(self, npts):
+        self.sim.NumPointsPerCycle = npts
+        
+    @property
+    def OccupationTol(self):
+        return self.sim.OccupationTol
+    @OccupationTol.setter
+    def OccupationTol(self, tol):
+        self.sim.OccupationTol = tol
 
     def setupBias(self, B, V, m = 1, singleResonance = True, 
             Bmax = None, NB = 1, Vmax = None, NV = 1):
@@ -199,15 +216,6 @@ class HallBar(object):
         self.bias.append(BB, 'B')
         self.bias.append(VV, 'V')
  
-    def enableDirectCalc(self): 
-        self.sim.ParticleType = 1
-
-    def enableCyclotronCalc(self): 
-        self.sim.ParticleType = 0
-
-    def numPointsPerCycle(self, npts):
-        self.sim.NumPointsPerCycle = npts
-
     def calcSingleTraject(self, shiftxy=(0,0), shiftth=0, contId=0):
         """ Calculate trajectory for single injection event from the
             midpoint of contId"""

@@ -97,6 +97,9 @@ void export_Simulator(){
                 &PySimulator::setNumPointsPerCycle)
         .add_property("TimeStep", &PySimulator::getTimeStep, 
                 &PySimulator::setTimeStep)
+        .add_property("OccupationTol", &PySimulator::getOccupationTol, 
+                &PySimulator::setOccupationTol)
+
     ;
 }
 

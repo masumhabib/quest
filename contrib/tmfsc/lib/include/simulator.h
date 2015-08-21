@@ -25,6 +25,8 @@ using std::tie;
 using std::make_shared;
 using std::shared_ptr;
 using std::queue;
+using std::cout;
+using std::endl;
 using maths::armadillo::mat;
 using maths::armadillo::zeros;
 using maths::constants::pi;
@@ -70,6 +72,8 @@ public:
     void setParticleType(ParticleType type) { particleType = type; };
     double getTimeStep() const { return dt; };
     void setTimeStep(double dt) { isAutoDt = false; this->dt = dt; };
+    double getOccupationTol() const { return mOccupationTol; };
+    void setOccupationTol(double tol) { mOccupationTol = tol; };
 
 private:
     tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
@@ -87,7 +91,6 @@ private:
     void collectElectron(const Particle &electron, int iCont);
 
 private:
-    Device::ptr mDev; //!< Device structure.
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
     int mNdtStep = 10; //!< maximum number of steps for determining reflection dt.
@@ -101,18 +104,20 @@ private:
     double mV = 0; //!< Electric potential.
     double mE = 0; //!< Energy of electron.
 
+    bool debug = false; //!< Prints debug message if true.
+
+    double mReflectionTol = 1E-4;
+    double mTransmissionTol = 1E-4;
+    double mOccupationTol = 1E-9;
+    double mClosenessTol = 1E-2;
+
+    static constexpr double ETOL = 1E-6;
+
+    Device::ptr mDev; //!< Device structure.
     vector<double> mElectBins; //!< Electron bins.
     double mnElects; //!< Total electrons injected.
     queue<Particle::ptr> mElectsQu; //!< Deck of electrons.
-
-    bool debug = false; //!< Prints debug message if true.
-
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
-    static constexpr double ETOL = 1E-6;
-    static constexpr double REFLECTION_TOL = 1E-4;
-    static constexpr double TRANSMISSION_TOL = 1E-4;
-    static constexpr double OCCUPATION_TOL = 1E-9;
-    static constexpr double CLOSENESS_TOL = 1E-2;
 };
 
 }}
