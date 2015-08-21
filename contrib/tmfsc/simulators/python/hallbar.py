@@ -413,6 +413,7 @@ class HallBar(object):
         icpu = self.mpiworld.rank
         ncpu = self.mpiworld.size
         if not os.path.exists(self.outDir):
+            self.mpiworld.barrier()
             if icpu == 0: 
                 os.makedirs(self.outDir)
             self.mpiworld.barrier()
