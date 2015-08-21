@@ -203,11 +203,11 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
-                if (debug){
-                    std::cout << "-D- V1 = " << V1 << " V2 = " << V2 
-                        << " T(E) = " << transProb 
-                        << " R(E) = " << refProb << std::endl;
-                }
+                //if (debug){
+                //    std::cout << "-D- V1 = " << V1 << " V2 = " << V2 
+                //        << " T(E) = " << transProb 
+                //        << " R(E) = " << refProb << std::endl;
+                //}
 
                 // reflect?
                 if (refProb > REFLECTION_TOL && occu > OCCUPATION_TOL) {
