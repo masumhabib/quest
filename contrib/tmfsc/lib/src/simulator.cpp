@@ -161,13 +161,16 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
             // no crossing, continue
             electron->doStep();
             //applyPotential(electron);
+        } else if (mDev->isAbsorbEdge(iEdge)) {
+            collectElectron(*electron, mDev->edgeToContIndx(iEdge));
+            break;
         } else { 
             // about to crossed an edge, find the intersection and probe 
             // how close we can get to the intersection point
             point intp = mDev->intersection(iEdge, ri, rf);
             if (!getCloseToEdge(*electron, ri, intp, iEdge)){
                 if (debug) {
-                    std::cout << "-W- Could not get close to edge!" << std::endl;
+                    cout << "-W- Could not get close to edge " << iEdge << endl;
                 }
                 break;
             }
@@ -188,8 +191,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 Particle::ptr transElect = electron->clone();
                 if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
                     if (debug) {
-                        std::cout << "-W- Could not cross the edge!" 
-                            << std::endl;
+                        cout << "-W- Could not cross the edge " << iEdge << endl;
                     }
                     break;
                 }
@@ -224,10 +226,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                     mElectsQu.push(transElect);
                 }
                 break;
-            } else if (mDev->isAbsorbEdge(iEdge)) {
-                collectElectron(*electron, mDev->edgeToContIndx(iEdge));
-                break;
-            }
+            } 
         }    
 
         // reset ourselves, ready for the next step

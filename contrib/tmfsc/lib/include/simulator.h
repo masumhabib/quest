@@ -104,7 +104,7 @@ private:
     double mV = 0; //!< Electric potential.
     double mE = 0; //!< Energy of electron.
 
-    bool debug = false; //!< Prints debug message if true.
+    bool debug = true; //!< Prints debug message if true.
 
     double mReflectionTol = 1E-4;
     double mTransmissionTol = 1E-4;
