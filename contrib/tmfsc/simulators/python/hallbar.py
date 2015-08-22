@@ -338,18 +338,19 @@ class HallBar(object):
 
 
     def drawTrajectory(self, alpha=None, color=None, width=2.0):
-        if alpha is None:
-            alpha = traj.occupation
-
         for traj in self.trajs:
-            if alpha > 1:
-                alpha = 1
+            if alpha is None:
+                alpha2 = traj.occupation
+            else:
+                alpha2 = alpha
+            if alpha2 > 1:
+                alpha2 = 1
             if color is None:
                 self.axes.plot(traj.path[:, 0], traj.path[:, 1],
-                    linewidth=width, alpha=alpha)
+                    linewidth=width, alpha=alpha2)
             else:
                  self.axes.plot(traj.path[:, 0], self.traj.path[:, 1], 
-                         linewidth=width, alpha=alpha, color=color)
+                         linewidth=width, alpha=alpha2, color=color)
  
     def animate(self, filename=None):
 	    self._start_animation()
