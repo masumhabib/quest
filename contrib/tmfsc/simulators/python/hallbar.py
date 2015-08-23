@@ -525,7 +525,7 @@ def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
     x = biases.biasVars[X]
     y = biases.biasVars[Y]
     T = out['T']
-    z = T[:,int(Z[1])-1, int(Z[2])-1] - T[:,int(Z[1])-1, 3]
+    z = T[:,int(Z[1])-1, int(Z[2])-1] - 0*T[:,int(Z[1])-1, 3]
 
     print "-D-: len(x) =",len(x), "len(y) =",len(y), "len(z)", z.shape[0]
 
@@ -546,10 +546,20 @@ def plot2D(x, y, z, xlabel, ylabel, transFileName):
     plt.savefig(pngFile, dpi=100)
     plt.show()
 
-def plotTransVsBn(transFileName, T='T12'):
+def plotTransVsBn1(transFileName, T='T12'):
     x,y,z = loadTrans2D(transFileName, Z=T)
     x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
     plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)', transFileName)
+
+def plotTransVsBn2(transFileName, T='T12'):
+    x,y,z = loadTrans2D(transFileName, X='V2', Z=T)
+    x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
+    plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)', transFileName)
+
+def plotTransVsBV2(transFileName, T='T12'):
+    x,y,z = loadTrans2D(transFileName, X='V2', Z=T)
+    #x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
+    plot2D(x,y,z, '${V2 (V)}$', 'B (T)', transFileName)
 
 def plotTransVsV1V2(transFileName, T='T12'):
     x,y,z = loadTrans2D(transFileName, X='V1', Y='V2', Z=T)
@@ -569,7 +579,8 @@ def main(argv = None):
             help="Does not load previous state.")
     parser.add_argument("--calc", type=str, choices=["onetraj", "alltraj", "onetrans", "alltrans"],
             help="Does not load previous state.")
-    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn", "TV1V2"],
+    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn1", 
+            "TBn2", "TBV2", "TV1V2"],
             help="Does not load previous state.")
     args = parser.parse_args()
 
@@ -578,8 +589,12 @@ def main(argv = None):
     if not os.path.exists(input_file):
         raise Exception("File " + input_file + " not found")
 
-    if args.plot == "TBn":
-        plotTransVsBn(input_file)
+    if args.plot == "TBn1":
+        plotTransVsBn1(input_file)
+    elif args.plot == "TBn2":
+        plotTransVsBn2(input_file)
+    elif args.plot == "TBV2":
+        plotTransVsBV2(input_file)
     elif args.plot == "TV1V2":
         plotTransVsV1V2(input_file)
         return 0
