@@ -2,6 +2,13 @@
 #include "segment.h"
 namespace qmicad { namespace tmfsc {
 
+
+inline double distance(const point& p, const point& q){
+    double dx = p[0] - q[0], dy = p[1] - q[1];
+    return sqrt(dx*dx + dy*dy);
+}
+
+
 /** Creates a line segment joining (p,q) also provides an alternet 
  * representation in terms of co-efficients a,b and c */
 Segment::Segment(const point &p, const point &q) 

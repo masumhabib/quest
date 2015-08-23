@@ -23,6 +23,8 @@ using std::max;
 using std::min;
 using std::abs;
 
+inline double distance(const point& p, const point& q);
+
 class Segment : public Printable {
 public:
     Segment(const point &p, const point &q);
