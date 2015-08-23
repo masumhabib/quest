@@ -23,7 +23,12 @@ using std::max;
 using std::min;
 using std::abs;
 
-inline double distance(const point& p, const point& q);
+inline 
+double distance(const point& p, const point& q){
+    double dx = p[0] - q[0], dy = p[1] - q[1];
+    return sqrt(dx*dx + dy*dy);
+}
+
 
 class Segment : public Printable {
 public:
