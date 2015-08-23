@@ -39,7 +39,8 @@ public:
     virtual void reflect(const svec& normal);
     virtual void rotateVel(double thti); //!< Rotate the Particle by thti
     virtual double timeToReach(const svec& pos);
-    virtual const svec& stepCloseToPoint(const svec& pos, double distanceTol);
+    virtual const svec& stepCloseToPoint(const svec& pos, 
+            double distanceTol = 0.0);
 
 protected:
     virtual void update() = 0;
