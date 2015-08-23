@@ -81,19 +81,21 @@ private:
     Trajectory calcTraj(bool saveTraj);
     inline void applyPotential(Particle::ptr electron);
     inline void refreshTimeStepSize(Particle::ptr electron);
-    inline bool justCrossEdge(Particle& electron, const point& ri, 
-            const point& intp, int iEdge);
-    inline bool getCloseToEdge(Particle& electron, const point& ri, 
-            const point& intp, int iEdge);
-    inline bool stepNearEdge(Particle& electron, const point& ri, 
-            const point& intp, int iEdge, double closenessTol);
+    inline bool justCrossEdge(Particle& electron, point ri, point rf, 
+            int iEdge);
+    inline bool getCloseToEdge(Particle& electron, point ri, point rf, 
+            int iEdge);
+    inline bool stepNearEdge(Particle& electron, point& ri, point& rf, 
+            int iEdge, bool doCross);
+    inline bool stepNearEdge2(Particle& electron, point& ri, point& rf, 
+            int iEdge, bool doCross);
     void resetElectBins();
     void collectElectron(const Particle &electron, int iCont);
 
 private:
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
-    int mNdtStep = 10; //!< maximum number of steps for determining reflection dt.
+    int mNdtStep = 5; //!< maximum number of steps for determining reflection dt.
     double mvF = 1E6/nm; //!< Fermi velocity.
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.

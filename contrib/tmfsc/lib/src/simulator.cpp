@@ -143,7 +143,6 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
 Trajectory Simulator::calcTraj(bool saveTraj) {
     Particle::ptr electron = mElectsQu.front();
     point ri = electron->getPos();
-    svec vi = electron->getVel();
     svec rf = ri;
 
     Trajectory traj;
@@ -160,15 +159,13 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
         if (iEdge == -1) { 
             // no crossing, continue
             electron->doStep();
-            //applyPotential(electron);
         } else if (mDev->isAbsorbEdge(iEdge)) {
             collectElectron(*electron, mDev->edgeToContIndx(iEdge));
             break;
         } else { 
             // about to crossed an edge, find the intersection and probe 
             // how close we can get to the intersection point
-            point intp = mDev->intersection(iEdge, ri, rf);
-            if (!getCloseToEdge(*electron, ri, intp, iEdge)){
+            if (!getCloseToEdge(*electron, ri, rf, iEdge)){
                 if (debug) {
                     cout << "-W- Could not get close to edge " << iEdge << endl;
                 }
@@ -177,19 +174,18 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
             // we are now close enough, now step to the point
             electron->doStep();
             // update our location
-            rf = electron->getPos();
-            ri = rf;
-
+            svec r = electron->getPos();
             if (mDev->isReflectEdge(iEdge)) {
                 // we were about to cross a reflecting edge, NO WAY,
                 // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
+                rf = r;
             } else if (mDev->isTransmitEdge(iEdge)) {
                 // about to cross a transmitting edge/gate boundary, let's first
                 // calculate what would be transmission probability. To do so,
                 // first just cross the boundary and get the potential.
                 Particle::ptr transElect = electron->clone();
-                if(!justCrossEdge(*transElect, ri, intp, iEdge)) {
+                if(!justCrossEdge(*transElect, r, rf, iEdge)) {
                     if (debug) {
                         cout << "-W- Could not cross the edge " << iEdge << endl;
                     }
@@ -225,6 +221,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                     refreshTimeStepSize(transElect);
                     mElectsQu.push(transElect);
                 }
+                rf = r;
                 break;
             } 
         }    
@@ -263,7 +260,8 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
         if (mydt > maxdt){
             mydt = maxdt;
             if (debug) {
-                std::cout << "-W-  Too big time step, using default" << std::endl;
+                std::cout << "-W-  Too big time step, using default" 
+                    << std::endl;
             }
         }
     }
@@ -271,25 +269,58 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
 }
 
 
-inline bool Simulator::justCrossEdge(Particle& electron, 
-        const point& ri, const point& intp, int iEdge) {
-    return stepNearEdge(electron, ri, intp, iEdge, mClosenessTol); 
+inline bool Simulator::justCrossEdge(Particle& electron, point ri, point rf, 
+        int iEdge) {
+    return stepNearEdge(electron, ri, rf, iEdge, true); 
 }
 
-inline bool Simulator::getCloseToEdge(Particle& electron, 
-        const point& ri, const point& intp, int iEdge) 
-{
-    return stepNearEdge(electron, ri, intp, -1, -mClosenessTol); 
+inline bool Simulator::getCloseToEdge(Particle& electron, point ri, point rf, 
+        int iEdge) {
+    return stepNearEdge(electron, ri, rf, iEdge, false); 
 }
 
-inline bool Simulator::stepNearEdge(Particle& electron, 
-        const point& ri, const point& intp, int iEdge, double closenessTol) 
-{
-    point rf = intp;
+inline bool Simulator::stepNearEdge(Particle& electron, point& ri, point& rf, 
+        int iEdge, bool doCross) {
     int itr = 0;
+    double dl = doCross ? mClosenessTol/10 : -mClosenessTol/10;
     while (itr < mNdtStep) {
-        rf = electron.stepCloseToPoint(rf, closenessTol);
-        if (mDev->intersects(ri, rf) == iEdge) {
+        point intp = mDev->intersection(iEdge, ri, rf);
+        point r = electron.stepCloseToPoint(intp, dl);
+        svec dr = r - intp;
+
+        double d = distance(r, intp);
+        if (mDev->intersects(iEdge, r, rf)){
+            // did not cross
+            if (!doCross && d < mClosenessTol){
+                return true;
+            }
+            electron.doStep();
+            ri = r;
+            //rf = electron.stepCloseToPoint(intp - dr);
+
+        } else {
+            //did cross
+            if (doCross && d < mClosenessTol){
+                return true;
+            }
+            rf = r;
+            //ri = electron.stepCloseToPoint(intp - dr);
+        }
+        itr += 1;
+    }
+    return false;
+}
+
+inline bool Simulator::stepNearEdge2(Particle& electron, point& ri, point& rf, 
+        int iEdge, bool doCross) {
+    //point rf = intp;
+    int itr = 0;
+    double dl = doCross ? mClosenessTol : -mClosenessTol;
+    point intp = mDev->intersection(iEdge, ri, rf);
+    iEdge = doCross ? iEdge : -1;
+    while (itr < mNdtStep) {
+        intp = electron.stepCloseToPoint(intp, dl);
+        if (mDev->intersects(ri, intp) == iEdge) {
             return true;
         }
         itr += 1;
