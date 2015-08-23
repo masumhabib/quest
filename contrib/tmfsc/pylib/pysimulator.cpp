@@ -99,6 +99,8 @@ void export_Simulator(){
                 &PySimulator::setTimeStep)
         .add_property("OccupationTol", &PySimulator::getOccupationTol, 
                 &PySimulator::setOccupationTol)
+        .add_property("DebugLevel", &PySimulator::getDebugLvl,
+                &PySimulator::setDebugLvl)
 
     ;
 }

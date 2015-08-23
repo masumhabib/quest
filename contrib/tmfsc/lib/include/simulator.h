@@ -75,6 +75,9 @@ public:
     double getOccupationTol() const { return mOccupationTol; };
     void setOccupationTol(double tol) { mOccupationTol = tol; };
 
+    void setDebugLvl(unsigned long debugLevel) { debug = (debugLevel > 0); };
+    unsigned long getDebugLvl() { return debug ? 1L : 0L; };
+
 private:
     tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
     TrajectoryVect calcTraj(point ri, double thi, bool saveTraj);
@@ -106,7 +109,7 @@ private:
     double mV = 0; //!< Electric potential.
     double mE = 0; //!< Energy of electron.
 
-    bool debug = true; //!< Prints debug message if true.
+    bool debug = false; //!< Prints debug message if true.
 
     double mReflectionTol = 1E-4;
     double mTransmissionTol = 1E-4;

@@ -193,6 +193,13 @@ class HallBar(object):
     def OccupationTol(self, tol):
         self.sim.OccupationTol = tol
 
+    @property
+    def DebugLevel(self):
+        return self.sim.DebugLevel
+    @DebugLevel.setter
+    def DebugLevel(self, level):
+        self.sim.DebugLevel = level
+
     def setupBias(self, B, V, m = 1, singleResonance = True, 
             Bmax = None, NB = 1, Vmax = None, NV = 1):
         """ Sets up the bias points """
@@ -542,7 +549,7 @@ def plot2D(x, y, z, xlabel, ylabel, transFileName):
 def plotTransVsBn(transFileName, T='T12'):
     x,y,z = loadTrans2D(transFileName, Z=T)
     x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
-    plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)')
+    plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)', transFileName)
 
 def plotTransVsV1V2(transFileName, T='T12'):
     x,y,z = loadTrans2D(transFileName, X='V1', Y='V2', Z=T)
