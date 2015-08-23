@@ -56,11 +56,10 @@ void Device::edgeType(int iEdge, int type) {
 }
 
 /** Returns the edge index that intersects the line segment defined by
- *  p and q. p and q are in angstrom. */
-int Device::intersects(point p, point q) {
-    // convert to angstrom
+ *  p and q. */
+int Device::intersects(const point &p, const point &q) {
     for (int i = 0; i < mEdgs.size(); i += 1) {
-        if (mEdgs[i].intersects(p, q)) {
+        if (intersects(i, p, q)) {
             return i;
         }
     }
@@ -68,9 +67,14 @@ int Device::intersects(point p, point q) {
     return -1;
 }
 
+/** Returns true if edge iEdge intersects the segment pq. */
+inline int Device::intersects(int iEdge, const point &p, const point &q) {
+    return mEdgs[iEdge].intersects(p, q);
+}
+
 /** Returns intersection point between and edge and the line segment defined 
  * by p and q. p and q are in angstrom. */
-point Device::intersection(int iEdge, point p, point q) {
+point Device::intersection(int iEdge, const point &p, const point &q) {
     // convert to angstrom
     return mEdgs[iEdge].intersection(p, q);
 }
