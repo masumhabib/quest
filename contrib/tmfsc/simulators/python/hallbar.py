@@ -270,22 +270,27 @@ class HallBar(object):
         # MPI stuff
         myStart, myEnd = self._getMyJobList(mpi, npts)
         myNpts = myEnd - myStart + 1
+        cpuid = self.mpiworld.rank
+        ncpus = self.mpiworld.size
 
         self.mprint("\nCalculating transmission:",npts, "bias point(s) on",\
-            self.mpiworld.size, "CPU(s) ...")
+            ncpus, "CPU(s) ...")
+        self.mprint("\n Running: ")
 
-        elapsedTime = 0.0;
+        elapsedTime = 0.0
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
             B,V = self.bias.get(ib)
-            self.printBias(B, V, ib)
+            if ncpus == 1:
+                self.printBias(B, V, ib)
             if self.dev.NumGates > 0:
                 T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, False, 
                         contId)
             else:
                 T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], False, 
                         contId)
-            self.printTrans(contId, T)
+            if (ncpus == 1):
+                self.printTrans(contId, T)
             self.T[ib,:,:] = T
             doneIndx.append(ib)
 
@@ -294,9 +299,12 @@ class HallBar(object):
             if int(elapsedTime) >= self.checkPointTime or ipt == myEnd-1:
                 self._saveTransCalcState(doneIndx)
                 elapsedTime = 0.0
- 
+                sys.stdout.write('.')
+        #print "Task", cpuid, ": DONE"
+        #print "Waiting for others ..."
+        self.mpiworld.barrier()
         self.mprint("\n\nCalculations are done, collecting data ...")
-        if self.mpiworld.rank == 0:
+        if cpuid == 0:
             self.T = mpi.reduce(self.mpiworld, self.T, op.add, 0) 
         else:
             mpi.reduce(self.mpiworld, self.T, op.add, 0) 
