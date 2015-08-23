@@ -68,7 +68,7 @@ int Device::intersects(const point &p, const point &q) {
 }
 
 /** Returns true if edge iEdge intersects the segment pq. */
-inline int Device::intersects(int iEdge, const point &p, const point &q) {
+int Device::intersects(int iEdge, const point &p, const point &q) {
     return mEdgs[iEdge].intersects(p, q);
 }
 

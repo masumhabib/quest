@@ -69,7 +69,7 @@ public:
     int addEdge(int ipt1, int ipt2, int type = Edge::EDGE_REFLECT);
     void edgeType(int iEdge, int type);
     int intersects(const point &p, const point &q);
-    inline int intersects(int iEdge, const point &p, const point &q);
+    int intersects(int iEdge, const point &p, const point &q);
     point intersection(int iEdge, const point &p, const point &q);
     vector<point> createPointsOnCont(int iCnt, int n);
     vector<point> createPointsOnCont(int iCnt, double dl);
