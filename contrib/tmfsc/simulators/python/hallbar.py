@@ -275,8 +275,13 @@ class HallBar(object):
 
         self.mprint("\nCalculating transmission:",npts, "bias point(s) on",\
             ncpus, "CPU(s) ...")
-        self.mprint("\n Running: ")
+        if ncpus > 1:
+            self.mprint("\n Running: ")
 
+        ndots = 60
+        ddot = ndots*1.0/npts
+        idot = 0
+        
         elapsedTime = 0.0
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
@@ -299,7 +304,12 @@ class HallBar(object):
             if int(elapsedTime) >= self.checkPointTime or ipt == myEnd-1:
                 self._saveTransCalcState(doneIndx)
                 elapsedTime = 0.0
-                sys.stdout.write('.')
+            # progressbar
+            if idot > 1:
+                idot -= 1
+                if ncpus > 1:
+                    sys.stdout.write('.')
+            idot += ddot
         #print "Task", cpuid, ": DONE"
         #print "Waiting for others ..."
         self.mpiworld.barrier()
@@ -524,7 +534,7 @@ class HallBar(object):
         self.line.set_data(x, y)                                                
         return self.line      
 
-def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
+def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12', Z2=None):
     """Plots transmission as a function of magnetic field and gate voltage"""
     transFile = open(transFileName, 'rb')
     out = pickle.load(transFile) 
@@ -533,7 +543,9 @@ def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12'):
     x = biases.biasVars[X]
     y = biases.biasVars[Y]
     T = out['T']
-    z = T[:,int(Z[1])-1, int(Z[2])-1] - 0*T[:,int(Z[1])-1, 3]
+    z = T[:,int(Z[1])-1, int(Z[2])-1]
+    if Z2 is not None:
+        z = z - T[:,int(Z2[1])-1, int(Z2[2])-1]
 
     print "-D-: len(x) =",len(x), "len(y) =",len(y), "len(z)", z.shape[0]
 
@@ -564,8 +576,8 @@ def plotTransVsBn2(transFileName, T='T12'):
     x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
     plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)', transFileName)
 
-def plotTransVsBV2(transFileName, T='T12'):
-    x,y,z = loadTrans2D(transFileName, X='V2', Z=T)
+def plotTransVsBV2(transFileName, T='T12', T2=None):
+    x,y,z = loadTrans2D(transFileName, X='V2', Z=T, Z2=T2)
     #x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
     plot2D(x,y,z, '${V2 (V)}$', 'B (T)', transFileName)
 
@@ -588,7 +600,7 @@ def main(argv = None):
     parser.add_argument("--calc", type=str, choices=["onetraj", "alltraj", "onetrans", "alltrans"],
             help="Does not load previous state.")
     parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn1", 
-            "TBn2", "TBV2", "TV1V2"],
+            "TBn2", "TBV2", "T2BV2", "TV1V2"],
             help="Does not load previous state.")
     args = parser.parse_args()
 
@@ -603,6 +615,8 @@ def main(argv = None):
         plotTransVsBn2(input_file)
     elif args.plot == "TBV2":
         plotTransVsBV2(input_file)
+    elif args.plot == "T2BV2":
+        plotTransVsBV2(input_file, T='T12', T2='T14')
     elif args.plot == "TV1V2":
         plotTransVsV1V2(input_file)
         return 0
