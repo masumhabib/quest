@@ -94,6 +94,7 @@ class HallBar(object):
         self.checkPointTime = 10 # time interval at which state is saved
         self.currentTime = time.time() # for the time keeper
         self.cleanRun = False # If true, does not load previous state from CWD
+        self.verbosity = 0
 
         self.bias = Bias()
         self.clear()
@@ -275,7 +276,7 @@ class HallBar(object):
 
         self.mprint("\nCalculating transmission:",npts, "bias point(s) on",\
             ncpus, "CPU(s) ...")
-        if ncpus > 1:
+        if self.verbosity == 0:
             self.mprint("\n Running: ")
 
         ndots = 60
@@ -286,7 +287,7 @@ class HallBar(object):
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
             B,V = self.bias.get(ib)
-            if ncpus == 1:
+            if self.verbosity == 1:
                 self.printBias(B, V, ib)
             if self.dev.NumGates > 0:
                 T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, False, 
@@ -294,7 +295,7 @@ class HallBar(object):
             else:
                 T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], False, 
                         contId)
-            if (ncpus == 1):
+            if self.verbosity == 1:
                 self.printTrans(contId, T)
             self.T[ib,:,:] = T
             doneIndx.append(ib)
@@ -307,7 +308,7 @@ class HallBar(object):
             # progressbar
             if idot > 1:
                 idot -= 1
-                if ncpus > 1:
+                if self.verbosity == 0:
                     sys.stdout.write('.')
             idot += ddot
         #print "Task", cpuid, ": DONE"
@@ -417,14 +418,16 @@ class HallBar(object):
                 range(len(B)))
         msg += '  '.join('  V{0}={1:.3f}'.format(iv+1, V[iv]) for iv in 
                 range(len(V)))
-        self.mprint (msg)
+        #self.mprint (msg)
+        print msg,
  
     def printTrans(self, contId, T):
         msg = " ==>"
         for ic in range(self.dev.numConts()):
             if ic != contId:
                 msg += '  T{0}{1}={2:.3f}'.format(contId, ic, T[contId][ic])
-        self.mprint (msg + "\n")
+        #self.mprint (msg + "\n")
+        print (msg)
  
     def banner(self):
         self.mprint(greet())
@@ -566,6 +569,17 @@ def plot2D(x, y, z, xlabel, ylabel, transFileName):
     plt.savefig(pngFile, dpi=100)
     plt.show()
 
+def plot(x, y, xlabel, ylabel, transFileName):
+    fig = plt.figure()
+    axes = fig.add_subplot(111)
+    plt.plot(x, y)
+    axes.set_xlabel(xlabel)
+    axes.set_ylabel(ylabel)
+    pngFile, junk = os.path.splitext(transFileName)
+    pngFile = pngFile + ".png"
+    plt.savefig(pngFile, dpi=100)
+    plt.show()
+
 def plotTransVsBn1(transFileName, T='T12'):
     x,y,z = loadTrans2D(transFileName, Z=T)
     x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
@@ -585,6 +599,9 @@ def plotTransVsV1V2(transFileName, T='T12'):
     x,y,z = loadTrans2D(transFileName, X='V1', Y='V2', Z=T)
     plot2D(x,y,z, 'V1 (V)', 'V2 (V)', transFileName)
 
+def plotTransVsB(transFileName, T='T12', T2=None):
+    x,y,z = loadTrans2D(transFileName, Y='B1', Z=T, Z2=T2)
+    plot(y, z, 'B (T)', 'T12-T14', transFileName)
 
 
 """
@@ -599,8 +616,8 @@ def main(argv = None):
             help="Does not load previous state.")
     parser.add_argument("--calc", type=str, choices=["onetraj", "alltraj", "onetrans", "alltrans"],
             help="Does not load previous state.")
-    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TBn1", 
-            "TBn2", "TBV2", "T2BV2", "TV1V2"],
+    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TB2", 
+        "TBn1", "TBn2", "TBV2", "T2BV2", "TV1V2"],
             help="Does not load previous state.")
     args = parser.parse_args()
 
@@ -609,7 +626,9 @@ def main(argv = None):
     if not os.path.exists(input_file):
         raise Exception("File " + input_file + " not found")
 
-    if args.plot == "TBn1":
+    if args.plot == "TB2":
+        plotTransVsB(input_file, T='T12', T2='T14')
+    elif args.plot == "TBn1":
         plotTransVsBn1(input_file)
     elif args.plot == "TBn2":
         plotTransVsBn2(input_file)
