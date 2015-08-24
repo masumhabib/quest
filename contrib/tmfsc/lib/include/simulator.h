@@ -56,6 +56,8 @@ public:
     TrajectoryVect calcTraj(point ri, double thi, double E, 
             double B, const vector<double>& VG, bool saveTraj = true);
 
+    int getMaxNumTrajsPerElect() const { return mMaxTrajsPerElect; };
+    void setMaxNumTrajsPerElect(int ntrajs) { mMaxTrajsPerElect = ntrajs; };
     int getMaxNumStepsPerTraj() const { return mMaxStepsPerTraj; };
     void setMaxNumStepsPerTraj(int nsteps) { mMaxStepsPerTraj = nsteps; };
     int getNumPointsPerCycle() const { return mPtsPerCycle; };
@@ -99,8 +101,9 @@ private:
 
 private:
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
+    int mMaxTrajsPerElect = 10000; //!< maximum number of trajectories for one electron
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
-    int mNdtStep = 5; //!< maximum number of steps for determining reflection dt.
+    int mNdtStep = 10; //!< maximum number of steps for determining reflection dt.
     double mvF = 1E6/nm; //!< Fermi velocity.
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.

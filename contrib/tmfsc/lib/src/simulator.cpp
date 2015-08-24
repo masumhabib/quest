@@ -133,8 +133,15 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
     // loop over all the electron paths created when electrons cross 
     // a transmitting boundary
     TrajectoryVect trajs;
-    while(!mElectsQu.empty()) {
+    int itrajs = 0;
+    while(!mElectsQu.empty() && itrajs < mMaxTrajsPerElect) {
         trajs.push_back(calcTraj(saveTraj));
+        itrajs += 1;
+    }
+    if (itrajs >= mMaxTrajsPerElect) {
+        if (debug) {
+            cout << "-W- Maximum number of trajectories reached" << endl;
+        }
     }
  
     return trajs; 
