@@ -92,7 +92,7 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
         vector<double> th(mNth);
-        genNormalDist(th, pi/5, 0);
+        genNormalDist(th, mAngleSpread, 0);
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-pi/20.0)) {
@@ -305,6 +305,10 @@ inline bool Simulator::stepNearEdge(Particle& electron, point& ri, point& rf,
             }
             rf = r;
             //ri = electron.stepCloseToPoint(intp - dr);
+        }
+        // FIXME: there might be a better way than this ...
+        if (!mDev->intersects(iEdge, ri, rf)) {
+            return false;
         }
         itr += 1;
     }

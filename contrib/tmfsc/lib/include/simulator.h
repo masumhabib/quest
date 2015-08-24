@@ -60,12 +60,14 @@ public:
     void setMaxNumStepsPerTraj(int nsteps) { mMaxStepsPerTraj = nsteps; };
     int getNumPointsPerCycle() const { return mPtsPerCycle; };
     void setNumPointsPerCycle(int nPtsPerCycle) { mPtsPerCycle = nPtsPerCycle; };
-    int getNumTimeStepsEdge() const { return mNdtStep; };
-    void setNumTimeStepsEdge(int nsteps) { mNdtStep = nsteps; };
+    int getNumEdgeSeekSteps() const { return mNdtStep; };
+    void setNumEdgeSeekSteps(int nsteps) { mNdtStep = nsteps; };
     double getInjecSpacing() const { return mdl; };
     void setInjecSpacing(double dl) { mdl = dl; };
     int getNumInjecDir() const { return mNth; };
     void setNumInjecDir(int ndir) { mNth = ndir; };
+    double getInjecAngleSpread() const { return mAngleSpread; };
+    void setInjecAngleSpread(double angle) { mAngleSpread = angle; };
     double getFermiVelo() const { return mvF; };
     void getFermiVelo(double vF) { mvF = vF; };
     ParticleType getParticleType() const { return particleType; };
@@ -108,6 +110,7 @@ private:
     double mB = 0; //!< Magnetic field.
     double mV = 0; //!< Electric potential.
     double mE = 0; //!< Energy of electron.
+    double mAngleSpread = pi/5; //!< spread of incident angle
 
     bool debug = false; //!< Prints debug message if true.
 

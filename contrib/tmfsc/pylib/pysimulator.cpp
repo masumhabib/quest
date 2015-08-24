@@ -91,10 +91,20 @@ void export_Simulator(){
         .def("calcTrans", &PySimulator::calcTranPy, PySimulator_calcTranPy())
         .def("calcTraj", &PySimulator::calcTrajPy2, PySimulator_calcTrajPy2())
         .def("calcTrans", &PySimulator::calcTranPy2, PySimulator_calcTranPy2())
-        .add_property("ParticleType", &PySimulator::getParticleTypePy, 
-                &PySimulator::setParticleTypePy)
+        .add_property("MaxNumStepsPerTraj", &PySimulator::getMaxNumStepsPerTraj, 
+                &PySimulator::setMaxNumStepsPerTraj)
         .add_property("NumPointsPerCycle", &PySimulator::getNumPointsPerCycle, 
                 &PySimulator::setNumPointsPerCycle)
+        .add_property("NumEdgeSeekSteps", &PySimulator::getNumEdgeSeekSteps, 
+                &PySimulator::setNumEdgeSeekSteps)
+        .add_property("InjecSpacing", &PySimulator::getInjecSpacing, 
+                &PySimulator::setInjecSpacing)
+        .add_property("NumInjecDir", &PySimulator::getNumInjecDir, 
+                &PySimulator::setNumInjecDir)
+        .add_property("InjecAngleSpread", &PySimulator::getInjecAngleSpread, 
+                &PySimulator::setInjecAngleSpread)
+        .add_property("ParticleType", &PySimulator::getParticleTypePy, 
+                &PySimulator::setParticleTypePy)
         .add_property("TimeStep", &PySimulator::getTimeStep, 
                 &PySimulator::setTimeStep)
         .add_property("OccupationTol", &PySimulator::getOccupationTol, 
