@@ -580,23 +580,26 @@ def plot(x, y, xlabel, ylabel, transFileName):
     plt.savefig(pngFile, dpi=100)
     plt.show()
 
-def plotTransVsBn1(transFileName, T='T12'):
-    x,y,z = loadTrans2D(transFileName, Z=T)
+def plotTransVsBn1(transFileName, T='T12', T2=None):
+    x,y,z = loadTrans2D(transFileName, Z=T, Z2=T2)
     x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
     plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)', transFileName)
 
-def plotTransVsBn2(transFileName, T='T12'):
-    x,y,z = loadTrans2D(transFileName, X='V2', Z=T)
+def plotTransVsBn2(transFileName, T='T12', T2=None):
+    x,y,z = loadTrans2D(transFileName, X='V2', Z=T, Z2=T2)
     x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
     plot2D(x,y,z, '${n (cm^{-2})}$', 'B (T)', transFileName)
+
+def plotTransVsBV1(transFileName, T='T12', T2=None):
+    x,y,z = loadTrans2D(transFileName, X='V1', Z=T, Z2=T2)
+    plot2D(x,y,z, '${V2 (V)}$', 'B (T)', transFileName)
 
 def plotTransVsBV2(transFileName, T='T12', T2=None):
     x,y,z = loadTrans2D(transFileName, X='V2', Z=T, Z2=T2)
-    #x = ((x-0)*q/(hbar*vf))**2/(2*pi)/1E4
     plot2D(x,y,z, '${V2 (V)}$', 'B (T)', transFileName)
 
-def plotTransVsV1V2(transFileName, T='T12'):
-    x,y,z = loadTrans2D(transFileName, X='V1', Y='V2', Z=T)
+def plotTransVsV1V2(transFileName, T='T12', T2=None):
+    x,y,z = loadTrans2D(transFileName, X='V1', Y='V2', Z=T, Z2=T2)
     plot2D(x,y,z, 'V1 (V)', 'V2 (V)', transFileName)
 
 def plotTransVsB(transFileName, T='T12', T2=None):
@@ -615,29 +618,41 @@ def main(argv = None):
     parser.add_argument("--clean", action="store_true", 
             help="Does not load previous state.")
     parser.add_argument("--calc", type=str, choices=["onetraj", "alltraj", "onetrans", "alltrans"],
-            help="Does not load previous state.")
-    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TB2", 
-        "TBn1", "TBn2", "TBV2", "T2BV2", "TV1V2"],
-            help="Does not load previous state.")
+            help="Runs simulation.")
+    parser.add_argument("--plot", type=str, choices=["geom", "traj", "TB", 
+        "TBn1", "TBn2", "TBV1", "TBV2", "TV1V2"],
+            help="Plots result.")
+    parser.add_argument("-T", type=str, 
+            help="Transmission to be plotted, e.g., T12.")
+    parser.add_argument("-T2", type=str, 
+            help="Transmission to be subtracted, e.g., T13.")
     args = parser.parse_args()
 
     # check if the simulation file exists
     input_file = args.input_file;
     if not os.path.exists(input_file):
         raise Exception("File " + input_file + " not found")
+    
+    # Parse transmission arguments
+    T1 = 'T12'; T2 = None
+    if args.T is not None:
+        T1 = args.T
+    if args.T2 is not None:
+        T2 = args.T2
 
-    if args.plot == "TB2":
-        plotTransVsB(input_file, T='T12', T2='T14')
+    # Plot
+    if args.plot == "TB":
+        plotTransVsB(input_file, T=T1, T2=T2)
     elif args.plot == "TBn1":
-        plotTransVsBn1(input_file)
+        plotTransVsBn1(input_file, T=T1, T2=T2)
     elif args.plot == "TBn2":
-        plotTransVsBn2(input_file)
+        plotTransVsBn2(input_file, T=T1, T2=T2)
     elif args.plot == "TBV2":
-        plotTransVsBV2(input_file)
-    elif args.plot == "T2BV2":
-        plotTransVsBV2(input_file, T='T12', T2='T14')
+        plotTransVsBV2(input_file, T=T1, T2=T2)
+    elif args.plot == "TBV1":
+        plotTransVsBV1(input_file, T=T1, T2=T2)
     elif args.plot == "TV1V2":
-        plotTransVsV1V2(input_file)
+        plotTransVsV1V2(input_file, T=T1, T2=T2)
         return 0
 
     # get current time, used later for obtaining elapsed time
