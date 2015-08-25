@@ -1,0 +1,20 @@
+#!/bin/bash
+np=1
+while getopts ":n:d:" opt; do
+  case $opt in
+    n) np="$OPTARG"
+    ;;
+    d) d_in="$OPTARG"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+shift $((OPTIND-1))
+
+if [[ $np -le 1 ]]; then 
+    python hallbar.py $@
+else
+    mpirun -n $np python hallbar.py $@
+fi
+
