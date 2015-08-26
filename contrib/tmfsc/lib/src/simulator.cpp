@@ -36,7 +36,8 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, double E,
     mB = B;
     mV = V;
 
-    return calcTraj(ri, thi, saveTraj);
+    auto result = calcTrajOneElect(ri, thi, saveTraj);
+    return get<2>(result);
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(double E, double B, 
@@ -77,17 +78,17 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, double E,
         mDev->setGatePotential(ig, VG[ig]);
     }
 
-    return calcTraj(ri, thi, saveTraj);
+    auto result = calcTrajOneElect(ri, thi, saveTraj);
+    return get<2>(result);
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
     vector<point> injPts = mDev->createPointsOnCont(injCont, mdl);
-    double th0 = mDev->contDirctn(injCont) + pi/2;
-    TrajectoryVect trajs;
-
-    // reset the bins
-    resetElectBins();
     int npts = injPts.size();
+    double th0 = mDev->contDirctn(injCont) + pi/2;
+
+    TrajectoryVect trajs;
+    ElectronBins electBins(mDev->numConts());
 
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
@@ -96,7 +97,17 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-pi/20.0)) {
-                TrajectoryVect traj = calcTraj(ri, th0 + thi, saveTraj);
+                int status;
+                TrajectoryVect traj;
+                ElectronBins bin(mDev->numConts());
+                tie(status, bin, traj) = calcTrajOneElect(ri, th0 + thi, saveTraj);
+                
+                if (status == -1) {
+                    continue;
+                }
+                
+                electBins += bin;
+
                 if (saveTraj) {
                     trajs.insert(trajs.end(), traj.begin(), traj.end());
                 }
@@ -106,53 +117,75 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
 
     int nc = mDev->numConts();
     mat TE = zeros<mat>(nc,nc);
+    vec trans = electBins.calcTrans();
     for (int ic = 0; ic < nc; ic += 1) {
-        TE(injCont, ic) = mElectBins[ic]/mnElects;
-        TE(ic, injCont) = mElectBins[ic]/mnElects;
+        TE(injCont, ic) = trans(ic);
+        TE(ic, injCont) = trans(ic);
     }
 
     return make_tuple(TE, trajs);
 }
 
-TrajectoryVect Simulator::calcTraj(point ri, double thi, bool saveTraj) {
+tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(point ri, 
+        double thi, bool saveTraj) {
+    int status = 0;
     double V = mV;
     if (mDev->getNumGates() > 0) {
         V = mDev->getPotAt(ri);
     }
 
     svec vi = {mvF*cos(thi), mvF*sin(thi)}; // inital velocity
-    shared_ptr<Particle> electron;
+    Particle::ptr electron;
     if (particleType == ParticleType::DiracCyclotron) {
         electron = make_shared<DiracCyclotron>(ri, vi, mE, V, mB);
     } else {
         electron = make_shared<DiracElectron>(ri, vi, mE, V, mB);
     }
     refreshTimeStepSize(electron);
-    mElectsQu.push(electron);
+    ElectronQueue electsQu;
+    electsQu.push(electron);
 
     // loop over all the electron paths created when electrons cross 
     // a transmitting boundary
     TrajectoryVect trajs;
+    ElectronBins electBins(mDev->numConts());
     int itrajs = 0;
-    while(!mElectsQu.empty() && itrajs < mMaxTrajsPerElect) {
-        trajs.push_back(calcTraj(saveTraj));
+    while(!electsQu.empty()) {
+        Trajectory traj;
+        status = calcSingleTraj(saveTraj, electsQu, electBins, traj);
+        if (status == -1) {
+            break;
+        }
+        if (saveTraj) {
+            trajs.push_back(traj);
+        }
+        if (electBins.getTotalNumElects() > mCollectionTol) {
+            status = 0;
+            break;
+        }
+
         itrajs += 1;
-    }
-    if (itrajs >= mMaxTrajsPerElect) {
-        if (debug) {
-            cout << "-W- Maximum number of trajectories reached" << endl;
+        if (itrajs >= mMaxTrajsPerElect) {
+            status = -2;
+            if (debug) {
+                cout << "-W- Maximum number of trajectories reached" << endl;
+            }
+            break;
         }
     }
  
-    return trajs; 
+    return make_tuple(status, electBins, trajs); 
 }
 
-Trajectory Simulator::calcTraj(bool saveTraj) {
-    Particle::ptr electron = mElectsQu.front();
+inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu, 
+        ElectronBins &bins, Trajectory& traj) {
+    int status = 0;
+    Particle::ptr electron = electsQu.top();
+    electsQu.pop();
+
     point ri = electron->getPos();
     svec rf = ri;
 
-    Trajectory traj;
     if (saveTraj) {
         traj.path.push_back(ri);
     }
@@ -167,14 +200,18 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
             // no crossing, continue
             electron->doStep();
         } else if (mDev->isAbsorbEdge(iEdge)) {
-            collectElectron(*electron, mDev->edgeToContIndx(iEdge));
+            bins.putElectron(electron, mDev->edgeToContIndx(iEdge));
+            status = 1;
             break;
         } else { 
             // about to crossed an edge, find the intersection and probe 
             // how close we can get to the intersection point
-            if (!getCloseToEdge(*electron, ri, rf, iEdge)){
+            if (!getCloseToEdge(electron, ri, rf, iEdge)){
                 if (debug) {
                     cout << "-W- Could not get close to edge " << iEdge << endl;
+                }
+                if (electron->getOccupation() > mOccupationFailTol) {
+                    status = -1;
                 }
                 break;
             }
@@ -192,9 +229,12 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 // calculate what would be transmission probability. To do so,
                 // first just cross the boundary and get the potential.
                 Particle::ptr transElect = electron->clone();
-                if(!justCrossEdge(*transElect, r, rf, iEdge)) {
+                if(!justCrossEdge(transElect, r, rf, iEdge)) {
                     if (debug) {
                         cout << "-W- Could not cross the edge " << iEdge << endl;
+                    }
+                    if (transElect->getOccupation() > mOccupationFailTol) {
+                        status = -1;
                     }
                     break;
                 }
@@ -215,18 +255,18 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
                 //}
 
                 // reflect?
-                if (refProb > mReflectionTol && occu > mOccupationTol) {
+                if (refProb > mReflectionTol) {
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
-                    mElectsQu.push(refElect);
+                    electsQu.push(refElect);
                 }
                 // transmit?
-                if (transProb > mTransmissionTol && occu > mOccupationTol) {
+                if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
                     transElect->rotateVel(-thti - thf);
                     refreshTimeStepSize(transElect);
-                    mElectsQu.push(transElect);
+                    electsQu.push(transElect);
                 }
                 rf = r;
                 break;
@@ -246,8 +286,7 @@ Trajectory Simulator::calcTraj(bool saveTraj) {
         traj.path.push_back(rf);
         traj.occupation = electron->getOccupation();
     }
-    mElectsQu.pop();
-    return traj;
+    return status;
 }
 
 inline void Simulator::applyPotential(Particle::ptr electron) {
@@ -276,23 +315,23 @@ inline void Simulator::refreshTimeStepSize(Particle::ptr electron){
 }
 
 
-inline bool Simulator::justCrossEdge(Particle& electron, point ri, point rf, 
-        int iEdge) {
+inline bool Simulator::justCrossEdge(Particle::ptr electron, point ri, 
+        point rf, int iEdge) {
     return stepNearEdge(electron, ri, rf, iEdge, true); 
 }
 
-inline bool Simulator::getCloseToEdge(Particle& electron, point ri, point rf, 
-        int iEdge) {
+inline bool Simulator::getCloseToEdge(Particle::ptr electron, point ri, 
+        point rf, int iEdge) {
     return stepNearEdge(electron, ri, rf, iEdge, false); 
 }
 
-inline bool Simulator::stepNearEdge(Particle& electron, point& ri, point& rf, 
-        int iEdge, bool doCross) {
+inline bool Simulator::stepNearEdge(Particle::ptr electron, point& ri, 
+        point& rf, int iEdge, bool doCross) {
     int itr = 0;
     double dl = doCross ? mClosenessTol/10 : -mClosenessTol/10;
     while (itr < mNdtStep) {
         point intp = mDev->intersection(iEdge, ri, rf);
-        point r = electron.stepCloseToPoint(intp, dl);
+        point r = electron->stepCloseToPoint(intp, dl);
         svec dr = r - intp;
 
         double d = distance(r, intp);
@@ -301,9 +340,9 @@ inline bool Simulator::stepNearEdge(Particle& electron, point& ri, point& rf,
             if (!doCross && d < mClosenessTol){
                 return true;
             }
-            electron.doStep();
+            electron->doStep();
             ri = r;
-            //rf = electron.stepCloseToPoint(intp - dr);
+            //rf = electron->stepCloseToPoint(intp - dr);
 
         } else {
             //did cross
@@ -311,7 +350,7 @@ inline bool Simulator::stepNearEdge(Particle& electron, point& ri, point& rf,
                 return true;
             }
             rf = r;
-            //ri = electron.stepCloseToPoint(intp - dr);
+            //ri = electron->stepCloseToPoint(intp - dr);
         }
         // FIXME: there might be a better way than this ...
         if (!mDev->intersects(iEdge, ri, rf)) {
@@ -322,15 +361,15 @@ inline bool Simulator::stepNearEdge(Particle& electron, point& ri, point& rf,
     return false;
 }
 
-inline bool Simulator::stepNearEdge2(Particle& electron, point& ri, point& rf, 
-        int iEdge, bool doCross) {
+inline bool Simulator::stepNearEdge2(Particle::ptr electron, point& ri, 
+        point& rf, int iEdge, bool doCross) {
     //point rf = intp;
     int itr = 0;
     double dl = doCross ? mClosenessTol : -mClosenessTol;
     point intp = mDev->intersection(iEdge, ri, rf);
     iEdge = doCross ? iEdge : -1;
     while (itr < mNdtStep) {
-        intp = electron.stepCloseToPoint(intp, dl);
+        intp = electron->stepCloseToPoint(intp, dl);
         if (mDev->intersects(ri, intp) == iEdge) {
             return true;
         }
@@ -338,22 +377,6 @@ inline bool Simulator::stepNearEdge2(Particle& electron, point& ri, point& rf,
     }
     return false;
 }
-
-void Simulator::collectElectron(const Particle &electron, int iCont){
-    if (iCont < mElectBins.size()) {
-        mElectBins[iCont] += electron.getOccupation();
-        mnElects += electron.getOccupation();
-    }
-}
-
-void Simulator::resetElectBins() {
-    mElectBins.resize(mDev->numConts());
-    for (auto &bin : mElectBins) {
-        bin = 0;
-    }
-    mnElects = 0;
-}
-
 
 }}
 

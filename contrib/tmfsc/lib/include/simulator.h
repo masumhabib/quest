@@ -22,12 +22,16 @@ namespace qmicad{ namespace tmfsc{
 using std::tuple;
 using std::make_tuple;
 using std::tie;
-using std::make_shared;
 using std::shared_ptr;
-using std::queue;
+using std::make_shared;
+using std::priority_queue;
 using std::cout;
 using std::endl;
+using std::get;
+
 using maths::armadillo::mat;
+using maths::armadillo::vec;
+using maths::armadillo::fill;
 using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::genNormalDist;
@@ -41,6 +45,43 @@ struct Trajectory {
     double occupation = 1.0;
 };
 typedef vector<Trajectory> TrajectoryVect;
+typedef priority_queue<Particle::ptr, vector<Particle::ptr>, ParticleComparator> 
+ElectronQueue;
+
+class ElectronBins {
+public:
+    ElectronBins(int nbins):bins(nbins, 0.0), totalNumElects(0.0) {}
+    void putElectron(const Particle::ptr electron, int ibin) {
+        double occu = electron->getOccupation();
+        bins[ibin] += occu;
+        totalNumElects += occu; 
+    }
+    void reset() {
+        for (auto &occu : bins) {
+            occu = 0;
+        }
+        totalNumElects = 0;
+    }
+    vec calcTrans() {
+        vec T(bins.size(), fill::zeros);
+        for (int i = 0; i < bins.size(); i += 1) {
+           T(i) = bins[i]/totalNumElects;
+       }
+       return T;
+    }
+    double getTotalNumElects() const { return totalNumElects; };
+    ElectronBins& operator+=(const ElectronBins& rhs) {
+        for (int i = 0; i < bins.size(); i += 1) {
+            bins[i] += rhs.bins[i];
+        }
+        totalNumElects += rhs.totalNumElects;
+
+        return *this;
+    }
+private:
+    vector<double> bins;
+    double totalNumElects;
+};
 
 class Simulator : public Printable {
 public:
@@ -76,28 +117,29 @@ public:
     void setParticleType(ParticleType type) { particleType = type; };
     double getTimeStep() const { return dt; };
     void setTimeStep(double dt) { isAutoDt = false; this->dt = dt; };
-    double getOccupationTol() const { return mOccupationTol; };
-    void setOccupationTol(double tol) { mOccupationTol = tol; };
+    double getCollectionTol() const { return 1.0-mCollectionTol; };
+    void setCollectionTol(double tol) { mCollectionTol = 1.0-tol; 
+        mOccupationFailTol = tol*10; };
 
     void setDebugLvl(unsigned long debugLevel) { debug = (debugLevel > 0); };
     unsigned long getDebugLvl() { return debug ? 1L : 0L; };
 
 private:
     tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
-    TrajectoryVect calcTraj(point ri, double thi, bool saveTraj);
-    Trajectory calcTraj(bool saveTraj);
+    tuple<int, ElectronBins, TrajectoryVect> calcTrajOneElect(point ri, 
+        double thi, bool saveTraj);
+    inline int calcSingleTraj(bool saveTraj, ElectronQueue &electsQu, 
+        ElectronBins &bins, Trajectory& traj);
     inline void applyPotential(Particle::ptr electron);
     inline void refreshTimeStepSize(Particle::ptr electron);
-    inline bool justCrossEdge(Particle& electron, point ri, point rf, 
+    inline bool justCrossEdge(Particle::ptr electron, point ri, point rf, 
             int iEdge);
-    inline bool getCloseToEdge(Particle& electron, point ri, point rf, 
+    inline bool getCloseToEdge(Particle::ptr electron, point ri, point rf, 
             int iEdge);
-    inline bool stepNearEdge(Particle& electron, point& ri, point& rf, 
+    inline bool stepNearEdge(Particle::ptr electron, point& ri, point& rf, 
             int iEdge, bool doCross);
-    inline bool stepNearEdge2(Particle& electron, point& ri, point& rf, 
+    inline bool stepNearEdge2(Particle::ptr electron, point& ri, point& rf, 
             int iEdge, bool doCross);
-    void resetElectBins();
-    void collectElectron(const Particle &electron, int iCont);
 
 private:
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
@@ -119,15 +161,13 @@ private:
 
     double mReflectionTol = 1E-4;
     double mTransmissionTol = 1E-4;
-    double mOccupationTol = 1E-9;
+    double mCollectionTol = 0.99;
+    double mOccupationFailTol = 1E-2;
     double mClosenessTol = 1E-2;
 
     static constexpr double ETOL = 1E-6;
 
     Device::ptr mDev; //!< Device structure.
-    vector<double> mElectBins; //!< Electron bins.
-    double mnElects; //!< Total electrons injected.
-    queue<Particle::ptr> mElectsQu; //!< Deck of electrons.
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
 };
 

@@ -107,8 +107,8 @@ void export_Simulator(){
                 &PySimulator::setParticleTypePy)
         .add_property("TimeStep", &PySimulator::getTimeStep, 
                 &PySimulator::setTimeStep)
-        .add_property("OccupationTol", &PySimulator::getOccupationTol, 
-                &PySimulator::setOccupationTol)
+        .add_property("CollectionTol", &PySimulator::getCollectionTol, 
+                &PySimulator::setCollectionTol)
         .add_property("DebugLevel", &PySimulator::getDebugLvl,
                 &PySimulator::setDebugLvl)
 

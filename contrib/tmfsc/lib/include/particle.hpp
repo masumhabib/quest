@@ -41,6 +41,13 @@ public:
     virtual double timeToReach(const svec& pos);
     virtual const svec& stepCloseToPoint(const svec& pos, 
             double distanceTol = 0.0);
+    //operators
+    friend bool operator< (const Particle& lhs, const Particle& rhs){ 
+        return lhs.occupation < rhs.occupation; 
+    }
+    friend bool operator> (const Particle& lhs, const Particle& rhs) {return rhs < lhs;}
+    friend bool operator<=(const Particle& lhs, const Particle& rhs) {return !(lhs > rhs);}
+    friend bool operator>=(const Particle& lhs, const Particle& rhs) {return !(lhs < rhs);}
 
 protected:
     virtual void update() = 0;
@@ -62,6 +69,13 @@ protected:
     svec nxtr = {0,0};
     svec nxtv = {0,0};
 
+};
+
+// Comparator for smart ptr of Particle
+struct ParticleComparator {
+    bool operator() (Particle::ptr lhs, Particle::ptr rhs) {
+        return *lhs < *rhs;
+    }
 };
 
 }}

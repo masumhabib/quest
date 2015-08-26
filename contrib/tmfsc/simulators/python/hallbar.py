@@ -188,11 +188,11 @@ class HallBar(object):
         self.sim.NumPointsPerCycle = npts
         
     @property
-    def OccupationTol(self):
-        return self.sim.OccupationTol
-    @OccupationTol.setter
-    def OccupationTol(self, tol):
-        self.sim.OccupationTol = tol
+    def CollectionTol(self):
+        return self.sim.CollectionTol
+    @CollectionTol.setter
+    def CollectionTol(self, tol):
+        self.sim.CollectionTol = tol
 
     @property
     def DebugLevel(self):
