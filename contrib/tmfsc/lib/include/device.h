@@ -87,14 +87,14 @@ public:
     svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };
     const Edge& edge(int indx) const { return mEdgs[indx]; };
-    tuple<double, double, double, double> calcProbab(double V1, double V2,
-            const svec& vel, double En, int iEdge);
-    
+   
     svec contNormVect(int indx) const { 
         return edgeNormVect(contToEdgeIndx(indx)); };
     const svec& contUnitVect(int indx) const { 
         return edgeUnitVect(contToEdgeIndx(indx)); };
     double contDirctn(int iCnt) { return mEdgs[mCnts[iCnt]].angle(); }
+    point contMidPoint(int iCnt) const { return mEdgs[mCnts[iCnt]].midPoint(); }
+    double contWidth(int iCnt) const { return mEdgs[mCnts[iCnt]].length(); }
 
     int addGate(const point& lb, const point& rb, const point& rt, 
             const point& lt);
@@ -104,6 +104,9 @@ public:
     double getSplitLen();
     void setSplitLen(double len);
 
+    tuple<double, double, double, double> calcProbab(double V1, 
+            double V2, const svec& vel, double En, int iEdge);
+ 
 public:
 private:
     shared_ptr<LinearPot> mPot; //!< Potential solver.

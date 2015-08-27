@@ -118,8 +118,8 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
-tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
-            const svec& vel, double En, int iEdge) 
+tuple<double, double, double, double> Device::calcProbab(double V1, 
+        double V2, const svec& vel, double En, int iEdge) 
 {
 	using maths::constants::e;
 	using maths::constants::hbar;

@@ -83,12 +83,75 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, double E,
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
+    return calcTranRandom(injCont, saveTraj);
+}
+
+inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont, 
+        bool saveTraj){
+    int nconts = mDev->numConts();
+    point r0 = mDev->contMidPoint(injCont);
+    svec contVect = mDev->contUnitVect(injCont);
+    double contWidth = mDev->contWidth(injCont);
+    double th0 = mDev->contDirctn(injCont) + pi/2;
+
+    TrajectoryVect trajs;
+    ElectronBins electBins(nconts);
+    double maxError = numeric_limits<double>::max();
+    row prevTE = row(nconts);
+    prevTE.fill(numeric_limits<double>::min());
+    int ip = 0;
+
+    while (maxError < mTransmissionTol) {
+        double distance = getUniformRand(-contWidth/2, contWidth/2); 
+        double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, 
+                pi/2-mAngleLimit);
+        svec position = r0 + distance * contVect;
+        angle = th0 + angle;
+
+        int status;
+        TrajectoryVect traj;
+        ElectronBins bin(nconts);
+        tie(status, bin, traj) = calcTrajOneElect(position, angle, saveTraj);
+        
+        if (status == -1) {
+            continue;
+        }
+        if (saveTraj) {
+            trajs.insert(trajs.end(), traj.begin(), traj.end());
+        }
+       
+        electBins += bin;
+        row newTE = electBins.calcTransVec();
+        maxError = max((newTE - prevTE)/prevTE);
+        prevTE = newTE;
+
+        ip += 1;
+        if (ip >= mMaxNumInjPoints) {
+            if (debug) {
+                cout << "-W- Transmission calculation did not converge within "
+                     << mTransmissionTol << " in " << ip << " injections." << endl;
+            }
+            break;
+        }
+    }
+
+    mat TE = electBins.calcTransMat(nconts);
+    return make_tuple(TE, trajs);
+}
+
+inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont, 
+        bool saveTraj){
+    int nconts = mDev->numConts();
     vector<point> injPts = mDev->createPointsOnCont(injCont, mdl);
     int npts = injPts.size();
     double th0 = mDev->contDirctn(injCont) + pi/2;
 
+    if (npts * mNth > mMaxNumInjPoints) {
+        throw invalid_argument("Too many injection points, please reduce it.");
+    }
+
     TrajectoryVect trajs;
-    ElectronBins electBins(mDev->numConts());
+    ElectronBins electBins(nconts);
 
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
@@ -96,11 +159,12 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
         genNormalDist(th, mAngleSpread, 0);
 
         for (double thi:th){
-            if (abs(thi) < (pi/2.0-pi/20.0)) {
+            if (abs(thi) < (pi/2.0-mAngleLimit)) {
                 int status;
                 TrajectoryVect traj;
-                ElectronBins bin(mDev->numConts());
-                tie(status, bin, traj) = calcTrajOneElect(ri, th0 + thi, saveTraj);
+                ElectronBins bin(nconts);
+                tie(status, bin, traj) = calcTrajOneElect(ri, th0 + thi, 
+                        saveTraj);
                 
                 if (status == -1) {
                     continue;
@@ -115,19 +179,13 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
         }
     }
 
-    int nc = mDev->numConts();
-    mat TE = zeros<mat>(nc,nc);
-    vec trans = electBins.calcTrans();
-    for (int ic = 0; ic < nc; ic += 1) {
-        TE(injCont, ic) = trans(ic);
-        TE(ic, injCont) = trans(ic);
-    }
-
+    mat TE = electBins.calcTransMat(nconts);
     return make_tuple(TE, trajs);
 }
 
-tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(point ri, 
-        double thi, bool saveTraj) {
+
+inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
+        point ri, double thi, bool saveTraj) {
     int status = 0;
     double V = mV;
     if (mDev->getNumGates() > 0) {

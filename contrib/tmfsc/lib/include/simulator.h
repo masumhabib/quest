@@ -13,6 +13,7 @@
 #include "maths/constants.h"
 #include "utils/random.h"
 #include "potential/potential.h"
+#include <limits>
 #include <tuple>
 #include <iostream>
 #include <memory>
@@ -22,19 +23,23 @@ namespace qmicad{ namespace tmfsc{
 using std::tuple;
 using std::make_tuple;
 using std::tie;
+using std::get;
 using std::shared_ptr;
 using std::make_shared;
 using std::priority_queue;
 using std::cout;
 using std::endl;
-using std::get;
+using std::numeric_limits;
 
 using maths::armadillo::mat;
 using maths::armadillo::vec;
+using maths::armadillo::row;
 using maths::armadillo::fill;
 using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::genNormalDist;
+using utils::random::getUniformRand;
+using utils::random::getGaussianRand;
 
 using maths::constants::pi;
 using maths::armadillo::dcmplx;
@@ -62,12 +67,17 @@ public:
         }
         totalNumElects = 0;
     }
-    vec calcTrans() {
-        vec T(bins.size(), fill::zeros);
+    row calcTransVec() {
+        row T(bins.size(), fill::zeros);
         for (int i = 0; i < bins.size(); i += 1) {
-           T(i) = bins[i]/totalNumElects;
+           T(i) = (bins[i]+numeric_limits<double>::min())/totalNumElects;
        }
        return T;
+    }
+    mat calcTransMat(int icont) {
+        mat T(bins.size(), bins.size(), fill::zeros);
+        T.row(icont) = calcTransVec();
+        return T;
     }
     double getTotalNumElects() const { return totalNumElects; };
     ElectronBins& operator+=(const ElectronBins& rhs) {
@@ -126,7 +136,9 @@ public:
 
 private:
     tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
-    tuple<int, ElectronBins, TrajectoryVect> calcTrajOneElect(point ri, 
+    inline tuple<mat, TrajectoryVect> calcTranRandom(int injCont, bool saveTraj);
+    inline tuple<mat, TrajectoryVect> calcTranSemiRandom(int injCont, bool saveTraj);
+    inline tuple<int, ElectronBins, TrajectoryVect> calcTrajOneElect(point ri, 
         double thi, bool saveTraj);
     inline int calcSingleTraj(bool saveTraj, ElectronQueue &electsQu, 
         ElectronBins &bins, Trajectory& traj);
@@ -142,20 +154,23 @@ private:
             int iEdge, bool doCross);
 
 private:
+    double mvF = 1E6/nm; //!< Fermi velocity.
+    double mB = 0; //!< Magnetic field.
+    double mV = 0; //!< Electric potential.
+    double mE = 0; //!< Energy of electron.
+
+    int mMaxNumInjPoints = 25000; //!< Maximum number of injection points
+    double mdl = 5.0; //!< distance between two injection points in a contact
+    int mNth = 50; //!< number of random directions for each contact.
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
     int mMaxTrajsPerElect = 10000; //!< maximum number of trajectories for one electron
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
     int mNdtStep = 10; //!< maximum number of steps for determining reflection dt.
-    double mvF = 1E6/nm; //!< Fermi velocity.
-    double mdl = 5.0; //!< distance between two injection points in a contact
-    int mNth = 50; //!< number of random directions for each contact.
     double dt = 10/(1E6/nm); //!< default time step. 
     double maxdt = 100/(1E6/nm); //!< maximum time step size
     bool isAutoDt = true; //!< Switch for automatic dt calculation
-    double mB = 0; //!< Magnetic field.
-    double mV = 0; //!< Electric potential.
-    double mE = 0; //!< Energy of electron.
-    double mAngleSpread = pi/5; //!< spread of incident angle
+    double mAngleSpread = pi/5; //!< spread (std dev) of injection angle.
+    double mAngleLimit = pi/20; //!< allowed limit of injection angle.
 
     bool debug = false; //!< Prints debug message if true.
 
