@@ -146,7 +146,10 @@ tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(point ri,
     electsQu.push(electron);
 
     // loop over all the electron paths created when electrons cross 
-    // a transmitting boundary
+    // a transmitting boundary and calculate the trajectory for each of these
+    // electrons; loop terminates if (1) significant part of the electron 
+    // has already been collected or (2) if we have reached maximum number
+    // of trajectories allowed or (3) the queue is empty -- also implies (1).
     TrajectoryVect trajs;
     ElectronBins electBins(mDev->numConts());
     int itrajs = 0;
@@ -200,16 +203,21 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
             // no crossing, continue
             electron->doStep();
         } else if (mDev->isAbsorbEdge(iEdge)) {
+            // crossed an absorbing edge, collect it and then we'll be done.
             bins.putElectron(electron, mDev->edgeToContIndx(iEdge));
             status = 1;
             break;
         } else { 
-            // about to crossed an edge, find the intersection and probe 
-            // how close we can get to the intersection point
+            // about to cross a reflecting or transmitting edge, find the 
+            // intersection and probe how close we can get to the 
+            // intersection point
             if (!getCloseToEdge(electron, ri, rf, iEdge)){
                 if (debug) {
                     cout << "-W- Could not get close to edge " << iEdge << endl;
                 }
+                // we failed to get close to edge, this part of the electron
+                // will be discarded; therefor, we can not continue with this
+                // electron if it carries a significant portion ...
                 if (electron->getOccupation() > mOccupationFailTol) {
                     status = -1;
                 }
@@ -233,16 +241,22 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                     if (debug) {
                         cout << "-W- Could not cross the edge " << iEdge << endl;
                     }
+                    // if this electron carries a significant occupation,
+                    // we should no longer use it in our transmission 
+                    // calculation
                     if (transElect->getOccupation() > mOccupationFailTol) {
                         status = -1;
                     }
                     break;
                 }
+                // cross the transmission boundary
                 transElect->doStep();
+                // get the potentials at the both sides of the transmitting edge
                 double V1 = transElect->getPot(); // potential before edge
                 applyPotential(transElect);
                 double V2 = transElect->getPot(); // potential after edge
 
+                // calculate the transmission and reflection probability
                 double thf, transProb, refProb;
                 double thti;
                 tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
@@ -254,14 +268,14 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 //        << " R(E) = " << refProb << std::endl;
                 //}
 
-                // reflect?
+                // reflect? if yes, reflect it and put it in the queue
                 if (refProb > mReflectionTol) {
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
                     electsQu.push(refElect);
                 }
-                // transmit?
+                // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
                     transElect->rotateVel(-thti - thf);
@@ -281,7 +295,7 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
         ii += 1;
     }
 
-    // last point that we have missed.
+    // append the last point to trajectory that we have missed.
     if (saveTraj) {
         traj.path.push_back(rf);
         traj.occupation = electron->getOccupation();
