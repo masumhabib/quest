@@ -168,8 +168,8 @@ private:
     int mMaxNumInjPoints = 2500; //!< Maximum number of injection points
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.
-    int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
-    int mMaxTrajsPerElect = 10000; //!< maximum number of trajectories for one electron
+    int mMaxStepsPerTraj = 5000;  //!< maximum number of time steps before fail.
+    int mMaxTrajsPerElect = 5000; //!< maximum number of trajectories for one electron
     int mPtsPerCycle = 100; //!< number of points per cyclotron cycle.
     int mNdtStep = 10; //!< maximum number of steps for determining reflection dt.
     double dt = 10/(1E6/nm); //!< default time step. 
