@@ -83,12 +83,85 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, double E,
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
+    if (injectModel == InjectModel::SemiRandom) {
+        return calcTranSemiRandom(injCont, saveTraj);
+    } else if (injectModel == InjectModel::Random) {
+        return calcTranRandom(injCont, saveTraj);
+    }
+}
+
+inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont, 
+        bool saveTraj){
+    int nconts = mDev->numConts();
+    point r0 = mDev->contMidPoint(injCont);
+    svec contVect = mDev->contUnitVect(injCont);
+    double contWidth = mDev->contWidth(injCont);
+    double th0 = mDev->contDirctn(injCont) + pi/2;
+
+    TrajectoryVect trajs;
+    ElectronBins electBins(nconts);
+    double maxError = numeric_limits<double>::max();
+    row prevTE = row(nconts);
+    prevTE.fill(numeric_limits<double>::min());
+    int ip = 0;
+
+    while (maxError > mTransmissionConv) {
+        double distance = getUniformRand(-contWidth/2, contWidth/2); 
+        double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, 
+                pi/2-mAngleLimit);
+        svec position = r0 + distance * contVect;
+        angle = th0 + angle;
+        //cout << "DBG: pos = " << position;
+        //cout << "DBG: angle = " << angle << endl;
+
+        int status;
+        TrajectoryVect traj;
+        ElectronBins bin(nconts);
+        tie(status, bin, traj) = calcTrajOneElect(position, angle, saveTraj);
+        //cout << "DBG: totalNumElects = " << bin.getTotalNumElects() << endl;
+ 
+        if (status == -1 || bin.getTotalNumElects() == 0) {
+            continue;
+        }
+ 
+        electBins += bin;
+        row newTE = electBins.calcTransVec();
+        maxError = max(abs((newTE - prevTE)/prevTE));
+        prevTE = newTE;
+        //cout << "DBG: maxError " << maxError << endl;
+        //cout << "DBG: newTE " << newTE;
+
+        if (saveTraj) {
+            trajs.insert(trajs.end(), traj.begin(), traj.end());
+        }
+ 
+        ip += 1;
+        if (ip >= mMaxNumInjPoints) {
+            if (debug) {
+                cout << "-W- Transmission calculation did not converge within "
+                     << mTransmissionTol << " in " << ip << " injections." << endl;
+            }
+            break;
+        }
+    }
+
+    mat TE = electBins.calcTransMat(injCont);
+    return make_tuple(TE, trajs);
+}
+
+inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont, 
+        bool saveTraj){
+    int nconts = mDev->numConts();
     vector<point> injPts = mDev->createPointsOnCont(injCont, mdl);
     int npts = injPts.size();
     double th0 = mDev->contDirctn(injCont) + pi/2;
 
+    if (npts * mNth > mMaxNumInjPoints) {
+        throw invalid_argument("Too many injection points, please reduce it.");
+    }
+
     TrajectoryVect trajs;
-    ElectronBins electBins(mDev->numConts());
+    ElectronBins electBins(nconts);
 
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
@@ -96,11 +169,12 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
         genNormalDist(th, mAngleSpread, 0);
 
         for (double thi:th){
-            if (abs(thi) < (pi/2.0-pi/20.0)) {
+            if (abs(thi) < (pi/2.0-mAngleLimit)) {
                 int status;
                 TrajectoryVect traj;
-                ElectronBins bin(mDev->numConts());
-                tie(status, bin, traj) = calcTrajOneElect(ri, th0 + thi, saveTraj);
+                ElectronBins bin(nconts);
+                tie(status, bin, traj) = calcTrajOneElect(ri, th0 + thi, 
+                        saveTraj);
                 
                 if (status == -1) {
                     continue;
@@ -115,19 +189,13 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
         }
     }
 
-    int nc = mDev->numConts();
-    mat TE = zeros<mat>(nc,nc);
-    vec trans = electBins.calcTrans();
-    for (int ic = 0; ic < nc; ic += 1) {
-        TE(injCont, ic) = trans(ic);
-        TE(ic, injCont) = trans(ic);
-    }
-
+    mat TE = electBins.calcTransMat(injCont);
     return make_tuple(TE, trajs);
 }
 
-tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(point ri, 
-        double thi, bool saveTraj) {
+
+inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
+        point ri, double thi, bool saveTraj) {
     int status = 0;
     double V = mV;
     if (mDev->getNumGates() > 0) {
@@ -146,18 +214,21 @@ tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(point ri,
     electsQu.push(electron);
 
     // loop over all the electron paths created when electrons cross 
-    // a transmitting boundary
+    // a transmitting boundary and calculate the trajectory for each of these
+    // electrons; loop terminates if (1) significant part of the electron 
+    // has already been collected or (2) if we have reached maximum number
+    // of trajectories allowed or (3) the queue is empty -- also implies (1).
     TrajectoryVect trajs;
     ElectronBins electBins(mDev->numConts());
     int itrajs = 0;
     while(!electsQu.empty()) {
         Trajectory traj;
         status = calcSingleTraj(saveTraj, electsQu, electBins, traj);
-        if (status == -1) {
-            break;
-        }
         if (saveTraj) {
             trajs.push_back(traj);
+        }
+        if (status == -1) {
+            break;
         }
         if (electBins.getTotalNumElects() > mCollectionTol) {
             status = 0;
@@ -200,16 +271,21 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
             // no crossing, continue
             electron->doStep();
         } else if (mDev->isAbsorbEdge(iEdge)) {
+            // crossed an absorbing edge, collect it and then we'll be done.
             bins.putElectron(electron, mDev->edgeToContIndx(iEdge));
             status = 1;
             break;
         } else { 
-            // about to crossed an edge, find the intersection and probe 
-            // how close we can get to the intersection point
+            // about to cross a reflecting or transmitting edge, find the 
+            // intersection and probe how close we can get to the 
+            // intersection point
             if (!getCloseToEdge(electron, ri, rf, iEdge)){
                 if (debug) {
                     cout << "-W- Could not get close to edge " << iEdge << endl;
                 }
+                // we failed to get close to edge, this part of the electron
+                // will be discarded; therefor, we can not continue with this
+                // electron if it carries a significant portion ...
                 if (electron->getOccupation() > mOccupationFailTol) {
                     status = -1;
                 }
@@ -233,16 +309,22 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                     if (debug) {
                         cout << "-W- Could not cross the edge " << iEdge << endl;
                     }
+                    // if this electron carries a significant occupation,
+                    // we should no longer use it in our transmission 
+                    // calculation
                     if (transElect->getOccupation() > mOccupationFailTol) {
                         status = -1;
                     }
                     break;
                 }
+                // cross the transmission boundary
                 transElect->doStep();
+                // get the potentials at the both sides of the transmitting edge
                 double V1 = transElect->getPot(); // potential before edge
                 applyPotential(transElect);
                 double V2 = transElect->getPot(); // potential after edge
 
+                // calculate the transmission and reflection probability
                 double thf, transProb, refProb;
                 double thti;
                 tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
@@ -254,14 +336,14 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 //        << " R(E) = " << refProb << std::endl;
                 //}
 
-                // reflect?
+                // reflect? if yes, reflect it and put it in the queue
                 if (refProb > mReflectionTol) {
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
                     electsQu.push(refElect);
                 }
-                // transmit?
+                // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
                     transElect->rotateVel(-thti - thf);
@@ -281,7 +363,7 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
         ii += 1;
     }
 
-    // last point that we have missed.
+    // append the last point to trajectory that we have missed.
     if (saveTraj) {
         traj.path.push_back(rf);
         traj.occupation = electron->getOccupation();

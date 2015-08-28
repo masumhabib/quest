@@ -41,6 +41,7 @@ public:
     double angle() const { return mth; };
     const point& p() const { return mp; };
     const point& q() const { return mq; };
+    point midPoint() const { return (mp + mq)/2; };
 
     bool intersects(const point &p, const point &q, bool collinear = false);
     bool intersects(const Segment &seg, bool collinear = false);
