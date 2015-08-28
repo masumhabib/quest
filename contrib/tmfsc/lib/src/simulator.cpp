@@ -135,7 +135,7 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
         }
     }
 
-    mat TE = electBins.calcTransMat(nconts);
+    mat TE = electBins.calcTransMat(injCont);
     return make_tuple(TE, trajs);
 }
 
@@ -179,13 +179,14 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
         }
     }
 
-    mat TE = electBins.calcTransMat(nconts);
+    mat TE = electBins.calcTransMat(injCont);
     return make_tuple(TE, trajs);
 }
 
 
 inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
         point ri, double thi, bool saveTraj) {
+    cout << "DBG 1" << endl;
     int status = 0;
     double V = mV;
     if (mDev->getNumGates() > 0) {
@@ -202,6 +203,7 @@ inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
     refreshTimeStepSize(electron);
     ElectronQueue electsQu;
     electsQu.push(electron);
+    cout << "DBG 2" << endl;
 
     // loop over all the electron paths created when electrons cross 
     // a transmitting boundary and calculate the trajectory for each of these
@@ -212,13 +214,14 @@ inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
     ElectronBins electBins(mDev->numConts());
     int itrajs = 0;
     while(!electsQu.empty()) {
+        cout << "DBG 3 " << itrajs << endl;
         Trajectory traj;
         status = calcSingleTraj(saveTraj, electsQu, electBins, traj);
-        if (status == -1) {
-            break;
-        }
         if (saveTraj) {
             trajs.push_back(traj);
+        }
+        if (status == -1) {
+            break;
         }
         if (electBins.getTotalNumElects() > mCollectionTol) {
             status = 0;
