@@ -266,6 +266,7 @@ class HallBar(object):
         
         # load previously saved state
         biasIndx, doneIndx, self.T = self._loadTransCalcState();
+        self._saveTransCalcState(doneIndx)
         npts = len(biasIndx)
        
         # MPI stuff
@@ -280,7 +281,7 @@ class HallBar(object):
             self.mprint("\n Running: ")
 
         ndots = 60
-        ddot = ndots*1.0/npts
+        ddot = ndots*1.0/(npts+1E-10)
         idot = 0
         
         elapsedTime = 0.0
@@ -482,9 +483,9 @@ class HallBar(object):
                         if ifile == 0:
                             nfiles = transCalcState['ncpu']
                         doneIndx = transCalcState['doneIndx']
-                        T = transCalcState['T']
+                        loadedT = transCalcState['T']
                         for indx in doneIndx:
-                            T[indx,:,:] = T[indx, :, :]
+                            T[indx, :, :] = loadedT[indx, :, :]
                             doneSet.add(indx)
                     except EOFError:
                         print "Error loading file ..., skipping."
@@ -497,9 +498,9 @@ class HallBar(object):
             doneIndx = []
             for key in doneSet:
                 doneIndx.append(key)
-        T = mpi.broadcast(self.mpiworld, T, 0)
+        #T = mpi.broadcast(self.mpiworld, T, 0)
         biasIndx = mpi.broadcast(self.mpiworld, biasIndx, 0)
-        doneIndx = mpi.broadcast(self.mpiworld, doneIndx, 0)
+        #doneIndx = mpi.broadcast(self.mpiworld, doneIndx, 0)
 
         return (biasIndx, doneIndx, T)
 
