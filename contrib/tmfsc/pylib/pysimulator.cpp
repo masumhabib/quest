@@ -53,6 +53,14 @@ void PySimulator::setParticleTypePy(int type) {
     setParticleType(static_cast<ParticleType>(type));
 }
 
+int PySimulator::getInjectModelPy() {
+    return static_cast<int>(getInjectModel());
+}
+
+void PySimulator::setInjectModelPy(int model) {
+    setInjectModel(static_cast<InjectModel>(model));
+}
+
 list PySimulator::TrajVect2List(const TrajectoryVect& trajs) {
     list trajList; 
     int ntraj = trajs.size();

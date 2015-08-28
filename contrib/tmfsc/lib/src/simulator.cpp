@@ -83,7 +83,11 @@ TrajectoryVect Simulator::calcTraj(point ri, double thi, double E,
 }
 
 tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
-    return calcTranRandom(injCont, saveTraj);
+    if (injectModel == InjectModel::SemiRandom) {
+        return calcTranSemiRandom(injCont, saveTraj);
+    } else if (injectModel == InjectModel::Random) {
+        return calcTranRandom(injCont, saveTraj);
+    }
 }
 
 inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont, 
@@ -101,30 +105,36 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     prevTE.fill(numeric_limits<double>::min());
     int ip = 0;
 
-    while (maxError < mTransmissionTol) {
+    while (maxError > mTransmissionConv) {
         double distance = getUniformRand(-contWidth/2, contWidth/2); 
         double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, 
                 pi/2-mAngleLimit);
         svec position = r0 + distance * contVect;
         angle = th0 + angle;
+        //cout << "DBG: pos = " << position;
+        //cout << "DBG: angle = " << angle << endl;
 
         int status;
         TrajectoryVect traj;
         ElectronBins bin(nconts);
         tie(status, bin, traj) = calcTrajOneElect(position, angle, saveTraj);
-        
-        if (status == -1) {
+        //cout << "DBG: totalNumElects = " << bin.getTotalNumElects() << endl;
+ 
+        if (status == -1 || bin.getTotalNumElects() == 0) {
             continue;
         }
+ 
+        electBins += bin;
+        row newTE = electBins.calcTransVec();
+        maxError = max(abs((newTE - prevTE)/prevTE));
+        prevTE = newTE;
+        //cout << "DBG: maxError " << maxError << endl;
+        //cout << "DBG: newTE " << newTE;
+
         if (saveTraj) {
             trajs.insert(trajs.end(), traj.begin(), traj.end());
         }
-       
-        electBins += bin;
-        row newTE = electBins.calcTransVec();
-        maxError = max((newTE - prevTE)/prevTE);
-        prevTE = newTE;
-
+ 
         ip += 1;
         if (ip >= mMaxNumInjPoints) {
             if (debug) {
@@ -186,7 +196,6 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
 
 inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
         point ri, double thi, bool saveTraj) {
-    cout << "DBG 1" << endl;
     int status = 0;
     double V = mV;
     if (mDev->getNumGates() > 0) {
@@ -203,7 +212,6 @@ inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
     refreshTimeStepSize(electron);
     ElectronQueue electsQu;
     electsQu.push(electron);
-    cout << "DBG 2" << endl;
 
     // loop over all the electron paths created when electrons cross 
     // a transmitting boundary and calculate the trajectory for each of these
@@ -214,7 +222,6 @@ inline tuple<int, ElectronBins, TrajectoryVect> Simulator::calcTrajOneElect(
     ElectronBins electBins(mDev->numConts());
     int itrajs = 0;
     while(!electsQu.empty()) {
-        cout << "DBG 3 " << itrajs << endl;
         Trajectory traj;
         status = calcSingleTraj(saveTraj, electsQu, electBins, traj);
         if (saveTraj) {

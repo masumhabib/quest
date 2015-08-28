@@ -44,6 +44,8 @@ public:
 
     int getParticleTypePy();
     void setParticleTypePy(int type);
+    int getInjectModelPy();
+    void setInjectModelPy(int model);
 
 private:
      PyTrajectory Traj2PyTraj (const Trajectory& traj);

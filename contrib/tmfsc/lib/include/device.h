@@ -93,7 +93,7 @@ public:
     const svec& contUnitVect(int indx) const { 
         return edgeUnitVect(contToEdgeIndx(indx)); };
     double contDirctn(int iCnt) { return mEdgs[mCnts[iCnt]].angle(); }
-    point contMidPoint(int iCnt) const { return mEdgs[mCnts[iCnt]].midPoint(); }
+    point contMidPoint(int iCnt) const { return mEdgs[mCnts[iCnt]].midPoint() + contNormVect(iCnt)/1E6; }
     double contWidth(int iCnt) const { return mEdgs[mCnts[iCnt]].length(); }
 
     int addGate(const point& lb, const point& rb, const point& rt, 

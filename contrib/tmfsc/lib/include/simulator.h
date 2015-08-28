@@ -96,6 +96,7 @@ private:
 class Simulator : public Printable {
 public:
     enum class ParticleType {DiracCyclotron = 0, DiracElectron = 1 };
+    enum class InjectModel {SemiRandom = 0, Random = 1};
 
     Simulator(Device::ptr dev);
     tuple<mat, TrajectoryVect> calcTran(double E, double B, double V, 
@@ -123,18 +124,22 @@ public:
     void setInjecAngleSpread(double angle) { mAngleSpread = angle; };
     double getFermiVelo() const { return mvF; };
     void getFermiVelo(double vF) { mvF = vF; };
-    ParticleType getParticleType() const { return particleType; };
-    void setParticleType(ParticleType type) { particleType = type; };
     double getTimeStep() const { return dt; };
     void setTimeStep(double dt) { isAutoDt = false; this->dt = dt; };
     double getCollectionTol() const { return 1.0-mCollectionTol; };
     void setCollectionTol(double tol) { mCollectionTol = 1.0-tol; 
         mOccupationFailTol = tol*10; };
+    ParticleType getParticleType() const { return particleType; };
+    void setParticleType(ParticleType type) { particleType = type; };
+    InjectModel getInjectModel() const { return injectModel; };
+    void setInjectModel(InjectModel model) { injectModel = model; };
+
 
     void setDebugLvl(unsigned long debugLevel) { debug = (debugLevel > 0); };
     unsigned long getDebugLvl() { return debug ? 1L : 0L; };
 
 private:
+
     tuple<mat, TrajectoryVect> calcTran(int injCont, bool saveTraj);
     inline tuple<mat, TrajectoryVect> calcTranRandom(int injCont, bool saveTraj);
     inline tuple<mat, TrajectoryVect> calcTranSemiRandom(int injCont, bool saveTraj);
@@ -155,11 +160,12 @@ private:
 
 private:
     double mvF = 1E6/nm; //!< Fermi velocity.
+    // FIXME: These three members should be really a part of the device class.
     double mB = 0; //!< Magnetic field.
     double mV = 0; //!< Electric potential.
     double mE = 0; //!< Energy of electron.
 
-    int mMaxNumInjPoints = 25000; //!< Maximum number of injection points
+    int mMaxNumInjPoints = 2500; //!< Maximum number of injection points
     double mdl = 5.0; //!< distance between two injection points in a contact
     int mNth = 50; //!< number of random directions for each contact.
     int mMaxStepsPerTraj = 10000;  //!< maximum number of time steps before fail.
@@ -179,11 +185,14 @@ private:
     double mCollectionTol = 0.99;
     double mOccupationFailTol = 1E-2;
     double mClosenessTol = 1E-2;
+    double mTransmissionConv = 1E-2;
 
     static constexpr double ETOL = 1E-6;
 
     Device::ptr mDev; //!< Device structure.
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
+    InjectModel injectModel = InjectModel::Random; //!< Injection model.
+
 };
 
 }}
