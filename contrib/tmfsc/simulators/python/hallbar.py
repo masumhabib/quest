@@ -254,7 +254,8 @@ class HallBar(object):
         else:
             self.T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], contId, 
                     saveTrajectory)
-            self.printTrans(contId, self.T)
+        self.printTrans(contId, self.T)
+        #print self.T
         
         return self.T
     
@@ -291,13 +292,14 @@ class HallBar(object):
             if self.verbosity == 1:
                 self.printBias(B, V, ib)
             if self.dev.NumGates > 0:
-                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, False, 
-                        contId)
+                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, contId, 
+                        False)
             else:
-                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], False, 
-                        contId)
+                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], contId, 
+                        False)
             if self.verbosity == 1:
                 self.printTrans(contId, T)
+                #print T
             self.T[ib,:,:] = T
             doneIndx.append(ib)
 
