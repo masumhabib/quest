@@ -6,7 +6,7 @@ from qmicad.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 import matplotlib.patches as patches
-from matplotlib import animation
+from matplotlib import animation,cm
 
 import numpy as np
 from math import pi, sqrt, sin, cos, tan
@@ -563,7 +563,7 @@ def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12', Z2=None):
 def plot2D(x, y, z, xlabel, ylabel, transFileName):
     fig = plt.figure()
     axes = fig.add_subplot(111)
-    plt.pcolor(x, y, z, vmin=z.min(),vmax=z.max())
+    plt.pcolor(x, y, z, vmin=z.min(),vmax=z.max(), cmap=cm.seismic)
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
     plt.colorbar()
