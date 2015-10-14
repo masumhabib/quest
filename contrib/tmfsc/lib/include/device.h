@@ -103,11 +103,17 @@ public:
     double getPotAt(const point& position);
     double getSplitLen();
     void setSplitLen(double len);
+    void setRoughnessEfficiency( double efficiency );
 
     tuple<double, double, double, double> calcProbab(double V1, 
             double V2, const svec& vel, double En, int iEdge);
  
 public:
+    /*!
+     * this number will be multiplied to the occupation of the particle each
+     * time it reflects from a boundary or crosses a transmitting edge
+     */
+    double roughnessEfficiency = 1.0;
 private:
     shared_ptr<LinearPot> mPot; //!< Potential solver.
     vector<point> mPts; //!< vertices.
@@ -115,6 +121,9 @@ private:
     vector<int> mCnts;  //!< Contact to edge map.
     map<int, int> mEdg2Cnt; //!< Egde to contact map.
     double splitLen = 0.0; //!< Split length between gates
+
+
+
 };
 
 

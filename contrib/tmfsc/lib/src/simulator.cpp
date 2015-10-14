@@ -299,6 +299,8 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // we were about to cross a reflecting edge, NO WAY,
                 // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
+                // Roughness Correction
+                electron->setOccupation( electron->getOccupation() * mDev->roughnessEfficiency );
                 rf = r;
             } else if (mDev->isTransmitEdge(iEdge)) {
                 // about to cross a transmitting edge/gate boundary, let's first
@@ -341,11 +343,15 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
+                    // Roughness Correction
+                    refElect->setOccupation( refElect->getOccupation() * mDev->roughnessEfficiency );
                     electsQu.push(refElect);
                 }
                 // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
+                    // Roughness Correction
+                    transElect->setOccupation( transElect->getOccupation() * mDev->roughnessEfficiency );
                     transElect->rotateVel(-thti - thf);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);

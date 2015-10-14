@@ -203,6 +203,14 @@ void Device::setSplitLen(double len){
 	this->splitLen = len;
 }
 
+void Device::setRoughnessEfficiency(double efficiency){
+	if ( efficiency>=0 && efficiency <= 1.0 ){
+		this->roughnessEfficiency = efficiency;
+	}else{
+		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
+	}
+
+}
 }}
 
 

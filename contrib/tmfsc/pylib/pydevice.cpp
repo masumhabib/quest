@@ -45,8 +45,8 @@ void export_Device(){
         .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
         .def_readonly("NumGates", &PyDevice::getNumGates)
     	.def("getSplitLen", &PyDevice::getSplitLen)
-    	.def("setSplitLen", &PyDevice::setSplitLen);
- 
+    	.def("setSplitLen", &PyDevice::setSplitLen)
+        .def("setRoughnessEfficiency", &PyDevice::setRoughnessEfficiency);
     ;
 }
 
