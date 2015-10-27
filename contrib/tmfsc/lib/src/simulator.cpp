@@ -351,7 +351,7 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
                     // Roughness Correction
-                    transElect->setOccupation( transElect->getOccupation() * mDev->roughnessEfficiency );
+                    //transElect->setOccupation( transElect->getOccupation() * mDev->roughnessEfficiency );
                     transElect->rotateVel(-thti - thf);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);

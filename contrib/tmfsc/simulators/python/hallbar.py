@@ -174,6 +174,9 @@ class HallBar(object):
         
     def setSplitLen(self, len):
         self.dev.setSplitLen(len)
+    
+    def setRoughnessEfficiency(self, roughness):
+	self.dev.setRoughnessEfficiency(roughness)
 
     def getSplitLen(self):
         return self.dev.getSplitLen()
