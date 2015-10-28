@@ -176,10 +176,10 @@ class HallBar(object):
         self.dev.setSplitLen(len)
     
     def setRoughness(self, RefEdgeRghnsEff, isRefRghns, TranEdgeRghnsEff, isTranRghns,):
-	       self.dev.setRefEdgRghnsEff( RefEdgeRghnsEff )
-           self.dev.setTranEdgRghnsEff( TranEdgeRghnsEff )
-           self.dev.setRefEdgRghnsOn( isRefRghns )
-           self.dev.setTranEdgRghnsOn( isTranRghns )
+       self.dev.setRefEdgRghnsEff( RefEdgeRghnsEff )
+       self.dev.setTranEdgRghnsEff( TranEdgeRghnsEff )
+       self.dev.setRefEdgRghnsOn( isRefRghns )
+       self.dev.setTranEdgRghnsOn( isTranRghns )
 
     def getSplitLen(self):
         return self.dev.getSplitLen()
