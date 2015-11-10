@@ -101,13 +101,32 @@ public:
     int getNumGates() const { return mPot->NG(); };
     void setGatePotential(int igate, double V);
     double getPotAt(const point& position);
-    double getSplitLen();
+
+    double getSplitLen() { return splitLen; }
     void setSplitLen(double len);
+
+    void setRefEdgRghnsEff( double efficiency );
+    double getRefEdgRghnsEff() { return RefEdgRghnsEff; }
+
+    void setTranEdgRghnsEff( double efficiency );
+    double getTranEdgRghnsEff() { return TranEdgRghnsEff; }
+
+    void setRefEdgRghnsOn( bool flagRefEdgRghnsOn );
+    bool getRefEdgRghnsOn(){ return isRefEdgRghnsOn; }
+
+    void setTranEdgRghnsOn( bool flagTranEdgRghnsOn );
+    bool getTranEdgRghnsOn(){ return isTranEdgRghnsOn; }
+
 
     tuple<double, double, double, double> calcProbab(double V1, 
             double V2, const svec& vel, double En, int iEdge);
  
 public:
+    /*!
+     * this number will be multiplied to the occupation of the particle each
+     * time it reflects from a boundary or crosses a transmitting edge
+     */
+
 private:
     shared_ptr<LinearPot> mPot; //!< Potential solver.
     vector<point> mPts; //!< vertices.
@@ -115,6 +134,10 @@ private:
     vector<int> mCnts;  //!< Contact to edge map.
     map<int, int> mEdg2Cnt; //!< Egde to contact map.
     double splitLen = 0.0; //!< Split length between gates
+    double RefEdgRghnsEff = 1.0;
+    double TranEdgRghnsEff = 1.0;
+    bool isRefEdgRghnsOn = false;
+    bool isTranEdgRghnsOn = false;
 };
 
 

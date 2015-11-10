@@ -299,6 +299,11 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // we were about to cross a reflecting edge, NO WAY,
                 // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
+                // Roughness Correction
+				if ( mDev->getRefEdgRghnsOn() ){
+					distElecRoughness( electron->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
+					electron->setOccupation( electron->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
+				}
                 rf = r;
             } else if (mDev->isTransmitEdge(iEdge)) {
                 // about to cross a transmitting edge/gate boundary, let's first
@@ -341,11 +346,21 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
+                    // Roughness Correction
+                    if ( mDev->getTranEdgRghnsOn() ){
+						distElecRoughness( refElect->getOccupation() * (1 - mDev->getTranEdgRghnsEff() ), bins );//Lost part
+						electron->setOccupation( refElect->getOccupation() * mDev->getTranEdgRghnsEff() );//Remaining Part
+                    }
                     electsQu.push(refElect);
                 }
                 // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
+                    // Roughness Correction
+                    if ( mDev->getTranEdgRghnsOn() ){
+                    	distElecRoughness( transElect->getOccupation() * (1 - mDev->getTranEdgRghnsEff() ), bins );//Lost part
+                    	transElect->setOccupation( transElect->getOccupation() * mDev->getTranEdgRghnsEff() );//Remaining Part
+                    }
                     transElect->rotateVel(-thti - thf);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);
@@ -458,6 +473,35 @@ inline bool Simulator::stepNearEdge2(Particle::ptr electron, point& ri,
         itr += 1;
     }
     return false;
+}
+
+inline void Simulator::distElecRoughness( double occu, ElectronBins &bins ){
+	Particle::ptr electron;
+	svec dummy_vi;
+	svec dummy_ri;
+	int totalEdge, totalAbsorbingEdge;
+	double dummy_mE, dummy_V, dummy_mB;
+	// Creating a dummy electron
+	if (particleType == ParticleType::DiracCyclotron) {
+	    electron = make_shared<DiracCyclotron>(dummy_ri, dummy_vi, dummy_mE, dummy_V, dummy_mB);
+	} else {
+		electron = make_shared<DiracElectron>(dummy_ri, dummy_vi, dummy_mE, dummy_V, dummy_mB);
+	}
+	totalEdge = this->mDev->numEdges();
+	totalAbsorbingEdge = 0;
+	vector<int> absorbEdgeList;
+	// Finding the absorbing Edge index
+	for( int iEdge = 0; iEdge<totalEdge; iEdge++ ){
+		if (this->mDev->isAbsorbEdge(iEdge)){
+			absorbEdgeList.push_back( iEdge );
+			totalAbsorbingEdge++;
+		}
+	}
+	// Distributing the lost portion equally among absorbing contacts
+	electron->setOccupation( occu / absorbEdgeList.size() );
+	for( vector<int>::iterator iEdgeIt = absorbEdgeList.begin(); iEdgeIt != absorbEdgeList.end(); ++iEdgeIt ){
+		bins.putElectron(electron, this->mDev->edgeToContIndx(*iEdgeIt));
+	}
 }
 
 }}

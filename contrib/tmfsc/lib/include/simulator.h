@@ -157,6 +157,7 @@ private:
             int iEdge, bool doCross);
     inline bool stepNearEdge2(Particle::ptr electron, point& ri, point& rf, 
             int iEdge, bool doCross);
+    inline void distElecRoughness( double occu, ElectronBins &bins );
 
 private:
     double mvF = 1E6/nm; //!< Fermi velocity.

@@ -195,14 +195,33 @@ Edge::Edge(const point &p, const point &q, int type)
 
 }
 
-double Device::getSplitLen(){
-	return this->splitLen;
-}
-
 void Device::setSplitLen(double len){
 	this->splitLen = len;
 }
 
+void Device::setRefEdgRghnsEff( double efficiency ){
+	if ( efficiency>=0 && efficiency <= 1.0 ){
+		this->RefEdgRghnsEff = efficiency;
+	}else{
+		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
+	}
+}
+
+void Device::setTranEdgRghnsEff( double efficiency ){
+	if ( efficiency>=0 && efficiency <= 1.0 ){
+		this->TranEdgRghnsEff = efficiency;
+	}else{
+		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
+	}
+}
+
+void Device::setRefEdgRghnsOn( bool flagRefEdgRghnsOn ){
+	this->isRefEdgRghnsOn = flagRefEdgRghnsOn;
+}
+
+void Device::setTranEdgRghnsOn( bool flagTranEdgRghnsOn ){
+	this->isTranEdgRghnsOn = flagTranEdgRghnsOn;
+}
 }}
 
 
