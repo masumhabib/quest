@@ -384,8 +384,8 @@ class HallBar(object):
                 self.axes.plot(traj.path[:, 0], traj.path[:, 1],
                     linewidth=width, alpha=alpha2, marker=marker)
             else:
-                 self.axes.plot(traj.path[:, 0], self.traj.path[:, 1], 
-                         linewidth=width, alpha=alpha2, color=color, marker=marker)
+                 self.axes.plot(traj.path[:, 0], traj.path[:, 1], 
+                    linewidth=width, alpha=alpha2, color=color, marker=marker)
  
     def animate(self, filename=None):
 	    self._start_animation()
