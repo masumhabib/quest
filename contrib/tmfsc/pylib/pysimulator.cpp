@@ -6,41 +6,41 @@
 
 namespace qmicad{ namespace python{
 
-list PySimulator::calcTrajPy(point ri, double thi, double B, 
-            double EF, double V, bool saveTraj)
+list PySimulator::calcTrajPy(point ri, double thi, double E, 
+            double B, double V, bool saveTraj)
 {
-    TrajectoryVect trajs = calcTraj(ri, thi, B, EF, V, saveTraj);
+    TrajectoryVect trajs = calcTraj(ri, thi, E, B, V, saveTraj);
     return TrajVect2List(trajs);
 }
 
-list PySimulator::calcTrajPy2(point ri, double thi, double B, double E, 
+list PySimulator::calcTrajPy2(point ri, double thi, double E, double B, 
         const list& VG, bool saveTraj) 
 {
     vector<double> VGs = list2vect<double> (VG);
-    TrajectoryVect trajs = calcTraj(ri, thi, B, E, VGs, saveTraj);
+    TrajectoryVect trajs = calcTraj(ri, thi, E, B, VGs, saveTraj);
 
     return TrajVect2List(trajs);
 
 }
 
-tuple PySimulator::calcTranPy(double B, double E, double V, 
+tuple PySimulator::calcTranPy(double E, double B, double V, 
         int injCont, bool saveTraj)
 {
     TrajectoryVect trajs;
     mat TE;
-    tie(TE, trajs) = calcTran(B, E, V, injCont, saveTraj);
+    tie(TE, trajs) = calcTran(E, B, V, injCont, saveTraj);
 
     return make_tuple(TE, TrajVect2List(trajs));
 }
  
 
-tuple PySimulator::calcTranPy2(double B, double E, const list& VG, 
+tuple PySimulator::calcTranPy2(double E, double B, const list& VG, 
         int injCont, bool saveTraj) 
 {
     TrajectoryVect trajs;
     mat TE;
     vector<double> VGs = list2vect<double> (VG);
-    tie(TE, trajs) = calcTran(B, E, VGs, injCont, saveTraj);
+    tie(TE, trajs) = calcTran(E, B, VGs, injCont, saveTraj);
 
     return make_tuple(TE, TrajVect2List(trajs));
 }
@@ -51,6 +51,14 @@ int PySimulator::getParticleTypePy() {
 
 void PySimulator::setParticleTypePy(int type) {
     setParticleType(static_cast<ParticleType>(type));
+}
+
+int PySimulator::getInjectModelPy() {
+    return static_cast<int>(getInjectModel());
+}
+
+void PySimulator::setInjectModelPy(int model) {
+    setInjectModel(static_cast<InjectModel>(model));
 }
 
 list PySimulator::TrajVect2List(const TrajectoryVect& trajs) {
@@ -91,12 +99,27 @@ void export_Simulator(){
         .def("calcTrans", &PySimulator::calcTranPy, PySimulator_calcTranPy())
         .def("calcTraj", &PySimulator::calcTrajPy2, PySimulator_calcTrajPy2())
         .def("calcTrans", &PySimulator::calcTranPy2, PySimulator_calcTranPy2())
-        .add_property("ParticleType", &PySimulator::getParticleTypePy, 
-                &PySimulator::setParticleTypePy)
+        .add_property("MaxNumStepsPerTraj", &PySimulator::getMaxNumStepsPerTraj, 
+                &PySimulator::setMaxNumStepsPerTraj)
         .add_property("NumPointsPerCycle", &PySimulator::getNumPointsPerCycle, 
                 &PySimulator::setNumPointsPerCycle)
+        .add_property("NumEdgeSeekSteps", &PySimulator::getNumEdgeSeekSteps, 
+                &PySimulator::setNumEdgeSeekSteps)
+        .add_property("InjecSpacing", &PySimulator::getInjecSpacing, 
+                &PySimulator::setInjecSpacing)
+        .add_property("NumInjecDir", &PySimulator::getNumInjecDir, 
+                &PySimulator::setNumInjecDir)
+        .add_property("InjecAngleSpread", &PySimulator::getInjecAngleSpread, 
+                &PySimulator::setInjecAngleSpread)
+        .add_property("ParticleType", &PySimulator::getParticleTypePy, 
+                &PySimulator::setParticleTypePy)
         .add_property("TimeStep", &PySimulator::getTimeStep, 
                 &PySimulator::setTimeStep)
+        .add_property("CollectionTol", &PySimulator::getCollectionTol, 
+                &PySimulator::setCollectionTol)
+        .add_property("DebugLevel", &PySimulator::getDebugLvl,
+                &PySimulator::setDebugLvl)
+
     ;
 }
 

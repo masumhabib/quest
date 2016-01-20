@@ -43,8 +43,17 @@ void export_Device(){
         .def("numConts", &PyDevice::numConts)
         .def("isReflectEdge", &PyDevice::isReflectEdge)
         .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
-        .def_readonly("NumGates", &PyDevice::getNumGates);
- 
+        .def_readonly("NumGates", &PyDevice::getNumGates)
+    	.def("getSplitLen", &PyDevice::getSplitLen)
+    	.def("setSplitLen", &PyDevice::setSplitLen)
+        .def("setRefEdgRghnsEff", &PyDevice::setRefEdgRghnsEff)
+		.def("getRefEdgRghnsEff", &PyDevice::getRefEdgRghnsEff)
+		.def("setTranEdgRghnsEff", &PyDevice::setTranEdgRghnsEff)
+		.def("getTranEdgRghnsEff", &PyDevice::getTranEdgRghnsEff)
+		.def("setRefEdgRghnsOn", &PyDevice::setRefEdgRghnsOn)
+		.def("getRefEdgRghnsOn", &PyDevice::getRefEdgRghnsOn)
+		.def("setTranEdgRghnsOn", &PyDevice::setTranEdgRghnsOn)
+		.def("getTranEdgRghnsOn", &PyDevice::getTranEdgRghnsOn);
     ;
 }
 

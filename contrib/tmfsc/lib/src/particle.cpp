@@ -11,11 +11,12 @@ Particle::Particle(const svec& ri, const svec& vi, double m, double q)
         :r(ri), v(vi), m(m), q(q) 
 {
     speed = sqrt(v[0]*v[0] + v[1]*v[1]);
+    speed2 = speed*speed;
 }
 
 double Particle::timeToReach(const svec& pos) {
-    double t = sqrt(pow(pos[0]-r[0],2) + pow(pos[1]-r[1], 2))/speed;
-    return t;
+    double dx = pos[0]-r[0], dy = pos[1]-r[1];
+    return sqrt(dx*dx + dy*dy)/speed;
 }
 
 const svec& Particle::stepCloseToPoint(const svec& pos, double distanceTol) {
@@ -38,16 +39,9 @@ void Particle::reflect(const svec& normal) {
 }
 
 void Particle::rotateVel(double thti){
-	//TODO calculation can be made faster if manual calculation is used instead
-	// of matrix multiplication
-	mat rotationMat;
-	// Building rotation matrix
-	rotationMat << cos(thti) << -sin(thti) << endr
-					<< sin(thti) <<  cos(thti) <<  endr;
-	// converting row vector to column vector for matrix multiplication
-	col vcol = conv_to< col >::from(this->v);
-	col rotv = rotationMat * vcol;
-	this->v = conv_to< svec >::from(rotv);
+	double vx = this->v[0], vy = this->v[1];
+	this->v[0] = vx*cos(thti) - vy*sin(thti);
+	this->v[1] = vx*sin(thti) + vy*cos(thti);
 }
 
 }}

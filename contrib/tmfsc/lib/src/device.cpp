@@ -56,11 +56,10 @@ void Device::edgeType(int iEdge, int type) {
 }
 
 /** Returns the edge index that intersects the line segment defined by
- *  p and q. p and q are in angstrom. */
-int Device::intersects(point p, point q) {
-    // convert to angstrom
+ *  p and q. */
+int Device::intersects(const point &p, const point &q) {
     for (int i = 0; i < mEdgs.size(); i += 1) {
-        if (mEdgs[i].intersects(p, q)) {
+        if (intersects(i, p, q)) {
             return i;
         }
     }
@@ -68,9 +67,14 @@ int Device::intersects(point p, point q) {
     return -1;
 }
 
+/** Returns true if edge iEdge intersects the segment pq. */
+int Device::intersects(int iEdge, const point &p, const point &q) {
+    return mEdgs[iEdge].intersects(p, q);
+}
+
 /** Returns intersection point between and edge and the line segment defined 
  * by p and q. p and q are in angstrom. */
-point Device::intersection(int iEdge, point p, point q) {
+point Device::intersection(int iEdge, const point &p, const point &q) {
     // convert to angstrom
     return mEdgs[iEdge].intersection(p, q);
 }
@@ -114,9 +118,11 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
-tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
-            const svec& vel, double En, int iEdge) 
+tuple<double, double, double, double> Device::calcProbab(double V1, 
+        double V2, const svec& vel, double En, int iEdge) 
 {
+	using maths::constants::e;
+	using maths::constants::hbar;
 	double th, thti, TransProb, RefProb;
 	svec NormVec = this->edgeNormVect(iEdge);
 	double incidentAbsoluteAngle = atan2( vel[1], vel[0] );
@@ -127,26 +133,36 @@ tuple<double, double, double, double> Device::calcProbab(double V1, double V2,
 			thti += pi;
 		}
 	}
+	// correcting theta incidence due to vector complication
 	else{
 		thti = atan2( NormVec[1], NormVec[0]) + incidentAbsoluteAngle;
 	}
-	// correcting theta incidence due to vector complication
-	double angle_critical = std::asin( abs(En+V2) / abs(En+V1) );
-	if( abs(En+V2) / abs(En/V2) > 1 ){
-		angle_critical = pi/2;
-	}
+
+	// handle the critical angle case
+	double sininv = abs((En+V1)/(En+V2)) * sin(thti);
+	if (abs(sininv) > 1) {
+	    return make_tuple(std::nan("NaN"), thti, 0.0, 1.0);
+    }
+
 	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
-	if( abs( thti ) < angle_critical ){
-			TransProb = std::cos( thti )   *   std::cos( th ) \
-						/   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
-	}
-	else{
-			TransProb = 1E-8;
-	}
-//    if ( ~( (En > -V1 && En < -V2) || (En>-V2 && En <-V1) ) ){
-//    	//TODO
-//    	return make_tuple(0, 0, 0, 0);
-//    }
+    // if pn case, calculate exponential term and apply negative refraction
+	double t_graded = 1.0;
+	if ( !( (En > -V1 && En < -V2) || (En > -V2 && En < -V1) ) ){
+		th = -th;
+	} else {
+	    //FIXME: REMOVE hardcoded vF, else, it is gonna cause major headache
+    	double vF = 1E6;
+    	double kf1, ky, d_eff, S;
+    	kf1 = e * abs(En - (-V1)) / (hbar * vF);
+    	ky = kf1 * sin ( thti );
+    	d_eff = hbar * vF * abs(ky) * (this->splitLen*nm) / ( e*abs(V1-V2) );
+    	S = pi * (d_eff/2) * abs(ky);
+    	t_graded = std::exp( -2*S );
+    }
+
+	TransProb = t_graded*std::cos( thti )*std::cos( th ) 
+	    /   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
+
 //    if( En+V2 > En+V1 )
 //    {
 //    	//TODO
@@ -179,6 +195,33 @@ Edge::Edge(const point &p, const point &q, int type)
 
 }
 
+void Device::setSplitLen(double len){
+	this->splitLen = len;
+}
+
+void Device::setRefEdgRghnsEff( double efficiency ){
+	if ( efficiency>=0 && efficiency <= 1.0 ){
+		this->RefEdgRghnsEff = efficiency;
+	}else{
+		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
+	}
+}
+
+void Device::setTranEdgRghnsEff( double efficiency ){
+	if ( efficiency>=0 && efficiency <= 1.0 ){
+		this->TranEdgRghnsEff = efficiency;
+	}else{
+		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
+	}
+}
+
+void Device::setRefEdgRghnsOn( bool flagRefEdgRghnsOn ){
+	this->isRefEdgRghnsOn = flagRefEdgRghnsOn;
+}
+
+void Device::setTranEdgRghnsOn( bool flagTranEdgRghnsOn ){
+	this->isTranEdgRghnsOn = flagTranEdgRghnsOn;
+}
 }}
 
 

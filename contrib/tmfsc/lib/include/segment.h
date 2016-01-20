@@ -23,6 +23,13 @@ using std::max;
 using std::min;
 using std::abs;
 
+inline 
+double distance(const point& p, const point& q){
+    double dx = p[0] - q[0], dy = p[1] - q[1];
+    return sqrt(dx*dx + dy*dy);
+}
+
+
 class Segment : public Printable {
 public:
     Segment(const point &p, const point &q);
@@ -34,6 +41,7 @@ public:
     double angle() const { return mth; };
     const point& p() const { return mp; };
     const point& q() const { return mq; };
+    point midPoint() const { return (mp + mq)/2; };
 
     bool intersects(const point &p, const point &q, bool collinear = false);
     bool intersects(const Segment &seg, bool collinear = false);

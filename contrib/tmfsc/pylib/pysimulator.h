@@ -33,17 +33,19 @@ struct PyTrajectory {
 class PySimulator : public Simulator {
 public:
     PySimulator(Device::ptr dev) : Simulator(dev){};
-    list calcTrajPy(point ri, double thi, double B, double EF, double V, 
+    list calcTrajPy(point ri, double thi, double E, double B, double V, 
             bool saveTraj = true);
-    tuple calcTranPy(double B, double E, double V, int injCont = 0, 
+    tuple calcTranPy(double E, double B, double V, int injCont = 0, 
             bool saveTraj = false);
-    list calcTrajPy2(point ri, double thi, double B, double E, const list& VG, 
+    list calcTrajPy2(point ri, double thi, double E, double B, const list& VG, 
             bool saveTraj = true);
-    tuple calcTranPy2(double B, double E, const list& VG, int injCont = 0, 
+    tuple calcTranPy2(double E, double B, const list& VG, int injCont = 0, 
             bool saveTraj = false);
 
     int getParticleTypePy();
     void setParticleTypePy(int type);
+    int getInjectModelPy();
+    void setInjectModelPy(int model);
 
 private:
      PyTrajectory Traj2PyTraj (const Trajectory& traj);
