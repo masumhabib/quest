@@ -111,6 +111,8 @@ void export_Simulator(){
                 &PySimulator::setNumInjecDir)
         .add_property("InjecAngleSpread", &PySimulator::getInjecAngleSpread, 
                 &PySimulator::setInjecAngleSpread)
+        .add_property("MeanInjecAngle", &PySimulator::getMeanInjecAngle, 
+                &PySimulator::setMeanInjecAngle)
         .add_property("ParticleType", &PySimulator::getParticleTypePy, 
                 &PySimulator::setParticleTypePy)
         .add_property("TimeStep", &PySimulator::getTimeStep, 

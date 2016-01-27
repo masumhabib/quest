@@ -96,7 +96,7 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     point r0 = mDev->contMidPoint(injCont);
     svec contVect = mDev->contUnitVect(injCont);
     double contWidth = mDev->contWidth(injCont);
-    double th0 = mDev->contDirctn(injCont) + pi/2;
+    double th0 = mDev->contDirctn(injCont) + mMeanInjAngle;
 
     TrajectoryVect trajs;
     ElectronBins electBins(nconts);
@@ -154,7 +154,7 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
     int nconts = mDev->numConts();
     vector<point> injPts = mDev->createPointsOnCont(injCont, mdl);
     int npts = injPts.size();
-    double th0 = mDev->contDirctn(injCont) + pi/2;
+    double th0 = mDev->contDirctn(injCont) + mMeanInjAngle;
 
     if (npts * mNth > mMaxNumInjPoints) {
         throw invalid_argument("Too many injection points, please reduce it.");

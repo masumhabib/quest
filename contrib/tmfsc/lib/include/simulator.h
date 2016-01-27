@@ -122,6 +122,9 @@ public:
     void setNumInjecDir(int ndir) { mNth = ndir; };
     double getInjecAngleSpread() const { return mAngleSpread; };
     void setInjecAngleSpread(double angle) { mAngleSpread = angle; };
+    double getMeanInjecAngle() const { return mMeanInjAngle; };
+    void setMeanInjecAngle(double angle) { mMeanInjAngle = angle; };
+
     double getFermiVelo() const { return mvF; };
     void getFermiVelo(double vF) { mvF = vF; };
     double getTimeStep() const { return dt; };
@@ -178,6 +181,7 @@ private:
     bool isAutoDt = true; //!< Switch for automatic dt calculation
     double mAngleSpread = pi/5; //!< spread (std dev) of injection angle.
     double mAngleLimit = pi/20; //!< allowed limit of injection angle.
+    double mMeanInjAngle = pi/2; //!< mean of the injection angle
 
     bool debug = false; //!< Prints debug message if true.
 
