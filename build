@@ -14,7 +14,10 @@ function usage(){
     echo "  When no option is given, builds qmicad using make."
     echo "  options: " 
     echo "    config: configures qmicad using cmake."
+    echo "    debug: make with debugging information."
+    echo "    release: make with debugging information."
     echo "    install [path]: installs qmicad."
+    echo "    doc: build documentation."
     echo "    clean: deletes compiled object files in the build folder."
     echo "    superclean: deletes build folder."
     echo "    help: shows this message."
@@ -23,7 +26,11 @@ function usage(){
 function doconfig(){
     mkdir -p $build_dir
     cd $build_dir
-    cmake ../
+    if [[ "$1" ]]; then
+        cmake -DCMAKE_BUILD_TYPE=$1 ../
+    else
+        cmake ../
+    fi
     cd ../
 }
 
@@ -53,20 +60,14 @@ elif [[ $# -ge 1 ]]; then
     opt=$1
     if [[ $opt == "help" ]]; then
         usage
-    #elif [[ $opt == "build" ]]; then
-    #    if [[ ! -d "build/" ]]; then
-    #        doconfig
-    #        cd ../
-    #    fi
-#
-    #    if [[ $# == 2 ]]; then
-    #        mkopt=$2
-    #        cd build && make -j $ncpu $mkopt
-    #    else
-    #        cd build && make -j $ncpu
-    #    fi
     elif [[ $opt == "config" ]]; then 
         doconfig
+    elif [[ $opt == "debug" ]]; then 
+        doconfig "Debug"
+        domake
+    elif [[ $opt == "release" ]]; then 
+        doconfig "Release"
+        domake
     elif [[ $opt == "clean" ]]; then 
         domake "clean"
     elif [[ $opt == "superclean" ]]; then
@@ -78,6 +79,12 @@ elif [[ $# -ge 1 ]]; then
         else
             cd $build_dir && make install 
         fi
+    elif [[ $opt == "doc" ]]; then
+        if [[ ! -f "./$build_dir/Makefile" ]]; then
+            doconfig
+        fi
+
+        cd $build_dir && make doc
     else
         usage
         exit -1
