@@ -29,7 +29,7 @@ using namespace maths::constants;
  *  0     0    Huu  Hud
  *  0     0    Hdu  Hdd
  * A quantity, sigma_z*(kx^2 + ky^2) is added to the upper 2x2 and subtracted 
- * from the lowe 2x2 to avoid fermion doubling and to avoid all the side
+ * from the low 2x2 to avoid fermion doubling and to avoid all the side
  * effects that can be introduced by the term sigma_z*(kx^2 + ky^2).
  */
 class TISurfKpParams4: public cxhamparams{

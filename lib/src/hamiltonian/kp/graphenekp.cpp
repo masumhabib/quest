@@ -78,37 +78,17 @@ cxmat GrapheneKpParams::twoAtomHam(const AtomicStruct& atomi, const AtomicStruct
         // nearest neighbor in x
         }else if(abs(d - ma) <= mdtol && abs(dx - ma) <= mdtol){ 
             // add magnetic field
-            //dcmplx phase = dcmplx(1,0);
-            //if(abs(mBz) > mBzTol){
-            //    if (mBzGauge == coord::X){ // for A = (-Bz*y, 0, 0)
-            //        double phi = mfactor*mBz*(xi - xj)*(yi+yj);
-            //        phase = exp(i*phi);
-            //    }else if (mBzGauge == coord::Y){ // for A = (0, Bz*x, 0)
-            //        double phi = mfactor*mBz*(yj - yi)*(xi+xj);
-            //        phase = exp(i*phi);
-            //    }
-            //}
-            dcmplx phase = calcPeierlsPhase(xi, xj, yi, yj);
+            dcmplx phase = calcPeierlsPhase(xi, yi, xj, yj);
             
             if (xi > xj){
                 hmat = mt10x*phase;
-            }else{
+            } else {
                 hmat = mt01x*phase;
             }
         //nearest neighbor y
         }else if (abs(d - ma) <= mdtol && abs(dy - ma) <= mdtol){
             // add magnetic field
-            //dcmplx phase = dcmplx(1,0);
-            //if(abs(mBz) > mBzTol){
-            //    if (mBzGauge == coord::Y){ // for A = (0, Bz*x, 0)
-            //        double phi = mfactor*mBz*(yj - yi)*(xi+xj);
-            //        phase = exp(i*phi);
-            //    }else if (mBzGauge == coord::X){ // for A = (-Bz*y, 0, 0)
-            //        double phi = mfactor*mBz*(xi - xj)*(yi+yj);
-            //        phase = exp(i*phi);
-            //    }
-            //}
-            dcmplx phase = calcPeierlsPhase(xi, xj, yi, yj);
+            dcmplx phase = calcPeierlsPhase(xi, yi, xj, yj);
             
             if(yi > yj){
                 hmat = mt10y*phase;

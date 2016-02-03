@@ -76,7 +76,7 @@ protected:
     double mBz;           //!< The z-component of magnetic field.
     int    mBzGauge;      //!< gauge choice for the z-component.
     //!< pre-factor for magnetic phase = i*hbar/q/2
-    dcmplx mfactor = dcmplx(0, 1E-20*q/hbar/2); 
+    double mfactor = 1E-20*q/hbar/2; 
     static constexpr double mBzTol = 1E-10;
 };
 
@@ -90,9 +90,9 @@ dcmplx HamParams<T>::calcPeierlsPhase(double xi, double yi,
     if(abs(mBz) > mBzTol) {
         dcmplx iphi = dcmplx(0,0);
         if (mBzGauge == coord::X) { // for A = (-Bz*y, 0, 0)
-            iphi = mfactor*mBz*(xi - xj)*(yi + yj);
+            iphi = dcmplx(0, mfactor*mBz*(xi - xj)*(yi + yj));
         } else if (mBzGauge == coord::Y) { // for A = (0, Bz*x, 0)
-            iphi = mfactor*mBz*(yj - yi)*(xi + xj);
+            iphi = dcmplx(0, mfactor*mBz*(yj - yi)*(xi + xj));
         }
         phase = exp(iphi);
     }
