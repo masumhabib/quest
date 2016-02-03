@@ -60,7 +60,6 @@ private:
         mortho   = true;
         mpt.add(0, "D", 2, 2);
         mBz      = 0;
-        mfactor  = 1E-20*q/hbar/2;
     };        
     //!< Updates internal tight binding parameters calculated using 
     //!< k.p model. Call it after changing any of the k.p parameters.
@@ -80,7 +79,6 @@ private:
     cxmat mt01y;
     cxmat mt10y;
     
-    double mfactor;      //!< pre-factor for magnetic phase.
     
 };
 

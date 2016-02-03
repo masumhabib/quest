@@ -64,6 +64,9 @@ protected:
     // Updates internal parameters. Call it after changing any of the 
     // public parameters.
     virtual void update(){}; 
+
+    // Caluclates Peierl's phase factor for magnetic field
+    dcmplx calcPeierlsPhase(double xi, double yi, double xj, double yj) const;
     
 protected:
     // Parameters required for all Hamiltonin
@@ -72,9 +75,29 @@ protected:
     PeriodicTable mpt;    //!< The periodic table required for this system.
     double mBz;           //!< The z-component of magnetic field.
     int    mBzGauge;      //!< gauge choice for the z-component.
+    //!< pre-factor for magnetic phase = i*hbar/q/2
+    dcmplx mfactor = dcmplx(0, 1E-20*q/hbar/2); 
     static constexpr double mBzTol = 1E-10;
-                            
 };
+
+
+// Caluclates Peierl's phase factor for magnetic field
+template<class T>
+dcmplx HamParams<T>::calcPeierlsPhase(double xi, double yi, 
+        double xj, double yj) const 
+{
+    dcmplx phase = dcmplx(1,0);
+    if(abs(mBz) > mBzTol) {
+        dcmplx iphi = dcmplx(0,0);
+        if (mBzGauge == coord::X) { // for A = (-Bz*y, 0, 0)
+            iphi = mfactor*mBz*(xi - xj)*(yi + yj);
+        } else if (mBzGauge == coord::Y) { // for A = (0, Bz*x, 0)
+            iphi = mfactor*mBz*(yj - yi)*(xi + xj);
+        }
+        phase = exp(iphi);
+    }
+    return phase;
+}
 
 //!< Generates the hamiltonaina and overlap matrices between atomc block
 //!< i and atomic block j. 
