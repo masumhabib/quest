@@ -13,14 +13,10 @@
 namespace qmicad{
 namespace hamiltonian{
 
-GrapheneKpParams::GrapheneKpParams(const string &prefix):cxhamparams(prefix)
-{
-    mTitle  = "Graphene k.p parameters";
-    mI      = eye<cxmat>(2,2);    
-    
-    setDefaultParams();
-    update();
-}
+//GrapheneKpParams::GrapheneKpParams(const string &prefix) //:DiracKpParams(prefix)
+//{
+//    mTitle  = "Graphene k.p parameters";
+//}
 
 string GrapheneKpParams::toString() const { 
     stringstream ss;
@@ -38,10 +34,18 @@ string GrapheneKpParams::toString() const {
     return ss.str(); 
 };
 
-void GrapheneKpParams::update(){
+GrapheneOneValleyKpParams::GrapheneOneValleyKpParams(const string &prefix)
+    :GrapheneKpParams(prefix)
+{
+    mI = eye<cxmat>(2,2);    
+    setDefaultParams();
+    update();
+}
+
+void GrapheneOneValleyKpParams::update(){
     if(!(is_finite(mdtol) && is_finite(mgamma) && is_finite(ma) 
             && is_finite(mK))){
-        throw runtime_error("GrapheneKpParams: invalid k.p parameters.");    
+        throw runtime_error("GrapheneOneValleyKpParams: invalid k.p parameters.");    
     }
     double Kx = mK, Ky = mK, ax = ma, ay = ma;
     meps = -mgamma*(Kx/ax + Ky/ay)*sz();
@@ -51,84 +55,41 @@ void GrapheneKpParams::update(){
     mt10y = trans(mt01y);                
 }
 
-cxmat GrapheneKpParams::twoAtomHam(const AtomicStruct& atomi, const AtomicStruct& atomj) const
+GrapheneTwoValleyKpParams::GrapheneTwoValleyKpParams(const string &prefix)
+    :GrapheneKpParams(prefix)
 {
-    if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1) {
-        throw invalid_argument("GrapheneHamGen(): atomi and atomj must should contain one atom each.");
+    mI = eye<cxmat>(4, 4);    
+    setDefaultParams();
+    update();
+}
+
+void GrapheneTwoValleyKpParams::update(){
+    if(!(is_finite(mdtol) && is_finite(mgamma) && is_finite(ma) 
+            && is_finite(mK))){
+        throw runtime_error("GrapheneTwoValleyKpParams: invalid k.p parameters.");    
     }
     
-    int noi = atomi.NumOfOrbitals();
-    int noj = atomj.NumOfOrbitals();
+    double Kx = mK, Ky = mK, ax = ma, ay = ma;
+    meps = zeros<cxmat>(4,4);
+    cxmat eps22 = -mgamma*(Kx/ax + Ky/ay)*sz();
+    meps(span(0,1), span(0,1)) = eps22;
+    meps(span(2,3), span(2,3)) = eps22;
 
-    cxmat hmat =  zeros<cxmat>(noi, noj);
+    mt01x = zeros<cxmat>(4,4);
+    cxmat t01x_K = (mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
+    cxmat t01x_Kp = (-mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
+    mt01x(span(0,1), span(0,1)) = t01x_K;
+    mt01x(span(2,3), span(2,3)) = t01x_Kp;
+    mt10x = trans(mt01x);
 
-    // calculate distance between atom i and atom j
-    double xi = atomi.X(0), yi = atomi.Y(0), zi = atomi.Z(0);
-    double xj = atomj.X(0), yj = atomj.Y(0), zj = atomj.Z(0);
-    
-    double dx = abs(xi - xj), dy = abs(yi - yj), dz = abs(zi - zj);           
-    double d = sqrt(dx*dx + dy*dy + dz*dz);
-
-    // Assign the the matrix elements based on the distance between 
-    // the lattice points.
-    if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
-        // site energy
-        if (d <= mdtol){
-            hmat = meps;
-        // nearest neighbor in x
-        }else if(abs(d - ma) <= mdtol && abs(dx - ma) <= mdtol){ 
-            // add magnetic field
-            dcmplx phase = calcPeierlsPhase(xi, yi, xj, yj);
-            
-            if (xi > xj){
-                hmat = mt10x*phase;
-            } else {
-                hmat = mt01x*phase;
-            }
-        //nearest neighbor y
-        }else if (abs(d - ma) <= mdtol && abs(dy - ma) <= mdtol){
-            // add magnetic field
-            dcmplx phase = calcPeierlsPhase(xi, yi, xj, yj);
-            
-            if(yi > yj){
-                hmat = mt10y*phase;
-            }else{
-                hmat = mt01y*phase;
-            }
-        }            
-    }  
-    return hmat;
-};
-
-cxmat GrapheneKpParams::twoAtomOvl(const AtomicStruct& atomi, const AtomicStruct& atomj) const
-{
-    if (atomi.NumOfAtoms() > 1 || atomj.NumOfAtoms() > 1) {
-        throw invalid_argument("GrapheneHamGen(): atomi and atomj must should contain one atom each.");
-    }
-    
-    int noi = atomi.NumOfOrbitals();
-    int noj = atomj.NumOfOrbitals();
-
-    cxmat smat =  zeros<cxmat>(noi, noj);
-
-    // calculate distance between atom i and atom j
-    double xi = atomi.X(0), yi = atomi.Y(0), zi = atomi.Z(0);
-    double xj = atomj.X(0), yj = atomj.Y(0), zj = atomj.Z(0);
-    
-    double dx = abs(xi - xj), dy = abs(yi - yj), dz = abs(zi - zj);           
-    double d = sqrt(dx*dx + dy*dy + dz*dz);
-
-    // Assign the the matrix elements based on the distance between 
-    // the lattice points.
-    if (atomi.Symbol(0) == "D" && atomj.Symbol(0) == "D"){
-        // overlap matrix of atom i.
-        if (d <= mdtol){
-            smat = mI;
-        }
-    }
-    return smat;
-};
-
+    mt01y = zeros<cxmat>(4,4);
+    cxmat t01y_K = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+    // cxmat t01y_Kp = (-mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+    cxmat t01y_Kp = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+    mt01y(span(0,1), span(0,1)) = t01y_K;
+    mt01y(span(2,3), span(2,3)) = t01y_Kp;
+    mt10y = trans(mt01y);
+}
 
 }
 }

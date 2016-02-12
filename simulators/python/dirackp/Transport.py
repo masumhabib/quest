@@ -97,6 +97,7 @@ class Transport(object):
         self.HAM_TI_SURF_KP4 = 11       # TI surface k.p hamiltonian with 4 spin basis set
         self.HAM_TI_3D_KP    = 15       # TI 3D k.p hamiltonian with 4 spin basis set        
         self.HAM_GRAPHENE_KP = 20       # Graphene k.p Hamiltonian
+        self.HAM_GRAPHENE_TWO_VALLEY_KP = 21       # Graphene k.p Hamiltonian
         self.HamType         = self.HAM_TI_SURF_KP 
         
         # Device types
@@ -192,7 +193,6 @@ class Transport(object):
 
         nprint("\n Creating atomistic geometry ...")
 
-        # TI k.p surface
         if not hasattr(self, "hp"): # if hp does not exist, create it.
             if self.HamType == self.HAM_TI_SURF_KP:
                 self.hp = TISurfKpParams()
@@ -201,7 +201,9 @@ class Transport(object):
             elif self.HamType == self.HAM_TI_3D_KP:
                 self.hp = TI3DKpParams()
             elif self.HamType == self.HAM_GRAPHENE_KP:
-                self.hp = GrapheneKpParams()
+                self.hp = GrapheneOneKpParams()
+            elif self.HamType == self.HAM_GRAPHENE_TWO_VALLEY_KP:
+                self.hp = GrapheneTwoKpParams()
             else:
                 raise RuntimeError(" Unsupported Hamiltonian type. ")
 
@@ -251,7 +253,8 @@ class Transport(object):
 
         if (self.HamType == self.HAM_TI_SURF_KP 
                     or self.HamType == self.HAM_TI_SURF_KP4
-                    or self.HamType == self.HAM_GRAPHENE_KP):
+                    or self.HamType == self.HAM_GRAPHENE_KP
+                    or self.HamType == self.HAM_GRAPHENE_TWO_VALLEY_KP):
             nw = []
             geom = AtomicStruct()
             beg = 0

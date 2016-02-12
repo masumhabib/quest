@@ -63,7 +63,7 @@ public:
 protected:
     // Updates internal parameters. Call it after changing any of the 
     // public parameters.
-    virtual void update(){}; 
+    virtual void update() {}; 
 
     // Caluclates Peierl's phase factor for magnetic field
     dcmplx calcPeierlsPhase(double xi, double yi, double xj, double yj) const;
