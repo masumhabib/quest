@@ -49,9 +49,9 @@ void GrapheneOneValleyKpParams::update(){
     }
     double Kx = mK, Ky = mK, ax = ma, ay = ma;
     meps = -mgamma*(Kx/ax + Ky/ay)*sz();
-    mt01x = (mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
+    mt01x = mgamma/(2*ax)*(-sx()*i + Kx*sz());
     mt10x = trans(mt01x);
-    mt01y = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+    mt01y = mgamma/(2*ay)*(-sy()*i + Ky*sz());
     mt10y = trans(mt01y);                
 }
 
@@ -76,16 +76,15 @@ void GrapheneTwoValleyKpParams::update(){
     meps(span(2,3), span(2,3)) = eps22;
 
     mt01x = zeros<cxmat>(4,4);
-    cxmat t01x_K = (mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
-    cxmat t01x_Kp = (-mgamma/(2*ax))*sx()*i + (Kx*mgamma/(2*ax))*sz();
+    cxmat t01x_K = mgamma/(2*ax)*(-sx()*i + Kx*sz());
+    cxmat t01x_Kp = mgamma/(2*ax)*(sx()*i + Kx*sz());
     mt01x(span(0,1), span(0,1)) = t01x_K;
     mt01x(span(2,3), span(2,3)) = t01x_Kp;
     mt10x = trans(mt01x);
 
     mt01y = zeros<cxmat>(4,4);
-    cxmat t01y_K = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
-    // cxmat t01y_Kp = (-mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
-    cxmat t01y_Kp = (mgamma/(2*ay))*sy()*i + (Ky*mgamma/(2*ay))*sz();
+    cxmat t01y_K = mgamma/(2*ay)*(-sy()*i + Ky*sz());
+    cxmat t01y_Kp = mgamma/(2*ay)*(-sy()*i + Ky*sz());
     mt01y(span(0,1), span(0,1)) = t01y_K;
     mt01y(span(2,3), span(2,3)) = t01y_Kp;
     mt10y = trans(mt01y);
