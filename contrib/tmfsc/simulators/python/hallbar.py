@@ -206,6 +206,13 @@ class HallBar(object):
     @DebugLevel.setter
     def DebugLevel(self, level):
         self.sim.DebugLevel = level
+    
+    @property
+    def MinmNoInjection(self):
+        return self.sim.MinmNoInjection
+    @MinmNoInjection.setter
+    def MinmNoInjection(self, mNo):
+        self.sim.MinmNoInjection = mNo
 
     def setupBias(self, B, V, m = 1, singleResonance = True, 
             Bmax = None, NB = 1, Vmax = None, NV = 1):

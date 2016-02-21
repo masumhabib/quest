@@ -104,11 +104,16 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     row prevTE = row(nconts);
     prevTE.fill(numeric_limits<double>::min());
     int ip = 0;
-
-    while (maxError > mTransmissionConv) {
-        double distance = getUniformRand(-contWidth/2, contWidth/2); 
-        double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, 
-                pi/2-mAngleLimit);
+    bool isReset = true; // Reset the distribution only for first time
+    int totalN = 0;
+    
+    while (1) { //TODO condition need to be improved
+        if ( maxError < mTransmissionConv && totalN > mNoInjection ){
+            break;
+        }
+        double distance = getUniformRand(-contWidth/2, contWidth/2, isReset);
+        double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit, isReset);
+        isReset = false;
         svec position = r0 + distance * contVect;
         angle = th0 + angle;
         //cout << "DBG: pos = " << position;
@@ -143,8 +148,8 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
             }
             break;
         }
+        totalN += 1;
     }
-
     mat TE = electBins.calcTransMat(injCont);
     return make_tuple(TE, trajs);
 }
