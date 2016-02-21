@@ -136,6 +136,8 @@ public:
     void setParticleType(ParticleType type) { particleType = type; };
     InjectModel getInjectModel() const { return injectModel; };
     void setInjectModel(InjectModel model) { injectModel = model; };
+    void setMinNoInjection(int mNo) {mNoInjection = mNo;};
+    int getMinNoInjection() const {return mNoInjection; };
 
 
     void setDebugLvl(unsigned long debugLevel) { debug = (debugLevel > 0); };
@@ -191,6 +193,7 @@ private:
     double mOccupationFailTol = 1E-2;
     double mClosenessTol = 1E-2;
     double mTransmissionConv = 1E-2;
+    int mNoInjection = 500;
 
     static constexpr double ETOL = 1E-6;
 
