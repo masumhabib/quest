@@ -305,11 +305,14 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
                 // Roughness Correction
+                Particle::ptr reflElect = electron->clone();
 				if ( mDev->getRefEdgRghnsOn() ){
-					distElecRoughness( electron->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
-					electron->setOccupation( electron->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
+					distElecRoughness( reflElect->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
+					reflElect->setOccupation( reflElect->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
 				}
                 rf = r;
+                electsQu.push(reflElect);
+                break;
             } else if (mDev->isTransmitEdge(iEdge)) {
                 // about to cross a transmitting edge/gate boundary, let's first
                 // calculate what would be transmission probability. To do so,
