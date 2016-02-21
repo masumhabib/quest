@@ -336,7 +336,7 @@ class HallBar(object):
         else:
             mpi.reduce(self.mpiworld, self.T, op.add, 0) 
  
-    def drawGeom(self):
+    def drawGeom(self, gateColors=None,gateBorder=0.0,refEdgeBorder=2.0,contBorder=4.0):
         """ Draws the device outline """
         self.fig = plt.figure()
         self.axes = self.fig.add_subplot(111)
@@ -346,14 +346,14 @@ class HallBar(object):
         pt1 = self.dev.edgeMidPoint(0) - edgeVec/2.0
         for ie in range(nedges):                                    
             if self.dev.edgeType(ie) == EDGE_ABSORB:
-                width = 4.0
+                width = contBorder
             else:
-                width = 1.5 
+                width = refEdgeBorder 
             edgeVec = self.dev.edgeVect(ie)
             pt2 = pt1 + edgeVec
             X = np.array([pt1[0], pt2[0]])
             Y = np.array([pt1[1], pt2[1]])
-            self.axes.plot(X, Y, 'r-', linewidth=width) 
+            self.axes.plot(X, Y, 'k-', linewidth=width) 
             pt1 = pt2
         # draw gates
         codes = [Path.MOVETO,
@@ -362,11 +362,16 @@ class HallBar(object):
             Path.LINETO,
             Path.CLOSEPOLY,
          ]
-        for gate in self.gates:
+        for gate_indx, gate in enumerate(self.gates):
             gate = gate + (np.array([0,0]),)
             path = Path(gate, codes)
-            patch = patches.PathPatch(path, alpha=0.5, facecolor='yellow', 
-                lw=1)
+            if gateColors is None:
+                patch = patches.PathPatch(path, alpha=0.85, 
+                        facecolor=[0.8313, 0.8313, 0.8313], lw=getBorder)
+            else:
+                patch = patches.PathPatch(path, alpha=0.85, 
+                        facecolor=gateColors[gate_indx], lw=gateBorder)
+
             self.axes.add_patch(patch)
 
         self.axes.set_aspect('equal', 'datalim')
