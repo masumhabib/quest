@@ -35,7 +35,7 @@ def simulate():
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.10.0"
+    tr.VERSION_REQUIRED = "0.10.1"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False
