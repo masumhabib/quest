@@ -121,6 +121,8 @@ void export_Simulator(){
                 &PySimulator::setCollectionTol)
         .add_property("DebugLevel", &PySimulator::getDebugLvl,
                 &PySimulator::setDebugLvl)
+        .add_property("MinmNoInjection", &PySimulator::getMinNoInjection,
+                  &PySimulator::setMinNoInjection)
 
     ;
 }
