@@ -160,8 +160,8 @@ class HallBar(object):
     def addPoint(self, x, y):
         return self.dev.addPoint(np.array([x, y]))
 
-    def addEdge(self, ipt1, ipt2, type = EDGE_REFLECT):
-        return self.dev.addEdge(ipt1, ipt2, type);
+    def addEdge(self, ipt1, ipt2, type = EDGE_REFLECT, d = 0):
+        return self.dev.addEdge(ipt1, ipt2, type, d);
 
     def addGate(self, lb, rb, rt, lt, VgRatio = 1):
         gate = (np.array([lb[0], lb[1]]), np.array([rb[0], rb[1]]), 
@@ -171,18 +171,7 @@ class HallBar(object):
 
     def setEdgeType(self, id, type):
         self.dev.edgeType(id, type)
-        
-    def setSplitLen(self, len):
-        self.dev.setSplitLen(len)
-    
-    def setRoughness(self, RefEdgeRghnsEff, isRefRghns, TranEdgeRghnsEff=1.0, isTranRghns=False):
-       self.dev.setRefEdgRghnsEff( RefEdgeRghnsEff )
-       self.dev.setTranEdgRghnsEff( TranEdgeRghnsEff )
-       self.dev.setRefEdgRghnsOn( isRefRghns )
-       self.dev.setTranEdgRghnsOn( isTranRghns )
 
-    def getSplitLen(self):
-        return self.dev.getSplitLen()
 
     def enableDirectCalc(self): 
         self.sim.ParticleType = 1
@@ -213,6 +202,13 @@ class HallBar(object):
     @MinmNoInjection.setter
     def MinmNoInjection(self, mNo):
         self.sim.MinmNoInjection = mNo
+        
+    @property
+    def EdgeRefRghnsEff(self):
+        return self.dev.EdgeRefRghnsEff
+    @EdgeRefRghnsEff.setter
+    def EdgeRefRghnsEff(self, mEff):
+        self.dev.EdgeRefRghnsEff = mEff
 
     def setupBias(self, B, V, m = 1, singleResonance = True, 
             Bmax = None, NB = 1, Vmax = None, NV = 1):
@@ -367,7 +363,7 @@ class HallBar(object):
             path = Path(gate, codes)
             if gateColors is None:
                 patch = patches.PathPatch(path, alpha=0.85, 
-                        facecolor=[0.8313, 0.8313, 0.8313], lw=getBorder)
+                        facecolor=[0.8313, 0.8313, 0.8313], lw=gateBorder)
             else:
                 patch = patches.PathPatch(path, alpha=0.85, 
                         facecolor=gateColors[gate_indx], lw=gateBorder)

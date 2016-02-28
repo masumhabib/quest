@@ -305,9 +305,9 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
                 // Roughness Correction
-				if ( mDev->getRefEdgRghnsOn() ){
-					distElecRoughness( electron->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
-					electron->setOccupation( electron->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
+				if ( mDev->getEdgeRefRghnsEff() != 1.0 ){
+					distElecRoughness( electron->getOccupation() * ( 1 - mDev->getEdgeRefRghnsEff() ), bins );//Lost part
+					electron->setOccupation( electron->getOccupation() * mDev->getEdgeRefRghnsEff() );//Remaining Part
 				}
                 rf = r;
             } else if (mDev->isTransmitEdge(iEdge)) {
@@ -337,35 +337,19 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // calculate the transmission and reflection probability
                 double thf, transProb, refProb;
                 double thti;
-                tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
+                tie(thf, thti, transProb, refProb) = mDev->calcTransProb(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
                 double occu = electron->getOccupation();
-                //if (debug){
-                //    std::cout << "-D- V1 = " << V1 << " V2 = " << V2 
-                //        << " T(E) = " << transProb 
-                //        << " R(E) = " << refProb << std::endl;
-                //}
-
                 // reflect? if yes, reflect it and put it in the queue
                 if (refProb > mReflectionTol) {
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
-                    // Roughness Correction
-                    if ( mDev->getTranEdgRghnsOn() ){
-						distElecRoughness( refElect->getOccupation() * (1 - mDev->getTranEdgRghnsEff() ), bins );//Lost part
-						electron->setOccupation( refElect->getOccupation() * mDev->getTranEdgRghnsEff() );//Remaining Part
-                    }
                     electsQu.push(refElect);
                 }
                 // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
-                    // Roughness Correction
-                    if ( mDev->getTranEdgRghnsOn() ){
-                    	distElecRoughness( transElect->getOccupation() * (1 - mDev->getTranEdgRghnsEff() ), bins );//Lost part
-                    	transElect->setOccupation( transElect->getOccupation() * mDev->getTranEdgRghnsEff() );//Remaining Part
-                    }
                     transElect->rotateVel(-thti - thf);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);

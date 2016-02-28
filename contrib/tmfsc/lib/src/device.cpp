@@ -36,12 +36,18 @@ void Device::addPoints(const vector<point> &pts) {
     }
 }
 
-/** Adds an edge devined by two point indices. */
-int Device::addEdge(int ipt1, int ipt2, int type) {
+/** Adds an edge defined by two point indices. */
+int Device::addEdge(int ipt1, int ipt2, int type, double d) {
     if (ipt1 >= mPts.size() || ipt2 >= mPts.size()) {
         throw invalid_argument(" Device::addEdge(): indices out of bounds");
     }
-    mEdgs.push_back(Edge(mPts[ipt1], mPts[ipt2], type));
+    if (d < 0){
+    	throw invalid_argument("Split length of junction cannot be negative");
+    }
+    if (type != Edge::EDGE_TRANSMIT && d>0){
+    	throw invalid_argument("Edge other than transmitting cannot have split length");
+    }
+    mEdgs.push_back(Edge(mPts[ipt1], mPts[ipt2], type, d));
     return mEdgs.size() - 1;
 }
 
@@ -118,7 +124,10 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
-tuple<double, double, double, double> Device::calcProbab(double V1, 
+/** Returns refraction angle, incident angle, Transmission probability,
+ *  Reflection probability for an electron going through a transmitting
+ *  edge  */
+tuple<double, double, double, double> Device::calcTransProb(double V1,
         double V2, const svec& vel, double En, int iEdge) 
 {
 	using maths::constants::e;
@@ -126,7 +135,7 @@ tuple<double, double, double, double> Device::calcProbab(double V1,
 	double th, thti, TransProb, RefProb;
 	svec NormVec = this->edgeNormVect(iEdge);
 	double incidentAbsoluteAngle = atan2( vel[1], vel[0] );
-	//TODO have to think about a generalized formula
+	//FIXME have to think about a generalized formula
 	if(incidentAbsoluteAngle<=pi && incidentAbsoluteAngle>=-pi/2){
 		thti = incidentAbsoluteAngle - atan2( NormVec[1], NormVec[0]);
 		if( abs(thti) > pi/2 ){
@@ -155,7 +164,7 @@ tuple<double, double, double, double> Device::calcProbab(double V1,
     	double kf1, ky, d_eff, S;
     	kf1 = e * abs(En - (-V1)) / (hbar * vF);
     	ky = kf1 * sin ( thti );
-    	d_eff = hbar * vF * abs(ky) * (this->splitLen*nm) / ( e*abs(V1-V2) );
+    	d_eff = hbar * vF * abs(ky) * (mEdgs[iEdge].split()*nm) / ( e*abs(V1-V2) );
     	S = pi * (d_eff/2) * abs(ky);
     	t_graded = std::exp( -2*S );
     }
@@ -165,7 +174,7 @@ tuple<double, double, double, double> Device::calcProbab(double V1,
 
 //    if( En+V2 > En+V1 )
 //    {
-//    	//TODO
+//    	//FIXME
 //
 //    }
 	RefProb = 1 - TransProb;
@@ -190,37 +199,9 @@ double Device::getPotAt(const point& position) {
     return mPot->getPotAt(gpoint(position[0], position[1]));
 }
 
-Edge::Edge(const point &p, const point &q, int type)
-: Segment(p,q), mType(type){
+Edge::Edge(const point &p, const point &q, int type, double d)
+: Segment(p,q), mType(type), md(d){
 
-}
-
-void Device::setSplitLen(double len){
-	this->splitLen = len;
-}
-
-void Device::setRefEdgRghnsEff( double efficiency ){
-	if ( efficiency>=0 && efficiency <= 1.0 ){
-		this->RefEdgRghnsEff = efficiency;
-	}else{
-		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
-	}
-}
-
-void Device::setTranEdgRghnsEff( double efficiency ){
-	if ( efficiency>=0 && efficiency <= 1.0 ){
-		this->TranEdgRghnsEff = efficiency;
-	}else{
-		std::cout << "DBG: Roughness Efficiency not in correct range" << std::endl;
-	}
-}
-
-void Device::setRefEdgRghnsOn( bool flagRefEdgRghnsOn ){
-	this->isRefEdgRghnsOn = flagRefEdgRghnsOn;
-}
-
-void Device::setTranEdgRghnsOn( bool flagTranEdgRghnsOn ){
-	this->isTranEdgRghnsOn = flagTranEdgRghnsOn;
 }
 }}
 
