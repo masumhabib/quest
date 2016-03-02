@@ -32,6 +32,11 @@ void DiracElectron::reflect(const svec& normal) {
     update();
 }
 
+void DiracElectron::refract(const svec& normal, double n1, double n2){
+	Particle::refract(normal, n1, n2);
+	update();
+}
+
 DiracElectron::ptr DiracElectron::clone() {
     return make_shared<DiracElectron>(*this); 
 }

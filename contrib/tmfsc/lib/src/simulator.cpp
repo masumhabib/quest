@@ -333,12 +333,11 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 double V1 = transElect->getPot(); // potential before edge
                 applyPotential(transElect);
                 double V2 = transElect->getPot(); // potential after edge
-
                 // calculate the transmission and reflection probability
-                double thf, transProb, refProb;
-                double thti;
-                tie(thf, thti, transProb, refProb) = mDev->calcTransProb(V1, V2,
+                double transProb, refProb;
+                transProb = mDev->calcTransProb(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
+                refProb = 1 - transProb;
                 double occu = electron->getOccupation();
                 // reflect? if yes, reflect it and put it in the queue
                 if (refProb > mReflectionTol) {
@@ -350,7 +349,7 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
-                    transElect->rotateVel(-thti - thf);
+                    transElect->refract(mDev->edgeNormVect(iEdge), V1, V2);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);
                 }

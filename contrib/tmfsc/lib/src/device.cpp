@@ -124,61 +124,49 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
-/** Returns refraction angle, incident angle, Transmission probability,
- *  Reflection probability for an electron going through a transmitting
+/** Transmission probability of an electron going through a transmitting
  *  edge  */
-tuple<double, double, double, double> Device::calcTransProb(double V1,
-        double V2, const svec& vel, double En, int iEdge) 
+double Device::calcTransProb(double V1, double V2, const svec& vel, double En,
+		int iEdge)
 {
 	using maths::constants::e;
 	using maths::constants::hbar;
-	double th, thti, TransProb, RefProb;
+	double thr, thti, TransProb;
 	svec NormVec = this->edgeNormVect(iEdge);
-	double incidentAbsoluteAngle = atan2( vel[1], vel[0] );
-	//FIXME have to think about a generalized formula
-	if(incidentAbsoluteAngle<=pi && incidentAbsoluteAngle>=-pi/2){
-		thti = incidentAbsoluteAngle - atan2( NormVec[1], NormVec[0]);
-		if( abs(thti) > pi/2 ){
-			thti += pi;
-		}
+	// incident angle
+	double vMag = sqrt( vel[0]*vel[0] + vel[1]*vel[1] );
+	svec v_unit = vel / vMag;
+	thti = acos( dot(NormVec, v_unit) );
+	// correction for incident angle for normal direction not in traditional
+	// direction
+	if( thti > pi/2 ){
+		thti = pi - thti;
+	}else{
+		NormVec = -NormVec;
 	}
-	// correcting theta incidence due to vector complication
-	else{
-		thti = atan2( NormVec[1], NormVec[0]) + incidentAbsoluteAngle;
-	}
-
-	// handle the critical angle case
+	// total internal reflection
 	double sininv = abs((En+V1)/(En+V2)) * sin(thti);
 	if (abs(sininv) > 1) {
-	    return make_tuple(std::nan("NaN"), thti, 0.0, 1.0);
-    }
-
-	th = asin(abs((En+V1)/(En+V2)) * sin(thti));
-    // if pn case, calculate exponential term and apply negative refraction
+		return 0.0;
+	}
+	// refraction angle
+	thr = asin(abs((En+V1)/(En+V2)) * sin(thti));
+	// if pn case, calculate exponential term
 	double t_graded = 1.0;
-	if ( !( (En > -V1 && En < -V2) || (En > -V2 && En < -V1) ) ){
-		th = -th;
-	} else {
-	    //FIXME: REMOVE hardcoded vF, else, it is gonna cause major headache
-    	double vF = 1E6;
-    	double kf1, ky, d_eff, S;
-    	kf1 = e * abs(En - (-V1)) / (hbar * vF);
-    	ky = kf1 * sin ( thti );
-    	d_eff = hbar * vF * abs(ky) * (mEdgs[iEdge].split()*nm) / ( e*abs(V1-V2) );
-    	S = pi * (d_eff/2) * abs(ky);
-    	t_graded = std::exp( -2*S );
-    }
-
-	TransProb = t_graded*std::cos( thti )*std::cos( th ) 
-	    /   std::pow(  cos( (abs(thti)+abs(th))/2 ), 2  )  ;
-
-//    if( En+V2 > En+V1 )
-//    {
-//    	//FIXME
-//
-//    }
-	RefProb = 1 - TransProb;
-	return make_tuple(th, thti, TransProb, RefProb);
+	if (  (En > -V1 && En < -V2) || (En > -V2 && En < -V1) ){
+		//FIXME: REMOVE hardcoded vF, else, it is gonna cause major headache
+		double vF = 1E6;
+		double kf1, ky, d_eff, S;
+		kf1 = e * abs(En - (-V1)) / (hbar * vF);
+		ky = kf1 * sin ( thti );
+		d_eff = hbar * vF * abs(ky) * (mEdgs[iEdge].split()*nm) / ( e*abs(V1-V2) );
+		S = pi * (d_eff/2) * abs(ky);
+		t_graded = std::exp( -2*S );
+	}
+	// calc trans. prob.
+	TransProb = t_graded  *  cos( thti )*cos( thr )
+				/ pow(  cos( (abs(thti)+abs(thr))/2 ), 2  )  ;
+	return TransProb;
 }
  
 int Device::addGate(const point& lb, const point& rb, const point& rt, 

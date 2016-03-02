@@ -39,6 +39,8 @@ using std::complex;
 using std::exp;
 using std::acos;
 using std::conj;
+using std::cos;
+using std::pow;
 
 class Edge : public Segment {
 public:
@@ -107,8 +109,8 @@ public:
     void setEdgeRefRghnsEff(double mEff) {mEdgeRefRghnsEff = mEff;};
     double getEdgeRefRghnsEff() const {return mEdgeRefRghnsEff; };
 
-    tuple<double, double, double, double> calcTransProb(double V1,
-            double V2, const svec& vel, double En, int iEdge);
+    double calcTransProb(double V1, double V2, const svec& vel, double En,
+    		int iEdge);
  
 public:
     /*!
