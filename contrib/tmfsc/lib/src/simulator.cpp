@@ -104,26 +104,26 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     row prevTE = row(nconts);
     prevTE.fill(numeric_limits<double>::min());
     int ip = 0;
-    bool isReset = true; // Reset the distribution only for first time
     int totalN = 0;
-    
+    Distribution gaussianDistContAngl( Distribution::GAUSSIAN_RANDOM,  mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
+    Distribution uniformRandContLen( Distribution::UNIFORM_RANDOM, -contWidth/2, contWidth/2 );
+
     while (1) { //TODO condition need to be improved
         if ( maxError < mTransmissionConv && totalN > mNoInjection ){
             break;
         }
-        double distance = getUniformRand(-contWidth/2, contWidth/2, isReset);
-        double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit, isReset);
-        isReset = false;
+        double distance = uniformRandContLen.getDistribution();
+        double angle = gaussianDistContAngl.getDistribution();
         svec position = r0 + distance * contVect;
         angle = th0 + angle;
-        //cout << "DBG: pos = " << position;
-        //cout << "DBG: angle = " << angle << endl;
 
         int status;
         TrajectoryVect traj;
         ElectronBins bin(nconts);
         tie(status, bin, traj) = calcTrajOneElect(position, angle, saveTraj);
-        //cout << "DBG: totalNumElects = " << bin.getTotalNumElects() << endl;
+        if (debug) {
+            cout << "DBG: totalNumElects = " << bin.getTotalNumElects() << endl;
+        }
  
         if (status == -1 || bin.getTotalNumElects() == 0) {
             continue;
@@ -167,11 +167,11 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
 
     TrajectoryVect trajs;
     ElectronBins electBins(nconts);
-
+    Distribution normalDistContAngl( Distribution::NORMAL, mAngleSpread, 0 );
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
         vector<double> th(mNth);
-        genNormalDist(th, mAngleSpread, 0);
+        normalDistContAngl.getDistribution( th );
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-mAngleLimit)) {

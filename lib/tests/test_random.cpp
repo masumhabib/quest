@@ -49,12 +49,14 @@ void printBannerTestCase(string testName)
 BOOST_AUTO_TEST_CASE(Generate_Normal_Distribution)
 {
 	printBannerTestCase( "Testing Normal Distribution" );
-    int N = 1000000;
+    int N = 100;
     double expmean = 0;
     double sigma = 1;
     vector<double> vs(N);
-    genNormalDist(vs, sigma, expmean);
-    
+	Distribution normaldist(Distribution::NORMAL, sigma, expmean);
+	std::cout << normaldist.toString() << endl;
+	normaldist.getDistribution(vs);
+    //genNormalDist(vs, sigma, expmean);
     double foundMean = 0;
     for (auto v : vs) {
     	foundMean += v;
@@ -77,9 +79,11 @@ BOOST_AUTO_TEST_CASE(Gaussian_Random_Distribution)
 	expmean = 5;
 	foundMean = 0;
 	bool reset = false;
-
+	Distribution gaussianRandDist( Distribution::GAUSSIAN_RANDOM, sigma, expmean, min, max );
+	std::cout << gaussianRandDist.toString() << endl;
+	gaussianRandDist.getDistribution(true);
 	for( int n=0; n<N; n++ ){
-		double number = getGaussianRand(sigma, expmean, min, max, reset );
+		double number = gaussianRandDist.getDistribution(reset);
 		foundMean += number;
 		++hist[std::round( number)];
 	}
@@ -110,15 +114,18 @@ BOOST_AUTO_TEST_CASE(Uniform_Random_Distribution)
 	printBannerTestCase( "Testing Uniform Random Distribution" );
 	int N = 1000000;
 	std::map<int, int> hist;
-	double expmean, min, max, foundMean;
+	double expmean, min, max, foundMean, dSigma;
 	min = -2;
 	max = 12;
 	expmean = (min + max)/2;
+
 	foundMean = 0;
 	bool reset = false;
-
+	Distribution uniformRandDist( Distribution::UNIFORM_RANDOM, min, max);
+	std::cout << uniformRandDist.toString() << endl;
+	uniformRandDist.getDistribution(true);
 	for( int n=0; n<N; n++ ){
-		double number = getUniformRand(min, max, reset );
+		double number = uniformRandDist.getDistribution(reset);
 		foundMean += number;
 		++hist[std::round( number)];
 	}

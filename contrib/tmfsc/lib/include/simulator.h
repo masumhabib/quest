@@ -37,9 +37,7 @@ using maths::armadillo::row;
 using maths::armadillo::fill;
 using maths::armadillo::zeros;
 using maths::constants::pi;
-using utils::random::genNormalDist;
-using utils::random::getUniformRand;
-using utils::random::getGaussianRand;
+using utils::random::Distribution;
 
 using maths::constants::pi;
 using maths::armadillo::dcmplx;

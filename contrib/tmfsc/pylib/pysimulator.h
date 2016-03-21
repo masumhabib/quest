@@ -23,6 +23,7 @@ using tmfsc::TrajectoryVect;
 using tmfsc::Trajectory;
 using maths::armadillo::mat;
 using std::vector;
+using boost::python::list;
 
 struct PyTrajectory {
     mat path;
@@ -33,13 +34,13 @@ struct PyTrajectory {
 class PySimulator : public Simulator {
 public:
     PySimulator(Device::ptr dev) : Simulator(dev){};
-    list calcTrajPy(point ri, double thi, double E, double B, double V, 
+    list calcTrajPy(point ri, double thi, double E, double B, double V,
             bool saveTraj = true);
     tuple calcTranPy(double E, double B, double V, int injCont = 0, 
             bool saveTraj = false);
-    list calcTrajPy2(point ri, double thi, double E, double B, const list& VG, 
+    list calcTrajPy2(point ri, double thi, double E, double B, const list& VG,
             bool saveTraj = true);
-    tuple calcTranPy2(double E, double B, const list& VG, int injCont = 0, 
+    tuple calcTranPy2(double E, double B, const list& VG, int injCont = 0,
             bool saveTraj = false);
 
     int getParticleTypePy();
