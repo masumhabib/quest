@@ -3,6 +3,10 @@
 
 # Intermediate object files
 obj/
+Debug/
+debug/
+Release/
+release/
 *.pyc
 
 # IDE related
