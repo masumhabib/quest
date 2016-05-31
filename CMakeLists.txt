@@ -113,7 +113,7 @@ message(STATUS "Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
 message(STATUS "Installation location: ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR}")
 
 # Prepare distribution directory
-set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
+set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/../${PROJECT_NAME}-${QMICAD_VERSION})
 set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 
 # installation
