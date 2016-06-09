@@ -122,7 +122,7 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
 
     // selection of uniform points on contact
     mContLenDist = make_shared<Distribution>( DistributionType::UNIFORM_RANDOM,
-    		-contWidth/100, contWidth/100 );
+    		-contWidth/2, contWidth/2 );
 
     while (1) { //TODO condition need to be improved
         if ( maxError < mTransmissionConv && totalN > mNoInjection ){
