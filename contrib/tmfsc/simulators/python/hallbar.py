@@ -34,12 +34,16 @@ class Bias(object):
     def clear(self):
         self.biasVars = {}
         self.sizes = {}
+        self.Efkeys = []
         self.Bkeys = []
         self.Vkeys = []
 
     def append(self, bias, kind):
         key = ""
-        if kind == 'B':
+        if kind == 'Ef':
+            key = kind + str(len(self.Efkeys)+1)
+            self.Efkeys.append(key)
+        elif kind == 'B':
             key = kind + str(len(self.Bkeys)+1)
             self.Bkeys.append(key)
         elif kind == 'V':
@@ -52,6 +56,10 @@ class Bias(object):
         self.sizes[key] = len(self.biasVars[key]);
 
     def get(self, ib):
+        Ef = []
+        for key in self.Efkeys:
+            bias, ib = self._getBias(ib, key)
+            Ef.append(bias)
         B = []
         for key in self.Bkeys:
             bias, ib = self._getBias(ib, key)
@@ -60,7 +68,7 @@ class Bias(object):
         for key in self.Vkeys:
             bias, ib = self._getBias(ib, key)
             V.append(bias)
-        return B, V
+        return Ef, B, V
     
     def _getBias(self, ib, key):
         bias = self.biasVars[key]
@@ -155,7 +163,7 @@ class HallBar(object):
         self.gates = [] # gate geometries for drawing
 
         # default bias setup 
-        self.setupBias(1.0, 0.15)
+        self.setupBias(Ef=0.0, B=1.0, V=0.15)
 
     def addPoint(self, x, y):
         return self.dev.addPoint(np.array([x, y]))
@@ -171,7 +179,6 @@ class HallBar(object):
 
     def setEdgeType(self, id, type):
         self.dev.edgeType(id, type)
-
 
     def enableDirectCalc(self): 
         self.sim.ParticleType = 1
@@ -205,16 +212,43 @@ class HallBar(object):
         
     @property
     def EdgeRefRghnsEff(self):
-        return self.dev.EdgeRefRghnsEff
+        return self.sim.EdgeRefRghnsEff
     @EdgeRefRghnsEff.setter
     def EdgeRefRghnsEff(self, mEff):
-        self.dev.EdgeRefRghnsEff = mEff
+        self.sim.EdgeRefRghnsEff = mEff
 
-    def setupBias(self, B, V, m = 1, singleResonance = True, 
-            Bmax = None, NB = 1, Vmax = None, NV = 1):
+    @property
+    def InjecAngleSpread(self):
+        return self.sim.InjecAngleSpread
+    @InjecAngleSpread.setter
+    def InjecAngleSpread(self, angle):
+        self.sim.InjecAngleSpread = angle
+        
+    @property
+    def EdgRghSpread(self):
+        return self.sim.EdgRghSpread
+    @EdgRghSpread.setter
+    def EdgRghSpread(self, angle):
+        self.sim.EdgRghSpread = angle
+        
+    @property
+    def IsEdgRghRan(self):
+        return self.sim.IsEdgRghRan
+    @IsEdgRghRan.setter
+    def IsEdgRghRan(self, flagBool):
+        self.sim.IsEdgRghRan = flagBool
+
+    def setupBias(self, Ef, B, V, m = 1, singleResonance = True, 
+            Efmax = None, NEf = 1, Bmax = None, NB = 1, Vmax = None, NV = 1):
         """ Sets up the bias points """
+        EEf = []
         VV = [] 
         BB = [] 
+        if NEf == 1:   
+            EEf = np.array([Ef])
+        else:
+            assert Efmax is not None, "Efmax is None"
+            EEf = np.linspace(Ef, Efmax, NEf)
         if NV == 1:
             VV = np.array([V])
         else:
@@ -230,6 +264,7 @@ class HallBar(object):
             B0 = abs(self.EF-V)/vf/nm/self.dc*2.0
             BB = m*np.array([B0])
         self.bias.clear()
+        self.bias.append(EEf, 'Ef')
         self.bias.append(BB, 'B')
         self.bias.append(VV, 'V')
  
@@ -242,26 +277,26 @@ class HallBar(object):
         print ("\nInjecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
-        B,V = self.bias.get(0);
-        self.printBias(B, V, 0)
+        Ef, B, V = self.bias.get(0);
+        self.printBias(Ef, B, V, 0)
         print ""
         if self.dev.NumGates > 0:
-            self.trajs = self.sim.calcTraj(ri, thi, self.EF, B[0], V)
+            self.trajs = self.sim.calcTraj(ri, thi, Ef[0], B[0], V)
         else:
-            self.trajs = self.sim.calcTraj(ri, thi, self.EF, B[0], V[0])
+            self.trajs = self.sim.calcTraj(ri, thi, Ef[0], B[0], V[0])
     
     def calcSingleTrans(self, dl=5, nth=50, saveTrajectory=False, 
             contId = 0):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        B,V = self.bias.get(0);
-        self.printBias(B, V, 0)
+        Ef, B, V = self.bias.get(0);
+        self.printBias(Ef, B, V, 0)
         if self.dev.NumGates > 0:
-            self.T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, contId, 
+            self.T,self.trajs = self.sim.calcTrans(Ef[0], B[0], V, contId, 
                     saveTrajectory)
         else:
-            self.T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], contId, 
+            self.T,self.trajs = self.sim.calcTrans(Ef[0], B[0], V[0], contId, 
                     saveTrajectory)
         self.printTrans(contId, self.T)
         #print self.T
@@ -297,14 +332,14 @@ class HallBar(object):
         elapsedTime = 0.0
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
-            B,V = self.bias.get(ib)
+            Ef, B, V = self.bias.get(ib)
             if self.verbosity == 1:
-                self.printBias(B, V, ib)
+                self.printBias(Ef, B, V, ib)
             if self.dev.NumGates > 0:
-                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V, contId, 
+                T,self.trajs = self.sim.calcTrans(Ef[0], B[0], V, contId, 
                         False)
             else:
-                T,self.trajs = self.sim.calcTrans(self.EF, B[0], V[0], contId, 
+                T,self.trajs = self.sim.calcTrans(Ef[0], B[0], V[0], contId, 
                         False)
             if self.verbosity == 1:
                 self.printTrans(contId, T)
@@ -362,8 +397,12 @@ class HallBar(object):
             gate = gate + (np.array([0,0]),)
             path = Path(gate, codes)
             if gateColors is None:
-                patch = patches.PathPatch(path, alpha=0.85, 
-                        facecolor=[0.8313, 0.8313, 0.8313], lw=gateBorder)
+                if gate_indx % 2 == 0 :
+                    patch = patches.PathPatch(path, alpha=0.85,
+                            facecolor=[1, 1, 1], lw=gateBorder)
+                else :
+                    patch = patches.PathPatch(path, alpha=0.85,
+                            facecolor=[0.8313, 0.8313, 0.8313], lw=gateBorder)
             else:
                 patch = patches.PathPatch(path, alpha=0.85, 
                         facecolor=gateColors[gate_indx], lw=gateBorder)
@@ -388,6 +427,8 @@ class HallBar(object):
                 alpha2 = alpha
             if alpha2 > 1:
                 alpha2 = 1
+            elif alpha2 < 0:
+                alpha2 = 0
             if color is None:
                 self.axes.plot(traj.path[:, 0], traj.path[:, 1],
                     linewidth=width, alpha=alpha2, marker=marker)
@@ -403,9 +444,8 @@ class HallBar(object):
     def showPlot(self):
         plt.show()
 
-
-    def saveTraj(self, file_name):
-        plt.savefig(file_name, dpi=300)
+    def saveTraj(self, file_name, dpi=300):
+        plt.savefig(file_name, dpi=dpi)
 
     def save(self):
         """ Saves results """
@@ -427,10 +467,12 @@ class HallBar(object):
         self.mprint("Trajectory:")
         self.mprint(self.trajs)
     
-    def printBias(self, B, V, ipt):
+    def printBias(self, Ef, B, V, ipt):
         msg = "Bias# " + str(ipt) + ": "
         #biasIndx = range(1, len(biases));
         #msg += "B={0:.3f}".format(biases[0])
+        msg += '  '.join('  Ef{0}={1:.3f}'.format(ief+1, Ef[ief]) for ief in 
+                range(len(Ef)))
         msg += '  '.join('  B{0}={1:.3f}'.format(ib+1, B[ib]) for ib in 
                 range(len(B)))
         msg += '  '.join('  V{0}={1:.3f}'.format(iv+1, V[iv]) for iv in 
@@ -555,6 +597,7 @@ class HallBar(object):
         return self.line      
 
 def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12', Z2=None):
+    # TODO after Ef Sweep
     """Plots transmission as a function of magnetic field and gate voltage"""
     transFile = open(transFileName, 'rb')
     out = pickle.load(transFile) 

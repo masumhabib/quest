@@ -9,7 +9,7 @@ hallbar.outDir = 'tmfsc_out/'
 #hallbar.setupBias(0.0, 0.001, m=1, singleResonance=False,
 #        Bmax=0.0, NB=2, Vmax=0.001, NV=2)
 
-hallbar.setupBias(1.5, 0.15)
+hallbar.setupBias(Ef = 0, B=1.5, V=0.15)
 hallbar.printBiasList()
 #hallbar.sim.TimeStep = 1/(1E6/1E-9)
 

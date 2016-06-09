@@ -25,6 +25,8 @@ using arma::Col;
 using arma::Row;
 using arma::span;
 
+using arma::uword; // @TODO: Armadillo >5.000.1 Fix
+
 using arma::field;
 using arma::endr;
 using arma::inv;
@@ -57,6 +59,8 @@ typedef arma::Col<float>          fcol;      //!< Double precision column vector
 typedef arma::Col<fcmplx>         cxfcol;    //!< Double precision complex column vector.
 typedef arma::Col<int>            icol;      //!< Signed integer column vector.
 typedef arma::Col<uint>           ucol;      //!< Unsigned integer column vector.
+
+typedef arma::Col<uword>          uwcol;     //!< Unsigned long long int column vector. // @TODO: Armadillo >5.000.1 Fix
 
 typedef arma::Row<double>         row;       //!< Double precision row vector.
 typedef arma::Row<dcmplx>         cxrow;     //!< Double precision complex row vector.

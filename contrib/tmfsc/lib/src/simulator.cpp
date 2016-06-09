@@ -105,15 +105,31 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     prevTE.fill(numeric_limits<double>::min());
     int ip = 0;
     int totalN = 0;
-    Distribution gaussianDistContAngl( Distribution::GAUSSIAN_RANDOM,  mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
-    Distribution uniformRandContLen( Distribution::UNIFORM_RANDOM, -contWidth/2, contWidth/2 );
+
+    // Gaussian Distribution of injection angle
+       mContAngDist = make_shared<Distribution>( DistributionType::GAUSSIAN_RANDOM,
+                            mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
+
+    // COSINE distribution of injection angles
+//    vec angles = maths::armadillo::linspace( -pi/2, pi/2,
+//    		201 );
+//    vec tempWeights = cos( angles );
+//    vec weights = tempWeights / accu(tempWeights);
+//    mContAngDist = make_shared<Distribution>( DistributionType::DISCRETE,
+//    		-pi/2+mAngleLimit, pi/2-mAngleLimit,
+//			conv_to<vector<double>>::from(angles) ,
+//			conv_to<vector<double>>::from(weights) );
+
+    // selection of uniform points on contact
+    mContLenDist = make_shared<Distribution>( DistributionType::UNIFORM_RANDOM,
+    		-contWidth/100, contWidth/100 );
 
     while (1) { //TODO condition need to be improved
         if ( maxError < mTransmissionConv && totalN > mNoInjection ){
             break;
         }
-        double distance = uniformRandContLen.getDistribution();
-        double angle = gaussianDistContAngl.getDistribution();
+        double distance = mContLenDist->getDistribution();
+        double angle = mContAngDist->getDistribution();
         svec position = r0 + distance * contVect;
         angle = th0 + angle;
 
@@ -167,11 +183,12 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
 
     TrajectoryVect trajs;
     ElectronBins electBins(nconts);
-    Distribution normalDistContAngl( Distribution::NORMAL, mAngleSpread, 0 );
+    //Distribution normalDistContAngl( DistributionType::NORMAL, mAngleSpread, 0 );
+    mContAngDist = make_shared<Distribution>( DistributionType::NORMAL, mAngleSpread, 0 );
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
         vector<double> th(mNth);
-        normalDistContAngl.getDistribution( th );
+        mContAngDist->getDistribution( th );
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-mAngleLimit)) {
@@ -306,8 +323,10 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 electron->reflect(mDev->edgeNormVect(iEdge));
                 // Roughness Correction
 				if ( mDev->getEdgeRefRghnsEff() != 1.0 ){
-					distElecRoughness( electron->getOccupation() * ( 1 - mDev->getEdgeRefRghnsEff() ), bins );//Lost part
-					electron->setOccupation( electron->getOccupation() * mDev->getEdgeRefRghnsEff() );//Remaining Part
+					distElecRoughness( electron->getOccupation()
+							* ( 1 - mDev->getEdgeRefRghnsEff() ), bins );//Lost part
+					electron->setOccupation( electron->getOccupation()
+							* mDev->getEdgeRefRghnsEff() );//Remaining Part
 				}
                 rf = r;
             } else if (mDev->isTransmitEdge(iEdge)) {
@@ -349,7 +368,8 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
-                    transElect->refract(mDev->edgeNormVect(iEdge), V1, V2);
+                    transElect->refract(mDev->edgeNormVect(iEdge),
+                    		transElect->getEnergy()+V1, transElect->getEnergy()+V2);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);
                 }
@@ -471,9 +491,11 @@ inline void Simulator::distElecRoughness( double occu, ElectronBins &bins ){
 	double dummy_mE, dummy_V, dummy_mB;
 	// Creating a dummy electron
 	if (particleType == ParticleType::DiracCyclotron) {
-	    electron = make_shared<DiracCyclotron>(dummy_ri, dummy_vi, dummy_mE, dummy_V, dummy_mB);
+	    electron = make_shared<DiracCyclotron>(dummy_ri, dummy_vi, dummy_mE,
+	    		dummy_V, dummy_mB);
 	} else {
-		electron = make_shared<DiracElectron>(dummy_ri, dummy_vi, dummy_mE, dummy_V, dummy_mB);
+		electron = make_shared<DiracElectron>(dummy_ri, dummy_vi, dummy_mE,
+				dummy_V, dummy_mB);
 	}
 	totalEdge = this->mDev->numEdges();
 	totalAbsorbingEdge = 0;
@@ -487,7 +509,8 @@ inline void Simulator::distElecRoughness( double occu, ElectronBins &bins ){
 	}
 	// Distributing the lost portion equally among absorbing contacts
 	electron->setOccupation( occu / absorbEdgeList.size() );
-	for( vector<int>::iterator iEdgeIt = absorbEdgeList.begin(); iEdgeIt != absorbEdgeList.end(); ++iEdgeIt ){
+	for( vector<int>::iterator iEdgeIt = absorbEdgeList.begin();
+			iEdgeIt != absorbEdgeList.end(); ++iEdgeIt ){
 		bins.putElectron(electron, this->mDev->edgeToContIndx(*iEdgeIt));
 	}
 }

@@ -38,6 +38,7 @@ using maths::armadillo::fill;
 using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::Distribution;
+using utils::random::DistributionType;
 
 using maths::constants::pi;
 using maths::armadillo::dcmplx;
@@ -198,7 +199,10 @@ private:
     Device::ptr mDev; //!< Device structure.
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
     InjectModel injectModel = InjectModel::Random; //!< Injection model.
-
+    Distribution::ptr mContAngDist; //!< Injection Angle Distribution
+    Distribution::ptr mContLenDist; //!< Injection Length Distribution
+    Distribution::ptr mEdgeRghDist; //!< Edge Roughness Distribution
+    Distribution::ptr mJuncRghDist; //!< Junction Roughness Distribution
 };
 
 }}

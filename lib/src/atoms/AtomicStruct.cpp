@@ -227,13 +227,15 @@ AtomicStruct& AtomicStruct::operator+= (const svec& rvec){
  */
 AtomicStruct AtomicStruct::operator ()(const ucol& index) const{
     
-    //get only the atoms we are interested in
-    icol atomId = mia.elem(index);   
-    ucol cols;
-    cols << coord::X << coord::Y << coord::Z;
-    mat coordinate = mXyz(index,cols);        
-
-    return AtomicStruct(atomId, coordinate, mlv, mpt);
+	uwcol tempindex = arma::conv_to<uwcol>::from(index); // @TODO: Armadillo 5.000.1 Fix
+	//icol atomId = mia.elem(index);
+	icol atomId = mia.elem(tempindex); // @TODO: Armadillo 5.000.1 Fix
+	// ucol cols;
+	uwcol cols; // @TODO: Armadillo 5.000.1 Fix
+	cols << coord::X << coord::Y << coord::Z;
+	//mat coordinate = mXyz(index,cols);
+	mat coordinate = mXyz(tempindex,cols); // @TODO: Armadillo 5.000.1 Fix
+	return AtomicStruct(atomId, coordinate, mlv, mpt);
 }
 
 /*

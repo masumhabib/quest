@@ -10,15 +10,16 @@
 namespace utils{namespace random{
 
 //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
-Distribution::Distribution( int distributionType, double sigma_or_min,
+Distribution::Distribution( DistributionType distributionType, double sigma_or_min,
 		double mean_or_max) : mNormal_dist_engn( mean_or_max, sigma_or_min ),
-			mUniform_dist_engn(  sigma_or_min, mean_or_max ), mGenerator(mDevice, mNormal_dist_engn){
+			mUniform_dist_engn(  sigma_or_min, mean_or_max ),
+			mGenerator(mDevice, mNormal_dist_engn){
 	mDistributionType = distributionType;
-	if( distributionType==Distribution::GAUSSIAN_RANDOM ||
-			distributionType==Distribution::NORMAL){
+	if( distributionType==DistributionType::GAUSSIAN_RANDOM ||
+			distributionType==DistributionType::NORMAL){
 		mSigma = sigma_or_min;
 		mMean = mean_or_max;
-	}else if( distributionType==Distribution::UNIFORM_RANDOM ){
+	}else if( distributionType==DistributionType::UNIFORM_RANDOM ){
 		mMin = sigma_or_min;
 		mMax = mean_or_max;
 	}else{
@@ -26,13 +27,13 @@ Distribution::Distribution( int distributionType, double sigma_or_min,
 	}
 }
 //!< Constructor - Gaussian Random (custom)
-Distribution::Distribution( int distributionType, double sigma,
+Distribution::Distribution( DistributionType distributionType, double sigma,
 							double mean, double min, double max):
 							mNormal_dist_engn( mean, sigma ),
 							mUniform_dist_engn( min, max),
 							mGenerator(mDevice, mNormal_dist_engn){
 	mDistributionType = distributionType;
-	if( distributionType==Distribution::GAUSSIAN_RANDOM ){
+	if( distributionType==DistributionType::GAUSSIAN_RANDOM ){
 		mSigma = sigma;
 		mMean = mean;
 		mMin = min;
@@ -41,11 +42,40 @@ Distribution::Distribution( int distributionType, double sigma,
 		throw invalid_argument("No constructor for this type of Distribution");
 	}
 }
+//!< Constructor - Cosine Distribution
+Distribution::Distribution( DistributionType distributionType, double min,
+		double max, std::vector<double> angles, std::vector<double> weights):
+									mNormal_dist_engn( 0.0, 0.0 ),
+									mUniform_dist_engn( 0.0, 0.0),
+									mGenerator(mDevice, mNormal_dist_engn),
+									mDiscrt_dist_engn(weights){
+	mDistributionType = distributionType;
+	br::discrete_distribution<>* tempDiscrtEngn = new br::discrete_distribution<>(weights);
+	if( distributionType==DistributionType::DISCRETE ){
+		mMin = min;
+		mMax = max;
+		mDiscrtAngle = angles;
+		mDiscrtWeights = weights;
+	}else{
+		throw invalid_argument("No constructor for this type of Distribution");
+	}
+}
 
-
+//!< Constructor - No Distribution, returns fixed value
+Distribution::Distribution( DistributionType distributionType, double fixed):
+							mNormal_dist_engn( 0.0, 0.0 ),
+							mUniform_dist_engn( 0.0, 0.0),
+							mGenerator(mDevice, mNormal_dist_engn){
+	mDistributionType = distributionType;
+	if( distributionType==DistributionType::NONE ){
+		mMean = fixed;
+	}else{
+		throw invalid_argument("No constructor for this type of Distribution");
+	}
+}
 //!< Normal Dist
 void Distribution::getDistribution( vector<double> &result ){
-	if( mDistributionType == Distribution::NORMAL ){
+	if( mDistributionType == DistributionType::NORMAL ){
 		genNormalDist(result);
 	}else{
 		throw invalid_argument("Wrong Distribution Type");
@@ -54,29 +84,30 @@ void Distribution::getDistribution( vector<double> &result ){
 //!< Gaussian Random custom, Gaussian Random boost
 double Distribution::getDistribution( bool reset ){
 	double number = NaN;
-	if( mDistributionType == Distribution::UNIFORM_RANDOM ){
+	if( mDistributionType == DistributionType::UNIFORM_RANDOM ){
 		number = getUniformRand(reset);
-	}else if( mDistributionType == Distribution::GAUSSIAN_RANDOM ){
+	}else if( mDistributionType == DistributionType::GAUSSIAN_RANDOM ){
 		number = getGaussianRand(reset);
+	}else if( mDistributionType == DistributionType::DISCRETE ){
+		number = getDiscrtRand();
+	}else if( mDistributionType == DistributionType::NONE ){
+		number = mMean;
 	}else{
 		throw invalid_argument("Wrong Distribution Type");
 	}
 	return number;
 }
-
 void Distribution::genNormalDist(vector<double> &result){
-
     for (auto it = result.begin(); it != result.end(); ++it){
         *it = mGenerator();
     }
-
 }
 
 double Distribution::getGaussianRand(bool reset){
 	if (reset) {
 	    	mNormal_dist_engn.reset();
 	}
-	double number;
+	double number = NaN;
 	// is_nan checking
 	if ( mMin != mMin && mMax != mMax ){   // without Min and Max Feature
 		number = mGenerator();
@@ -89,13 +120,20 @@ double Distribution::getGaussianRand(bool reset){
 }
 
 double Distribution::getUniformRand(bool reset){
-
     if (reset) {
     	mUniform_dist_engn.reset();
     }
- 
     return mUniform_dist_engn( mDevice );
 }
+
+double Distribution::getDiscrtRand(){
+	double number = NaN;
+	do {
+		number = mDiscrtAngle[ mDiscrt_dist_engn(mDevice) ];
+	} while (number < mMin || number > mMax);
+	return number;
+}
+
 string Distribution::toString() const{
 
 	stringstream out;
@@ -104,14 +142,18 @@ string Distribution::toString() const{
 	out << std::fixed;
 
 	string distype;
-	if( mDistributionType == Distribution::UNIFORM_RANDOM ){
+	if( mDistributionType == DistributionType::NONE ){
+			distype = "no distribution";
+	}else if( mDistributionType == DistributionType::UNIFORM_RANDOM ){
 		distype = "uniform random";
-	}else if( mDistributionType == Distribution::GAUSSIAN_RANDOM && mMin!=mMin && mMax != mMax){
+	}else if( mDistributionType == DistributionType::GAUSSIAN_RANDOM && mMin!=mMin && mMax != mMax){
 		distype = "gaussian random without minm and maxm";
-	}else if( mDistributionType == Distribution::GAUSSIAN_RANDOM && mMin==mMin && mMax==mMax){
+	}else if( mDistributionType == DistributionType::GAUSSIAN_RANDOM && mMin==mMin && mMax==mMax){
 		distype = "gaussian random with minm and maxm";
-	}else if( mDistributionType == Distribution::NORMAL){
+	}else if( mDistributionType == DistributionType::NORMAL){
 		distype = "normal";
+	}else if( mDistributionType == DistributionType::DISCRETE){
+		distype = "discrete";
 	}
 	out << " type: " << std::fixed  << distype << endl;
 	out << " Sigma or Variance: " << mSigma << endl;

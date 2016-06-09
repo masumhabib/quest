@@ -131,7 +131,7 @@ double Device::calcTransProb(double V1, double V2, const svec& vel, double En,
 {
 	using maths::constants::e;
 	using maths::constants::hbar;
-	double thr, thti, TransProb;
+	double thtr, thti, TransProb;
 	svec NormVec = this->edgeNormVect(iEdge);
 	// incident angle
 	double vMag = sqrt( vel[0]*vel[0] + vel[1]*vel[1] );
@@ -146,11 +146,11 @@ double Device::calcTransProb(double V1, double V2, const svec& vel, double En,
 	}
 	// total internal reflection
 	double sininv = abs((En+V1)/(En+V2)) * sin(thti);
-	if (abs(sininv) > 1) {
+	if ( abs(sininv) > 1 ) {
 		return 0.0;
 	}
 	// refraction angle
-	thr = asin(abs((En+V1)/(En+V2)) * sin(thti));
+	thtr = asin(  ( (En+V1)/(En+V2) )  *  sin(thti)  );
 	// if pn case, calculate exponential term
 	double t_graded = 1.0;
 	if (  (En > -V1 && En < -V2) || (En > -V2 && En < -V1) ){
@@ -164,8 +164,8 @@ double Device::calcTransProb(double V1, double V2, const svec& vel, double En,
 		t_graded = std::exp( -2*S );
 	}
 	// calc trans. prob.
-	TransProb = t_graded  *  cos( thti )*cos( thr )
-				/ pow(  cos( (abs(thti)+abs(thr))/2 ), 2  )  ;
+	TransProb = t_graded  *  cos(thti) * cos(thtr)
+				/ pow(  cos( (abs(thti)+abs(thtr))/2 ), 2  )  ;
 	return TransProb;
 }
  
