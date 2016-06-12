@@ -1,5 +1,6 @@
 #!/bin/bash
-#
+# vim:ft=sh
+
 # FileName: build
 # Description: A build script that runs configures, builds and installs qmicad.
 # 
@@ -7,91 +8,143 @@
 #
 # Created: 18 June 2014.
 
-build_dir="obj"
+default_config="Release"  # Default configuration to build
+default_command="make"  # By default, compile everything
+ncpu="8"
 
 function usage(){
-    echo "Usage: build [options]"
+    echo "Usage: build [debug|release] [config|test|doc|install|clean|superclean]"
     echo "  When no option is given, builds qmicad using make."
-    echo "  options: " 
-    echo "    config: configures qmicad using cmake."
+    echo "  Description of options: " 
     echo "    debug: make with debugging information."
     echo "    release: make with debugging information."
-    echo "    install [path]: installs qmicad."
+    echo "    config: configures qmicad using cmake."
+    echo "    test: runs tests."
     echo "    doc: build documentation."
+    echo "    install [path]: installs qmicad."
     echo "    clean: deletes compiled object files in the build folder."
     echo "    superclean: deletes build folder."
     echo "    help: shows this message."
 }
 
-function doconfig(){
+function get_build_dir() {
+    local build_dir=$1/build
+    echo $build_dir
+}
+
+is_config_needed () {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
+    if [[ -f $build_dir/Makefile ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function do_config() {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
+    #echo "-D- $build_dir"
     mkdir -p $build_dir
-    cd $build_dir
-    if [[ "$1" ]]; then
-        cmake -DCMAKE_BUILD_TYPE=$1 ../
-    else
-        cmake ../
-    fi
-    cd ../
+    cd $build_dir && cmake -DCMAKE_BUILD_TYPE=$config ../../ && cd ../../
 }
 
-function domake(){
-    mkopt=""
-    ncpu="4"
+function do_make() {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
 
-    if [[ "$1" ]]; then
-        mkopt=$1
-    fi
-
-    if [[ "$2" ]]; then
-        ncpu=$2
-    fi
-
-    if [[ ! -f "./$build_dir/Makefile" ]]; then
-        doconfig
-    fi
-
-    cd $build_dir && make -j $ncpu $mkopt
+    cd $build_dir && make -j $ncpu && cd ../../
 }
 
-if [[ $# -eq 0 ]]; then
-    # No argument, run build qmicad
-    domake
-elif [[ $# -ge 1 ]]; then
-    opt=$1
-    if [[ $opt == "help" ]]; then
-        usage
-    elif [[ $opt == "config" ]]; then 
-        doconfig
-    elif [[ $opt == "debug" ]]; then 
-        doconfig "Debug"
-        domake
-    elif [[ $opt == "release" ]]; then 
-        doconfig "Release"
-        domake
-    elif [[ $opt == "clean" ]]; then 
-        domake "clean"
-    elif [[ $opt == "superclean" ]]; then
-        rm -rf $build_dir
-    elif [[ $opt == "install" ]]; then
-        if [[ $# == 2 ]]; then
-            install_dir=$2
-            cd $build_dir && cmake -DCMAKE_INSTALL_PREFIX:PATH=$install_dir ../ && make install
-        else
-            cd $build_dir && make install 
+function do_test() {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
+
+    cd $build_dir && make test ARGS="--output-on-failure --color_output=yes" && cd ../../
+}
+
+function do_make_doc() {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
+
+    cd $build_dir && make doc && cd ../../
+}
+
+function do_clean () {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
+
+    cd $build_dir && make clean && cd ../../
+}
+
+function do_superclean () {
+    local config=$1
+    rm -rf $config
+}
+
+function do_install () {
+    local config=$1
+    local build_dir=$(eval get_build_dir $config)
+
+    cd $build_dir && cmake -DCMAKE_INSTALL_PREFIX:PATH=$install_dir ../../ \
+            && make install && cd ../../
+}
+
+config=$default_config
+cmd=$default_command
+install_path=""
+while [[ $# -gt 0 ]]; do
+    case $1 in 
+        debug)
+            config="Debug"
+            ;;
+        release)
+            config="Release"
+            ;;
+        config|test|doc|clean|superclean)
+            cmd=$1
+            ;;
+        install)
+            cmd="install"
+            shift
+            if [[ $# -gt 0 ]]; then
+                install_dir="$1"
+                shift
+            fi
+            ;;
+        *)
+            usage
+            exit 1
+    esac
+    shift
+done
+
+case $cmd in
+    config)
+        do_config $config
+        ;;
+    make)
+        if is_config_needed $config; then
+            do_config $config
         fi
-    elif [[ $opt == "doc" ]]; then
-        if [[ ! -f "./$build_dir/Makefile" ]]; then
-            doconfig
-        fi
-
-        cd $build_dir && make doc
-    else
+        do_make $config
+        ;;
+    test)
+        do_test $config
+        ;;
+    doc)
+        do_make_doc $config
+        ;;
+    clean)
+        do_clean $config
+        ;;
+    superclean)
+        do_superclean $config
+        ;;
+    install)
+        do_install "Release"
+        ;;
+    *)
         usage
-        exit -1
-    fi
-else
-    usage
-    exit -1
-fi
-
-
+esac
