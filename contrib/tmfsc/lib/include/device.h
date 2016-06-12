@@ -39,13 +39,17 @@ using std::complex;
 using std::exp;
 using std::acos;
 using std::conj;
+using std::cos;
+using std::pow;
 
 class Edge : public Segment {
 public:
-    Edge(const point &p, const point &q, int type = EDGE_REFLECT);
+    Edge(const point &p, const point &q, int type = EDGE_REFLECT, double d = 0);
 
     void type(int type) { mType = type; }
     int type() { return mType; }
+    void split(double d) { md = d; } //!< get split length
+    double split() { return md; } //!< set split length
 
 public:
     // edge types
@@ -55,6 +59,7 @@ public:
 
 protected:
     int mType;
+    double md; //!< split length of the junction for transmitting edge
 };
 
 
@@ -66,7 +71,7 @@ public:
      *  first point again. */
     int addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
-    int addEdge(int ipt1, int ipt2, int type = Edge::EDGE_REFLECT);
+    int addEdge(int ipt1, int ipt2, int type = Edge::EDGE_REFLECT, double d =0);
     void edgeType(int iEdge, int type);
     int intersects(const point &p, const point &q);
     int intersects(int iEdge, const point &p, const point &q);
@@ -101,25 +106,11 @@ public:
     int getNumGates() const { return mPot->NG(); };
     void setGatePotential(int igate, double V);
     double getPotAt(const point& position);
+    void setEdgeRefRghnsEff(double mEff) {mEdgeRefRghnsEff = mEff;};
+    double getEdgeRefRghnsEff() const {return mEdgeRefRghnsEff; };
 
-    double getSplitLen() { return splitLen; }
-    void setSplitLen(double len);
-
-    void setRefEdgRghnsEff( double efficiency );
-    double getRefEdgRghnsEff() { return RefEdgRghnsEff; }
-
-    void setTranEdgRghnsEff( double efficiency );
-    double getTranEdgRghnsEff() { return TranEdgRghnsEff; }
-
-    void setRefEdgRghnsOn( bool flagRefEdgRghnsOn );
-    bool getRefEdgRghnsOn(){ return isRefEdgRghnsOn; }
-
-    void setTranEdgRghnsOn( bool flagTranEdgRghnsOn );
-    bool getTranEdgRghnsOn(){ return isTranEdgRghnsOn; }
-
-
-    tuple<double, double, double, double> calcProbab(double V1, 
-            double V2, const svec& vel, double En, int iEdge);
+    double calcTransProb(double V1, double V2, const svec& vel, double En,
+    		int iEdge);
  
 public:
     /*!
@@ -133,11 +124,7 @@ private:
     vector<Edge> mEdgs; //!< edges.
     vector<int> mCnts;  //!< Contact to edge map.
     map<int, int> mEdg2Cnt; //!< Egde to contact map.
-    double splitLen = 0.0; //!< Split length between gates
-    double RefEdgRghnsEff = 1.0;
-    double TranEdgRghnsEff = 1.0;
-    bool isRefEdgRghnsOn = false;
-    bool isTranEdgRghnsOn = false;
+    double mEdgeRefRghnsEff = 1.0; //!< Edge Reflection Efficiency
 };
 
 

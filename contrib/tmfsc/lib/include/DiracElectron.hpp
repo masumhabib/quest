@@ -21,6 +21,7 @@ public:
     virtual const svec& nextPos();
     virtual void doStep();
     virtual void reflect(const svec& normal);
+    virtual void refract(const svec& normal, double n1, double n2);
     virtual ptr clone();
 
 protected:

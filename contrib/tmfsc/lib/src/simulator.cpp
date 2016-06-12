@@ -88,6 +88,8 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
     } else if (injectModel == InjectModel::Random) {
         return calcTranRandom(injCont, saveTraj);
     }
+
+    return make_tuple<mat, TrajectoryVect>(mat(), TrajectoryVect());
 }
 
 inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont, 
@@ -104,26 +106,42 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     row prevTE = row(nconts);
     prevTE.fill(numeric_limits<double>::min());
     int ip = 0;
-    bool isReset = true; // Reset the distribution only for first time
     int totalN = 0;
-    
+
+    // Gaussian Distribution of injection angle
+       mContAngDist = make_shared<Distribution>( DistributionType::GAUSSIAN_RANDOM,
+                            mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
+
+    // COSINE distribution of injection angles
+//    vec angles = maths::armadillo::linspace( -pi/2, pi/2,
+//    		201 );
+//    vec tempWeights = cos( angles );
+//    vec weights = tempWeights / accu(tempWeights);
+//    mContAngDist = make_shared<Distribution>( DistributionType::DISCRETE,
+//    		-pi/2+mAngleLimit, pi/2-mAngleLimit,
+//			conv_to<vector<double>>::from(angles) ,
+//			conv_to<vector<double>>::from(weights) );
+
+    // selection of uniform points on contact
+    mContLenDist = make_shared<Distribution>( DistributionType::UNIFORM_RANDOM,
+    		-contWidth/2, contWidth/2 );
+
     while (1) { //TODO condition need to be improved
         if ( maxError < mTransmissionConv && totalN > mNoInjection ){
             break;
         }
-        double distance = getUniformRand(-contWidth/2, contWidth/2, isReset);
-        double angle = getGaussianRand(mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit, isReset);
-        isReset = false;
+        double distance = mContLenDist->getDistribution();
+        double angle = mContAngDist->getDistribution();
         svec position = r0 + distance * contVect;
         angle = th0 + angle;
-        //cout << "DBG: pos = " << position;
-        //cout << "DBG: angle = " << angle << endl;
 
         int status;
         TrajectoryVect traj;
         ElectronBins bin(nconts);
         tie(status, bin, traj) = calcTrajOneElect(position, angle, saveTraj);
-        //cout << "DBG: totalNumElects = " << bin.getTotalNumElects() << endl;
+        if (debug) {
+            cout << "DBG: totalNumElects = " << bin.getTotalNumElects() << endl;
+        }
  
         if (status == -1 || bin.getTotalNumElects() == 0) {
             continue;
@@ -167,11 +185,12 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
 
     TrajectoryVect trajs;
     ElectronBins electBins(nconts);
-
+    //Distribution normalDistContAngl( DistributionType::NORMAL, mAngleSpread, 0 );
+    mContAngDist = make_shared<Distribution>( DistributionType::NORMAL, mAngleSpread, 0 );
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
         vector<double> th(mNth);
-        genNormalDist(th, mAngleSpread, 0);
+        mContAngDist->getDistribution( th );
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-mAngleLimit)) {
@@ -305,10 +324,19 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // lets reflect back
                 electron->reflect(mDev->edgeNormVect(iEdge));
                 // Roughness Correction
+                // BEGIN develop =========================
                 Particle::ptr reflElect = electron->clone();
-				if ( mDev->getRefEdgRghnsOn() ){
-					distElecRoughness( reflElect->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
-					reflElect->setOccupation( reflElect->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
+				//if ( mDev->getRefEdgRghnsOn() ){
+				//	distElecRoughness( reflElect->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
+				//	reflElect->setOccupation( reflElect->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
+				// END develop   ============================
+                // BEGIN Multiple_Junction
+				if ( mDev->getEdgeRefRghnsEff() != 1.0 ){
+					distElecRoughness( electron->getOccupation()
+							* ( 1 - mDev->getEdgeRefRghnsEff() ), bins );//Lost part
+					electron->setOccupation( electron->getOccupation()
+							* mDev->getEdgeRefRghnsEff() );//Remaining Part
+                // END Multiple_Junction
 				}
                 rf = r;
                 electsQu.push(reflElect);
@@ -336,40 +364,24 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 double V1 = transElect->getPot(); // potential before edge
                 applyPotential(transElect);
                 double V2 = transElect->getPot(); // potential after edge
-
                 // calculate the transmission and reflection probability
-                double thf, transProb, refProb;
-                double thti;
-                tie(thf, thti, transProb, refProb) = mDev->calcProbab(V1, V2,
+                double transProb, refProb;
+                transProb = mDev->calcTransProb(V1, V2,
                         transElect->getVel(), transElect->getEnergy(), iEdge);
+                refProb = 1 - transProb;
                 double occu = electron->getOccupation();
-                //if (debug){
-                //    std::cout << "-D- V1 = " << V1 << " V2 = " << V2 
-                //        << " T(E) = " << transProb 
-                //        << " R(E) = " << refProb << std::endl;
-                //}
-
                 // reflect? if yes, reflect it and put it in the queue
                 if (refProb > mReflectionTol) {
                     Particle::ptr refElect = electron->clone();
                     refElect->reflect(mDev->edgeNormVect(iEdge));
                     refElect->setOccupation(refProb*occu);
-                    // Roughness Correction
-                    if ( mDev->getTranEdgRghnsOn() ){
-						distElecRoughness( refElect->getOccupation() * (1 - mDev->getTranEdgRghnsEff() ), bins );//Lost part
-						electron->setOccupation( refElect->getOccupation() * mDev->getTranEdgRghnsEff() );//Remaining Part
-                    }
                     electsQu.push(refElect);
                 }
                 // transmit? if yes, transmit it and put it in the queue
                 if (transProb > mTransmissionTol) {
                     transElect->setOccupation(transProb*occu);
-                    // Roughness Correction
-                    if ( mDev->getTranEdgRghnsOn() ){
-                    	distElecRoughness( transElect->getOccupation() * (1 - mDev->getTranEdgRghnsEff() ), bins );//Lost part
-                    	transElect->setOccupation( transElect->getOccupation() * mDev->getTranEdgRghnsEff() );//Remaining Part
-                    }
-                    transElect->rotateVel(-thti - thf);
+                    transElect->refract(mDev->edgeNormVect(iEdge),
+                    		transElect->getEnergy()+V1, transElect->getEnergy()+V2);
                     refreshTimeStepSize(transElect);
                     electsQu.push(transElect);
                 }
@@ -491,9 +503,11 @@ inline void Simulator::distElecRoughness( double occu, ElectronBins &bins ){
 	double dummy_mE, dummy_V, dummy_mB;
 	// Creating a dummy electron
 	if (particleType == ParticleType::DiracCyclotron) {
-	    electron = make_shared<DiracCyclotron>(dummy_ri, dummy_vi, dummy_mE, dummy_V, dummy_mB);
+	    electron = make_shared<DiracCyclotron>(dummy_ri, dummy_vi, dummy_mE,
+	    		dummy_V, dummy_mB);
 	} else {
-		electron = make_shared<DiracElectron>(dummy_ri, dummy_vi, dummy_mE, dummy_V, dummy_mB);
+		electron = make_shared<DiracElectron>(dummy_ri, dummy_vi, dummy_mE,
+				dummy_V, dummy_mB);
 	}
 	totalEdge = this->mDev->numEdges();
 	totalAbsorbingEdge = 0;
@@ -507,7 +521,8 @@ inline void Simulator::distElecRoughness( double occu, ElectronBins &bins ){
 	}
 	// Distributing the lost portion equally among absorbing contacts
 	electron->setOccupation( occu / absorbEdgeList.size() );
-	for( vector<int>::iterator iEdgeIt = absorbEdgeList.begin(); iEdgeIt != absorbEdgeList.end(); ++iEdgeIt ){
+	for( vector<int>::iterator iEdgeIt = absorbEdgeList.begin();
+			iEdgeIt != absorbEdgeList.end(); ++iEdgeIt ){
 		bins.putElectron(electron, this->mDev->edgeToContIndx(*iEdgeIt));
 	}
 }

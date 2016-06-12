@@ -49,12 +49,14 @@ void printBannerTestCase(string testName)
 BOOST_AUTO_TEST_CASE(Generate_Normal_Distribution)
 {
 	printBannerTestCase( "Testing Normal Distribution" );
-    int N = 1000000;
+    int N = 100;
     double expmean = 0;
     double sigma = 1;
     vector<double> vs(N);
-    genNormalDist(vs, sigma, expmean);
-    
+	Distribution normaldist(DistributionType::NORMAL, sigma, expmean);
+	std::cout << normaldist.toString() << endl;
+	normaldist.getDistribution(vs);
+    //genNormalDist(vs, sigma, expmean);
     double foundMean = 0;
     for (auto v : vs) {
     	foundMean += v;
@@ -77,9 +79,11 @@ BOOST_AUTO_TEST_CASE(Gaussian_Random_Distribution)
 	expmean = 5;
 	foundMean = 0;
 	bool reset = false;
-
+	Distribution gaussianRandDist( DistributionType::GAUSSIAN_RANDOM, sigma, expmean, min, max );
+	std::cout << gaussianRandDist.toString() << endl;
+	gaussianRandDist.getDistribution(true);
 	for( int n=0; n<N; n++ ){
-		double number = getGaussianRand(sigma, expmean, min, max, reset );
+		double number = gaussianRandDist.getDistribution(reset);
 		foundMean += number;
 		++hist[std::round( number)];
 	}
@@ -110,15 +114,65 @@ BOOST_AUTO_TEST_CASE(Uniform_Random_Distribution)
 	printBannerTestCase( "Testing Uniform Random Distribution" );
 	int N = 1000000;
 	std::map<int, int> hist;
-	double expmean, min, max, foundMean;
+	double expmean, min, max, foundMean, dSigma;
 	min = -2;
 	max = 12;
 	expmean = (min + max)/2;
+
 	foundMean = 0;
 	bool reset = false;
-
+	Distribution uniformRandDist( DistributionType::UNIFORM_RANDOM, min, max);
+	std::cout << uniformRandDist.toString() << endl;
+	uniformRandDist.getDistribution(true);
 	for( int n=0; n<N; n++ ){
-		double number = getUniformRand(min, max, reset );
+		double number = uniformRandDist.getDistribution(reset);
+		foundMean += number;
+		++hist[std::round( number)];
+	}
+	foundMean = foundMean/double(N);
+	//checking mean
+	if ( expmean!=0 ){
+			BOOST_CHECK_CLOSE( foundMean,  expmean, 1);
+	}
+	BOOST_CHECK(abs( expmean - abs(foundMean) ) < 0.1*abs(abs(min)-abs(expmean)));
+	//checking minimum
+	BOOST_CHECK(hist.begin()->first >= min);
+	//checking maximum
+	BOOST_CHECK(hist.rbegin()->first <= max );
+	if( print_histogram ){
+		cout << "Histogram : " << endl;
+		for(auto p : hist) {
+				std::cout << std::fixed << std::setprecision(1) << std::setw(2)
+						  << p.first << ' ' << std::string(p.second/4000, '*') << '\n';
+		}
+		cout << "\n";
+	}
+	cout << "Expected Mean: " << expmean << endl;
+	cout << "Generated Mean: " << foundMean << endl;
+}
+
+
+BOOST_AUTO_TEST_CASE(Cosine_Distribution)
+{
+	printBannerTestCase( "Testing Cosine Random Distribution" );
+	int N = 1000000;
+	std::map<int, int> hist;
+	double expmean, min, max, foundMean;
+	min = -pi/2;
+	max = pi/2;
+	expmean = (min + max)/2;
+	vec angles = linspace(min, max, (max - min)/100.0);
+	vec tempweights = cos( angles );
+	vec weights = tempweights/ accu( tempweights );
+	vector<double> anglesStdVec = arma::conv_to< vector<double> >::from( angles );
+	vector<double> weightsStdVec = arma::conv_to< vector<double> >::from( weights );
+	foundMean = 0;
+	bool reset = false;
+	Distribution cosineRandDist( DistributionType::DISCRETE, min, max, anglesStdVec, weightsStdVec);
+	std::cout << cosineRandDist.toString() << endl;
+	cosineRandDist.getDistribution(true);
+	for( int n=0; n<N; n++ ){
+		double number = cosineRandDist.getDistribution(reset);
 		foundMean += number;
 		++hist[std::round( number)];
 	}

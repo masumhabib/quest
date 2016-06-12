@@ -12,6 +12,7 @@
 #define	CONSTANTS_H
 
 #include "maths/arma.hpp"
+#include <limits>
 
 namespace maths{ namespace constants{
     
@@ -52,6 +53,9 @@ private:
     const cmat22             sy = cmat22(0,-i, i, 0);
     const cmat22             sz = cmat22(1, 0, 0,-1);
     
+    // NaN
+    const double		NaN 	= std::numeric_limits<double>::quiet_NaN();
+
 };
 
 }

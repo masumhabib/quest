@@ -31,8 +31,13 @@ void DiracCyclotron::doStep() {
 
 void DiracCyclotron::reflect(const svec& normal) {
     Particle::reflect(normal);
-
     th = atan2(v[1], v[0]);
+
+}
+
+void DiracCyclotron::refract(const svec& normal, double V1, double V2){
+	Particle::refract(normal, V1, V2);
+	th = atan2(v[1], v[0]);
 }
 
 void DiracCyclotron::rotateVel(double thti) {

@@ -6,6 +6,7 @@
 #define TMFSC_PARTICLE_H
 #include "tmfsc.h"
 #include <memory>
+#include "maths/constants.h"
 
 namespace qmicad { namespace tmfsc {
 
@@ -14,6 +15,7 @@ using maths::armadillo::col;
 using arma::conv_to;
 using arma::endr;
 using std::shared_ptr;
+using maths::constants::pi;
 
 class Particle {
 public:
@@ -37,6 +39,7 @@ public:
     virtual void doStep() = 0;
     virtual ptr clone() = 0;
     virtual void reflect(const svec& normal);
+    virtual void refract(const svec& normal, double V1, double V2);
     virtual void rotateVel(double thti); //!< Rotate the Particle by thti
     virtual double timeToReach(const svec& pos);
     virtual const svec& stepCloseToPoint(const svec& pos, 
