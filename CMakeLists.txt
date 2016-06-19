@@ -13,7 +13,7 @@ set(QMICAD_MINOR 11)
 set(QMICAD_PATCH 0)
 
 # Options
-option(VERBOSE_MAKE "Verbose cmake for debugging" on)
+option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
 #set(CMAKE_BUILD_TYPE "Debug")
 
@@ -66,21 +66,17 @@ endif()
 
 # Armadillo
 find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 # MPI mpich2
 find_package(MPI REQUIRED)
-include_directories(${MPI_INCLUDE_PATH})
 
 # Python libs
 find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_DIRS})
 
 # NumPy
 include(cmake/FindNumPy.cmake)
 find_package(NumPy REQUIRED)
-include_directories(${NUMPY_INCLUDE_DIRS})
 
 # doxygen
 find_package(Doxygen)

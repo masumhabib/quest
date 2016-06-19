@@ -4,6 +4,10 @@
 set(PYTMFSC_INCLUDE_DIRS ${TMFSC_ROOT_DIR}/pylib)
 list(REMOVE_DUPLICATES PYTMFSC_INCLUDE_DIRS)
 
+include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(${NUMPY_INCLUDE_DIRS})
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+include_directories(${MPI_INCLUDE_PATH})
 include_directories(${PYTMFSC_INCLUDE_DIRS})
 include_directories(${TMFSC_INCLUDE_DIRS})
 

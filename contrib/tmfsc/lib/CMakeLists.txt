@@ -5,6 +5,8 @@ set(TMFSC_INCLUDE_DIRS ${TMFSC_ROOT_DIR}/lib/include)
 list(REMOVE_DUPLICATES TMFSC_INCLUDE_DIRS)
 set(TMFSC_INCLUDE_DIRS ${TMFSC_INCLUDE_DIRS} PARENT_SCOPE)
 
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+include_directories(${MPI_INCLUDE_PATH})
 include_directories(${QMICAD_INCLUDE_DIRS})
 include_directories(${TMFSC_INCLUDE_DIRS})
 
