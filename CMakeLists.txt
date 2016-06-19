@@ -13,25 +13,25 @@ set(QMICAD_MINOR 11)
 set(QMICAD_PATCH 0)
 
 # Options
-option(VERBOSE_MAKE "Verbose cmake for debugging" off)
+option(VERBOSE_MAKE "Verbose cmake for debugging" on)
 option(LINK_STATIC "Link everything statically" off)
 #set(CMAKE_BUILD_TYPE "Debug")
+
+# To use locally compiled libraries (Armadillo and Boost), create a file
+# that contains the local library paths and include it here. Some examples of
+# such files can be found in cmake/local folder.
+include(cmake/local/Armadillo.cmake)
+
+# Build and run testing
 enable_testing()
 
 # For custom cmake scripts
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-# Add machine specific local usr path for locally compiled libraries
-#include(cmake/machines/fir)
-
-# optimization
-set(CMAKE_CXX_FLAGS_RELEASE " -m64 -O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
-# Linker flags
-#set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 
 # Start configuration
 set(QMICAD_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
+message(STATUS "--------------------------------------------------------------")
 message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
 message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "--------------------------------------------------------------")
@@ -56,6 +56,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 # Libraries
 # -----------------------------------------------------------------------------
@@ -77,6 +78,7 @@ find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 # NumPy
+include(cmake/FindNumPy.cmake)
 find_package(NumPy REQUIRED)
 include_directories(${NUMPY_INCLUDE_DIRS})
 
@@ -100,18 +102,6 @@ endif()
 find_package(Boost 1.55 REQUIRED serialization random mpi mpi_python unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 
-if(${CMAKE_BUILD_TYPE} MATCHES "Release")
-    set(QMICAD_FLAGS ${CMAKE_CXX_FLAGS_RELEASE})
-endif(${CMAKE_BUILD_TYPE} MATCHES "Release")
-
-if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    set(QMICAD_FLAGS ${CMAKE_CXX_FLAGS_DEBUG})
-endif(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-
-message(STATUS "Compiler flags: ${QMICAD_FLAGS}")
-message(STATUS "Linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
-message(STATUS "Installation location: ${CMAKE_INSTALL_PREFIX}/${QMICAD_INSTALL_DIR}")
-
 # Prepare distribution directory
 set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/../${PROJECT_NAME}-${QMICAD_VERSION})
 set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
@@ -119,9 +109,9 @@ set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 # installation
 install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
 
-# QMICAD C++ Library
 add_subdirectory(lib)
 add_subdirectory(pylib)
 add_subdirectory(contrib/tmfsc)
 
+message(STATUS "--------------------------------------------------------------")
 
