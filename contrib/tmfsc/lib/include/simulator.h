@@ -42,6 +42,8 @@ using utils::random::DistributionType;
 
 using maths::constants::pi;
 using maths::armadillo::dcmplx;
+using maths::constants::NaN;
+using maths::is_nan;
 
 typedef vector<point> Path;
 struct Trajectory {
@@ -123,6 +125,8 @@ public:
     void setInjecAngleSpread(double angle) { mAngleSpread = angle; };
     double getMeanInjecAngle() const { return mMeanInjAngle; };
     void setMeanInjecAngle(double angle) { mMeanInjAngle = angle; };
+    double getEdgRghAngleSpread() const { return mEdgRghAngleSpread; };
+    void setEdgRghAngleSpread(double angle) { mEdgRghAngleSpread = angle; };
 
     double getFermiVelo() const { return mvF; };
     void getFermiVelo(double vF) { mvF = vF; };
@@ -180,9 +184,11 @@ private:
     double dt = 10/(1E6/nm); //!< default time step. 
     double maxdt = 100/(1E6/nm); //!< maximum time step size
     bool isAutoDt = true; //!< Switch for automatic dt calculation
-    double mAngleSpread = pi/5; //!< spread (std dev) of injection angle.
+    // NaN will give cosine distribution
+    double mAngleSpread = NaN; //!< spread (std dev) of injection angle.
     double mAngleLimit = pi/20; //!< allowed limit of injection angle.
     double mMeanInjAngle = pi/2; //!< mean of the injection angle
+    double mEdgRghAngleSpread = NaN; //!< spread (std dev) of edge roughness
 
     bool debug = false; //!< Prints debug message if true.
 

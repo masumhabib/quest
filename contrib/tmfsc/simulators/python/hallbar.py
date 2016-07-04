@@ -225,18 +225,11 @@ class HallBar(object):
         self.sim.InjecAngleSpread = angle
         
     @property
-    def EdgRghSpread(self):
-        return self.sim.EdgRghSpread
-    @EdgRghSpread.setter
-    def EdgRghSpread(self, angle):
-        self.sim.EdgRghSpread = angle
-        
-    @property
-    def IsEdgRghRan(self):
-        return self.sim.IsEdgRghRan
-    @IsEdgRghRan.setter
-    def IsEdgRghRan(self, flagBool):
-        self.sim.IsEdgRghRan = flagBool
+    def EdgRghAngleSpread(self):
+        return self.sim.EdgRghAngleSpread
+    @EdgRghAngleSpread.setter
+    def EdgRghAngleSpread(self, angle):
+        self.sim.EdgRghAngleSpread = angle
 
     def setupBias(self, Ef, B, V, m = 1, singleResonance = True, 
             Efmax = None, NEf = 1, Bmax = None, NB = 1, Vmax = None, NV = 1):
