@@ -107,27 +107,32 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     prevTE.fill(numeric_limits<double>::min());
     int ip = 0;
     int totalN = 0;
+    // if mAngleSpread is NaN then set the cosine distribution
+    // else use the gaussian distribution with definite value of mAngleSpread
+    // for injecting electrons
+    if ( is_nan( mAngleSpread ) ){
+        // COSINE distribution of injection angles
+        vec angles = maths::armadillo::linspace(-pi/2+mAngleLimit,
+                                                pi/2-mAngleLimit, 181);
+        vec tempWeights = cos(angles);
+        vec weights = tempWeights / accu(tempWeights);
+        mContAngDist = make_shared<Distribution>(DistributionType::DISCRETE,
+                                                 -pi/2+mAngleLimit,
+                                                 pi/2-mAngleLimit,
+                                                 conv_to<vector<double>>::from(
+                                                         angles),
+                                                 conv_to<vector<double>>::from(
+                                                         weights));
+        cout << "\n" << "DBG: Cosine Distribution for Contact Injection Angle Set"
+        << endl;
+    }else{
+        // Gaussian Distribution of injection angle
+        mContAngDist = make_shared<Distribution>( DistributionType::GAUSSIAN_RANDOM,
+                          mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
+        cout << "DBG: Gaussian Distribution for Contact Injection Angle Set with "
+                << "Sigma=pi/" << pi/mAngleSpread << endl;
+    }
 
-    // Gaussian Distribution of injection angle
-
-    // mContAngDist = make_shared<Distribution>( DistributionType::GAUSSIAN_RANDOM,
-    //                      mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
-    // cout << "DBG: Gaussian Distribution for Contact Injection Angle" << endl;
-
-    // COSINE distribution of injection angles
-    vec angles = maths::armadillo::linspace(-pi / 2, pi / 2,
-                                            201);
-    vec tempWeights = cos(angles);
-    vec weights = tempWeights / accu(tempWeights);
-    mContAngDist = make_shared<Distribution>(DistributionType::DISCRETE,
-                                             -pi / 2 + mAngleLimit,
-                                             pi / 2 - mAngleLimit,
-                                             conv_to<vector<double>>::from(
-                                                     angles),
-                                             conv_to<vector<double>>::from(
-                                                     weights));
-    cout << "\n" << "DBG: Cosine Distribution for Contact Injection Angle Set"
-                    << endl;
     // selection of uniform points on contact
     mContLenDist = make_shared<Distribution>(DistributionType::UNIFORM_RANDOM,
                                              -contWidth / 2, contWidth / 2);
