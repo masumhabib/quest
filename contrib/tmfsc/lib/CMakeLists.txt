@@ -29,7 +29,7 @@ foreach(testSrc ${TMFSC_TEST_SRCS})
         add_executable(${testName} ${testSrc})
 
         #link to Boost libraries AND your targets and dependencies
-        target_link_libraries(${testName} ${Boost_LIBRARIES} tmfsc)
+        target_link_libraries(${testName} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES} tmfsc)
 
         #I like to move testing binaries into a testBin directory
         set_target_properties(${testName} PROPERTIES 

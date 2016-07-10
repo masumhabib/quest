@@ -12,6 +12,7 @@ set(QMICAD_MAJOR 0)
 set(QMICAD_MINOR 11)
 set(QMICAD_PATCH 0)
 
+
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
@@ -71,8 +72,8 @@ find_package(Armadillo REQUIRED)
 find_package(MPI REQUIRED)
 
 # Python libs
-find_package(PythonInterp REQUIRED)
-find_package(PythonLibs REQUIRED)
+find_package(PythonInterp 2.7 REQUIRED)
+find_package(PythonLibs 2.7 REQUIRED)
 
 # NumPy
 include(cmake/FindNumPy.cmake)

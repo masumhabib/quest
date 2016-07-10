@@ -34,7 +34,7 @@ using std::numeric_limits;
 using maths::armadillo::mat;
 using maths::armadillo::vec;
 using maths::armadillo::row;
-using maths::armadillo::fill;
+namespace fill = maths::armadillo::fill;
 using maths::armadillo::zeros;
 using maths::constants::pi;
 using utils::random::Distribution;
