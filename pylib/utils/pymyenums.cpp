@@ -5,8 +5,8 @@
  * Created on January 21, 2014, 11:42 AM
  */
 
-#include "utils/myenums.hpp"
 #include "boostpython.hpp"
+#include "utils/myenums.hpp"
 
 namespace qmicad{
 namespace python{

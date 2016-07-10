@@ -5,8 +5,8 @@
  * Created on February 17, 2014, 12:21 AM
  */
 
-#include "kpoints/KPoints.h"
 #include "boostpython.hpp"
+#include "kpoints/KPoints.h"
 
 
 /**

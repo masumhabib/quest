@@ -8,9 +8,9 @@
 #ifndef PYCOHRGFLOOP_H
 #define	PYCOHRGFLOOP_H
 
+#include "boostpython.hpp"
 #include "negf/CohRgfLoop.h"
 #include "negf/RgfResult.h"
-#include "boostpython.hpp"
 #include "npyarma/npyarma.h"
 
 namespace qmicad{

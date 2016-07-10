@@ -5,8 +5,8 @@
  * Created on January 27, 2014, 5:19 PM
  */
 
-#include "potential/linearPot.h"
 #include "boostpython.hpp"
+#include "potential/linearPot.h"
 
 /**
  * Python exporters.

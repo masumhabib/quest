@@ -6,8 +6,8 @@
  * 
  */
 
-#include "utils/Printable.hpp"
 #include "boostpython.hpp"
+#include "utils/Printable.hpp"
 
 
 /**

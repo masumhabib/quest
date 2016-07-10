@@ -5,8 +5,8 @@
  * Created on January 25, 2014, 10:16 AM
  */
 
-#include "hamiltonian/kp/tikp.h"
 #include "boostpython.hpp"
+#include "hamiltonian/kp/tikp.h"
 
 
 /**

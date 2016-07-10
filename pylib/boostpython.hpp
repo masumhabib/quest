@@ -8,7 +8,7 @@
 #ifndef BOOSTPYTHON_HPP
 #define	BOOSTPYTHON_HPP
 
-#include <python2.6/Python.h>
+#include <Python.h>
 #include <boost/python.hpp>
 #include <boost/format.hpp>
 #include <boost/python/module.hpp>

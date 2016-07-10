@@ -8,8 +8,8 @@
  * 
  */
 
-#include "atoms/Lattice.h"
 #include "boostpython.hpp"
+#include "atoms/Lattice.h"
 
 
 /**

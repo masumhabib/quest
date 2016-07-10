@@ -6,8 +6,8 @@
  */
 
 
-#include "hamiltonian/kp/graphenekp.h"
 #include "boostpython.hpp"
+#include "hamiltonian/kp/graphenekp.h"
 
 /**
  * Python exporters.

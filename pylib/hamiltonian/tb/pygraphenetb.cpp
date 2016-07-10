@@ -7,8 +7,8 @@
  * Tight binding parameters for graphene.
  */
 
-#include "hamiltonian/tb/graphenetb.h"
 #include "boostpython.hpp"
+#include "hamiltonian/tb/graphenetb.h"
 
 
 /**

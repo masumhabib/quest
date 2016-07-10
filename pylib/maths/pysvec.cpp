@@ -8,8 +8,8 @@
  * 
  */
 
-#include "maths/svec.h"
 #include "boostpython.hpp"
+#include "maths/svec.h"
 
 
 namespace qmicad{

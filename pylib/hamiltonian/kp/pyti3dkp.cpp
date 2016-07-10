@@ -6,8 +6,8 @@
  * Created on September 12, 2014, 9:49 AM
  */
 
-#include "hamiltonian/kp/TI3DKpParams.h"
 #include "boostpython.hpp"
+#include "hamiltonian/kp/TI3DKpParams.h"
 
 namespace qmicad{namespace python{
 using namespace qmicad::hamiltonian;

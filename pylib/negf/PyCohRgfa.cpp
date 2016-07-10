@@ -5,8 +5,8 @@
  * Created on April 22, 2013, 8:05 PM
  */
 
-#include "negf/CohRgfa.h"
 #include "boostpython.hpp"
+#include "negf/CohRgfa.h"
 
 /**
  * Python exporters.

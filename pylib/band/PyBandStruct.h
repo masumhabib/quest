@@ -8,9 +8,9 @@
 #ifndef PYBANDSTRUCT_H
 #define	PYBANDSTRUCT_H
 
+#include "boostpython.hpp"
 #include "utils/std.hpp"
 #include "band/BandStruct.h"
-#include "boostpython.hpp"
 #include "npyarma/npyarma.h"
 
 namespace qmicad{namespace python{

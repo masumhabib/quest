@@ -5,8 +5,8 @@
  * Created on February 3, 2014, 1:45 PM
  */
 
-#include "maths/geometry.hpp"
 #include "boostpython.hpp"
+#include "maths/geometry.hpp"
 
 
 namespace qmicad{

@@ -11,6 +11,7 @@
 #ifndef TMFSC_PYLIB_PYTMFSC_H
 #define	TMFSC_PYLIB_PYTMFSC_H
 
+#include "boostpython.hpp"
 #include "pydevice.h"
 #include "pysimulator.h"
 
