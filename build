@@ -80,6 +80,7 @@ function do_clean () {
 
 function do_superclean () {
     local config=$1
+    echo "rm -rf $config"
     rm -rf $config
 }
 
