@@ -108,7 +108,7 @@ install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
 
 add_subdirectory(lib)
 add_subdirectory(pylib)
-add_subdirectory(contrib/tmfsc)
+add_subdirectory(tests)
 
 message(STATUS "--------------------------------------------------------------")
 

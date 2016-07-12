@@ -115,6 +115,27 @@ void export_negf()
     export_CohRgfLoop();    
 }
 
+void export_tmfsc()
+{ 
+    using namespace qmicad::tmfsc;
+
+    object tmfscModule(handle<>(borrowed(PyImport_AddModule("qmicad.tmfsc"))));
+    scope().attr("tmfsc") = tmfscModule;
+    scope tmfsc_scope = tmfscModule;
+
+    // add global variables
+    object package = scope();
+    package.attr("nm") = nm;
+    package.attr("AA") = AA;
+    package.attr("EDGE_ABSORB") = Edge::EDGE_ABSORB;
+    package.attr("EDGE_REFLECT") = Edge::EDGE_REFLECT;
+    package.attr("EDGE_TRANSMIT") = Edge::EDGE_TRANSMIT;
+
+    export_Device();
+    export_Simulator();
+    
+}
+
 BOOST_PYTHON_MODULE(qmicad)
 { 
     // create qmicad package
@@ -134,6 +155,7 @@ BOOST_PYTHON_MODULE(qmicad)
     export_hamiltonian();
     export_band();
     export_negf();
+    export_tmfsc();
 }
 
 }

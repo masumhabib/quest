@@ -9,7 +9,7 @@
 #define	TMFSC_PYLIB_PYDEVICE_H
 
 #include "boostpython.hpp"
-#include "device.h"
+#include "tmfsc/device.h"
 
 namespace qmicad { namespace python {
 

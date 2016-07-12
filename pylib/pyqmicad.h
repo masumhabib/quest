@@ -57,6 +57,9 @@ void export_BandStruct();
 
 void export_npyarma();
 
+void export_Device();
+void export_Simulator();
+
 
 }
 }

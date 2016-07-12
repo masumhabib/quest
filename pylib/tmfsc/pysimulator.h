@@ -10,8 +10,8 @@
 
 #include "boostpython.hpp"
 #include "pyutils.hpp"
-#include "simulator.h"
 #include "pydevice.h"
+#include "tmfsc/simulator.h"
 #include <vector>
 
 namespace qmicad { namespace python {

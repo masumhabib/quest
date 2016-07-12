@@ -3,7 +3,7 @@
  * @co-author Mirza Elahi <mirza.monzur@gmail.com
  */
 
-#include "particle.hpp"
+#include "tmfsc/particle.hpp"
 
 namespace qmicad { namespace tmfsc {
 

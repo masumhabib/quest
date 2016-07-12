@@ -4,7 +4,7 @@
  * co-author : Mirza Elahi
  */
 
-#include "simulator.h"
+#include "tmfsc/simulator.h"
 
 namespace qmicad { namespace tmfsc {
 

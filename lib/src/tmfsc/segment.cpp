@@ -1,5 +1,5 @@
 
-#include "segment.h"
+#include "tmfsc/segment.h"
 namespace qmicad { namespace tmfsc {
 
 /** Creates a line segment joining (p,q) also provides an alternet 

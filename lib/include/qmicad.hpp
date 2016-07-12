@@ -67,11 +67,14 @@
 #include "potential/potential.h"
 #include "potential/linearPot.h"
 
+#include "band/BandStruct.h"
+
 #include "negf/computegs.h"
 #include "negf/CohRgfa.h"
 #include "negf/CohRgfLoop.h"
 
-#include "band/BandStruct.h"
+#include "tmfsc/device.h"
+#include "tmfsc/simulator.h"
 
 #include "config.h"
 

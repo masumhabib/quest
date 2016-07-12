@@ -3,7 +3,7 @@
  * @co-author Mirza Elahi <mirza.monzur@gmail.com>
  */
 
-#include "DiracCyclotron.hpp"
+#include "tmfsc/DiracCyclotron.hpp"
 
 namespace qmicad { namespace tmfsc {
 DiracCyclotron::DiracCyclotron(const svec& ri, const svec& vi, 

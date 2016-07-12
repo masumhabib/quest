@@ -4,7 +4,7 @@
  * Co-Author: Mirza Elahi
  */
 
-#include "device.h"
+#include "tmfsc/device.h"
 
 namespace qmicad{ namespace tmfsc{
 
