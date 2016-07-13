@@ -2,7 +2,7 @@
  *
  */
 
-#include "simulator.h"
+#include "tmfsc/simulator.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE SimulatorTest

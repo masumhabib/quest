@@ -100,8 +100,10 @@ find_package(Boost 1.55 REQUIRED serialization random mpi mpi_python unit_test_f
 include_directories(${Boost_INCLUDE_DIR})
 
 # Prepare distribution directory
-set(QMICAD_DIST_DIR ${PROJECT_BINARY_DIR}/../${PROJECT_NAME}-${QMICAD_VERSION})
+set(QMICAD_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
+set(QMICAD_DIST_DIR ${QMICAD_BUILD_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
 set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
+set(QMICAD_TEST_DIR ${QMICAD_BUILD_DIR}/tests)
 
 # installation
 install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
