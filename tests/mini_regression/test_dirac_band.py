@@ -38,9 +38,6 @@ def simulate():
     bs.HamType = bs.HAM_TI_SURF_KP
     bs.verbosity = vprint.MSG_NORMAL
     
-    #Simulation parameters.
-    bs.VERSION_REQUIRED = "0.11.0"
-
     bs.DryRun = False
     bs.AutoGenKp = False
 
@@ -66,13 +63,6 @@ def simulate():
 
     lx = bs.nl*bs.a;
     bs.kp.addKLine(Point(-pi/lx, 0), Point(pi/lx, 0), bs.nk1)
-
-    # Setup and simulation
-    if qmicad.version != bs.VERSION_REQUIRED:
-        msg = "QMICAD version mismatch. Required "
-        msg += str(bs.VERSION_REQUIRED) + ". Got "
-        msg += str(qmicad.version)
-        raise Exception(msg)
 
     # Change lattice constant if requested
     if hasattr(bs, 'a'):

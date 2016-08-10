@@ -29,7 +29,6 @@ def simulate():
     tr.verbosity = vprint.MSG_NORMAL
     
     # Simulation parameters ------------------------------------------
-    tr.VERSION_REQUIRED = "0.10.0"
     tr.verbosity = vprint.MSG_DEBUG 
     # Do a dry run    
     tr.DryRun = False
@@ -91,12 +90,6 @@ def simulate():
     tr.kT         = 0.0259  # temperature
 
     # --------------------------------------------------------------
-    if qmicad.version != tr.VERSION_REQUIRED:
-        msg = "QMICAD version mismatch. Required "
-        msg += str(tr.VERSION_REQUIRED) + ". Got "
-        msg += str(qmicad.version)
-        raise Exception(msg)
-
     
     # Get the total length
     tr.nb = tr.computeDevLen()
