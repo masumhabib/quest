@@ -26,19 +26,22 @@ target_link_libraries (pyqmicad -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES
 set_target_properties (pyqmicad PROPERTIES PREFIX "")
 set_target_properties (pyqmicad PROPERTIES OUTPUT_NAME "qmicad")
 
-# Prepare qmicad package
-add_custom_command(
-    TARGET pyqmicad POST_BUILD
+# Prepare qmicad python package
+add_custom_target(pyqmicad_package ALL
     COMMAND mkdir -p  ${QMICAD_DIST_DIR}/qmicad
     COMMAND mkdir -p  ${QMICAD_DIST_DIR}/qmicad/simulators
-    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/utils
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/pylib/python/*.py ${QMICAD_DIST_DIR}/qmicad
     COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/simulators/python/* ${QMICAD_DIST_DIR}/qmicad/simulators
-    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/utils/matlab ${QMICAD_DIST_DIR}/utils
-    #COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/tests ${QMICAD_DIST_DIR}/
-    #COMMAND cd        ${QMICAD_DIST_DIR}/tests && ln -sf ../qmicad . && cd ${QMICAD_DIST_DIR}
     COMMAND cp        ${QMICAD_DIST_DIR}/lib/qmicad${CMAKE_SHARED_LIBRARY_SUFFIX}  ${QMICAD_DIST_DIR}/qmicad/qmicad.so
     COMMAND cp    -rp ${QMICAD_DIST_DIR}/lib/libqmicad${CMAKE_SHARED_LIBRARY_SUFFIX} ${QMICAD_DIST_DIR}/qmicad
+
+    DEPENDS qmicad pyqmicad 
+)
+
+add_custom_target(qmicad_utils ALL
+    COMMAND mkdir -p  ${QMICAD_DIST_DIR}/utils
+    COMMAND cp    -rp ${CMAKE_SOURCE_DIR}/utils/matlab ${QMICAD_DIST_DIR}/utils
+    DEPENDS qmicad pyqmicad pyqmicad_package
 )
 
 # -------- </QMICAD Python Library> ---------

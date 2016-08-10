@@ -14,3 +14,8 @@ add_custom_target(mini_regression ALL
     DEPENDS pyqmicad
 )
 
+add_custom_command(TARGET mini_regression POST_BUILD
+    WORKING_DIRECTORY ${QMICAD_MINI_REGRESSION_DIR}
+    COMMAND ln -sf ${QMICAD_DIST_DIR}/qmicad .
+)
+
