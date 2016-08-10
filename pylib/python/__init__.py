@@ -12,6 +12,12 @@
  Last update: 02/12/2014
 
 """
+
+import DLFCN as _dl
+import sys as _sys
+if _sys.platform == "linux" or _sys.platform == "linux2":
+    _sys.setdlopenflags(_dl.RTLD_NOW | _dl.RTLD_GLOBAL)
+
 from qmicad import * 
 import tmfsc
 import linspace 
