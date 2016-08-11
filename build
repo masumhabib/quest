@@ -9,22 +9,24 @@
 # Created: 18 June 2014.
 
 default_config="Release"  # Default configuration to build
-default_command="make"  # By default, compile everything
+default_command="make"    # By default, compile everything
 ncpu="8"
 
 function usage(){
     echo "Usage: build [debug|release] [config|test|doc|install|clean|superclean]"
+    echo ""
     echo "  When no option is given, builds qmicad using make."
+    echo ""
     echo "  Description of options: " 
-    echo "    debug: make with debugging information."
-    echo "    release: make with debugging information."
-    echo "    config: configures qmicad using cmake."
-    echo "    test: runs tests."
-    echo "    doc: build documentation."
-    echo "    install [path]: installs qmicad."
-    echo "    clean: deletes compiled object files in the build folder."
-    echo "    superclean: deletes build folder."
-    echo "    help: shows this message."
+    echo "    debug:            Build the debug version."
+    echo "    release:          Build the release version."
+    echo "    config:           Configures qmicad using cmake."
+    echo "    test:             Runs tests."
+    echo "    doc:              Build documentation."
+    echo "    install [path]:   Installs qmicad."
+    echo "    clean:            Cleans compiled object files in the build folder."
+    echo "    superclean:       Deletes build folder."
+    echo "    help:             Shows this message."
 }
 
 function get_build_dir() {
