@@ -55,7 +55,7 @@ def simulate():
     bs.nb         = 4                # Number of bands to save
 
     # Output path
-    bs.OutPath     = "./2D"
+    bs.OutPath     = "./dirac_band"
 
     # Output path
     bs.OutPath    += "/"

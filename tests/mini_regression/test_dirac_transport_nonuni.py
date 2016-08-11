@@ -58,7 +58,7 @@ def simulate():
     tr.nb = tr.computeDevLen();
 
     # Output path
-    tr.OutPath     = "./pn_TE"
+    tr.OutPath     = "./dirac_transport_nonuni"
 
     # Calculation type
     tr.Calculations["TE"] = 1
