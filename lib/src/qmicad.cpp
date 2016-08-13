@@ -20,8 +20,8 @@
  * own problems. 
 
  * Deep down, QMICAD is a C++ library that uses BLAS and LAPACK for computation.
- * Yet, QMICAD provides both C++ and Python interfaces so that one can choose between 
- * the elegance of C++ and ease of Python. 
+ * Yet, QMICAD provides both C++ and Python interfaces so that one can choose 
+ * between the elegance of C++ and ease of Python. 
  * 
  */
 
@@ -31,7 +31,8 @@
 namespace qmicad{
 
 using utils::stds::string;
-const string version = QMICAD_VERSION;
+const string version = string("v") + QMICAD_VERSION_MAJOR + "." + 
+                       QMICAD_VERSION_MINOR + "." + QMICAD_VERSION_PATCH;
 
 /**
  * Prints welcome message.
@@ -41,7 +42,7 @@ char const* greet(){
     msg += "\n **************************************************************";
     msg += "\n ***                         QMICAD                         ***";
     msg += "\n ***    Quantum Mechanics Inspired Computer Aided Design    ***";
-    msg += "\n ***                         v" + qmicad::version 
+    msg += "\n ***                         " + qmicad::version 
                                                + "                        ***";
     msg += "\n **************************************************************";
     return msg.c_str();

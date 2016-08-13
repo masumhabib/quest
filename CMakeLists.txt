@@ -7,11 +7,6 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(qmicad CXX)
-# Version
-set(QMICAD_MAJOR 0)
-set(QMICAD_MINOR 11)
-set(QMICAD_PATCH 0)
-
 
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
@@ -30,8 +25,12 @@ enable_testing()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 
+include(cmake/Versioning.cmake)
+get_version (QMICAD_MAJOR QMICAD_MINOR QMICAD_PATCH QMICAD_BUILD)
+
 # Start configuration
-set(QMICAD_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
+set(QMICAD_VERSION v${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH}${QMICAD_BUILD})
+set(QMICAD_SHORT_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
 message(STATUS "--------------------------------------------------------------")
 message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
 message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
@@ -101,7 +100,7 @@ include_directories(${Boost_INCLUDE_DIR})
 
 # Prepare distribution directory
 set(QMICAD_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
-set(QMICAD_DIST_DIR ${QMICAD_BUILD_DIR}/${PROJECT_NAME}-${QMICAD_VERSION})
+set(QMICAD_DIST_DIR ${QMICAD_BUILD_DIR}/${PROJECT_NAME}-${QMICAD_SHORT_VERSION})
 set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
 set(QMICAD_TEST_DIR ${QMICAD_BUILD_DIR}/tests)
 
