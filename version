@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# FileName: version
+# Description: Updates or prints current version number from VERSION file.
+# 
+# Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
+#
+# Created: 18 June 2016.
+
+function usage(){
+    echo "Usage: version [x.yy.z]"
+    echo "  When no option is given, it return version string."
+    echo "  options: " 
+    echo "    x.yy.z - new version numbers."
+    exit 0
+}
+
+
+VERSION_FILE=VERSION
+version=`cat $VERSION_FILE`
+
+version_major=`echo $version | awk -F. '{print $1}' | sed 's/^v//g'`
+version_minor=`echo $version | awk -F. '{print $2}'`
+version_patch=`echo $version | awk -F. '{print $3}'`
+
+new_patch=$version_patch
+new_minor=$version_minor
+new_major=$version_major
+
+if [[ $# -eq 0 ]]; then
+    echo "v$version_major.$version_minor.$version_patch" 
+elif [[ $# -eq 1 ]]; then
+    IFS='.' read -ra vers <<< "$1"
+    nvers=${#vers[@]}
+    if [[ $nvers -eq 1 ]];then
+        new_patch=${vers[0]}
+    elif [[ $nvers -eq 2 ]];then
+        new_patch=${vers[1]}
+        new_minor=${vers[0]}
+    elif [[ $nvers -eq 3 ]];then
+        new_patch=${vers[2]}
+        new_minor=${vers[1]}
+        new_major=${vers[0]}
+        new_major=`echo $new_major | sed 's/^v//g'`
+    else
+        usage
+    fi
+
+    new_version=v$new_major.$new_minor.$new_patch
+
+    if [[ $version_major == $new_major && $version_minor == $new_minor 
+          && $version_patch == $new_patch ]]; then
+        echo "E: New requested version is the same as current version."
+        exit 1
+    fi
+
+    version_already_exists=`git tag | grep $new_version -c`
+    if [[ $version_already_exists -gt 0 ]]; then
+        echo "E: Version $new_version already exists in git repo."
+        exit 1
+    fi
+
+    echo "$new_version" > $VERSION_FILE
+    echo "Updated to v$new_major.$new_minor.$new_patch" 
+else
+    usage
+fi
