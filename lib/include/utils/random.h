@@ -8,7 +8,9 @@
 #ifndef RANDOM_H
 #define	RANDOM_H
 
+
 #include <boost/random/random_device.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -39,7 +41,72 @@ namespace random{
 
 using std::vector;
 using maths::constants::NaN;
-namespace br = boost::random;
+namespace rnd = boost::random;
+
+class Random {
+public: 
+    enum class Type {
+	    NONE = 0,
+	    NORMAL = 1,
+	    GAUSSIAN = 1,
+	    UNIFORM = 2,
+	    DISCRETE = 3
+    };
+
+public:
+    static unique_ptr<Random> make_generator();
+
+    virtual void reset() = 0;
+    virtual double generate () = 0;
+    virtual std::vector<double> generate (size_t count) = 0;
+
+    virtual ~Random() = default;
+
+protected:
+    Random();
+
+protected:
+    rnd::random_device device;
+    rnd::mt19937_64 generator;
+};
+
+class UniformRandom : public Random {
+public:
+    UniformRandom (double min, double max);
+
+    void reset();
+    double generate ();
+    std::vector<double> generate (size_t count) {};
+
+private:
+    double min;
+    double max;
+    rnd::uniform_real_distribution<double> distribution;
+};
+
+class NormalRandom : public Random {
+public:
+	NormalRandom(double sigma, double mean = 0) {};
+	NormalRandom(double sigma, double min, double max, double mean) {};
+
+    virtual void reset() {};
+    virtual double generate () {};
+    virtual std::vector<double> generate (size_t count) {};
+
+};
+
+class DiscreteRandom : public Random {
+public:
+	DiscreteRandom(const std::vector<double>& values, const std::vector<double>& weights) {};
+
+    virtual void reset() {};
+    virtual double generate () {};
+    virtual std::vector<double> generate (size_t count) {};
+
+
+};
+
+
 
 enum class DistributionType{
 	NONE = 0,
@@ -48,6 +115,7 @@ enum class DistributionType{
 	UNIFORM_RANDOM = 3,
 	DISCRETE = 4
 };
+
 class Distribution {
 public:
 	typedef shared_ptr<Distribution> ptr;
@@ -79,12 +147,12 @@ private:
     double mMin = NaN;
 
     //!< generator and engines
-	br::random_device mDevice;
-	br::normal_distribution<> mNormal_dist_engn; //!< Normal Engine
-	br::uniform_real_distribution<> mUniform_dist_engn; //!< Uniform Engine
-	br::variate_generator< br::random_device&,
-	br::normal_distribution<> > mGenerator;
-	br::discrete_distribution<> mDiscrt_dist_engn; //!< Discrete Engine
+	rnd::random_device mDevice;
+	rnd::normal_distribution<> mNormal_dist_engn; //!< Normal Engine
+	rnd::uniform_real_distribution<> mUniform_dist_engn; //!< Uniform Engine
+	rnd::variate_generator< rnd::random_device&,
+	rnd::normal_distribution<> > mGenerator;
+	rnd::discrete_distribution<> mDiscrt_dist_engn; //!< Discrete Engine
 
     void genNormalDist(vector<double> &result);
     double getGaussianRand(bool reset = false);

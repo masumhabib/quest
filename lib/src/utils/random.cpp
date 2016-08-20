@@ -7,7 +7,24 @@
 
 #include "utils/random.h"
 
-namespace utils{namespace random{
+namespace utils{ namespace random{
+
+Random::Random() : generator(device) { 
+}
+
+UniformRandom::UniformRandom (double min, double max) 
+: max(max), min(min), distribution(min, max) { 
+}
+
+
+double UniformRandom::generate () {
+    return distribution(generator);
+}
+
+void UniformRandom::reset() {
+    distribution.reset();
+}
+
 
 //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
 Distribution::Distribution( DistributionType distributionType, double sigma_or_min,
@@ -50,7 +67,7 @@ Distribution::Distribution( DistributionType distributionType, double min,
 									mGenerator(mDevice, mNormal_dist_engn),
 									mDiscrt_dist_engn(weights){
 	mDistributionType = distributionType;
-	br::discrete_distribution<>* tempDiscrtEngn = new br::discrete_distribution<>(weights);
+	rnd::discrete_distribution<>* tempDiscrtEngn = new rnd::discrete_distribution<>(weights);
 	if( distributionType==DistributionType::DISCRETE ){
 		mMin = min;
 		mMax = max;
