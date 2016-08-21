@@ -54,7 +54,7 @@ private:
     const cmat22             sz = cmat22(1, 0, 0,-1);
     
     // NaN
-    const double		NaN 	= std::numeric_limits<double>::quiet_NaN();
+    const double		NaN 	= std::nan("NaN");
 
 };
 
