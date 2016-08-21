@@ -58,7 +58,8 @@ public:
 
     virtual void reset() = 0;
     virtual double generate () = 0;
-    virtual std::vector<double> generate (size_t count) = 0;
+    virtual std::vector<double> generate (size_t count);
+    virtual std::vector<double> generate (int count);
 
     virtual ~Random() = default;
 
@@ -75,8 +76,9 @@ public:
     UniformRandom (double min, double max);
 
     void reset();
+
+    using Random::generate;
     double generate ();
-    std::vector<double> generate (size_t count) {};
 
 private:
     double min;
@@ -86,24 +88,31 @@ private:
 
 class NormalRandom : public Random {
 public:
-	NormalRandom(double sigma, double mean = 0) {};
-	NormalRandom(double sigma, double min, double max, double mean) {};
+    NormalRandom(double std_dev = 1.0, double mean = 0.0);
+    NormalRandom(double std_dev, double mean, double min, double max);
 
-    virtual void reset() {};
-    virtual double generate () {};
-    virtual std::vector<double> generate (size_t count) {};
+    void reset();
+    double generate();
+    using Random::generate;
 
+private:
+    double std_dev;
+    double mean;
+    double min = NaN;
+    double max = NaN;
+    rnd::normal_distribution<double> distribution;
+    static constexpr size_t MAX_RETRY = 1000;
 };
+
+typedef NormalRandom GaussianRandom;
 
 class DiscreteRandom : public Random {
 public:
 	DiscreteRandom(const std::vector<double>& values, const std::vector<double>& weights) {};
 
-    virtual void reset() {};
-    virtual double generate () {};
-    virtual std::vector<double> generate (size_t count) {};
-
-
+    void reset() {};
+    double generate () { return 0; };
+    using Random::generate;
 };
 
 

@@ -12,6 +12,22 @@ namespace utils{ namespace random{
 Random::Random() : generator(device) { 
 }
 
+std::vector<double> Random::generate (int count) {
+    if (count < 0) {
+        throw std::invalid_argument("Random::generate(): count must be >= 0");
+    }
+    
+    return generate((size_t) count);
+}
+
+std::vector<double> Random::generate (size_t count) {
+    vector<double> numbers(count);
+    for (size_t i = 0; i < count; i += 1){
+        numbers[i] = generate();
+    }
+    return numbers;
+}
+
 UniformRandom::UniformRandom (double min, double max) 
 : max(max), min(min), distribution(min, max) { 
 }
@@ -25,6 +41,31 @@ void UniformRandom::reset() {
     distribution.reset();
 }
 
+NormalRandom::NormalRandom(double std_dev, double mean)
+: std_dev (std_dev), mean (mean), distribution (mean, std_dev) {
+}
+
+NormalRandom::NormalRandom(double std_dev, double mean, double min, double max) 
+: std_dev (std_dev), mean (mean), min (min), max (max), 
+distribution (mean, std_dev) {
+}
+
+void NormalRandom::reset() {
+    distribution.reset();
+}
+
+double NormalRandom::generate() {
+    double random_number;
+    for (size_t retry = 0; retry < MAX_RETRY; retry += 1) {
+        random_number = distribution(generator);
+        if ((std::isnan(min) || random_number >= min)
+        &&  (std::isnan(max) || random_number <= max)) {
+            break;
+        }
+
+    }
+    return random_number;
+}
 
 //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
 Distribution::Distribution( DistributionType distributionType, double sigma_or_min,

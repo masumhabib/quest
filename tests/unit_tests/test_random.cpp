@@ -17,7 +17,7 @@
 using namespace utils::random;
 using namespace std;
 
-BOOST_AUTO_TEST_CASE(UniformRandom_generator)
+BOOST_AUTO_TEST_CASE(UniformRandom_generate_generates_uniform_distribution)
 {
 	int N = 1000000;
 	double min = -8, max = 12, span;
@@ -52,6 +52,49 @@ BOOST_AUTO_TEST_CASE(UniformRandom_generator)
     BOOST_CHECK_EQUAL(min_obtained, min);
     double max_obtained = *std::max_element(keys.begin(), keys.end());
     BOOST_CHECK_EQUAL(max_obtained, max);
+}
+
+BOOST_AUTO_TEST_CASE(Random_generate_returns_a_vector_of_numbers)
+{
+	size_t N = 1000000;
+	double min = -8, max = 12, span;
+	span = max - min;
+
+	UniformRandom uniform_random (min, max);
+	auto random_numbers = uniform_random.generate(N);
+	BOOST_REQUIRE_EQUAL(random_numbers.size(), N);
+
+	double expected_average = (max+min)/2;
+    double sum = 0;
+	for (int n = 0; n < N; n += 1) {
+	    sum += random_numbers[n];
+    }
+    double average = sum/N;
+
+    BOOST_CHECK_CLOSE(expected_average, average, 1);
+}
+
+BOOST_AUTO_TEST_CASE(NormalRandom_generate_generates_random_numbers_with_correct_stddev_and_mean)
+{
+	size_t N = 1000000;
+	double std_dev = 10, mean = 5;
+
+	NormalRandom random (std_dev, mean);
+	auto random_numbers = random.generate(N);
+	BOOST_REQUIRE_EQUAL(random_numbers.size(), N);
+
+    double sum = 0;
+    double squared_sum = 0;
+	for (int n = 0; n < N; n += 1) {
+	    sum += random_numbers[n];
+	    squared_sum += random_numbers[n]*random_numbers[n];
+    }
+    double mean_obtained = sum/N;
+    double std_dev_obtained = std::sqrt(squared_sum/N - mean_obtained*mean_obtained);
+
+
+    BOOST_CHECK_CLOSE(mean, mean_obtained, 1);
+    BOOST_CHECK_CLOSE(std_dev_obtained, std_dev, 1);
 }
 
 //bool print_histogram = true;
