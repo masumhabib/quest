@@ -44,6 +44,8 @@ if(NOT HAS_CXX11)
 endif(NOT HAS_CXX11)
 enable_cxx11()
 
+# C++ compiler flags
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Werror=return-type")
 
 if (VERBOSE_MAKE)
     set(CMAKE_VERBOSE_MAKEFILE      on)
