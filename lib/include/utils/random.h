@@ -96,8 +96,6 @@ public:
     using Random::generate;
 
 private:
-    double std_dev;
-    double mean;
     double min = NaN;
     double max = NaN;
     rnd::normal_distribution<double> distribution;
@@ -108,13 +106,49 @@ typedef NormalRandom GaussianRandom;
 
 class DiscreteRandom : public Random {
 public:
-	DiscreteRandom(const std::vector<double>& values, const std::vector<double>& weights) {};
+    struct WeightFunction {
+        virtual double operator () (const double& value) const = 0;
+    };
 
-    void reset() {};
-    double generate () { return 0; };
+public:
+	DiscreteRandom(const std::vector<double>& values, 
+	        const std::vector<double>& weights);
+	DiscreteRandom(const std::vector<double>& values, 
+	        const WeightFunction& weight_function);
+	DiscreteRandom(std::size_t count, double xmin, double xmax, 
+	        const WeightFunction& weight_function);
+
+    void reset();
+    double generate ();
     using Random::generate;
+
+private:
+    std::vector<double> calculate_weights (
+            const std::vector<double>& domain, 
+            const WeightFunction& weight_function);
+    std::vector<double> create_domain (size_t count, double xmin, double xmax);
+
+private:
+    std::vector<double> domain;
+    rnd::discrete_distribution<unsigned int> distribution;
 };
 
+class DiscreteCosineRandom : public DiscreteRandom {
+public:
+	DiscreteCosineRandom(const std::vector<double>& angles);
+	DiscreteCosineRandom(double angle_min, double angle_max, std::size_t count);
+	DiscreteCosineRandom(double angle_min, double angle_max, double step);
+
+private:
+    struct CosineFunction : public WeightFunction {
+        double operator () (const double& angle) const {
+            return std::cos (angle);
+        }
+    };
+
+private:
+    CosineFunction m_weight_function;
+};
 
 
 enum class DistributionType{

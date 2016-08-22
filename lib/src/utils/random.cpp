@@ -28,6 +28,10 @@ std::vector<double> Random::generate (size_t count) {
     return numbers;
 }
 
+//-----------------------------------------------------------------------------
+// Uniform Random
+//-----------------------------------------------------------------------------
+
 UniformRandom::UniformRandom (double min, double max) 
 : max(max), min(min), distribution(min, max) { 
 }
@@ -41,13 +45,16 @@ void UniformRandom::reset() {
     distribution.reset();
 }
 
+//-----------------------------------------------------------------------------
+// Normal Random
+//-----------------------------------------------------------------------------
+
 NormalRandom::NormalRandom(double std_dev, double mean)
-: std_dev (std_dev), mean (mean), distribution (mean, std_dev) {
+: distribution (mean, std_dev) {
 }
 
 NormalRandom::NormalRandom(double std_dev, double mean, double min, double max) 
-: std_dev (std_dev), mean (mean), min (min), max (max), 
-distribution (mean, std_dev) {
+: min (min), max (max), distribution (mean, std_dev) {
 }
 
 void NormalRandom::reset() {
@@ -56,15 +63,68 @@ void NormalRandom::reset() {
 
 double NormalRandom::generate() {
     double random_number;
+
     for (size_t retry = 0; retry < MAX_RETRY; retry += 1) {
         random_number = distribution(generator);
+        // check the range
         if ((std::isnan(min) || random_number >= min)
         &&  (std::isnan(max) || random_number <= max)) {
             break;
         }
-
     }
+
     return random_number;
+}
+
+//-----------------------------------------------------------------------------
+// Discrete Random
+//-----------------------------------------------------------------------------
+
+DiscreteRandom::DiscreteRandom (const std::vector<double>& values, 
+const std::vector<double>& weights) : domain (values), distribution (weights) {
+    if (values.size() != weights.size()) {
+        throw invalid_argument ("DiscreteRandom::DiscreteRandom(): values.size() != weights.size()");
+    }
+}
+
+DiscreteRandom::DiscreteRandom(const std::vector<double>& values, 
+const WeightFunction& weight_function): domain (values), distribution (
+calculate_weights(values, weight_function)) {
+}
+
+DiscreteRandom::DiscreteRandom(std::size_t count, double xmin, double xmax, 
+const WeightFunction& weight_function) : domain (create_domain (count, xmin, 
+xmax)), distribution (calculate_weights (domain, weight_function)) {
+}
+
+void DiscreteRandom::reset() {
+    distribution.reset();
+}
+
+double DiscreteRandom::generate () {
+    int random_number = distribution(generator);
+    assert (random_number < domain.size());
+    return domain[random_number];
+}
+
+std::vector<double> DiscreteRandom::calculate_weights (
+const std::vector<double>& domain, const WeightFunction& weight_function) {
+    std::vector<double> weights;
+    // for performance boost
+    weights.reserve(domain.size());
+
+    for (auto x : domain) {
+        weights.push_back(weight_function(x));
+    }
+
+    return weights;
+}
+
+std::vector<double> DiscreteRandom::create_domain (size_t count, double xmin,
+double xmax) {
+    std::vector<double> new_domain = utils::stds::linspace(xmin, xmax, count);
+
+    return new_domain;
 }
 
 //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
