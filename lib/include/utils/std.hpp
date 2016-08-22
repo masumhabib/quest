@@ -149,16 +149,9 @@ size_t count) {
 
     if (count == 0) {
         return vec;
-    //} else if (count == 1) {
-    //    vec.push_back(min);
-    //    return vec;
     }
 
     NumericType dx = (max - min)/(count-1);
-    //for (int i = 0; i < count; i += 1) {
-    //    NumericType x = min + i*dx; 
-    //    vec.push_back(x);
-    //}
     return linspace(min, max, dx);
 
     return vec;
