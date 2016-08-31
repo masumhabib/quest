@@ -80,6 +80,9 @@ template<typename NumericType>
 std::vector<NumericType> linspace (NumericType min, NumericType max, 
         NumericType delta);
 
+template<typename T, typename ...Args>
+std::unique_ptr<T> make_unique( Args&& ...args );
+
 
 // ======= IMPLEMENTATION ========
 template<typename NumericType>
@@ -157,6 +160,13 @@ size_t count) {
     return vec;
 
 }
+
+
+template<typename T, typename ...Args>
+std::unique_ptr<T> make_unique( Args&& ...args ) {
+    return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
+}
+
 
 }
 }
