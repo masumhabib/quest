@@ -92,9 +92,14 @@ const WeightFunction& weight_function): domain (values), distribution (
 calculate_weights(values, weight_function)) {
 }
 
-DiscreteRandom::DiscreteRandom(std::size_t count, double xmin, double xmax, 
-const WeightFunction& weight_function) : domain (create_domain (count, xmin, 
-xmax)), distribution (calculate_weights (domain, weight_function)) {
+DiscreteRandom::DiscreteRandom(double xmin, double xmax, std::size_t count, 
+const WeightFunction& weight_function) : domain (create_domain (xmin, xmax, 
+count)), distribution (calculate_weights (domain, weight_function)) {
+}
+
+DiscreteRandom::DiscreteRandom(double xmin, double xmax, double step, 
+const WeightFunction& weight_function) : domain (create_domain (xmin, xmax, 
+step)), distribution (calculate_weights (domain, weight_function)) {
 }
 
 void DiscreteRandom::reset() {
@@ -120,11 +125,36 @@ const std::vector<double>& domain, const WeightFunction& weight_function) {
     return weights;
 }
 
-std::vector<double> DiscreteRandom::create_domain (size_t count, double xmin,
-double xmax) {
+std::vector<double> DiscreteRandom::create_domain (
+double xmin, double xmax, size_t count) {
     std::vector<double> new_domain = utils::stds::linspace(xmin, xmax, count);
 
     return new_domain;
+}
+
+std::vector<double> DiscreteRandom::create_domain (
+double xmin, double xmax, double step) {
+    std::vector<double> new_domain = utils::stds::linspace(xmin, xmax, step);
+
+    return new_domain;
+}
+
+//-----------------------------------------------------------------------------
+// Discrete Cosine Random
+//-----------------------------------------------------------------------------
+//
+
+DiscreteCosineRandom::DiscreteCosineRandom (const std::vector<double>& angles) :
+DiscreteRandom (angles, CosineFunction()) {
+}
+
+DiscreteCosineRandom::DiscreteCosineRandom(double angle_min, double angle_max, 
+std::size_t count) : DiscreteRandom (angle_min, angle_max, count, 
+CosineFunction ()) {
+}
+
+DiscreteCosineRandom::DiscreteCosineRandom(double angle_min, double angle_max, 
+double step) : DiscreteRandom (angle_min, angle_max, step, CosineFunction()) {
 }
 
 //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist

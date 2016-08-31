@@ -6,7 +6,7 @@
  */
 
 #ifndef RANDOM_H
-#define	RANDOM_H
+#define RANDOM_H
 
 
 #include <boost/random/random_device.hpp>
@@ -46,11 +46,11 @@ namespace rnd = boost::random;
 class Random {
 public: 
     enum class Type {
-	    NONE = 0,
-	    NORMAL = 1,
-	    GAUSSIAN = 1,
-	    UNIFORM = 2,
-	    DISCRETE = 3
+        NONE = 0,
+        NORMAL = 1,
+        GAUSSIAN = 1,
+        UNIFORM = 2,
+        DISCRETE = 3
     };
 
 public:
@@ -111,22 +111,25 @@ public:
     };
 
 public:
-	DiscreteRandom(const std::vector<double>& values, 
-	        const std::vector<double>& weights);
-	DiscreteRandom(const std::vector<double>& values, 
-	        const WeightFunction& weight_function);
-	DiscreteRandom(std::size_t count, double xmin, double xmax, 
-	        const WeightFunction& weight_function);
+    DiscreteRandom(const std::vector<double>& values, 
+            const std::vector<double>& weights);
+    DiscreteRandom(const std::vector<double>& values, 
+            const WeightFunction& weight_function);
+    DiscreteRandom(double xmin, double xmax, std::size_t count, 
+            const WeightFunction& weight_function);
+    DiscreteRandom(double xmin, double xmax, double step, 
+            const WeightFunction& weight_function);
 
     void reset();
     double generate ();
     using Random::generate;
 
 private:
-    std::vector<double> calculate_weights (
+    static std::vector<double> calculate_weights (
             const std::vector<double>& domain, 
             const WeightFunction& weight_function);
-    std::vector<double> create_domain (size_t count, double xmin, double xmax);
+    std::vector<double> create_domain (double xmin, double xmax, size_t count);
+    std::vector<double> create_domain (double xmin, double xmax, double step);
 
 private:
     std::vector<double> domain;
@@ -135,52 +138,49 @@ private:
 
 class DiscreteCosineRandom : public DiscreteRandom {
 public:
-	DiscreteCosineRandom(const std::vector<double>& angles);
-	DiscreteCosineRandom(double angle_min, double angle_max, std::size_t count);
-	DiscreteCosineRandom(double angle_min, double angle_max, double step);
+    DiscreteCosineRandom(const std::vector<double>& angles);
+    DiscreteCosineRandom(double angle_min, double angle_max, std::size_t count);
+    DiscreteCosineRandom(double angle_min, double angle_max, double step);
 
-private:
+public:
     struct CosineFunction : public WeightFunction {
         double operator () (const double& angle) const {
-            return std::cos (angle);
+            return std::abs (std::cos (angle));
         }
     };
-
-private:
-    CosineFunction m_weight_function;
 };
 
 
 enum class DistributionType{
-	NONE = 0,
-	NORMAL = 1,
-	GAUSSIAN_RANDOM = 2,
-	UNIFORM_RANDOM = 3,
-	DISCRETE = 4
+    NONE = 0,
+    NORMAL = 1,
+    GAUSSIAN_RANDOM = 2,
+    UNIFORM_RANDOM = 3,
+    DISCRETE = 4
 };
 
 class Distribution {
 public:
-	typedef shared_ptr<Distribution> ptr;
-	//!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
-	Distribution( DistributionType distributionType, double sigma_or_min,
-			double mean_or_max);
-	//!< Constructor - Cosine
-	Distribution( DistributionType distributionType, double sigma_or_min,
-			double mean_or_max, double deltaAngle);
-	//!< Constructor - Gaussian Random (custom)
-	Distribution( DistributionType distributionType, double sigma, double mean,
-			double min, double max);
-	//!< Constructor - Cosine
-	Distribution( DistributionType distributionType, double min, double max,
-			std::vector<double> angles, std::vector<double> weights);
-	//!< Constructor - No Distribution, returns constant value
-	Distribution( DistributionType distributionType, double fixed=0.0 );
-	//!< Normal Dist
-	void getDistribution( vector<double> &result );
-	//!< Gaussian Random custom, Gaussian Random boost, Uniform Random
-	double getDistribution( bool reset=false );
-	string toString() const;
+    typedef shared_ptr<Distribution> ptr;
+    //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
+    Distribution( DistributionType distributionType, double sigma_or_min,
+            double mean_or_max);
+    //!< Constructor - Cosine
+    Distribution( DistributionType distributionType, double sigma_or_min,
+            double mean_or_max, double deltaAngle);
+    //!< Constructor - Gaussian Random (custom)
+    Distribution( DistributionType distributionType, double sigma, double mean,
+            double min, double max);
+    //!< Constructor - Cosine
+    Distribution( DistributionType distributionType, double min, double max,
+            std::vector<double> angles, std::vector<double> weights);
+    //!< Constructor - No Distribution, returns constant value
+    Distribution( DistributionType distributionType, double fixed=0.0 );
+    //!< Normal Dist
+    void getDistribution( vector<double> &result );
+    //!< Gaussian Random custom, Gaussian Random boost, Uniform Random
+    double getDistribution( bool reset=false );
+    string toString() const;
 
 private:
     DistributionType mDistributionType;
@@ -190,12 +190,12 @@ private:
     double mMin = NaN;
 
     //!< generator and engines
-	rnd::random_device mDevice;
-	rnd::normal_distribution<> mNormal_dist_engn; //!< Normal Engine
-	rnd::uniform_real_distribution<> mUniform_dist_engn; //!< Uniform Engine
-	rnd::variate_generator< rnd::random_device&,
-	rnd::normal_distribution<> > mGenerator;
-	rnd::discrete_distribution<> mDiscrt_dist_engn; //!< Discrete Engine
+    rnd::random_device mDevice;
+    rnd::normal_distribution<> mNormal_dist_engn; //!< Normal Engine
+    rnd::uniform_real_distribution<> mUniform_dist_engn; //!< Uniform Engine
+    rnd::variate_generator< rnd::random_device&,
+    rnd::normal_distribution<> > mGenerator;
+    rnd::discrete_distribution<> mDiscrt_dist_engn; //!< Discrete Engine
 
     void genNormalDist(vector<double> &result);
     double getGaussianRand(bool reset = false);
@@ -207,5 +207,5 @@ private:
 };
 }}
 
-#endif	/* RANDOM_H */
+#endif  /* RANDOM_H */
 

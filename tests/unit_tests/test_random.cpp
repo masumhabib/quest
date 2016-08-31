@@ -52,7 +52,7 @@ public:
         dist_error /= span;
         cout << "Dist error: " << dist_error << endl;
 
-        return dist_error/span;
+        return dist_error;
     }
 
 private:
@@ -86,7 +86,10 @@ BOOST_AUTO_TEST_CASE(UniformRandom_generates_uniform_distribution)
 {
     int N = 1000000;
     double min = -8, max = 12, span;
-    span = max - min;
+    // While calculating histogram, -8 to -7.5 will be assigned to freq[-8]
+    // similarly, 11.5 to 12 will be assigned to 12. Thus, -8 and 12 will 
+    // have half of actual frequency.
+    span = max - min; 
     double expected_freq = N/span;
 
     UniformRandom rnd_generator (min, max);
@@ -105,8 +108,7 @@ BOOST_AUTO_TEST_CASE(UniformRandom_generates_uniform_distribution)
 BOOST_AUTO_TEST_CASE(Random_returns_a_vector_of_numbers)
 {
     size_t N = 1000000;
-    double min = -8, max = 12, span;
-    span = max - min;
+    double min = -8, max = 12;
 
     UniformRandom uniform_random (min, max);
     auto random_numbers = uniform_random.generate(N);
@@ -152,12 +154,12 @@ BOOST_AUTO_TEST_CASE(NormalRandom_generates_random_numbers_with_correct_min_max)
 BOOST_AUTO_TEST_CASE(DiscreteRandom_generates_uniform_distribution_with_given_weights)
 {
     int N = 1000000;
-    double min = -8, max = 12, span;
-    span = max - min;
+    double min = -8, max = 11, span;
+    span = max - min + 1;
     double expected_freq = N/span;
 
-    std::vector<double> domain = utils::stds::linspace(min, max, size_t(span+1));
-    std::vector<double> weights (span+1, expected_freq);
+    std::vector<double> domain = utils::stds::linspace(min, max, size_t(span));
+    std::vector<double> weights (span, expected_freq);
 
     DiscreteRandom rnd_generator (domain, weights);
     std::vector<double> random_numbers = rnd_generator.generate(N);
@@ -180,11 +182,11 @@ BOOST_AUTO_TEST_CASE(DiscreteRandom_generates_uniform_distribution_with_given_we
     };
 
     int N = 1000000;
-    double min = -8, max = 12, span;
-    span = max - min;
-    double expected_freq = N/span;
+    double min = -8, max = 11, span;
+    span = max - min + 1;
+    double expected_freq = N/span; 
 
-    std::vector<double> domain = utils::stds::linspace(min, max, size_t(span+1));
+    std::vector<double> domain = utils::stds::linspace(min, max, size_t(span));
 
     DiscreteRandom rnd_generator (domain, UniformWeight(expected_freq));
     std::vector<double> random_numbers = rnd_generator.generate(N);
@@ -207,17 +209,34 @@ BOOST_AUTO_TEST_CASE(DiscreteRandom_generates_uniform_distribution_with_given_mi
     };
 
     int N = 1000000;
-    double min = -8, max = 12, span;
-    span = max - min;
+    double min = -8, max = 11, span;
+    span = max - min + 1;
     double expected_freq = N/span;
 
-    DiscreteRandom rnd_generator (size_t(span+1), min, max, UniformWeight(expected_freq));
+    DiscreteRandom rnd_generator (min, max, size_t(span), UniformWeight(expected_freq));
     std::vector<double> random_numbers = rnd_generator.generate(N);
 
     RandomAnalyzer analyzer (random_numbers);
     BOOST_CHECK_EQUAL(std::round(analyzer.min()), min);
     BOOST_CHECK_EQUAL(std::round(analyzer.max()), max);
     BOOST_CHECK(analyzer.distribution_error(expected_freq) < 1);
+}
+
+BOOST_AUTO_TEST_CASE(DiscreteCosineRandom_generates_cosine_distribution_with_given_min_max_count)
+{
+    int N = 1000000;
+    double min = -pi/2, max = pi/2;
+    size_t count = 100;
+
+    auto domain = utils::stds::linspace(min, max, count);
+    DiscreteCosineRandom rnd_generator (domain);
+    std::vector<double> random_numbers = rnd_generator.generate(N);
+
+    RandomAnalyzer analyzer (random_numbers);
+    BOOST_CHECK_CLOSE(analyzer.min(), min, 5);
+    BOOST_CHECK_CLOSE(analyzer.max(), max, 5);
+    BOOST_CHECK_EQUAL(std::round(analyzer.mean()), 0);
+    //BOOST_CHECK(analyzer.distribution_error(expected_freq) < 1);
 }
 
 //bool print_histogram = true;
