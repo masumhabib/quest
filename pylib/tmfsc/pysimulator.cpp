@@ -93,7 +93,7 @@ void export_Simulator(){
         .def_readwrite("occupation", &PyTrajectory::occupation)
     ;
 
-    class_<PySimulator, bases<Printable>, shared_ptr<PySimulator> >("Simulator", 
+    class_<PySimulator, bases<Printable>, shared_ptr<PySimulator>, noncopyable>("Simulator", 
             init<shared_ptr<PyDevice> >())
         .def("calcTraj", &PySimulator::calcTrajPy, PySimulator_calcTrajPy())
         .def("calcTrans", &PySimulator::calcTranPy, PySimulator_calcTranPy())
