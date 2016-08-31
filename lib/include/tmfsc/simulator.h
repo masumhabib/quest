@@ -37,11 +37,10 @@ using maths::armadillo::row;
 namespace fill = maths::armadillo::fill;
 using maths::armadillo::zeros;
 using maths::constants::pi;
-using utils::random::Distribution;
-using utils::random::DistributionType;
-
-using maths::constants::pi;
 using maths::armadillo::dcmplx;
+
+using utils::stds::make_unique;
+using namespace utils::random;
 
 typedef vector<point> Path;
 struct Trajectory {
@@ -199,10 +198,10 @@ private:
     Device::ptr mDev; //!< Device structure.
     ParticleType particleType = ParticleType::DiracCyclotron; //!< particle type.
     InjectModel injectModel = InjectModel::Random; //!< Injection model.
-    Distribution::ptr mContAngDist; //!< Injection Angle Distribution
-    Distribution::ptr mContLenDist; //!< Injection Length Distribution
-    Distribution::ptr mEdgeRghDist; //!< Edge Roughness Distribution
-    Distribution::ptr mJuncRghDist; //!< Junction Roughness Distribution
+    Random::Uptr mContAngDist; //!< Injection Angle Distribution
+    Random::Uptr mContLenDist; //!< Injection Length Distribution
+    Random::Uptr mEdgeRghDist; //!< Edge Roughness Distribution
+    Random::Uptr mJuncRghDist; //!< Junction Roughness Distribution
 };
 
 }}

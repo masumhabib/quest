@@ -109,8 +109,8 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     int totalN = 0;
 
     // Gaussian Distribution of injection angle
-       mContAngDist = make_shared<Distribution>( DistributionType::GAUSSIAN_RANDOM,
-                            mAngleSpread, 0, -pi/2+mAngleLimit, pi/2-mAngleLimit );
+       mContAngDist = make_unique<NormalRandom>(mAngleSpread, 0, 
+               -pi/2+mAngleLimit, pi/2-mAngleLimit );
 
     // COSINE distribution of injection angles
 //    vec angles = maths::armadillo::linspace( -pi/2, pi/2,
@@ -123,15 +123,14 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
 //			conv_to<vector<double>>::from(weights) );
 
     // selection of uniform points on contact
-    mContLenDist = make_shared<Distribution>( DistributionType::UNIFORM_RANDOM,
-    		-contWidth/2, contWidth/2 );
+    mContLenDist = make_unique<UniformRandom> (-contWidth/2, contWidth/2);
 
     while (1) { //TODO condition need to be improved
         if ( maxError < mTransmissionConv && totalN > mNoInjection ){
             break;
         }
-        double distance = mContLenDist->getDistribution();
-        double angle = mContAngDist->getDistribution();
+        double distance = mContLenDist->generate();
+        double angle = mContAngDist->generate();
         svec position = r0 + distance * contVect;
         angle = th0 + angle;
 
@@ -186,11 +185,10 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
     TrajectoryVect trajs;
     ElectronBins electBins(nconts);
     //Distribution normalDistContAngl( DistributionType::NORMAL, mAngleSpread, 0 );
-    mContAngDist = make_shared<Distribution>( DistributionType::NORMAL, mAngleSpread, 0 );
+    mContAngDist = make_unique<NormalRandom> (mAngleSpread, 0);
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
-        vector<double> th(mNth);
-        mContAngDist->getDistribution( th );
+        vector<double> th = mContAngDist->generate (mNth);
 
         for (double thi:th){
             if (abs(thi) < (pi/2.0-mAngleLimit)) {

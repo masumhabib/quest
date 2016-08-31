@@ -45,13 +45,14 @@ namespace rnd = boost::random;
 
 class Random {
 public: 
-    enum class Type {
-        NONE = 0,
-        NORMAL = 1,
-        GAUSSIAN = 1,
-        UNIFORM = 2,
-        DISCRETE = 3
-    };
+    typedef std::unique_ptr<Random> Uptr;
+//    enum class Type {
+//        NONE = 0,
+//        NORMAL = 1,
+//        GAUSSIAN = 1,
+//        UNIFORM = 2,
+//        DISCRETE = 3
+//    };
 
 public:
     static unique_ptr<Random> make_generator();
@@ -151,60 +152,61 @@ public:
 };
 
 
-enum class DistributionType{
-    NONE = 0,
-    NORMAL = 1,
-    GAUSSIAN_RANDOM = 2,
-    UNIFORM_RANDOM = 3,
-    DISCRETE = 4
-};
+//enum class DistributionType{
+//    NONE = 0,
+//    NORMAL = 1,
+//    GAUSSIAN_RANDOM = 2,
+//    UNIFORM_RANDOM = 3,
+//    DISCRETE = 4
+//};
 
-class Distribution {
-public:
-    typedef shared_ptr<Distribution> ptr;
-    //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
-    Distribution( DistributionType distributionType, double sigma_or_min,
-            double mean_or_max);
-    //!< Constructor - Cosine
-    Distribution( DistributionType distributionType, double sigma_or_min,
-            double mean_or_max, double deltaAngle);
-    //!< Constructor - Gaussian Random (custom)
-    Distribution( DistributionType distributionType, double sigma, double mean,
-            double min, double max);
-    //!< Constructor - Cosine
-    Distribution( DistributionType distributionType, double min, double max,
-            std::vector<double> angles, std::vector<double> weights);
-    //!< Constructor - No Distribution, returns constant value
-    Distribution( DistributionType distributionType, double fixed=0.0 );
-    //!< Normal Dist
-    void getDistribution( vector<double> &result );
-    //!< Gaussian Random custom, Gaussian Random boost, Uniform Random
-    double getDistribution( bool reset=false );
-    string toString() const;
+//class Distribution {
+//public:
+//    typedef shared_ptr<Distribution> ptr;
+//    //!< Constructor - Gaussian Random (boost) or Uniform Random or Normal Dist
+//    Distribution( DistributionType distributionType, double sigma_or_min,
+//            double mean_or_max);
+//    //!< Constructor - Cosine
+//    Distribution( DistributionType distributionType, double sigma_or_min,
+//            double mean_or_max, double deltaAngle);
+//    //!< Constructor - Gaussian Random (custom)
+//    Distribution( DistributionType distributionType, double sigma, double mean,
+//            double min, double max);
+//    //!< Constructor - Cosine
+//    Distribution( DistributionType distributionType, double min, double max,
+//            std::vector<double> angles, std::vector<double> weights);
+//    //!< Constructor - No Distribution, returns constant value
+//    Distribution( DistributionType distributionType, double fixed=0.0 );
+//    //!< Normal Dist
+//    void getDistribution( vector<double> &result );
+//    //!< Gaussian Random custom, Gaussian Random boost, Uniform Random
+//    double getDistribution( bool reset=false );
+//    string toString() const;
+//
+//private:
+//    DistributionType mDistributionType;
+//    double mSigma;
+//    double mMean;
+//    double mMax = NaN;
+//    double mMin = NaN;
+//
+//    //!< generator and engines
+//    rnd::random_device mDevice;
+//    rnd::normal_distribution<> mNormal_dist_engn; //!< Normal Engine
+//    rnd::uniform_real_distribution<> mUniform_dist_engn; //!< Uniform Engine
+//    rnd::variate_generator< rnd::random_device&,
+//    rnd::normal_distribution<> > mGenerator;
+//    rnd::discrete_distribution<> mDiscrt_dist_engn; //!< Discrete Engine
+//
+//    void genNormalDist(vector<double> &result);
+//    double getGaussianRand(bool reset = false);
+//    double getUniformRand(bool reset = false);
+//    double getDiscrtRand();
+//
+//    vec mDiscrtAngle; //!< Discrete Values
+//    vec mDiscrtWeights ; //!< Discrete Weights
+//};
 
-private:
-    DistributionType mDistributionType;
-    double mSigma;
-    double mMean;
-    double mMax = NaN;
-    double mMin = NaN;
-
-    //!< generator and engines
-    rnd::random_device mDevice;
-    rnd::normal_distribution<> mNormal_dist_engn; //!< Normal Engine
-    rnd::uniform_real_distribution<> mUniform_dist_engn; //!< Uniform Engine
-    rnd::variate_generator< rnd::random_device&,
-    rnd::normal_distribution<> > mGenerator;
-    rnd::discrete_distribution<> mDiscrt_dist_engn; //!< Discrete Engine
-
-    void genNormalDist(vector<double> &result);
-    double getGaussianRand(bool reset = false);
-    double getUniformRand(bool reset = false);
-    double getDiscrtRand();
-
-    vec mDiscrtAngle; //!< Discrete Values
-    vec mDiscrtWeights ; //!< Discrete Weights
-};
 }}
 
 #endif  /* RANDOM_H */
