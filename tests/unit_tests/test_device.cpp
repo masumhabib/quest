@@ -13,21 +13,25 @@
 using namespace qmicad::tmfsc;
 using namespace std;
 
+Device create_simple_device (const point& A, const point& B, const point& C,
+const point& D) {
+    Device dev;
+    int ptA = dev.addPoint(A);
+    int ptB = dev.addPoint(B);
+    int ptC = dev.addPoint(C);
+    int ptD = dev.addPoint(D);
+
+    dev.addEdge(ptA, ptB);
+    dev.addEdge(ptB, ptC);
+    dev.addEdge(ptC, ptD);
+    dev.addEdge(ptD, ptA);
+
+    return dev;
+}
+
 BOOST_AUTO_TEST_CASE(basics)
 {
-
-    point A = {0, 0};    
-    point B = {20, 0};    
-    point C = {20, 10};    
-    point D = {0, 10};    
-
-    Device dev;
-    dev.addPoint(A);
-    dev.addPoint(B);
-    dev.addPoint(C);
-    dev.addPoint(D);
-    dev.addPoint(A);
-
+    Device dev = create_simple_device ({0, 0}, {20, 0}, {20, 10}, {0, 10});
     dev.edgeType(1, Edge::EDGE_ABSORB);
     
     BOOST_CHECK(dev.numEdges() == 4);
@@ -39,19 +43,7 @@ BOOST_AUTO_TEST_CASE(basics)
 
 BOOST_AUTO_TEST_CASE(vectors)
 {
-
-    point A = {0, 0};    
-    point B = {20, 0};    
-    point C = {20, 10};    
-    point D = {0, 10};    
-
-    Device dev;
-    dev.addPoint(A);
-    dev.addPoint(B);
-    dev.addPoint(C);
-    dev.addPoint(D);
-    dev.addPoint(A);
-
+    Device dev = create_simple_device ({0, 0}, {20, 0}, {20, 10}, {0, 10});
     dev.edgeType(1, Edge::EDGE_ABSORB);
     
     svec u = dev.edgeUnitVect(0);
@@ -77,18 +69,7 @@ BOOST_AUTO_TEST_CASE(vectors)
 
 BOOST_AUTO_TEST_CASE(intersection)
 {
-    point A = {0, 0};    
-    point B = {20, 0};    
-    point C = {20, 10};    
-    point D = {0, 10};    
-
-    Device dev;
-    dev.addPoint(A);
-    dev.addPoint(B);
-    dev.addPoint(C);
-    dev.addPoint(D);
-    dev.addPoint(A);
-
+    Device dev = create_simple_device ({0, 0}, {20, 0}, {20, 10}, {0, 10});
     dev.edgeType(1, Edge::EDGE_ABSORB);
     
     point ctr = {10, 5};
@@ -115,19 +96,7 @@ BOOST_AUTO_TEST_CASE(intersection)
 
 BOOST_AUTO_TEST_CASE(pointsOnEdge)
 {
-
-    point A = {0, 0};    
-    point B = {20, 0};    
-    point C = {20, 10};    
-    point D = {0, 10};    
-
-    Device dev;
-    dev.addPoint(A);
-    dev.addPoint(B);
-    dev.addPoint(C);
-    dev.addPoint(D);
-    dev.addPoint(A);
-    
+    Device dev = create_simple_device ({0, 0}, {20, 0}, {20, 10}, {0, 10});
     dev.edgeType(1, Edge::EDGE_ABSORB);
 
     Edge e = dev.edge(1);
