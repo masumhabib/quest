@@ -27,7 +27,11 @@ BOOST_AUTO_TEST_CASE(basics)
     dev->addPoint(B);
     dev->addPoint(C);
     dev->addPoint(D);
-    dev->addPoint(A);
+
+    dev->addEdge(0, 1);
+    dev->addEdge(1, 2);
+    dev->addEdge(2, 3);
+    dev->addEdge(3, 0);
 
     dev->edgeType(1, Edge::EDGE_ABSORB);
 
