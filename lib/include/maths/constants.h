@@ -57,7 +57,14 @@ private:
     const double		NaN 	= std::nan("NaN");
 
 };
-
+template<class T>
+bool is_nan( T number ) {
+    if( number != number ){
+        return true;
+    }else{
+        return false;
+    }
+}
 }
 
 #endif	/* MYMATH_H */

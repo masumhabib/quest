@@ -93,7 +93,7 @@ tuple<mat, TrajectoryVect> Simulator::calcTran(int injCont, bool saveTraj){
 }
 
 inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont, 
-        bool saveTraj){
+        bool saveTraj) {
     int nconts = mDev->numConts();
     point r0 = mDev->contMidPoint(injCont);
     svec contVect = mDev->contUnitVect(injCont);
@@ -108,27 +108,49 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     int ip = 0;
     int totalN = 0;
 
-    // Gaussian Distribution of injection angle
-       mContAngDist = make_unique<NormalRandom>(mAngleSpread, 0, 
-               -pi/2+mAngleLimit, pi/2-mAngleLimit );
-
-    // COSINE distribution of injection angles
-//    vec angles = maths::armadillo::linspace( -pi/2, pi/2,
-//    		201 );
-//    vec tempWeights = cos( angles );
-//    vec weights = tempWeights / accu(tempWeights);
-//    mContAngDist = make_shared<Distribution>( DistributionType::DISCRETE,
-//    		-pi/2+mAngleLimit, pi/2-mAngleLimit,
-//			conv_to<vector<double>>::from(angles) ,
-//			conv_to<vector<double>>::from(weights) );
-
+    // if mAngleSpread is NaN then set the cosine distribution
+    // else use the gaussian distribution with definite value of mAngleSpread
+    // for injecting electrons
+    if ( is_nan( mAngleSpread ) ){
+        // COSINE distribution of injection angles
+        // TODO : Check whether sum of cosine prob is 1
+        mContAngDist = make_unique<DiscreteCosineRandom>( -pi / 2, pi / 2,
+                                                                     181 );
+        if( debug ) {
+            cout << "\n" <<
+                    "DBG: Cosine Distribution for Contact Injection Angle Set"
+                        << endl;
+        }
+    }else{
+        // Gaussian Distribution of injection angle
+        mContAngDist = make_unique<NormalRandom>(mAngleSpread, 0,
+                                                 -pi / 2 + mAngleLimit,
+                                                 pi / 2 - mAngleLimit);
+        if (debug) {
+            cout <<
+              "DBG: Gaussian Distribution for Contact Injection Angle Set with "
+                           << "Sigma=pi/" << pi / mAngleSpread << endl;
+        }
+    }
     // selection of uniform points on contact
     mContLenDist = make_unique<UniformRandom> (-contWidth/2, contWidth/2);
-
-    while (1) { //TODO condition need to be improved
-        if ( maxError < mTransmissionConv && totalN > mNoInjection ){
-            break;
+    if( debug ) {
+        cout <<
+        "DBG: Uniform Random Distribution for Contact Point Selection Set"
+        << endl;
+    }
+    // Edge Roughness setter
+    if (!is_nan(mEdgRghAngleSpread)) { //is_not_nan checking
+        mEdgeRghDist = make_unique<NormalRandom>(mEdgRghAngleSpread, 0,
+                                                 -pi / 2 + mAngleLimit,
+                                                 pi / 2 - mAngleLimit);
+        if( debug ) {
+            cout << "DBG: Edge Roughness Distribution Set." << endl;
         }
+    }
+    // Throw electrons till error is within tolerance and minimum no of
+    // electrons are not thrown
+    while (maxError > mTransmissionConv || totalN < mNoInjection) {
         double distance = mContLenDist->generate();
         double angle = mContAngDist->generate();
         svec position = r0 + distance * contVect;
@@ -150,9 +172,10 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
         row newTE = electBins.calcTransVec();
         maxError = max(abs((newTE - prevTE)/prevTE));
         prevTE = newTE;
-        //cout << "DBG: maxError " << maxError << endl;
-        //cout << "DBG: newTE " << newTE;
-
+        if( debug ) {
+            cout << "DBG: maxError " << maxError << endl;
+            cout << "DBG: newTE " << newTE;
+        }
         if (saveTraj) {
             trajs.insert(trajs.end(), traj.begin(), traj.end());
         }
@@ -184,7 +207,6 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranSemiRandom(int injCont,
 
     TrajectoryVect trajs;
     ElectronBins electBins(nconts);
-    //Distribution normalDistContAngl( DistributionType::NORMAL, mAngleSpread, 0 );
     mContAngDist = make_unique<NormalRandom> (mAngleSpread, 0);
     for (int ip = 0; ip < npts; ip += 1) {
         point ri = injPts[ip];
@@ -320,21 +342,20 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
             if (mDev->isReflectEdge(iEdge)) {
                 // we were about to cross a reflecting edge, NO WAY,
                 // lets reflect back
+                // rotating the electron randomly for edge roughness
+                if( !is_nan(mEdgRghAngleSpread) ) { // is_not_nan checking
+                    double rotateAngle = mEdgeRghDist->generate();
+                    electron->rotateVel(rotateAngle);
+                }
                 electron->reflect(mDev->edgeNormVect(iEdge));
-                // Roughness Correction
-                // BEGIN develop =========================
                 Particle::ptr reflElect = electron->clone();
-				//if ( mDev->getRefEdgRghnsOn() ){
-				//	distElecRoughness( reflElect->getOccupation() * ( 1 - mDev->getRefEdgRghnsEff() ), bins );//Lost part
-				//	reflElect->setOccupation( reflElect->getOccupation() * mDev->getRefEdgRghnsEff() );//Remaining Part
-				// END develop   ============================
-                // BEGIN Multiple_Junction
-				if ( mDev->getEdgeRefRghnsEff() != 1.0 ){
+                // is_nan checking
+				if ( mDev->getEdgeRefRghnsEff() != 1.0
+                                    && is_nan(mEdgRghAngleSpread) ){
 					distElecRoughness( electron->getOccupation()
 							* ( 1 - mDev->getEdgeRefRghnsEff() ), bins );//Lost part
 					electron->setOccupation( electron->getOccupation()
 							* mDev->getEdgeRefRghnsEff() );//Remaining Part
-                // END Multiple_Junction
 				}
                 rf = r;
                 electsQu.push(reflElect);
