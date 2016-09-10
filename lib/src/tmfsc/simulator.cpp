@@ -114,8 +114,8 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
     if ( is_nan( mAngleSpread ) ){
         // COSINE distribution of injection angles
         // TODO : Check whether sum of cosine prob is 1
-        mContAngDist = make_unique<DiscreteCosineRandom>( -pi / 2, pi / 2,
-                                                                     181 );
+        size_t count = 181;
+        mContAngDist = make_unique<DiscreteCosineRandom>( -pi / 2, pi / 2, count );
         if( debug ) {
             cout << "\n" <<
                     "DBG: Cosine Distribution for Contact Injection Angle Set"
