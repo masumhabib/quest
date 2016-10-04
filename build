@@ -2,9 +2,9 @@
 # vim:ft=sh
 
 # FileName: build
-# Description: A build script that runs configures, builds and installs qmicad.
+# Description: A script for configuring, compiling and and installing.
 # 
-# Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
+# Copyright (C) 2016  K M Masum Habib <masum.habib@gmail.com>
 #
 # Created: 18 June 2014.
 
@@ -15,15 +15,15 @@ ncpu="8"
 function usage(){
     echo "Usage: build [debug|release] [config|test|doc|install|clean|superclean]"
     echo ""
-    echo "  When no option is given, builds qmicad using make."
+    echo "  When no option is given, builds the project."
     echo ""
     echo "  Description of options: " 
     echo "    debug:            Build the debug version."
     echo "    release:          Build the release version."
-    echo "    config:           Configures qmicad using cmake."
+    echo "    config:           Configures project using cmake."
     echo "    test:             Runs tests."
     echo "    doc:              Build documentation."
-    echo "    install [path]:   Installs qmicad."
+    echo "    install [path]:   Installs the project."
     echo "    clean:            Cleans compiled object files in the build folder."
     echo "    superclean:       Deletes build folder."
     echo "    help:             Shows this message."

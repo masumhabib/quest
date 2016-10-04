@@ -1,4 +1,4 @@
-# Configures, makes and installs QMICAD
+# Configures, makes and installs QUEST
 # Copyright (c) 2014 K M Masum Habib
 # Created on: June 02, 2014
 #
@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(qmicad CXX)
+project(quest CXX)
 
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
@@ -26,13 +26,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 
 include(cmake/Versioning.cmake)
-get_version (QMICAD_MAJOR QMICAD_MINOR QMICAD_PATCH QMICAD_BUILD)
+get_version (QUEST_MAJOR QUEST_MINOR QUEST_PATCH QUEST_BUILD)
 
 # Start configuration
-set(QMICAD_VERSION v${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH}${QMICAD_BUILD})
-set(QMICAD_SHORT_VERSION ${QMICAD_MAJOR}.${QMICAD_MINOR}.${QMICAD_PATCH})
+set(QUEST_VERSION v${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH}${QUEST_BUILD})
+set(QUEST_SHORT_VERSION ${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH})
 message(STATUS "--------------------------------------------------------------")
-message(STATUS "Configuring QMICAD ${QMICAD_VERSION}")
+message(STATUS "Configuring QUEST ${QUEST_VERSION}")
 message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "--------------------------------------------------------------")
 
@@ -101,13 +101,13 @@ find_package(Boost 1.55 REQUIRED serialization random mpi mpi_python unit_test_f
 include_directories(${Boost_INCLUDE_DIR})
 
 # Prepare distribution directory
-set(QMICAD_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
-set(QMICAD_DIST_DIR ${QMICAD_BUILD_DIR}/${PROJECT_NAME}-${QMICAD_SHORT_VERSION})
-set(LIBRARY_OUTPUT_PATH ${QMICAD_DIST_DIR}/lib)
-set(QMICAD_TEST_DIR ${QMICAD_BUILD_DIR}/tests)
+set(QUEST_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
+set(QUEST_DIST_DIR ${QUEST_BUILD_DIR}/${PROJECT_NAME}-${QUEST_SHORT_VERSION})
+set(LIBRARY_OUTPUT_PATH ${QUEST_DIST_DIR}/lib)
+set(QUEST_TEST_DIR ${QUEST_BUILD_DIR}/tests)
 
 # installation
-install(DIRECTORY ${QMICAD_DIST_DIR} DESTINATION .)
+install(DIRECTORY ${QUEST_DIST_DIR} DESTINATION .)
 
 add_subdirectory(lib)
 add_subdirectory(pylib)
