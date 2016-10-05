@@ -1,5 +1,5 @@
 /* 
- * File:   pyqmicad.cpp
+ * File:   pyquest.cpp
  * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 3, 2014, 10:58 PM
@@ -14,7 +14,7 @@
 
 
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using namespace boost::python;
@@ -23,9 +23,9 @@ using namespace boost::python;
 void export_utils(){
 
     //map the utils namespace to a sub-module
-    // make "from qmicad.utils import <whatever>" work
-    object utilsModule(handle<>(borrowed(PyImport_AddModule("qmicad.utils"))));
-    // make "from qmicad import utils" work
+    // make "from quest.utils import <whatever>" work
+    object utilsModule(handle<>(borrowed(PyImport_AddModule("quest.utils"))));
+    // make "from quest import utils" work
     scope().attr("utils") = utilsModule;
     //set the current scope to the new sub-module
     scope utils_scope = utilsModule;
@@ -50,7 +50,7 @@ void export_utils(){
 
 void export_atoms()
 {     
-    object atomsModule(handle<>(borrowed(PyImport_AddModule("qmicad.atoms"))));
+    object atomsModule(handle<>(borrowed(PyImport_AddModule("quest.atoms"))));
     scope().attr("atoms") = atomsModule;
     scope atoms_scope = atomsModule;
 
@@ -65,7 +65,7 @@ void export_atoms()
 
 void export_kpoints()
 {
-    object kpointsModule(handle<>(borrowed(PyImport_AddModule("qmicad.kpoints"))));
+    object kpointsModule(handle<>(borrowed(PyImport_AddModule("quest.kpoints"))));
     scope().attr("kpoints") = kpointsModule;
     scope kpoints_scope = kpointsModule;
 
@@ -74,7 +74,7 @@ void export_kpoints()
 
 void export_potential()
 {    
-    object potentialModule(handle<>(borrowed(PyImport_AddModule("qmicad.potential"))));
+    object potentialModule(handle<>(borrowed(PyImport_AddModule("quest.potential"))));
     scope().attr("potential") = potentialModule;
     scope potential_scope = potentialModule;
 
@@ -84,7 +84,7 @@ void export_potential()
 
 void export_hamiltonian()
 {
-    object hamiltonianModule(handle<>(borrowed(PyImport_AddModule("qmicad.hamiltonian"))));
+    object hamiltonianModule(handle<>(borrowed(PyImport_AddModule("quest.hamiltonian"))));
     scope().attr("hamiltonian") = hamiltonianModule;
     scope hamiltonian_scope = hamiltonianModule;
 
@@ -99,7 +99,7 @@ void export_hamiltonian()
 
 void export_band()
 {
-    object bandModule(handle<>(borrowed(PyImport_AddModule("qmicad.band"))));
+    object bandModule(handle<>(borrowed(PyImport_AddModule("quest.band"))));
     scope().attr("band") = bandModule;
     scope band_scope = bandModule;
 
@@ -108,7 +108,7 @@ void export_band()
 
 void export_negf()
 {
-    object negfModule(handle<>(borrowed(PyImport_AddModule("qmicad.negf"))));
+    object negfModule(handle<>(borrowed(PyImport_AddModule("quest.negf"))));
     scope().attr("negf") = negfModule;
     scope negf_scope = negfModule;
 
@@ -117,9 +117,9 @@ void export_negf()
 
 void export_tmfsc()
 { 
-    using namespace qmicad::tmfsc;
+    using namespace quest::tmfsc;
 
-    object tmfscModule(handle<>(borrowed(PyImport_AddModule("qmicad.tmfsc"))));
+    object tmfscModule(handle<>(borrowed(PyImport_AddModule("quest.tmfsc"))));
     scope().attr("tmfsc") = tmfscModule;
     scope tmfsc_scope = tmfscModule;
 
@@ -136,14 +136,14 @@ void export_tmfsc()
     
 }
 
-BOOST_PYTHON_MODULE(qmicad)
+BOOST_PYTHON_MODULE(quest)
 { 
-    // create qmicad package
+    // create quest package
     object package = scope();
-    package.attr("__path__") = "qmicad";
+    package.attr("__path__") = "quest";
     package.attr("version") = version;
 
-    def("greet", greet, " Shows the QMICAD banner.");
+    def("greet", greet, " Shows the QUEST banner.");
     def("setVerbosity", setVerbosity, " Sets the verbosity level of C++ code.");
 
     

@@ -15,7 +15,7 @@
 /**
  * Python exporter.
  */
-namespace qmicad{
+namespace quest{
 namespace python{
 
 void export_lvec(){

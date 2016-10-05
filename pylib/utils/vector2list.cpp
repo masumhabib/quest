@@ -5,7 +5,7 @@
 
 #include "vector2list.h"
 
-namespace qmicad { namespace python {
+namespace quest { namespace python {
 
 
 }}

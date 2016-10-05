@@ -12,7 +12,7 @@
 #include "utils/std.hpp"
 #include "utils/serialize.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 using namespace utils::stds;

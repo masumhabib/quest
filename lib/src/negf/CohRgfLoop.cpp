@@ -8,7 +8,7 @@
 #include "negf/CohRgfLoop.h"
 #include "negf/RgfResult.h"
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 CohRgfLoop::CohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ieta, 

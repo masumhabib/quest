@@ -10,7 +10,7 @@
 
 #include "hamiltonian/kp/dirackp.h"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 DiracKpParams::DiracKpParams(const string &prefix):cxhamparams(prefix)

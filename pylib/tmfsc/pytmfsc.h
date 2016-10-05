@@ -15,7 +15,7 @@
 #include "pydevice.h"
 #include "pysimulator.h"
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 

@@ -16,7 +16,7 @@
 #include "utils/serialize.hpp"
 #include "utils/Printable.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace atoms{
 
 using namespace utils::stds;
@@ -83,6 +83,6 @@ typedef struct LatticeVector lvec;
 typedef struct LatticeCoordinate lcoord;
 
 } // namespace atoms
-} // namespace qmicad
+} // namespace quest
 #endif	/* LATTICE_H */
 

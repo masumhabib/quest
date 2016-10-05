@@ -9,8 +9,8 @@
 #include "boostpython.hpp"
 #include "hamiltonian/kp/TI3DKpParams.h"
 
-namespace qmicad{namespace python{
-using namespace qmicad::hamiltonian;
+namespace quest{namespace python{
+using namespace quest::hamiltonian;
 
 /**
  * TI Surface k.p parameters.

@@ -25,7 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 using std::shared_ptr;

@@ -1,6 +1,6 @@
 
 #include "tmfsc/segment.h"
-namespace qmicad { namespace tmfsc {
+namespace quest { namespace tmfsc {
 
 /** Creates a line segment joining (p,q) also provides an alternet 
  * representation in terms of co-efficients a,b and c */

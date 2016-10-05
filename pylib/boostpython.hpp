@@ -22,7 +22,7 @@
 #include <boost/mpi/python.hpp>
 #include <memory>
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using namespace boost::python;

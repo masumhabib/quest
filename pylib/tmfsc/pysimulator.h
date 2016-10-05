@@ -14,7 +14,7 @@
 #include "tmfsc/simulator.h"
 #include <vector>
 
-namespace qmicad { namespace python {
+namespace quest { namespace python {
 
 using tmfsc::Simulator;
 using tmfsc::Device;

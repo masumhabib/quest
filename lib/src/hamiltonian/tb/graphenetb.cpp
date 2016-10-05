@@ -9,7 +9,7 @@
 
 #include "hamiltonian/tb/graphenetb.h"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 using namespace maths::armadillo;

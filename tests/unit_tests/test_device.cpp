@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-using namespace qmicad::tmfsc;
+using namespace quest::tmfsc;
 using namespace std;
 
 Device create_simple_device (const point& A, const point& B, const point& C,

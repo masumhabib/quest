@@ -7,7 +7,7 @@
 
 #include "negf/CohRgfa.h"
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 CohRgfa::CohRgfa(uint nb, double kT, dcmplx ieta, bool orthogonal, string newprefix):

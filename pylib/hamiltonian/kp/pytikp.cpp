@@ -12,7 +12,7 @@
 /**
  * Python exporters.
  */
-namespace qmicad{namespace python{
+namespace quest{namespace python{
 using namespace hamiltonian;
 
     /**

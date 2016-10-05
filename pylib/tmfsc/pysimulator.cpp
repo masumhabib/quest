@@ -4,7 +4,7 @@
 
 #include "pysimulator.h"
 
-namespace qmicad{ namespace python{
+namespace quest{ namespace python{
 
 list PySimulator::calcTrajPy(point ri, double thi, double E, 
             double B, double V, bool saveTraj)
@@ -86,7 +86,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTranPy, calcTranPy, 3, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTrajPy2, calcTrajPy2, 5, 6)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PySimulator_calcTranPy2, calcTranPy2, 3, 5)
 void export_Simulator(){
-    using namespace qmicad::tmfsc;
+    using namespace quest::tmfsc;
 
     class_<PyTrajectory, shared_ptr<PyTrajectory> >("Trajectory")
         .add_property("path", &PyTrajectory::getPath)

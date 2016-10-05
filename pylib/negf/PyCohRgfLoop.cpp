@@ -10,7 +10,7 @@
 /**
  * Python exporters.
  */
-namespace qmicad{
+namespace quest{
 namespace python{
 
 PyCohRgfLoop::PyCohRgfLoop(const Workers &workers, uint nb, double kT, dcmplx ieta, 

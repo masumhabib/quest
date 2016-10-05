@@ -5,7 +5,7 @@
 
 #include "pydevice.h"
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 point PyDevice::contMidPointPy(int indx) {
@@ -20,7 +20,7 @@ point PyDevice::edgeMidPointPy(int indx) {
 }
 
 void export_Device(){
-    using namespace qmicad::tmfsc;
+    using namespace quest::tmfsc;
 
     int (PyDevice::*PyDevice_edgeType1)(int iEdge) = &PyDevice::edgeType;
     void (PyDevice::*PyDevice_edgeType2)(int iEdge, int type) = &PyDevice::edgeType;

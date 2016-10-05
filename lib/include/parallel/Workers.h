@@ -14,7 +14,7 @@
 #include <boost/mpi/environment.hpp>
 #include <boost/mpi/communicator.hpp>
 
-namespace qmicad{namespace parallel{
+namespace quest{namespace parallel{
 using namespace boost::mpi;
 using namespace utils;
 using namespace utils::stds;

@@ -17,7 +17,7 @@
 #include "atoms/AtomicStruct.h"
 #include "hamiltonian/hamiltonian.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 class GrapheneTbParams: public cxhamparams{

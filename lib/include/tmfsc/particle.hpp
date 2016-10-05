@@ -8,7 +8,7 @@
 #include <memory>
 #include "maths/constants.h"
 
-namespace qmicad { namespace tmfsc {
+namespace quest { namespace tmfsc {
 
 using maths::armadillo::mat;
 using maths::armadillo::col;

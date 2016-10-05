@@ -6,7 +6,7 @@
 
 #include "tmfsc/device.h"
 
-namespace qmicad{ namespace tmfsc{
+namespace quest{ namespace tmfsc{
 
 constexpr int Edge::EDGE_REFLECT;
 constexpr int Edge::EDGE_ABSORB;

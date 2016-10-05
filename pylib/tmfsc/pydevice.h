@@ -11,7 +11,7 @@
 #include "boostpython.hpp"
 #include "tmfsc/device.h"
 
-namespace qmicad { namespace python {
+namespace quest { namespace python {
 
 using tmfsc::Device;
 using tmfsc::svec;

@@ -19,7 +19,7 @@
 #include "utils/stringutils.h"
 
 
-namespace qmicad{
+namespace quest{
 namespace potential{
 
 using utils::strings::itos;

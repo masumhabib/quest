@@ -10,7 +10,7 @@
 #include "boostpython.hpp"
 #include <vector>
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using std::vector;

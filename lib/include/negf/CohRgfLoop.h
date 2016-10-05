@@ -25,11 +25,11 @@
 
 #include <iterator>
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 using namespace utils::stds;
-using namespace qmicad::parallel;
+using namespace quest::parallel;
 namespace mpi = boost::mpi;
 
 /*

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 """
- TI band structure simulator using QMICAD.
+ TI band structure simulator using QUEST.
  
  Author: K M Masum Habib <masum.habib@virginia.edu>
  Last update: 05/08/2014
@@ -24,8 +24,8 @@ from    math import pi
 #else:
 #    import mpi
 
-import  qmicad
-from    qmicad.simulators.dirackp import * 
+import  quest
+from    quest.simulators.dirackp import * 
 
 
 ##

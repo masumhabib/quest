@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from qmicad import greet
-from qmicad.tmfsc import Device, Simulator, Trajectory
-from qmicad.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
+from quest import greet
+from quest.tmfsc import Device, Simulator, Trajectory
+from quest.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 import matplotlib.patches as patches

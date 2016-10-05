@@ -20,7 +20,7 @@
 #include <memory>
 #include <tuple>
 
-namespace qmicad{ namespace tmfsc {
+namespace quest{ namespace tmfsc {
 using utils::Printable;
 using maths::armadillo::linspace;
 using maths::constants::pi;

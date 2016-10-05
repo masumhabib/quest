@@ -13,13 +13,13 @@
 #include "negf/RgfResult.h"
 #include "npyarma/npyarma.h"
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using namespace negf;
 namespace bp = boost::python;
-using qmicad::python::npy2mat;
-using qmicad::python::npy2col;
+using quest::python::npy2mat;
+using quest::python::npy2col;
 
 
 class PyCohRgfLoop: public CohRgfLoop{

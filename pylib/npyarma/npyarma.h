@@ -16,7 +16,7 @@
 #include <numpy/arrayobject.h>
 #include <armadillo>
 
-namespace qmicad{ namespace python{
+namespace quest{ namespace python{
 
 using std::shared_ptr;
 using std::make_shared;

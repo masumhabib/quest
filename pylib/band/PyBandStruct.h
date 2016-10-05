@@ -13,11 +13,11 @@
 #include "band/BandStruct.h"
 #include "npyarma/npyarma.h"
 
-namespace qmicad{namespace python{
+namespace quest{namespace python{
 
 namespace bp = boost::python;
-using qmicad::python::npy2mat;
-using qmicad::python::npy2col;
+using quest::python::npy2mat;
+using quest::python::npy2col;
 using namespace band;
 
 class PyBandStruct: public BandStruct {

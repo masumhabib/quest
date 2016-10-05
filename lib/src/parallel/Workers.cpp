@@ -8,7 +8,7 @@
 #include "parallel/Workers.h"
 
 
-namespace qmicad{namespace parallel{
+namespace quest{namespace parallel{
 
 Workers::Workers():mMasterId(0), mWorkers(mworld)
 {

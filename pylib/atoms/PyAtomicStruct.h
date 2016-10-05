@@ -14,7 +14,7 @@
 /**
  * Python exporters.
  */
-namespace qmicad{ namespace python{
+namespace quest{ namespace python{
 using namespace atoms;
 using namespace utils::stds;
 using namespace boost::python;

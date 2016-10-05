@@ -16,7 +16,7 @@
 #include "hamiltonian/kp/dirackp.h"
 #include "hamiltonian/hamiltonian.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 using namespace maths::armadillo;

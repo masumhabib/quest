@@ -16,7 +16,7 @@
 #include <stdexcept>
 
 
-namespace qmicad{ namespace tmfsc{
+namespace quest{ namespace tmfsc{
 using utils::Printable;
 using std::invalid_argument;
 using std::max;

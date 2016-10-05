@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 """
- TI Surface transport simulator for p-n junction using QMICAD.
+ TI Surface transport simulator for p-n junction using QUEST.
  
  Author: K M Masum Habib <masum.habib@virginia.edu>
  Last update: 03/26/2014
@@ -12,9 +12,9 @@ import  numpy as np
 import  math
 from    math import pi, tan, cos, sin
 
-import  qmicad
-from    qmicad.linspace import linspace
-from    qmicad.simulators.dirackp import *
+import  quest
+from    quest.linspace import linspace
+from    quest.simulators.dirackp import *
 
 
 ##

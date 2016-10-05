@@ -20,7 +20,7 @@
 #include "utils/vout.h"
 #include "utils/std.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 using namespace utils::stds;

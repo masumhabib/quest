@@ -6,7 +6,7 @@
 
 #include "tmfsc/simulator.h"
 
-namespace qmicad { namespace tmfsc {
+namespace quest { namespace tmfsc {
 
 Simulator::Simulator(Device::ptr dev)
 :mDev(dev) {

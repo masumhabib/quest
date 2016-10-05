@@ -7,7 +7,7 @@
 
 #include "potential/potential.h"
 
-namespace qmicad{
+namespace quest{
 namespace potential{
 
 using namespace std;

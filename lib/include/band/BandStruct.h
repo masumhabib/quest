@@ -31,14 +31,14 @@
 
 
 
-namespace qmicad{
+namespace quest{
 namespace band{
 
 using namespace maths::armadillo;
 using namespace maths::constants;
 using namespace maths::spvec;
 using namespace utils;
-using namespace qmicad::parallel;
+using namespace quest::parallel;
 using namespace utils::enums;
 using namespace atoms;
 

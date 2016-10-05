@@ -13,7 +13,7 @@
 #include "maths/constants.h"
 #include "utils/myenums.hpp"
 
-namespace qmicad{ namespace cache{
+namespace quest{ namespace cache{
 using std::out_of_range;
 using maths::armadillo::Mat;
 using maths::armadillo::field;

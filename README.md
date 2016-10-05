@@ -1,7 +1,7 @@
 QUEST
 ======
 
-QUantum mechanics Enabled Simulation Toolset (QUEST) library is a 
+QUantum mechanics Enabled Simulation Toolset (QUEST) is a 
 collection of C++ classes and functions for simulation and design of 
 nano-scaled devices using quantum mechanical tools such as Non-equilibrium 
 Green Function (NEGF) formalism. This library provides a common framework 

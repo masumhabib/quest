@@ -1,6 +1,6 @@
 
 """
-    Band structure calculator using QMICAD.
+    Band structure calculator using QUEST.
     Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
 
     Last update: 05/07/2014
@@ -11,18 +11,18 @@ import pickle as pk
 import numpy as np
 from   math import pi
 
-from qmicad import setVerbosity, greet
-from qmicad import vprint
-from qmicad.vprint import nprint, dprint, eprint
-from qmicad.atoms import AtomicStruct, LCoord
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneOneValleyKpParams, GrapheneTwoValleyKpParams, GrapheneTbParams, generateHamOvl
-from qmicad.kpoints import KPoints
-from qmicad.band import BandStruct
-from qmicad.utils import Timer, Workers, Point
+from quest import setVerbosity, greet
+from quest import vprint
+from quest.vprint import nprint, dprint, eprint
+from quest.atoms import AtomicStruct, LCoord
+from quest.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneOneValleyKpParams, GrapheneTwoValleyKpParams, GrapheneTbParams, generateHamOvl
+from quest.kpoints import KPoints
+from quest.band import BandStruct
+from quest.utils import Timer, Workers, Point
 
 class Band(object):
     """
-    Band structure calculator using QMICAD.    
+    Band structure calculator using QUEST.    
     """
     
     def __init__(self, workers = None):   
@@ -85,7 +85,7 @@ class Band(object):
     @verbosity.setter
     def verbosity(self, value):
         self._verbosity = value
-        # Set verbosity level of QMICAD library.
+        # Set verbosity level of QUEST library.
         setVerbosity(self._verbosity)
         vprint.verbosity = self._verbosity
 

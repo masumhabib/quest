@@ -7,7 +7,7 @@
 
 #include "kpoints/KPoints.h"
 
-namespace qmicad{
+namespace quest{
 namespace kpoints{
 
 KPoints::KPoints(const string& prefix):Printable(" " + prefix){

@@ -28,7 +28,7 @@
 
 
 
-namespace qmicad{
+namespace quest{
 namespace potential{
 
 using namespace utils::stds;

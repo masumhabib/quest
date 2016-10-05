@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import qmicad as qm
+import quest as qm
 import numpy as np
 
 x = np.array([[1., 2., 3.],[4., 5., 6]])

@@ -12,7 +12,7 @@
 #include "maths/svec.h"
 
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 

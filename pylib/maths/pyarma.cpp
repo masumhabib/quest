@@ -12,7 +12,7 @@
 /**
  * Python exporter for our favorite armadillo matrices.
  */
-namespace qmicad{
+namespace quest{
 namespace python{
 
 

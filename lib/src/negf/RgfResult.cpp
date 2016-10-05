@@ -7,7 +7,7 @@
 
 #include "negf/RgfResult.h"
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 RgfResult::RgfResult(string tag, uint N, int ib, int jb):

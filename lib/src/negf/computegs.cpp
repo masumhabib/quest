@@ -7,7 +7,7 @@
 
 #include "negf/computegs.h"
 
-namespace qmicad{
+namespace quest{
 namespace negf{    
 
 /**

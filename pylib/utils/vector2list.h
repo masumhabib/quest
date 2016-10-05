@@ -9,7 +9,7 @@
 #include "boostpython.hpp"
 #include <vector>
 
-namespace qmicad { namespace python {
+namespace quest { namespace python {
 
 //shamelessly copied from: http://stackoverflow.com/questions/6157409/stdvector-to-boostpythonlist
 using std::vector;

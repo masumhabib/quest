@@ -16,7 +16,7 @@
 #include "utils/Printable.hpp"
 #include "utils/std.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace kpoints{
 
 using namespace utils::stds;

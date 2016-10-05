@@ -10,7 +10,7 @@
 /**
  * Python exporters.
  */
-namespace qmicad{
+namespace quest{
 namespace python{
 
 PyBandStruct::PyBandStruct(const Workers &workers, uint nn,  bool orthoBasis,

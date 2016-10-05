@@ -8,7 +8,7 @@
 #include "maths/arma.hpp"
 #include "maths/svec.h"
 
-namespace qmicad { namespace tmfsc {
+namespace quest { namespace tmfsc {
 typedef maths::spvec::svec svec;
 typedef maths::spvec::svec point;
 static constexpr double nm = 1E-9;   // nanometer

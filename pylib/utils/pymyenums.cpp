@@ -8,7 +8,7 @@
 #include "boostpython.hpp"
 #include "utils/myenums.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 /**

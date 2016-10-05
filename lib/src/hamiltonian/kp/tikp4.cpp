@@ -7,7 +7,7 @@
 
 #include "hamiltonian/kp/tikp4.h"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 

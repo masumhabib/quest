@@ -7,7 +7,7 @@
 
 #include "potential/terminal.h"
 
-namespace qmicad{
+namespace quest{
 namespace potential{
 
 // Construct Terminal from a string containing definition of a plygon

@@ -14,7 +14,7 @@
 
 
 
-namespace qmicad{ namespace python{
+namespace quest{ namespace python{
 
 namespace bp = boost::python;
 using namespace utils::stds;

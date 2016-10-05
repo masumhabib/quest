@@ -13,7 +13,7 @@
 #include "utils/stringutils.h"
 #include "utils/Printable.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using maths::armadillo::wall_clock;

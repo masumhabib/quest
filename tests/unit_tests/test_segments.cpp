@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-using namespace qmicad::tmfsc;
+using namespace quest::tmfsc;
 using namespace std;
 BOOST_AUTO_TEST_CASE(basic)
 {

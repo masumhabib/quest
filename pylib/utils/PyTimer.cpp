@@ -10,7 +10,7 @@
 #include "maths/geometry.hpp"
 
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 /**

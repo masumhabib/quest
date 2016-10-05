@@ -16,7 +16,7 @@
 #include "utils/Printable.hpp"
 #include "maths/geometry.hpp"
 
-namespace qmicad{
+namespace quest{
 namespace potential{
 
 using namespace maths::geometry;

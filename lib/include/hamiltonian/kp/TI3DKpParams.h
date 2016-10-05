@@ -15,7 +15,7 @@
 #include "atoms/AtomicStruct.h"
 #include "hamiltonian/hamiltonian.hpp"
 
-namespace qmicad{namespace hamiltonian{
+namespace quest{namespace hamiltonian{
 
 using namespace maths::armadillo;
 using namespace maths::constants;

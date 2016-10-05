@@ -7,7 +7,7 @@
 
 #include "band/BandStruct.h"
 
-namespace qmicad{
+namespace quest{
 namespace band{
 
 BandStruct::BandStruct(const Workers &workers, uint nn,  bool orthoBasis, 

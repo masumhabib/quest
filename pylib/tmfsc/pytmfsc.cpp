@@ -4,7 +4,7 @@
 
 
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using namespace boost::python;
@@ -12,7 +12,7 @@ using namespace boost::python;
 
 BOOST_PYTHON_MODULE(tmfsc)
 { 
-    using namespace qmicad::tmfsc;
+    using namespace quest::tmfsc;
     // add global variables
     object package = scope();
     package.attr("nm") = nm;

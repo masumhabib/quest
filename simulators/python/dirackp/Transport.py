@@ -1,5 +1,5 @@
 """
-    Qunantum Transport simulator using QMICAD.
+    Qunantum Transport simulator using QUEST.
     Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
 
     Last update: 05/12/2014
@@ -10,19 +10,19 @@ import pickle as pk
 import numpy as np
 import random as rn
 
-from qmicad import setVerbosity, greet, vprint
-from qmicad.vprint import nprint, dprint, eprint
-from qmicad.linspace import linspace
-from qmicad.atoms import AtomicStruct, SVec, LCoord
-from qmicad.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
-from qmicad.negf import CohRgfLoop
-from qmicad.kpoints import KPoints
-from qmicad.potential import LinearPot
-from qmicad.utils import Timer, Workers, Quadrilateral, Point
+from quest import setVerbosity, greet, vprint
+from quest.vprint import nprint, dprint, eprint
+from quest.linspace import linspace
+from quest.atoms import AtomicStruct, SVec, LCoord
+from quest.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
+from quest.negf import CohRgfLoop
+from quest.kpoints import KPoints
+from quest.potential import LinearPot
+from quest.utils import Timer, Workers, Quadrilateral, Point
 
 class Transport(object):
     """
-    Qunantum Transport simulator using QMICAD.
+    Qunantum Transport simulator using QUEST.
         
     * Device geometry:
         ----------------------------------------
@@ -142,7 +142,7 @@ class Transport(object):
     @verbosity.setter
     def verbosity(self, value):
         self._verbosity = value
-        # Set verbosity level of QMICAD library.
+        # Set verbosity level of QUEST library.
         setVerbosity(self._verbosity)
         vprint.verbosity = self._verbosity
    

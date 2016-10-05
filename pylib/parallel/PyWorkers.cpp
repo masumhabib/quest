@@ -9,7 +9,7 @@
 #include "parallel/Workers.h"
 
 
-namespace qmicad{namespace python{
+namespace quest{namespace python{
 /**
  * MPI communicator wrapper.
  */

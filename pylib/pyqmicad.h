@@ -1,17 +1,17 @@
 /* 
- * File:   pyqmicad.h
+ * File:   pyquest.h
  * Copyright (C) 2014  K M Masum Habib <masum.habib@gmail.com>
  *
  * Created on February 3, 2014, 10:58 PM
  * 
- * Python wrapper for QMICAD package
+ * Python wrapper for QUEST package
  * 
  */
 
-#ifndef PYQMICAD_H
-#define	PYQMICAD_H
+#ifndef PYQUEST_H
+#define	PYQUEST_H
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 void export_Option();
@@ -63,5 +63,5 @@ void export_Simulator();
 
 }
 }
-#endif	/* QMICAD_H */
+#endif	/* PYQUEST_H */
 

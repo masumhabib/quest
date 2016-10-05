@@ -19,7 +19,7 @@
 #include <memory>
 #include <queue>
 
-namespace qmicad{ namespace tmfsc{
+namespace quest{ namespace tmfsc{
 using std::tuple;
 using std::make_tuple;
 using std::tie;

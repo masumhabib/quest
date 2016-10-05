@@ -10,7 +10,7 @@
 #include "maths/arma.hpp"
 #include <memory>
 
-namespace qmicad { namespace tmfsc {
+namespace quest { namespace tmfsc {
 using maths::constants::e;
 using std::make_shared;
 

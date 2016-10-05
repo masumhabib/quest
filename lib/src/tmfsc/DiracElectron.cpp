@@ -5,7 +5,7 @@
 
 #include "tmfsc/DiracElectron.hpp"
 
-namespace qmicad { namespace tmfsc {
+namespace quest { namespace tmfsc {
 DiracElectron::DiracElectron(const svec& ri, const svec& vi, 
         double En, double V, double Bz) : Particle(ri, vi, 0, -e)
 {

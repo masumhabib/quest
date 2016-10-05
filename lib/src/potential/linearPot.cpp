@@ -7,7 +7,7 @@
 
 #include "potential/linearPot.h"
 
-namespace qmicad{
+namespace quest{
 namespace potential{
 
 LinearRegion4::LinearRegion4(point lb, point rb, point rt, point lt, 

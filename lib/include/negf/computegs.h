@@ -11,7 +11,7 @@
 #include "maths/arma.hpp"
 #include "maths/constants.h"
 
-namespace qmicad{
+namespace quest{
 namespace negf{
 
 using namespace maths::armadillo;

@@ -9,7 +9,7 @@
 #include "maths/geometry.hpp"
 
 
-namespace qmicad{
+namespace quest{
 namespace python{
 
 using maths::geometry::point;

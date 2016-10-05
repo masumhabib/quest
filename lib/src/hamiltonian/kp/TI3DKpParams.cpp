@@ -7,7 +7,7 @@
 
 #include "hamiltonian/kp/TI3DKpParams.h"
 
-namespace qmicad{namespace hamiltonian{
+namespace quest{namespace hamiltonian{
 TI3DKpParams::TI3DKpParams(const string material, 
         const string &prefix):cxhamparams(prefix) 
 {

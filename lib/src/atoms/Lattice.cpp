@@ -10,7 +10,7 @@
 
 #include "atoms/Lattice.h"
 
-namespace qmicad{
+namespace quest{
 namespace atoms{
 
 

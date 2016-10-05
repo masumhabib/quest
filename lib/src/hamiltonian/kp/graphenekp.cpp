@@ -10,7 +10,7 @@
 
 #include "hamiltonian/kp/graphenekp.h"
 
-namespace qmicad{
+namespace quest{
 namespace hamiltonian{
 
 //GrapheneKpParams::GrapheneKpParams(const string &prefix) //:DiracKpParams(prefix)

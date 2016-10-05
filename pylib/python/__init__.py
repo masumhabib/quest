@@ -1,5 +1,5 @@
 """
- Quantum Mechanics Inspired Computer Aided Design (QMICAD) library is a 
+ QUantum mechanics Enabled Simulation Toolset (QUEST) library is a 
  collection of C++ classes and functions for simulation and design of 
  nano-scaled devices using quantum mechanical tools such as Non-equilibrium 
  Green's Function (NEGF) formalism. This library provides a common framework 
@@ -18,7 +18,7 @@ import sys as _sys
 if _sys.platform == "linux" or _sys.platform == "linux2":
     _sys.setdlopenflags(_dl.RTLD_NOW | _dl.RTLD_GLOBAL)
 
-from qmicad import * 
+from quest import * 
 import tmfsc
 import linspace 
 import vprint
