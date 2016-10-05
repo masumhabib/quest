@@ -9,8 +9,8 @@
  */
 
 #include "boostpython.hpp"
-#include "pyqmicad.h"
-#include "qmicad.hpp"
+#include "pyquest.h"
+#include "quest.hpp"
 
 
 

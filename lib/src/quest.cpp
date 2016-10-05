@@ -25,7 +25,7 @@
  * 
  */
 
-#include "qmicad.hpp"
+#include "quest.hpp"
 #include <string>
 
 namespace quest{
