@@ -1,0 +1,17 @@
+QUEST-v0.12.0
+=============
+Date: Oct 04, 2016
+
+Changes:
+--------
+  * Renamed to QUEST - QUantum mechanics Enabled Simulation Toolset. 
+  * Moved to GitHub.
+  * Implemented new simulation tool (tmfsc) based on semi-classical 
+    billiard ball model. 
+  * Added support for magnetic field.
+  * And much much more.
+
+
+
+
+
