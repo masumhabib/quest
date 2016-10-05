@@ -41,7 +41,7 @@ char const* greet(){
     static string msg;
     msg += "\n **************************************************************";
     msg += "\n ***                         QUEST                          ***";
-    msg += "\n ***    Quantum Mechanics Inspired Computer Aided Design    ***";
+    msg += "\n ***      QUantum mechanics Enabled Simulation Toolset      ***";
     msg += "\n ***                         " + quest::version 
                                                + "                        ***";
     msg += "\n **************************************************************";

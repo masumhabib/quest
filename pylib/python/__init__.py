@@ -19,7 +19,6 @@ if _sys.platform == "linux" or _sys.platform == "linux2":
     _sys.setdlopenflags(_dl.RTLD_NOW | _dl.RTLD_GLOBAL)
 
 from quest import * 
-import tmfsc
 import linspace 
 import vprint
 import simulators
