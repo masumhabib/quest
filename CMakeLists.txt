@@ -110,6 +110,7 @@ set(QUEST_TEST_DIR ${QUEST_BUILD_DIR}/tests)
 install(DIRECTORY ${QUEST_DIST_DIR} DESTINATION .)
 
 add_subdirectory(lib)
+add_subdirectory(logger)
 add_subdirectory(pylib)
 add_subdirectory(quester)
 add_subdirectory(tests)
