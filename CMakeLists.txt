@@ -16,7 +16,7 @@ option(LINK_STATIC "Link everything statically" off)
 # To use locally compiled libraries (Armadillo and Boost), create a file
 # that contains the local library paths and include it here. Some examples of
 # such files can be found in cmake/local folder.
-include(cmake/local/Armadillo.cmake)
+#include(cmake/local/Armadillo.cmake)
 
 # Build and run testing
 enable_testing()
