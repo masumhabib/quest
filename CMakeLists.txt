@@ -112,6 +112,8 @@ install(DIRECTORY ${QUEST_DIST_DIR} DESTINATION .)
 add_subdirectory(lib)
 add_subdirectory(pylib)
 add_subdirectory(tests)
+add_subdirectory(doc)
+
 
 message(STATUS "--------------------------------------------------------------")
 
