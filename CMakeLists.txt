@@ -114,6 +114,8 @@ add_subdirectory(logger)
 add_subdirectory(pylib)
 add_subdirectory(quester)
 add_subdirectory(tests)
+add_subdirectory(doc)
+
 
 message(STATUS "--------------------------------------------------------------")
 
