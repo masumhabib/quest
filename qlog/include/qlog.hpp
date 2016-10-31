@@ -1,6 +1,6 @@
-/** @page logger Logging facility API documentation
+/** @page qlog Logging facility API documentation
  *
- * @section loggerintro Introduction
+ * @section qlogintro Introduction
  *
  * This is a simple loggin facility for QUEST package. It has the following
  * features:
@@ -22,15 +22,15 @@
  * - Five predefined log levels: TRACE, DEBUG, INFO, WARN and ERROR.
  * - Truncate repeating messages after printing predefined number of times.
  *
- * @section loggerexamples Examples
+ * @section qlogexamples Examples
  *
  * 1. Complete simple example:
  * @code
- * #include <logger.hpp>
+ * #include <qlog.hpp>
  *
- * void test_logger () {
- *     //logger::init();
- *     //using logger::log;
+ * void test_qlog () {
+ *     //qlog::init();
+ *     //using qlog::log;
  *
  *     //log::info () << "Hey this will appear as information" << log::end;
  *
@@ -43,10 +43,10 @@
  *
  */
 
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#ifndef QLOG_HPP
+#define QLOG_HPP
 
-namespace logger {
+namespace qlog {
 
 enum Verbosity {
     Trace = -2,
@@ -56,7 +56,7 @@ enum Verbosity {
     Error =  2,
 };
 
-//class Logger {
+//class qlog {
 //
 //public:
 //    static Logger& get_logger ();
