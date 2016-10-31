@@ -8,19 +8,19 @@
 #)
 
 # includes
-set(LOGGER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/logger/include)
-list(REMOVE_DUPLICATES LOGGER_INCLUDE_DIRS)
+set(QLOG_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/qlog/include)
+list(REMOVE_DUPLICATES QLOG_INCLUDE_DIRS)
 #list(APPEND QUEST_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include)
 
-include_directories(${LOGGER_INCLUDE_DIRS})
+include_directories(${QLOG_INCLUDE_DIRS})
 #include_directories(${ARMADILLO_INCLUDE_DIRS})
 #include_directories(${MPI_INCLUDE_PATH})
 #set(QUEST_INCLUDE_DIRS ${QUEST_INCLUDE_DIRS} PARENT_SCOPE)
 
 # sources
-file(GLOB_RECURSE LOGGER_SOURCES ${CMAKE_SOURCE_DIR}/logger/src/*.cpp)
-file(GLOB_RECURSE LOGGER_HEADERS ${CMAKE_SOURCE_DIR}/logger/src/*.h*)
-add_library(logger STATIC ${LOGGER_SOURCES})
+file(GLOB_RECURSE QLOG_SOURCES ${CMAKE_SOURCE_DIR}/qlog/src/*.cpp)
+file(GLOB_RECURSE QLOG_HEADERS ${CMAKE_SOURCE_DIR}/qlog/src/*.h*)
+add_library(qlog STATIC ${QLOG_SOURCES})
 
 # linking
 #target_link_libraries (quest ${MPI_LIBRARIES})
