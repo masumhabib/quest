@@ -5,13 +5,13 @@
  * This is a simple loggin facility for QUEST package. It has the following
  * features:
  * - Lightweight and fast: 
- *      - All TRACE level logs are ignored at compile time in Release build. 
- *      - Early checking of severity -- no processing is done if the severity
- *        level is lower than the set value.
- *      - Logging is either:
- *          - Asynchronous: uses dedicated thread for speedup.
- *          - Synchronous: if desired.
- *      - No file I/O is done by default: logs are written to std::log (stderr). 
+ *     - All TRACE level logs are ignored at compile time in Release build. 
+ *     - Early checking of severity -- no processing is done if the severity
+ *       level is lower than the set value.
+ *     - Logging is either:
+ *         - Asynchronous: uses dedicated thread for speedup.
+ *         - Synchronous: if desired.
+ *     - No file I/O is done by default: logs are written to std::log (stderr). 
  * - Simple API: 
  *      - Supports insertion operator <<.
  *      - Also supports formatted output style syntax like printf ().
