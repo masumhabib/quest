@@ -7,6 +7,7 @@
  *
  */
 
+#include "main.h"
 #include "QuesterApp.hpp"
 //#include "read_python.h"
 //#include <quest.hpp>

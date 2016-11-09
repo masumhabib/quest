@@ -1,18 +1,13 @@
 # Copyright (c) 2014 K M Masum Habib
 
 # -------- <QUEST Executable> ------------------------------------------------
-# includes
-set(QUEST_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/lib/include)
-list(REMOVE_DUPLICATES QUEST_INCLUDE_DIRS)
-list(APPEND QUEST_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}.dir/include)
 
+include_directories(${QUEST_INCLUDE_DIRS})
+include_directories(${QLOG_INCLUDE_DIRS})
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${MPI_INCLUDE_PATH})
-include_directories(${QUEST_INCLUDE_DIRS})
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${PYQUEST_INCLUDE_DIRS})
-
-set(QUEST_INCLUDE_DIRS ${QUEST_INCLUDE_DIRS} PARENT_SCOPE)
 
 # sources
 file(GLOB_RECURSE QUEST_SOURCES ${CMAKE_SOURCE_DIR}/quester/*.cpp)
@@ -20,9 +15,11 @@ file(GLOB_RECURSE QUEST_HEADERS ${CMAKE_SOURCE_DIR}/quester/*.h*)
 add_executable(quester ${QUEST_SOURCES})
 
 # linking
+target_link_libraries (quester qlog)
 #target_link_libraries (quester ${ARMADILLO_LIBRARIES} -fopenmp)
 target_link_libraries (quester ${MPI_LIBRARIES})
 target_link_libraries (quester ${Boost_MPI_LIBRARIES})
+target_link_libraries (quester ${Boost_PROGRAM_OPTIONS_LIBRARIES})
 #target_link_libraries (quester ${Boost_SERIALIZATION_LIBRARIES})
 #target_link_libraries (quester ${Boost_RANDOM_LIBRARIES}) 
 target_link_libraries (quester ${PYTHON_LIBRARIES})

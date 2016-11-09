@@ -8,21 +8,25 @@
 #define QUESTERAPP_HPP
 
 #include "boost/program_options.hpp" 
-//#include "logger/logger.hpp"
+#include "qlog.hpp"
+#include <iostream>
+#include <sstream>
 
 namespace quester {
 
 struct Options {
 public:
-    //enum class Mode {
-    //    Batch = 0, Interactive;
-    //};
+    enum class Mode {
+        None = 0, Batch, Interactive,
+    };
 
 
-    //Mode mode = Mode::Interactive;
-    //std::string input_file;
+    Mode mode = Mode::None;
+    std::string command;
 
-    //logger::Verbosity verbosity;
+    bool print_help_message = false;
+
+    qlog::Verbosity verbosity;
 };
 
 class QuesterApp {
@@ -33,10 +37,13 @@ public:
 private:
     void init ();
     void parse_args (int argc, char** argv);
+    void print_usage ();
 
 
 private:
     Options opts;
+    std::string usage_error_message;
+    std::string usage_message;
 };
 
 }
