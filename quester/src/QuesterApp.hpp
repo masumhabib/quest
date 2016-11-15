@@ -11,6 +11,7 @@
 #include "qlog.hpp"
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 namespace quester {
 
