@@ -15,12 +15,15 @@ QuesterApp::QuesterApp (int argc, char** argv) {
 void QuesterApp::run() {
     if (opts.print_help_message == true) {
         print_usage ();
+    } else {
+
     }
 }
 
 
 void QuesterApp::parse_args (int argc, char** argv) {
     namespace po = boost::program_options;
+    namespace fs = boost::filesystem;
 
     std::string config_file;
     std::string verbosity;
@@ -29,6 +32,9 @@ void QuesterApp::parse_args (int argc, char** argv) {
     bool batch_mode = false;
     bool interactive_mode = false;
     std::string script_name;
+    std::string command;
+
+    exe_name = fs::path(std::string(argv[0])).stem().string();
 
     po::options_description options("Options");
     options.add_options()
@@ -38,7 +44,7 @@ void QuesterApp::parse_args (int argc, char** argv) {
                 "Config file name")
         ("version",
                 "Print version string")
-        ("run-command,r", po::value<std::string>(&opts.command), 
+        ("run-command,r", po::value<std::string>(&command), 
                 "Command to run ... e.g., run filename.py")
         ("script_file,f", po::value<std::string>(&script_name), 
                 "Script file to run.")
@@ -65,9 +71,10 @@ void QuesterApp::parse_args (int argc, char** argv) {
     conf_file_opts.add (options).add (hidden_options);
 
     // shown in the help message
-    po::options_description usage ("");
+    po::options_description usage (80, 40);
     usage.add (options);
     std::stringstream out;
+    out << "Usage: " << exe_name << " [options] " << std::endl;
     out << usage;
     usage_message = out.str();
 
@@ -84,25 +91,50 @@ void QuesterApp::parse_args (int argc, char** argv) {
         }
         po::notify (users_choices);
 
+        // perform option checking
+        if (batch_mode && interactive_mode) {
+            usage_error_message = "Interactive and batch mode are mutually exclusive, please chose one of them.";
+            opts.print_help_message = true;
+            return;
+        }
+
+        if (script_name.length () > 0 && command.length () > 0) {
+            usage_error_message = "Options --run-command and --script_file are mutually exclusive, please choose one of them.";
+            opts.print_help_message = true;
+            return;
+        }
+
+
+        if (script_name.length () > 0) {
+            opts.command = "run \"" + script_name + "\"";
+        }
+
+        if (command.length () > 0) {
+            opts.command = command;
+        }
+
+        if (batch_mode && opts.command.length () == 0) {
+            usage_error_message = "Batch mode was requested however, neither command nor script name was specified, aborting.";
+            opts.print_help_message = true;
+            return;
+        }
+
         if (!batch_mode && !interactive_mode) {
             if (script_name.length () > 0) {
-                opts.command = "run \"" + script_name + "\"";
                 opts.mode = Options::Mode::Batch;
-            } else if (opts.command.length () > 0) {
+            } else if (command.length () > 0) {
                 opts.mode = Options::Mode::Interactive;
             }
         } else if (batch_mode) {
             opts.mode = Options::Mode::Batch;
         } else if (interactive_mode) {
             opts.mode = Options::Mode::Interactive;
-        } else {
-            usage_error_message = "Interactive and batch mode are mutually exclusive, please chose one of them";
-            opts.print_help_message = true;
         }
         
         if (users_choices.count ("help")) {
             opts.print_help_message = true;
         }
+
 
     } catch (const po::unknown_option & e) {
         usage_error_message = e.what();
@@ -115,6 +147,8 @@ void QuesterApp::print_usage () {
         std::cout << std::endl << "ERROR: " << usage_error_message 
                   << std::endl << std::endl;
     }
+
+    //std::cout << get_banner() << endl;
     std::cout << usage_message << std::endl;
 }
 

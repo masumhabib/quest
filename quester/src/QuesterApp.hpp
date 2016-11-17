@@ -7,8 +7,9 @@
 #ifndef QUESTERAPP_HPP
 #define QUESTERAPP_HPP
 
-#include "boost/program_options.hpp" 
 #include "qlog.hpp"
+#include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -45,6 +46,7 @@ private:
     Options opts;
     std::string usage_error_message;
     std::string usage_message;
+    std::string exe_name;
 };
 
 }
