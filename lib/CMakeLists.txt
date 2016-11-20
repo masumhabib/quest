@@ -27,8 +27,8 @@ target_link_libraries (qmicad ${MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_MPI_LIBRARIES})
 target_link_libraries (qmicad ${Boost_SERIALIZATION_LIBRARIES})
 target_link_libraries (qmicad ${Boost_RANDOM_LIBRARIES}) 
-#target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
-target_link_libraries (qmicad ${ARMADILLO_LIBRARIES} -fopenmp)
+target_link_libraries (qmicad ${ARMADILLO_LIBRARIES})
+#target_link_libraries (qmicad ${ARMADILLO_LIBRARIES} -fopenmp)
 #set_target_properties(qmicad PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # Prepare qmicad package

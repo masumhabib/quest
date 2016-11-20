@@ -24,7 +24,7 @@ public:
     virtual void refract(const svec& normal, double V1, double V2);
     virtual void rotateVel(double thti);
     virtual ptr clone();
-
+    virtual void flipCharge();
 protected:
     virtual void update();
 
