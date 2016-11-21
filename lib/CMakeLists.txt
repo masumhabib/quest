@@ -27,8 +27,8 @@ target_link_libraries (quest ${MPI_LIBRARIES})
 target_link_libraries (quest ${Boost_MPI_LIBRARIES})
 target_link_libraries (quest ${Boost_SERIALIZATION_LIBRARIES})
 target_link_libraries (quest ${Boost_RANDOM_LIBRARIES}) 
-#target_link_libraries (quest ${ARMADILLO_LIBRARIES})
-target_link_libraries (quest ${ARMADILLO_LIBRARIES} -fopenmp)
+target_link_libraries (quest ${ARMADILLO_LIBRARIES})
+#target_link_libraries (quest ${ARMADILLO_LIBRARIES} -fopenmp)
 #set_target_properties(quest PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # Prepare quest package
