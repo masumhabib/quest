@@ -11,10 +11,10 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${PYQUEST_INCLUDE_DIRS})
 
 # sources
-set(PYENGINE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pyengine)
+set(PYENGINE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/pyengine/src)
 list(REMOVE_DUPLICATES PYENGINE_INCLUDE_DIRS)
 set(PYENGINE_INCLUDE_DIRS ${PYENGINE_INCLUDE_DIRS} PARENT_SCOPE)
-file(GLOB_RECURSE PYENGINE_SOURCES ${CMAKE_SOURCE_DIR}/pyengine/*.cpp)
+file(GLOB_RECURSE PYENGINE_SOURCES ${CMAKE_SOURCE_DIR}/pyengine/src/*.cpp)
 
 add_library (pyengine STATIC ${PYENGINE_SOURCES})
 
@@ -31,4 +31,5 @@ target_link_libraries (pyengine ${PYTHON_LIBRARIES})
 target_link_libraries (pyengine ${Boost_PYTHON_LIBRARIES})
 target_link_libraries (pyengine -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
 
+add_subdirectory (tests/unit_tests)
 
