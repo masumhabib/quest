@@ -18,10 +18,12 @@ import sys as _sys
 if _sys.platform == "linux" or _sys.platform == "linux2":
     _sys.setdlopenflags(_dl.RTLD_NOW | _dl.RTLD_GLOBAL)
 
-from quest import * 
-import linspace 
-import vprint
-import simulators
+from .quest import *
+from . import linspace
+from . import vprint
+from . import simulators
+
+import copyreg
 
 # TI surface k.p default parameters
 _TISurfKpParamsOrgInit =  hamiltonian.TISurfKpParams.__init__
@@ -225,12 +227,12 @@ def _tuple2enum(enum, value):
     return e
 
 def _registerEnumPicklers(): 
-    from copy_reg import constructor, pickle
+    from copyreg import constructor, pickle
     def reduce_enum(e):
         enum = type(e).__name__.split('.')[-1]
         return ( _tuple2enum, ( enum, int(e) ) )
     constructor( _tuple2enum)
-    for e in [ e for e in vars(utils).itervalues() if isEnumType(e) ]:
+    for e in [ e for e in iter(vars(utils).values()) if isEnumType(e) ]:
         pickle(e, reduce_enum)
 
 _registerEnumPicklers()

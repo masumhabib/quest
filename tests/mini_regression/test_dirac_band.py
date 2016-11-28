@@ -24,8 +24,7 @@ from    math import pi
 #else:
 #    import mpi
 
-import  quest
-from    quest.simulators.dirackp import * 
+from    quest.simulators.dirackp.Band import * 
 
 
 ##

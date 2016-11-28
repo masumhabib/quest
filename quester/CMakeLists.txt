@@ -25,7 +25,7 @@ target_link_libraries (quester ${Boost_SYSTEM_LIBRARIES})
 #target_link_libraries (quester ${Boost_SERIALIZATION_LIBRARIES})
 #target_link_libraries (quester ${Boost_RANDOM_LIBRARIES}) 
 target_link_libraries (quester ${PYTHON_LIBRARIES})
-target_link_libraries (quester ${Boost_PYTHON_LIBRARIES})
+target_link_libraries (quester ${Boost_PYTHON3_LIBRARIES})
 target_link_libraries (quester -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
 
 set_target_properties(quester PROPERTIES 

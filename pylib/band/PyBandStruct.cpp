@@ -59,10 +59,8 @@ void (PyBandStruct::*PyBandStruct_k_1)(const mat&) = &PyBandStruct::k;
 void (PyBandStruct::*PyBandStruct_H_1)(const cxmat&, int) = &PyBandStruct::H;
 void (PyBandStruct::*PyBandStruct_S_1)(const cxmat&, int) = &PyBandStruct::S;
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(PyBandStruct_save, save, 1, 2)
+
 void export_BandStruct(){
-    // ~~~~~~~~ To avoid nasty numpy segfault ~~~~~~~
-    import_array();
-    
     class_<BandStruct, bases<Printable>, shared_ptr<BandStruct>, noncopyable >("_BandStruct", 
             no_init)
     ;
