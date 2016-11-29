@@ -1,7 +1,7 @@
 /**
  * file: simulator.cpp
  * author: K M Masum Habib
- * co-author : Mirza Elahi
+ * co-author : Mirza M. Elahi
  */
 
 #include "tmfsc/simulator.h"
@@ -406,8 +406,37 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 }
                 rf = r;
                 break;
-            } 
-        }    
+            }else if (mDev->isSuperconductorEdge(iEdge)) {
+                // about to cross a superconductor edge
+                // need to check whether there should be Andreev reflection
+                // or the specular andreev reflection
+                electron->flipCharge(); // converting to a hole
+                Edge scEdge = mDev->edge(iEdge);
+                double V_electron = electron->getPot();
+                if( V_electron > scEdge.bandgap() ) {
+                    // Andreev reflection
+                    electron->rotateVel(pi);
+                    if (debug) {
+                        cout << "Energy > Bandgap, Bandgap : " <<
+                             scEdge.bandgap() << ", Pot : " <<
+                                V_electron << endl;
+                    }
+                }else if( electron->getPot() < scEdge.bandgap() ) {
+                    // specular Andreev relfection
+                    electron->reflect(mDev->edgeNormVect(iEdge));
+                    if (debug){
+                        cout << "Energy < Bandgap, Bandgap : " <<
+                             scEdge.bandgap() << ", Pot : " <<
+                                V_electron << endl;
+                    }
+
+                }
+                Particle::ptr reflElect = electron->clone();
+                rf = r;
+                electsQu.push(reflElect);
+                break;
+            }
+        }
 
         // reset ourselves, ready for the next step
         if (saveTraj) {

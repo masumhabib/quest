@@ -1,6 +1,7 @@
 /** 
  * Python wrapper for the Device class 
  * author: K M Masum Habib
+ * co-author: Mirza M. Elahi
  */
 
 #include "pydevice.h"
@@ -43,6 +44,7 @@ void export_Device(){
         .def("numConts", &PyDevice::numConts)
         .def("isReflectEdge", &PyDevice::isReflectEdge)
         .def("isAbsorbEdge", &PyDevice::isAbsorbEdge)
+        .def("isSuperconductorEdge", &PyDevice::isSuperconductorEdge)
         .def_readonly("NumGates", &PyDevice::getNumGates)
 		.add_property("EdgeRefRghnsEff", &PyDevice::getEdgeRefRghnsEff,
 		                  &PyDevice::setEdgeRefRghnsEff)

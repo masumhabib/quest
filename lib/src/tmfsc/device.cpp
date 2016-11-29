@@ -1,7 +1,7 @@
 /**
  * File: device.cpp
  * Author: K M Masum Habib
- * Co-Author: Mirza Elahi
+ * Co-Author: Mirza M. Elahi
  */
 
 #include "tmfsc/device.h"
@@ -11,6 +11,7 @@ namespace quest{ namespace tmfsc{
 constexpr int Edge::EDGE_REFLECT;
 constexpr int Edge::EDGE_ABSORB;
 constexpr int Edge::EDGE_TRANSMIT;
+constexpr int Edge::EDGE_SUPERCONDUCTOR;
 
 /** Constructor */
 Device::Device() {
@@ -37,7 +38,7 @@ void Device::addPoints(const vector<point> &pts) {
 }
 
 /** Adds an edge defined by two point indices. */
-int Device::addEdge(int ipt1, int ipt2, int type, double d) {
+int Device::addEdge(int ipt1, int ipt2, int type, double d, double bg) {
     if (ipt1 >= mPts.size() || ipt2 >= mPts.size()) {
         throw invalid_argument(" Device::addEdge(): indices out of bounds");
     }
@@ -47,7 +48,7 @@ int Device::addEdge(int ipt1, int ipt2, int type, double d) {
     if (type != Edge::EDGE_TRANSMIT && d>0){
     	throw invalid_argument("Edge other than transmitting cannot have split length");
     }
-    mEdgs.push_back(Edge(mPts[ipt1], mPts[ipt2], type, d));
+    mEdgs.push_back(Edge(mPts[ipt1], mPts[ipt2], type, d, bg));
     return mEdgs.size() - 1;
 }
 
@@ -124,11 +125,19 @@ bool Device::isTransmitEdge(int iEdge) {
     return mEdgs[iEdge].type() == Edge::EDGE_TRANSMIT;
 }
 
+bool Device::isSuperconductorEdge(int iEdge) {
+    return mEdgs[iEdge].type() == Edge::EDGE_SUPERCONDUCTOR;
+}
+
 /** Transmission probability of an electron going through a transmitting
  *  edge  */
 double Device::calcTransProb(double V1, double V2, const svec& vel, double En,
 		int iEdge)
 {
+    // Hitting Dirac point on either side
+    if ( En+V1 == 0.0 || En+V2 == 0.0 ){
+        return 0.0;
+    }
 	using maths::constants::e;
 	using maths::constants::hbar;
 	double thtr, thti, TransProb;
@@ -187,8 +196,8 @@ double Device::getPotAt(const point& position) {
     return mPot->getPotAt(gpoint(position[0], position[1]));
 }
 
-Edge::Edge(const point &p, const point &q, int type, double d)
-: Segment(p,q), mType(type), md(d){
+Edge::Edge(const point &p, const point &q, int type, double d, double bg)
+: Segment(p,q), mType(type), md(d), mBandgap(bg){
 
 }
 }}

@@ -43,13 +43,18 @@ DiracElectron::ptr DiracElectron::clone() {
 
 void DiracElectron::update() {
     double Bz = B[2];
-    F = {q*v[1]*Bz, -q*v[0]*Bz};
+    F = {q * v[1] * Bz, -q * v[0] * Bz};
     //speed = sqrt(v[0]*v[0] + v[1]*v[1]);
-    m = e*(En - V)/(speed*speed);
-    a = F/m*nm*nm;
+    m = e * (En - V) / (speed * speed);
+    a = F / m * nm * nm;
 }
 
+void DiracElectron::flipCharge(){
+    Particle::flipCharge();
+    update();
+}
 }}
+
 
 
 
