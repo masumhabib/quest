@@ -134,8 +134,6 @@ void (PyCohRgfLoop::*PyCohRgfLoop_pvl_1)(const col&, int, int) = &PyCohRgfLoop::
 void (PyCohRgfLoop::*PyCohRgfLoop_atomsTracedOver_1)(const ucol&) = &PyCohRgfLoop::atomsTracedOver;
 
 void export_CohRgfLoop(){
-    // ~~~~~~~~ To avoid nasty numpy segfault ~~~~~~~
-    import_array(); 
     class_<CohRgfLoop, bases<Printable>, shared_ptr<CohRgfLoop>, noncopyable >("_CohRgfLoop", 
             no_init)
     ;

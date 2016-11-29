@@ -65,7 +65,7 @@ def setupGeom(self):
         if ip == 2 or ip == 6 or ip == 12 or ip == 16 or ip ==9 or ip == 19:
         # Without Absorbing Side Contact
         #if ip == 2 or ip == 6 or ip == 12 or ip == 16:
-      		self.setEdgeType(ip, EDGE_ABSORB)
+      	    self.setEdgeType(ip, EDGE_ABSORB)
     # Add the transmitting edge
     ipt1 = self.addPoint(0+juncShift, -ly/2)
     ipt2 = self.addPoint(0+juncShift, ly/2)

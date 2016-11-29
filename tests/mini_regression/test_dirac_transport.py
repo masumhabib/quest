@@ -12,9 +12,9 @@ import  numpy as np
 import  math
 from    math import pi, tan, cos, sin
 
-import  quest
-from    quest.linspace import linspace
-from    quest.simulators.dirackp import *
+#import  quest
+#from    quest.linspace import linspace
+from    quest.simulators.dirackp.Transport import *
 
 
 ##

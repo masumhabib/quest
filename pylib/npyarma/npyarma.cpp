@@ -131,8 +131,16 @@ void test_npy2mat(bp::object obj){
     }
 }
 
-void export_npyarma(){
+/**Properly initialize the numpy array. For details see:
+ * https://docs.scipy.org/doc/numpy/user/c-info.how-to-extend.html
+ */
+PyMODINIT_FUNC init_npy () {
     import_array();
+    return NULL;
+}
+
+void export_npyarma(){
+    init_npy ();
 
   /**
    * The following struct constructors will make sure we can input

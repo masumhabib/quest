@@ -10,7 +10,6 @@ from matplotlib import animation,cm
 
 import numpy as np
 from math import pi, sqrt, sin, cos, tan
-from sets import Set
 import pickle
 import sys
 import os
@@ -73,7 +72,7 @@ class Bias(object):
     def _getBias(self, ib, key):
         bias = self.biasVars[key]
         size = self.sizes[key];
-        indx = ib % size 
+        indx = int(ib % size)
         ib = ib/size
         return bias[indx], ib
 
@@ -272,7 +271,7 @@ class HallBar(object):
         # calculate the trajectory
         Ef, B, V = self.bias.get(0);
         self.printBias(Ef, B, V, 0)
-        print ""
+        print ("")
         if self.dev.NumGates > 0:
             self.trajs = self.sim.calcTraj(ri, thi, Ef[0], B[0], V)
         else:
@@ -471,7 +470,7 @@ class HallBar(object):
         msg += '  '.join('  V{0}={1:.3f}'.format(iv+1, V[iv]) for iv in 
                 range(len(V)))
         #self.mprint (msg)
-        print msg,
+        print (msg,end="")
  
     def printTrans(self, contId, T):
         msg = " ==>"
@@ -491,7 +490,7 @@ class HallBar(object):
     def mprint(self, *args):
         if self.mpiworld.rank == 0:
             for arg in args:
-                print arg,
+                print (arg,end="")
         
     def _getElapsedTime(self):
         currentTime = time.time();
@@ -520,14 +519,14 @@ class HallBar(object):
         doneIndx = []
 
         if not self.cleanRun and self.mpiworld.rank == 0:
-            print "\n\nChecking if previous state is available ..."
-            doneSet = Set()
+            print ("\n\nChecking if previous state is available ...")
+            doneSet = set()
             ifile = 0
             nfiles = 1
             while(ifile < nfiles):
                 filename = self.outDir + self.tmpFile + str(ifile) + ".pkl"
                 if os.path.exists(filename):
-                    print "Loading ... " + filename
+                    print ("Loading ... " + filename)
                     try:
                         pklFile = open(filename, 'rb')
                         transCalcState = pickle.load(pklFile)
@@ -539,10 +538,10 @@ class HallBar(object):
                             T[indx, :, :] = loadedT[indx, :, :]
                             doneSet.add(indx)
                     except EOFError:
-                        print "Error loading file ..., skipping."
+                        print ("Error loading file ..., skipping.")
                 ifile += 1
             biasIndx = []
-            print "Out of",npts,"bias points,",len(doneSet),"are done."
+            print ("Out of",npts,"bias points,",len(doneSet),"are done.")
             for ib in range(npts):
                 if ib not in doneSet:
                     biasIndx.append(ib)
@@ -603,7 +602,7 @@ def loadTrans2D(transFileName, X='V1', Y='B1', Z='T12', Z2=None):
     if Z2 is not None:
         z = z - T[:,int(Z2[1])-1, int(Z2[2])-1]
 
-    print "-D-: len(x) =",len(x), "len(y) =",len(y), "len(z)", z.shape[0]
+    print ("-D-: len(x) =",len(x), "len(y) =",len(y), "len(z)", z.shape[0])
 
     z = np.reshape(z, (len(y), len(x)), order='F')
     x,y = np.meshgrid(x,y);

@@ -73,8 +73,8 @@ find_package(Armadillo REQUIRED)
 find_package(MPI REQUIRED)
 
 # Python libs
-find_package(PythonInterp 2.7 REQUIRED)
-find_package(PythonLibs 2.7 REQUIRED)
+find_package(PythonInterp 3.0 REQUIRED)
+find_package(PythonLibs 3.0 REQUIRED)
 
 # NumPy
 include(cmake/FindNumPy.cmake)
@@ -90,7 +90,7 @@ set(Boost_USE_MULTITHREADED     off)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       off)
 endif()
-find_package(Boost 1.55 REQUIRED python)
+find_package(Boost 1.55 REQUIRED python3)
 set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
 unset(Boost_LIBRARIES)
 unset(Boost_PYTHON_LIBRARIES)

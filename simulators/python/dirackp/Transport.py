@@ -615,7 +615,7 @@ class Transport(object):
         self.Sl = None
 
         # Enable calculations
-        for type, value in self.Calculations.iteritems():
+        for type, value in self.Calculations.items():
             # transmission
             if (type == "TE"):
                 self.rgf.enableTE(value)
@@ -625,7 +625,7 @@ class Transport(object):
                     self.rgf.enableI(value, 0, 1)
                 else:
                     for I in self.Calculations["I"]:
-                        if (I.has_key("Block") and I["Block"] == "All"):
+                        if ("Block" in I and I["Block"] == "All"):
                             for ib in range(0, self.nb-1):
                                 self.rgf.enableI(I["N"], ib, ib+1)
                         else:
@@ -702,7 +702,7 @@ class Transport(object):
        
         # Calculations to perform
         msg += " Calculations:\n"
-        for type, value in self.Calculations.iteritems():
+        for type, value in self.Calculations.items():
             if (type == "TE"):
                 msg += "  Transmission.\n"
             if (type == "I"):
@@ -711,7 +711,7 @@ class Transport(object):
                     msg += " (" + str(I["N"]) + ").\n"
                 else:
                     for I in self.Calculations["I"]:
-                        if (I.has_key("Block") and I["Block"] == "All"):
+                        if ("Block" in I and I["Block"] == "All"):
                             msg += "  Current of all blocks"
                             msg += " (" + str(I["N"]) + ").\n"
                         else:
