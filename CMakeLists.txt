@@ -4,7 +4,7 @@
 #
 
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 project(quest CXX)
 
@@ -116,6 +116,7 @@ add_subdirectory(pyengine)
 add_subdirectory(quester)
 add_subdirectory(tests)
 add_subdirectory(doc)
+add_subdirectory (dependencies)
 
 
 message(STATUS "--------------------------------------------------------------")
