@@ -100,7 +100,7 @@ unset(Boost_PYTHON_LIBRARIES)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python3 program_options random serialization system unit_test_framework)
+find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python program_options random serialization system unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 
 # Prepare distribution directory
