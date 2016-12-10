@@ -84,6 +84,9 @@ find_package(NumPy REQUIRED)
 find_package(Doxygen)
 
 # Boost
+set (boost_component_list "filesystem;program_options;random;serialization;system;unit_test_framework;mpi")#;python3;mpi_python")
+#set (boost_component_list "filesystem;unit_test_framework")#;python3;mpi_python")
+
 # Shared linking of libboost_python is required for mpi::communicator
 # to work both in python and C++.
 set(Boost_USE_MULTITHREADED     off)
@@ -97,7 +100,7 @@ unset(Boost_PYTHON_LIBRARIES)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python program_options random serialization system unit_test_framework)
+find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python3 program_options random serialization system unit_test_framework)
 include_directories(${Boost_INCLUDE_DIR})
 
 # Prepare distribution directory
