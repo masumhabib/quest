@@ -51,8 +51,10 @@ foreach (boost_component ${boost_component_list})
     if (${boost_component} STREQUAL "unit_test_framework")
         set (boost_component "test")
     endif()
+    message ("DBG: ${boost_component}")
     set (boost_libs ${boost_libs} --with-libraries=${boost_component})
 endforeach()
+message (STATUS "BOOST:${boost_libs}")
 
 ExternalProject_Add (boost
     URL ${boost_url}
@@ -63,7 +65,7 @@ ExternalProject_Add (boost
     PATCH_COMMAND ""
     CONFIGURE_COMMAND ${boost_bootstrap_command} --with-icu --with-python=${PYTHON_EXECUTABLE} ${boost_libs} --prefix=${boost_root} 
     #BUILD_COMMAND  ${boost_b2_command} threading=multi link=static runtime-link=static variant=release cxxflags=-std=c++14 include="${PYTHON_INCLUDE_DIRS}" -j8 --disable-icu install 
-    BUILD_COMMAND  ${boost_b2_command} variant=release debug-symbols=off threading=multi link=static,shared cxxflags="-std=c++14" include="${PYTHON_INCLUDE_DIRS}" -j8 install 
+    BUILD_COMMAND  ${boost_b2_command} variant=release debug-symbols=off threading=multi runtime-link=static link=static python=3.5 cxxflags="-std=c++14" include="${PYTHON_INCLUDE_DIRS}" -j8 install 
     INSTALL_COMMAND ""
 )
 
@@ -74,6 +76,27 @@ ExternalProject_Add_Step(boost enable_mpi
   DEPENDERS build
   WORKING_DIRECTORY ${build_path}/src/boost
 )
+
+#ExternalProject_Add (boost
+#    URL ${boost_url}
+#    URL_HASH SHA1=${boost_sha1}
+#    PREFIX ${build_path}
+#    BUILD_IN_SOURCE 1
+#    UPDATE_COMMAND ""
+#    PATCH_COMMAND ""
+#    CONFIGURE_COMMAND ${boost_bootstrap_command} --with-icu --with-python=${PYTHON_EXECUTABLE} ${boost_libs} --prefix=${boost_root} 
+#    #BUILD_COMMAND  ${boost_b2_command} threading=multi link=static runtime-link=static variant=release cxxflags=-std=c++14 include="${PYTHON_INCLUDE_DIRS}" -j8 --disable-icu install 
+#    BUILD_COMMAND  ${boost_b2_command} variant=release debug-symbols=off threading=multi link=static,shared cxxflags="-std=c++14" include="${PYTHON_INCLUDE_DIRS}" -j8 install 
+#    INSTALL_COMMAND ""
+#)
+#
+#ExternalProject_Add_Step(boost enable_mpi
+#  COMMENT "Enabling Boost.MPI ..."
+#  COMMAND ${boost_enable_mpi} #&& ${boost_enable_python}
+#  DEPENDEES configure 
+#  DEPENDERS build
+#  WORKING_DIRECTORY ${build_path}/src/boost
+#)
 
 #ExternalProject_Add (boost_mpi
 #    DEPENDS boost

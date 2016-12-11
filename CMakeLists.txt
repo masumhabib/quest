@@ -85,7 +85,10 @@ find_package(Doxygen)
 
 # Boost
 #set (boost_component_list "filesystem;program_options;random;serialization;system;unit_test_framework;python;mpi")
-set (boost_component_list "python;mpi")
+# ***NOTE:*** it is important to keep python and mpi at the front of this list
+# otherwise, the build system wont build mpi.so required run Boost.MPI
+# from python.
+set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 #set (boost_component_list "mpi;python")
 #set (boost_component_list "python;mpi")
 #set (boost_component_list "filesystem;program_options;random;serialization;system;unit_test_framework;mpi;python")#;mpi_python")
