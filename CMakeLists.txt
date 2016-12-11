@@ -11,6 +11,7 @@ project(quest CXX)
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
+option(BOOST_BUILD "Build boost from source" on)
 #set(CMAKE_BUILD_TYPE "Debug")
 
 # To use locally compiled libraries (Armadillo and Boost), create a file
@@ -84,12 +85,15 @@ find_package(NumPy REQUIRED)
 find_package(Doxygen)
 
 # Boost
-#set (boost_component_list "filesystem;program_options;random;serialization;system;unit_test_framework;python;mpi")
-# ***NOTE:*** it is important to keep python and mpi at the front of this list
-# otherwise, the build system wont build mpi.so required run Boost.MPI
-# from python.
-set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
+if (BOOST_BUILD)
+    # ***NOTE:*** it is important to keep python and mpi at the front of this list
+    # otherwise, the build system wont build mpi.so required run Boost.MPI
+    # from python.
+    set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
+    add_subdirectory (dependencies/boost)
 
+#else ()
+endif()
 # Shared linking of libboost_python is required for mpi::communicator
 # to work both in python and C++.
 set(Boost_USE_MULTITHREADED     off)
@@ -104,7 +108,10 @@ if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
 find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python program_options random serialization system unit_test_framework)
+
 include_directories(${Boost_INCLUDE_DIR})
+message ("DBG: ${Boost_INCLUDE_DIR}")
+message ("DBG: ${Boost_MPI_LIBRARIES}")
 
 # Prepare distribution directory
 set(QUEST_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
@@ -122,7 +129,7 @@ add_subdirectory(pyengine)
 add_subdirectory(quester)
 add_subdirectory(tests)
 add_subdirectory(doc)
-add_subdirectory (dependencies)
+#add_subdirectory (dependencies)
 
 
 message(STATUS "--------------------------------------------------------------")
