@@ -11,7 +11,7 @@ project(quest CXX)
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
-option(BOOST_BUILD "Build boost from source" on)
+option(BUILD_BOOST "Build boost from source" off)
 #set(CMAKE_BUILD_TYPE "Debug")
 
 # To use locally compiled libraries (Armadillo and Boost), create a file
@@ -84,16 +84,12 @@ find_package(NumPy REQUIRED)
 # doxygen
 find_package(Doxygen)
 
-# Boost
-if (BOOST_BUILD)
-    # ***NOTE:*** it is important to keep python and mpi at the front of this list
-    # otherwise, the build system wont build mpi.so required run Boost.MPI
-    # from python.
-    set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
-    add_subdirectory (dependencies/boost)
+# Boost 
+# ***NOTE:*** it is important to keep python and mpi at the front of this list
+# otherwise, the build system wont build mpi.so required run Boost.MPI
+# from python.
+set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 
-#else ()
-endif()
 # Shared linking of libboost_python is required for mpi::communicator
 # to work both in python and C++.
 set(Boost_USE_MULTITHREADED     off)
@@ -122,13 +118,19 @@ set(QUEST_TEST_DIR ${QUEST_BUILD_DIR}/tests)
 # installation
 install(DIRECTORY ${QUEST_DIST_DIR} DESTINATION .)
 
-add_subdirectory(lib)
-add_subdirectory(qlog)
-add_subdirectory(pylib)
-add_subdirectory(pyengine)
-add_subdirectory(quester)
-add_subdirectory(tests)
-add_subdirectory(doc)
+# Boost
+if (BUILD_BOOST)
+    add_subdirectory (dependencies/boost)
+else ()
+    add_subdirectory(lib)
+    add_subdirectory(qlog)
+    add_subdirectory(pylib)
+    add_subdirectory(pyengine)
+    add_subdirectory(quester)
+    add_subdirectory(tests)
+    add_subdirectory(doc)
+endif()
+
 #add_subdirectory (dependencies)
 
 

@@ -1,152 +1,389 @@
-#!/bin/bash
-# vim:ft=sh
+#!/bin/env python
+# vim:ft=python
 
-# FileName: build
-# Description: A script for configuring, compiling and and installing.
-# 
-# Copyright (C) 2016  K M Masum Habib <masum.habib@gmail.com>
-#
-# Created: 18 June 2014.
+"""
+-------------------------------------------------------------------------------
+                             QUEST build script
 
-default_config="Release"  # Default configuration to build
-default_command="make"    # By default, compile everything
-ncpu="8"
+    This script builds and installs the QUEST package. It can also build 
+    third party libraries/dependencies such as boost and armadillo.
 
-function usage(){
-    echo "Usage: build [debug|release] [config|test|doc|install|clean|superclean]"
-    echo ""
-    echo "  When no option is given, builds the project."
-    echo ""
-    echo "  Description of options: " 
-    echo "    debug:            Build the debug version."
-    echo "    release:          Build the release version."
-    echo "    config:           Configures project using cmake."
-    echo "    test:             Runs tests."
-    echo "    doc:              Build documentation."
-    echo "    install [path]:   Installs the project."
-    echo "    clean:            Cleans compiled object files in the build folder."
-    echo "    superclean:       Deletes build folder."
-    echo "    help:             Shows this message."
-}
+    For help, run ./build help
+-------------------------------------------------------------------------------
+"""
 
-function get_build_dir() {
-    local build_dir=$1/build
-    echo $build_dir
-}
+import os, sys, subprocess, shutil
+import argparse, textwrap
 
-is_config_needed () {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
-    if [[ -f $build_dir/Makefile ]]; then
-        return 1
-    else
-        return 0
-    fi
-}
+ROOT    = os.path.dirname(os.path.realpath(__file__))
+DEBUG   = "Debug"
+RELEASE = "Debug"
+QUEST   = "QUEST"
+BOOST   = "Boost"
 
-function do_config() {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
-    #echo "-D- $build_dir"
-    mkdir -p $build_dir
-    cd $build_dir && cmake -DCMAKE_BUILD_TYPE=$config ../../ && cd ../../
-}
+def main ():
+    opts = parse_args ()
+    perform_action (opts)
 
-function do_make() {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
+def parse_args  ():
+    # parse commandline arguments
+    parser = argparse.ArgumentParser(
+            usage="%(prog)s [options] command",
+            description="This script builds and installs the QUEST package. It can also build third party libraries/dependencies such as boost and armadillo.",
+            epilog="For more inforamtion, see project page at https://github.com/masumhabib/quest",
+            formatter_class=argparse.RawTextHelpFormatter
+    )
+    
+    parser.add_argument("-d", "--debug", action="store_true", default=True,
+            help="build QUEST with debug mode")
+    parser.add_argument("-r", "--release", action="store_true",
+            help="build QUEST with release mode")
+    parser.add_argument("--doc", action="store_true", 
+            help="build documentation")
+    parser.add_argument("--boost", action="store_true", 
+            help="build boost library from source")
+    parser.add_argument("--dest", type=str, metavar="/path/to/destination",
+            help="destination path where the action will be performed.")
+    parser.add_argument("--num_cpus", type=int, metavar="num_cpus", default=8,
+            help="number of CPUs that will be used for compilation")
 
-    cd $build_dir && make -j $ncpu && cd ../../
-}
+    commands = parser.add_argument_group("commands") 
+    commands.add_argument("command", type=str,
+            choices=["config", "make", "install", "clean", "superclean", 
+                     "test", "help"],
+            default='make',
+            help=textwrap.dedent(
+'''command to execute: 
+    config:           configure project using cmake.
+    make:             build the project .
+    clean:            clean compiled object files in the build folder.
+    superclean:       delete build folder.
+    test:             run tests.
+    install:          install the project.
+    help:             show this help message and exit.''')
+            )
 
-function do_test() {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
+    args = parser.parse_args()
 
-    cd $build_dir && make test ARGS="--output-on-failure --color_output=yes" && cd ../../
-}
+    if args.command == "help":
+        parser.print_help ()
+        exit (0)
 
-function do_make_doc() {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
+    return args
 
-    cd $build_dir && make doc && cd ../../
-}
+def perform_action (opts = None):
+    command = opts.command
+    if command == "config":
+        do_config (opts)
+    elif command == "make":
+        if is_config_needed (opts):
+            do_config (opts)
+        do_make (opts)
+    elif command == "clean":
+        if not is_config_needed (opts):
+            do_clean (opts)
+    elif command == "superclean":
+        do_superclean (opts)
+    elif command == "test":
+        if get_lib_name (opts) == QUEST:
+            if is_config_needed (opts):
+                do_config (opts)
+                do_make (opts)
+            do_test (opts)
+        else:
+            print ("Command 'test' is not applicable for library " 
+                    + get_lib_name (opts))
+            exit (1)
+    elif command == "install":
+        if get_lib_name (opts) == QUEST:
+            if is_config_needed (opts):
+                do_config (opts)
+                do_make (opts)
+            do_install (opts)
+        else:
+            print ("Command 'test' is not applicable for library " 
+                    + get_lib_name (opts))
+            exit (1)
+    else:
+        print ("Uknown command " + command + ", run 'build -h' for usage details.")
+        exit (1)
 
-function do_clean () {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
+def do_config(opts):
+    library = get_lib_name (opts)
+    config = get_config (opts)
+    build_dir = get_build_dir (config)
+    #print("(DD) " + build_dir)
 
-    cd $build_dir && make clean && cd ../../
-}
+    cmake_opts = "-DCMAKE_BUILD_TYPE=" + config + " ../../"
+    if library == QUEST:
+        cmake_opts += " -DBUILD_BOOST=OFF"
+    elif library == BOOST:
+        cmake_opts += " -DBUILD_BOOST=ON"
 
-function do_superclean () {
-    local config=$1
-    echo "rm -rf $config"
-    rm -rf $config
-}
+    run_cmake (build_dir, cmake_opts)
 
-function do_install () {
-    local config=$1
-    local build_dir=$(eval get_build_dir $config)
+def do_make(opts):
+    library = get_lib_name (opts)
+    config = get_config (opts)
+    build_dir = get_build_dir (config)
 
-    cd $build_dir && cmake -DCMAKE_INSTALL_PREFIX:PATH=$install_dir ../../ \
-            && make install && cd ../../
-}
+    make_opts = "-j " + str (opts.num_cpus)
+    run_make (build_dir, make_opts)
 
-config=$default_config
-cmd=$default_command
-install_path=""
-while [[ $# -gt 0 ]]; do
-    case $1 in 
-        debug)
-            config="Debug"
-            ;;
-        release)
-            config="Release"
-            ;;
-        config|test|doc|clean|superclean)
-            cmd=$1
-            ;;
-        install)
-            cmd="install"
-            shift
-            if [[ $# -gt 0 ]]; then
-                install_dir="$1"
-            fi
-            ;;
-        *)
-            usage
-            exit 1
-    esac
-    shift
-done
+def do_clean (opts):
+    config = get_config (opts)
+    build_dir = get_build_dir (config)
 
-case $cmd in
-    config)
-        do_config $config
-        ;;
-    make)
-        if is_config_needed $config; then
-            do_config $config
-        fi
-        do_make $config
-        ;;
-    test)
-        do_test $config
-        ;;
-    doc)
-        do_make_doc $config
-        ;;
-    clean)
-        do_clean $config
-        ;;
-    superclean)
-        do_superclean $config
-        ;;
-    install)
-        do_install "Release"
-        ;;
-    *)
-        usage
-esac
+    make_opts = "clean"
+    run_make (build_dir, make_opts)
+
+def do_superclean (opts):
+    library = get_lib_name (opts)
+    config = get_config (opts)
+
+    if library == QUEST:
+        dir_path = get_config_dir (config)
+        print ("II> Deleting " + dir_path)
+        shutil.rmtree (dir_path, ignore_errors = True)
+    elif library == BOOST:
+        boost_root = ROOT + "/dependencies/boost"
+        for dirname in ["build", "include", "lib"]:
+            dir_path = boost_root + "/" + dirname
+            print ("II> Deleting " + dir_path)
+            shutil.rmtree (dir_path, ignore_errors = True)
+           
+def do_test(opts):
+    config = get_config (opts)
+    build_dir = get_build_dir (config)
+
+    make_opts = "test ARGS=\"--output-on-failure --color_output=yes\"" 
+    run_make (build_dir, make_opts)
+
+def do_install (opts):
+    config = get_config (opts)
+    build_dir = get_build_dir (config)
+    install_dir = get_install_dir (opts)
+
+    if len (install_dir) > 0:
+        cmake_opts = " -DCMAKE_INSTALL_PREFIX:PATH=" + install_dir 
+        run_cmake (build_dir, cmake_opts)
+
+    make_opts = " install"
+    run_make (build_dir, make_opts)
+
+def run_cmake (build_dir, cmake_opts):
+    if not os.path.exists (build_dir):
+        os.makedirs (build_dir)
+
+    current_dir = os.getcwd ()
+    os.chdir (build_dir)
+
+    command = "cmake " + cmake_opts 
+    status = subprocess.call(command, shell=True)
+
+    os.chdir (current_dir)
+
+    if status != 0:
+        raise RuntimeError ("CMake command '" + command + "' failed")
+
+def run_make(build_dir, make_opts):
+    current_dir = os.getcwd ()
+
+    os.chdir (build_dir)
+    command = "make " + make_opts 
+    status = subprocess.call(command, shell=True)
+
+    os.chdir (current_dir)
+
+    if status != 0:
+        raise RuntimeError ("Make command '" + command + "' failed")
+
+def is_config_needed (opts):
+    config = get_config (opts)
+    build_dir = get_build_dir (config)
+    
+    return not os.path.isfile (build_dir + "/Makefile")
+
+def get_config (opts):
+    if opts.debug:
+        return DEBUG
+    elif opts.release:
+        return RELEASE
+    else:
+        raise RuntimeError ("Unknown config type")
+
+def get_lib_name (opts):
+    if opts.boost:
+        return BOOST
+    else:
+        return QUEST
+
+def get_config_dir (config):
+        return ROOT + "/" + config 
+
+def get_build_dir (config):
+        return get_config_dir (config) + "/build"
+
+def get_install_dir (opts):
+    return opts.dest 
+
+
+""" 
+Entry point 
+"""
+if __name__ == "__main__":
+    sys.exit (main ())
+
+
+###!/bin/bash
+### vim:ft=python
+##
+### FileName: build
+### Description: A script for configuring, compiling and and installing.
+### 
+### Copyright (C) 2016  K M Masum Habib <masum.habib@gmail.com>
+###
+### Created: 18 June 2014.
+##
+##default_config="Release"  # Default configuration to build
+##default_command="make"    # By default, compile everything
+##ncpu="8"
+##
+##function usage(){
+##    echo "Usage: build [debug|release] [config|test|doc|install|clean|superclean]"
+##    echo ""
+##    echo "  When no option is given, builds the project."
+##    echo ""
+##    echo "  Description of options: " 
+##    echo "    debug:            Build the debug version."
+##    echo "    release:          Build the release version."
+##    echo "    config:           Configures project using cmake."
+##    echo "    test:             Runs tests."
+##    echo "    doc:              Build documentation."
+##    echo "    install [path]:   Installs the project."
+##    echo "    clean:            Cleans compiled object files in the build folder."
+##    echo "    superclean:       Deletes build folder."
+##    echo "    help:             Shows this message."
+##}
+##
+##function get_build_dir() {
+##    local build_dir=$1/build
+##    echo $build_dir
+##}
+##
+##is_config_needed () {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##    if [[ -f $build_dir/Makefile ]]; then
+##        return 1
+##    else
+##        return 0
+##    fi
+##}
+##
+##function do_config() {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##    #echo "-D- $build_dir"
+##    mkdir -p $build_dir
+##    cd $build_dir && cmake -DCMAKE_BUILD_TYPE=$config ../../ && cd ../../
+##}
+##
+##function do_make() {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##
+##    cd $build_dir && make -j $ncpu && cd ../../
+##}
+##
+##function do_test() {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##
+##    cd $build_dir && make test ARGS="--output-on-failure --color_output=yes" && cd ../../
+##}
+##
+##function do_make_doc() {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##
+##    cd $build_dir && make doc && cd ../../
+##}
+##
+##function do_clean () {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##
+##    cd $build_dir && make clean && cd ../../
+##}
+##
+##function do_superclean () {
+##    local config=$1
+##    echo "rm -rf $config"
+##    rm -rf $config
+##}
+##
+##function do_install () {
+##    local config=$1
+##    local build_dir=$(eval get_build_dir $config)
+##
+##    cd $build_dir && cmake -DCMAKE_INSTALL_PREFIX:PATH=$install_dir ../../ \
+##            && make install && cd ../../
+##}
+##
+##config=$default_config
+##cmd=$default_command
+##install_path=""
+##while [[ $# -gt 0 ]]; do
+##    case $1 in 
+##        debug)
+##            config="Debug"
+##            ;;
+##        release)
+##            config="Release"
+##            ;;
+##        config|test|doc|clean|superclean)
+##            cmd=$1
+##            ;;
+##        install)
+##            cmd="install"
+##            shift
+##            if [[ $# -gt 0 ]]; then
+##                install_dir="$1"
+##            fi
+##            ;;
+##        *)
+##            usage
+##            exit 1
+##    esac
+##    shift
+##done
+##
+##case $cmd in
+##    config)
+##        do_config $config
+##        ;;
+##    make)
+##        if is_config_needed $config; then
+##            do_config $config
+##        fi
+##        do_make $config
+##        ;;
+##    test)
+##        do_test $config
+##        ;;
+##    doc)
+##        do_make_doc $config
+##        ;;
+##    clean)
+##        do_clean $config
+##        ;;
+##    superclean)
+##        do_superclean $config
+##        ;;
+##    install)
+##        do_install "Release"
+##        ;;
+##    *)
+##        usage
+##esac
