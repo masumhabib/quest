@@ -5,7 +5,9 @@
 
 #include "utils/random.h"
 
-//#define BOOST_TEST_DYN_LINK
+#ifndef LINK_STATIC
+#define BOOST_TEST_DYN_LINK
+#endif
 #define BOOST_TEST_MODULE LinspaceTest
 #include <boost/test/unit_test.hpp>
 
