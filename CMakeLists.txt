@@ -10,65 +10,43 @@ project(quest CXX)
 
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
-option(LINK_STATIC "Link everything statically" off)
+option(LINK_STATIC "Link everything statically" on)
 option(BUILD_BOOST "Build boost from source" off)
-#set(CMAKE_BUILD_TYPE "Debug")
+
+# For custom cmake scripts
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 # To use locally compiled libraries (Armadillo and Boost), create a file
 # that contains the local library paths and include it here. Some examples of
 # such files can be found in cmake/local folder.
 #include(cmake/local/Armadillo.cmake)
 
-# Build and run testing
-enable_testing()
-
-# For custom cmake scripts
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
-
-include(cmake/Versioning.cmake)
-get_version (QUEST_MAJOR QUEST_MINOR QUEST_PATCH QUEST_BUILD)
-
-# Start configuration
-set(QUEST_VERSION v${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH}${QUEST_BUILD})
-set(QUEST_SHORT_VERSION ${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH})
-message(STATUS "--------------------------------------------------------------")
-message(STATUS "Configuring QUEST ${QUEST_VERSION}")
-message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
-message(STATUS "--------------------------------------------------------------")
+# Path to local boost build directory 
+set(boost_root ${CMAKE_SOURCE_DIR}/dependencies/boost)
+list(APPEND CMAKE_PREFIX_PATH ${boost_root})
+# ***NOTE:*** it is important to keep python and mpi at the front of this list
+# otherwise, the build system wont build mpi.so required run Boost.MPI
+# from python.
+set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
+#set (boost_component_list "mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 
 # Ensure that we have a C++11 compiler.
 include(cmake/CXX11.cmake)
 check_for_cxx11_compiler(HAS_CXX11)
 if(NOT HAS_CXX11)
-  message(FATAL_ERROR "No C++11 compiler available!")
+    message(FATAL_ERROR "No C++11 compiler available!")
 endif(NOT HAS_CXX11)
 enable_cxx11()
 
-# C++ compiler flags
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Werror=return-type")
+#set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14")
 
 if (VERBOSE_MAKE)
     set(CMAKE_VERBOSE_MAKEFILE      on)
 endif()
 
-#Set a default build type if none was specified
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to 'Release' as none was specified.")
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-    # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
-endif()
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-
-# Libraries
-# -----------------------------------------------------------------------------
 if(LINK_STATIC)
     set(LINK_SEARCH_START_STATIC    on)
 endif()
-
-# Armadillo
-find_package(Armadillo REQUIRED)
 
 # MPI mpich2
 find_package(MPI REQUIRED)
@@ -77,51 +55,91 @@ find_package(MPI REQUIRED)
 find_package(PythonInterp 3.0 REQUIRED)
 find_package(PythonLibs 3.0 REQUIRED)
 
-# NumPy
-include(cmake/FindNumPy.cmake)
-find_package(NumPy REQUIRED)
-
-# doxygen
-find_package(Doxygen)
-
-# Boost 
-# ***NOTE:*** it is important to keep python and mpi at the front of this list
-# otherwise, the build system wont build mpi.so required run Boost.MPI
-# from python.
-set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
-
-# Shared linking of libboost_python is required for mpi::communicator
-# to work both in python and C++.
-set(Boost_USE_MULTITHREADED     off)
-if(LINK_STATIC)
-    set(Boost_USE_STATIC_LIBS       off)
-endif()
-find_package(Boost 1.55 REQUIRED python3)
-set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
-unset(Boost_LIBRARIES)
-unset(Boost_PYTHON_LIBRARIES)
-if(LINK_STATIC)
-    set(Boost_USE_STATIC_LIBS       on)
-endif()
-find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python program_options random serialization system unit_test_framework)
-
-include_directories(${Boost_INCLUDE_DIR})
-message ("DBG: ${Boost_INCLUDE_DIR}")
-message ("DBG: ${Boost_MPI_LIBRARIES}")
-
-# Prepare distribution directory
-set(QUEST_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
-set(QUEST_DIST_DIR ${QUEST_BUILD_DIR}/${PROJECT_NAME}-${QUEST_SHORT_VERSION})
-set(LIBRARY_OUTPUT_PATH ${QUEST_DIST_DIR}/lib)
-set(QUEST_TEST_DIR ${QUEST_BUILD_DIR}/tests)
-
-# installation
-install(DIRECTORY ${QUEST_DIST_DIR} DESTINATION .)
-
-# Boost
+# -----------------------------------------------------------------------------
+# Build boost library from source
+# -----------------------------------------------------------------------------
 if (BUILD_BOOST)
     add_subdirectory (dependencies/boost)
+
+# -----------------------------------------------------------------------------
+# QUEST package
+# -----------------------------------------------------------------------------
 else ()
+
+    #set(CMAKE_BUILD_TYPE "Debug")
+    
+    # Build and run testing
+    enable_testing()
+    
+    
+    
+    include(cmake/Versioning.cmake)
+    get_version (QUEST_MAJOR QUEST_MINOR QUEST_PATCH QUEST_BUILD)
+    
+    # Start configuration
+    set(QUEST_VERSION v${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH}${QUEST_BUILD})
+    set(QUEST_SHORT_VERSION ${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH})
+    message(STATUS "--------------------------------------------------------------")
+    message(STATUS "Configuring QUEST ${QUEST_VERSION}")
+    message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
+    message(STATUS "--------------------------------------------------------------")
+    
+    
+    # C++ compiler flags
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Werror=return-type")
+    
+    
+    #Set a default build type if none was specified
+    if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+        message(STATUS "Setting build type to 'Release' as none was specified.")
+        set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+        # Set the possible values of build type for cmake-gui
+        set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+    endif()
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+    
+    # Libraries
+    # -----------------------------------------------------------------------------
+    
+    # Armadillo
+    find_package(Armadillo REQUIRED)
+    
+    
+    # NumPy
+    include(cmake/FindNumPy.cmake)
+    find_package(NumPy REQUIRED)
+    
+    # doxygen
+    find_package(Doxygen)
+    
+    # Shared linking of libboost_python is required for mpi::communicator
+    # to work both in python and C++.
+    set(Boost_USE_MULTITHREADED     off)
+    if(LINK_STATIC)
+        set(Boost_USE_STATIC_LIBS       off)
+    endif()
+    find_package(Boost 1.55 REQUIRED python3)
+    set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
+    unset(Boost_LIBRARIES)
+    unset(Boost_PYTHON_LIBRARIES)
+    if(LINK_STATIC)
+        set(Boost_USE_STATIC_LIBS       on)
+    endif()
+    find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python program_options random serialization system unit_test_framework)
+    
+    include_directories(${Boost_INCLUDE_DIR})
+    message ("DBG: ${Boost_INCLUDE_DIR}")
+    message ("DBG: ${Boost_MPI_LIBRARIES}")
+    
+    # Prepare distribution directory
+    set(QUEST_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
+    set(QUEST_DIST_DIR ${QUEST_BUILD_DIR}/${PROJECT_NAME}-${QUEST_SHORT_VERSION})
+    set(LIBRARY_OUTPUT_PATH ${QUEST_DIST_DIR}/lib)
+    set(QUEST_TEST_DIR ${QUEST_BUILD_DIR}/tests)
+    
+    # installation
+    install(DIRECTORY ${QUEST_DIST_DIR} DESTINATION .)
+
     add_subdirectory(lib)
     add_subdirectory(qlog)
     add_subdirectory(pylib)

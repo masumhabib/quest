@@ -4,7 +4,7 @@
 
 #include "tmfsc/segment.h"
 
-#define BOOST_TEST_DYN_LINK
+//#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE SegmentTest
 #include <boost/test/unit_test.hpp>
 

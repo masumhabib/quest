@@ -49,6 +49,47 @@ foreach (boost_component ${boost_component_list})
     set (boost_libs ${boost_libs} --with-libraries=${boost_component})
 endforeach()
 
+
+#ExternalProject_Add (boost_mpi
+#    URL ${boost_url}
+#    URL_HASH SHA1=${boost_sha1}
+#    PREFIX ${build_path}
+#    BUILD_IN_SOURCE 1
+#    UPDATE_COMMAND ""
+#    PATCH_COMMAND ""
+#    CONFIGURE_COMMAND ${boost_bootstrap_command} --with-icu --with-python=${PYTHON_EXECUTABLE} --with-libraries=python --with-libraries=mpi --prefix=${boost_root} 
+#    BUILD_COMMAND ${boost_b2_command} variant=release debug-symbols=off threading=multi runtime-link=static link=static cxxflags="-std=c++14" include="${PYTHON_INCLUDE_DIRS}" -j8 install 
+#    INSTALL_COMMAND ""
+#)
+#
+#ExternalProject_Add_Step (boost_mpi enable_mpi
+#  COMMENT "Enabling Boost.MPI ..."
+#  COMMAND ${boost_enable_mpi} #&& ${boost_enable_python}
+#  DEPENDEES configure 
+#  DEPENDERS build
+#  WORKING_DIRECTORY ${build_path}/src/boost_mpi
+#)
+#
+#ExternalProject_Add_Step (boost_mpi remove_statics_libs
+#  COMMENT "Enabling Boost.MPI ..."
+#  COMMAND ls -la 
+#  DEPENDEES build 
+#  WORKING_DIRECTORY ${boost_root}/lib/
+#)
+
+#ExternalProject_Add (boost
+#    URL ${boost_url}
+#    URL_HASH SHA1=${boost_sha1}
+#    PREFIX ${build_path}
+#    BUILD_IN_SOURCE 1
+#    UPDATE_COMMAND ""
+#    PATCH_COMMAND ""
+#    #DEPENDS boost_mpi
+#    CONFIGURE_COMMAND ${boost_bootstrap_command} --with-icu  ${boost_libs} --prefix=${boost_root} 
+#    BUILD_COMMAND  ${boost_b2_command} variant=release debug-symbols=off threading=multi runtime-link=static link=static cxxflags="-std=c++14" include="${PYTHON_INCLUDE_DIRS}" -j8 install 
+#    INSTALL_COMMAND ""
+#)
+
 ExternalProject_Add (boost
     URL ${boost_url}
     URL_HASH SHA1=${boost_sha1}
@@ -57,11 +98,11 @@ ExternalProject_Add (boost
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
     CONFIGURE_COMMAND ${boost_bootstrap_command} --with-icu --with-python=${PYTHON_EXECUTABLE} ${boost_libs} --prefix=${boost_root} 
-    BUILD_COMMAND  ${boost_b2_command} variant=release debug-symbols=off threading=multi runtime-link=static link=static cxxflags="-std=c++14" include="${PYTHON_INCLUDE_DIRS}" -j8 install 
+    BUILD_COMMAND ${boost_b2_command} variant=release debug-symbols=off threading=multi link=shared,static runtime-link=shared cxxflags=-std=c++14 cxxflags=-fPIC include="${PYTHON_INCLUDE_DIRS}" -j8 install 
     INSTALL_COMMAND ""
 )
 
-ExternalProject_Add_Step(boost enable_mpi
+ExternalProject_Add_Step (boost enable_mpi
   COMMENT "Enabling Boost.MPI ..."
   COMMAND ${boost_enable_mpi} #&& ${boost_enable_python}
   DEPENDEES configure 
