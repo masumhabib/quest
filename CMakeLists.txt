@@ -10,7 +10,7 @@ project(quest CXX)
 
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
-option(LINK_STATIC "Link everything statically" on)
+option(LINK_STATIC "Link everything statically" off)
 option(BUILD_BOOST "Build boost from source" off)
 
 # For custom cmake scripts
@@ -46,6 +46,7 @@ endif()
 
 if(LINK_STATIC)
     set(LINK_SEARCH_START_STATIC    on)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DLINK_STATIC")
 endif()
 
 # MPI mpich2
@@ -114,18 +115,18 @@ else ()
     
     # Shared linking of libboost_python is required for mpi::communicator
     # to work both in python and C++.
-    set(Boost_USE_MULTITHREADED     off)
-    if(LINK_STATIC)
-        set(Boost_USE_STATIC_LIBS       off)
-    endif()
-    find_package(Boost 1.55 REQUIRED python3)
-    set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
-    unset(Boost_LIBRARIES)
-    unset(Boost_PYTHON_LIBRARIES)
+    #set(Boost_USE_MULTITHREADED     off)
+    #if(LINK_STATIC)
+    #    set(Boost_USE_STATIC_LIBS       off)
+    #endif()
+    #find_package(Boost 1.55 REQUIRED python3)
+    #set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
+    #unset(Boost_LIBRARIES)
+    #unset(Boost_PYTHON_LIBRARIES)
     if(LINK_STATIC)
         set(Boost_USE_STATIC_LIBS       on)
     endif()
-    find_package(Boost 1.55 REQUIRED filesystem mpi mpi_python program_options random serialization system unit_test_framework)
+    find_package(Boost 1.55 REQUIRED python3 mpi mpi_python filesystem program_options random serialization system unit_test_framework)
     
     include_directories(${Boost_INCLUDE_DIR})
     message ("DBG: ${Boost_INCLUDE_DIR}")
