@@ -113,24 +113,12 @@ else ()
     # doxygen
     find_package(Doxygen)
     
-    # Shared linking of libboost_python is required for mpi::communicator
-    # to work both in python and C++.
-    #set(Boost_USE_MULTITHREADED     off)
-    #if(LINK_STATIC)
-    #    set(Boost_USE_STATIC_LIBS       off)
-    #endif()
-    #find_package(Boost 1.55 REQUIRED python3)
-    #set(Boost_PYTHON_LIBRARIES_SHARED ${Boost_PYTHON_LIBRARIES})
-    #unset(Boost_LIBRARIES)
-    #unset(Boost_PYTHON_LIBRARIES)
     if(LINK_STATIC)
         set(Boost_USE_STATIC_LIBS       on)
     endif()
     find_package(Boost 1.55 REQUIRED python3 mpi mpi_python filesystem program_options random serialization system unit_test_framework)
     
     include_directories(${Boost_INCLUDE_DIR})
-    message ("DBG: ${Boost_INCLUDE_DIR}")
-    message ("DBG: ${Boost_MPI_LIBRARIES}")
     
     # Prepare distribution directory
     set(QUEST_BUILD_DIR ${PROJECT_BINARY_DIR}/..)
