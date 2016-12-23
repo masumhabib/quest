@@ -1,3 +1,0 @@
-repository='external project URL'
-module='https://sourceforge.net/projects/arma/files/armadillo-7.500.2.tar.xz'
-tag='SHA1=75b2266c57f8c51ba76979ee98e6338cb4c9f5fc'
