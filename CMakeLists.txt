@@ -12,6 +12,7 @@ project(quest CXX)
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
 option(BUILD_BOOST "Build boost from source" off)
+option(BUILD_ARMADILLO "Build boost from source" off)
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
@@ -29,6 +30,13 @@ list(APPEND CMAKE_PREFIX_PATH ${boost_root})
 # from python.
 set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 #set (boost_component_list "mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
+
+# Path to local armadillo build directory 
+set(armadillo_root ${CMAKE_SOURCE_DIR}/dependencies/armadillo)
+list(APPEND CMAKE_PREFIX_PATH ${armadillo_root})
+# ***NOTE:*** it is important to keep python and mpi at the front of this list
+# otherwise, the build system wont build mpi.so required run Boost.MPI
+# from python.
 
 # Ensure that we have a C++11 compiler.
 include(cmake/CXX11.cmake)
@@ -61,6 +69,12 @@ find_package(PythonLibs 3.0 REQUIRED)
 # -----------------------------------------------------------------------------
 if (BUILD_BOOST)
     add_subdirectory (dependencies/boost)
+
+# -----------------------------------------------------------------------------
+# Build armadillo library from source
+# -----------------------------------------------------------------------------
+elseif (BUILD_ARMADILLO)
+    add_subdirectory (dependencies/armadillo)
 
 # -----------------------------------------------------------------------------
 # QUEST package

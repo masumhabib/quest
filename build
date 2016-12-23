@@ -15,11 +15,12 @@
 import os, sys, subprocess, shutil
 import argparse, textwrap
 
-ROOT    = os.path.dirname(os.path.realpath(__file__))
-DEBUG   = "Debug"
-RELEASE = "Debug"
-QUEST   = "QUEST"
-BOOST   = "Boost"
+ROOT            = os.path.dirname(os.path.realpath(__file__))
+DEBUG           = "Debug"
+RELEASE         = "Debug"
+QUEST           = "QUEST"
+BOOST           = "Boost"
+ARMADILLO       = "Armadillo"
 
 def main ():
     opts = parse_args ()
@@ -42,6 +43,8 @@ def parse_args  ():
             help="build documentation")
     parser.add_argument("--boost", action="store_true", 
             help="build boost library from source")
+    parser.add_argument("--armadillo", action="store_true", 
+            help="build armadillo library from source")
     parser.add_argument("--dest", type=str, metavar="/path/to/destination",
             help="destination path where the action will be performed.")
     parser.add_argument("-n", "--num_cpus", type=int, metavar="num_cpus", default=8,
@@ -116,9 +119,11 @@ def do_config(opts):
 
     cmake_opts = "-DCMAKE_BUILD_TYPE=" + config + " ../../"
     if library == QUEST:
-        cmake_opts += " -DBUILD_BOOST=OFF"
+        cmake_opts += " -DBUILD_BOOST=OFF -DBUILD_ARMADILLO=OFF"
     elif library == BOOST:
         cmake_opts += " -DBUILD_BOOST=ON"
+    elif library == ARMADILLO:
+        cmake_opts += " -DBUILD_ARMADILLO=ON"
 
     run_cmake (build_dir, cmake_opts)
 
@@ -215,6 +220,8 @@ def get_config (opts):
 def get_lib_name (opts):
     if opts.boost:
         return BOOST
+    elif opts.armadillo:
+        return ARMADILLO
     else:
         return QUEST
 

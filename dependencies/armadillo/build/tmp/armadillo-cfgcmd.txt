@@ -1,0 +1,1 @@
+cmd='/usr/bin/cmake;-GUnix Makefiles;/home/masum/src/quest/dependencies/armadillo/build/src/armadillo'
