@@ -34,9 +34,9 @@ def parse_args  ():
             formatter_class=argparse.RawTextHelpFormatter
     )
     
-    parser.add_argument("-d", "--debug", action="store_true", default=True,
+    parser.add_argument("-d", "--debug", action="store_true", 
             help="build QUEST with debug mode")
-    parser.add_argument("-r", "--release", action="store_true",
+    parser.add_argument("-r", "--release", action="store_true", default=True,
             help="build QUEST with release mode")
     parser.add_argument("--doc", action="store_true", 
             help="build documentation")
@@ -44,14 +44,14 @@ def parse_args  ():
             help="build boost library from source")
     parser.add_argument("--dest", type=str, metavar="/path/to/destination",
             help="destination path where the action will be performed.")
-    parser.add_argument("--num_cpus", type=int, metavar="num_cpus", default=8,
+    parser.add_argument("-n", "--num_cpus", type=int, metavar="num_cpus", default=8,
             help="number of CPUs that will be used for compilation")
 
     commands = parser.add_argument_group("commands") 
-    commands.add_argument("command", type=str,
+    commands.add_argument("command", type=str, nargs='?', default='make',
             choices=["config", "make", "install", "clean", "superclean", 
                      "test", "help"],
-            default='make',
+            
             help=textwrap.dedent(
 '''command to execute: 
     config:           configure project using cmake.
