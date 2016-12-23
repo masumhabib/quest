@@ -55,9 +55,10 @@ ExternalProject_Add (armadillo
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
+    CONFIGURE_COMMAND cmake -DCMAKE_INSTALL_PREFIX= .
     #CONFIGURE_COMMAND ${armadillo_bootstrap_command} --with-icu --with-python=${PYTHON_EXECUTABLE} ${armadillo_libs} --prefix=${armadillo_root} 
     #BUILD_COMMAND ${armadillo_b2_command} variant=release debug-symbols=off threading=multi link=shared,static runtime-link=shared cxxflags=-std=c++14 cxxflags=-fPIC include="${PYTHON_INCLUDE_DIRS}" -j8 install 
-    #INSTALL_COMMAND ""
+    INSTALL_COMMAND make install DESTDIR=${armadillo_root}
 )
 
 #ExternalProject_Add_Step (armadillo enable_mpi
