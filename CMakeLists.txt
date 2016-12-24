@@ -34,9 +34,6 @@ set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_opt
 # Path to local armadillo build directory 
 set(armadillo_root ${CMAKE_SOURCE_DIR}/dependencies/armadillo)
 list(APPEND CMAKE_PREFIX_PATH ${armadillo_root})
-# ***NOTE:*** it is important to keep python and mpi at the front of this list
-# otherwise, the build system wont build mpi.so required run Boost.MPI
-# from python.
 
 # Ensure that we have a C++11 compiler.
 include(cmake/CXX11.cmake)
@@ -102,6 +99,8 @@ else ()
     
     # C++ compiler flags
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Werror=return-type")
+    # Just to suppress deprecated warning from boost for using auto_ptr
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
     
     
     #Set a default build type if none was specified
@@ -118,6 +117,7 @@ else ()
     
     # Armadillo
     find_package(Armadillo REQUIRED)
+    message ("DBG: ${ARMADILLO_INCLUDE_DIRS}")
     
     
     # NumPy

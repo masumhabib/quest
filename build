@@ -156,7 +156,13 @@ def do_superclean (opts):
             dir_path = boost_root + "/" + dirname
             print ("II> Deleting " + dir_path)
             shutil.rmtree (dir_path, ignore_errors = True)
-           
+    elif library == ARMADILLO:
+        armadillo_root = ROOT + "/dependencies/armadillo"
+        for dirname in ["build", "include", "lib64", "share"]:
+            dir_path = armadillo_root + "/" + dirname
+            print ("II> Deleting " + dir_path)
+            shutil.rmtree (dir_path, ignore_errors = True)
+          
 def do_test(opts):
     config = get_config (opts)
     build_dir = get_build_dir (config)
