@@ -12,6 +12,8 @@ project(quest CXX)
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
 option(BUILD_BOOST "Build boost from source" off)
+option(BUILD_BLAS "Build blas from source" off)
+option(BUILD_LAPACK "Build lapack from source" off)
 option(BUILD_ARMADILLO "Build boost from source" off)
 
 # For custom cmake scripts
@@ -68,6 +70,12 @@ if (BUILD_BOOST)
     add_subdirectory (dependencies/boost)
 
 # -----------------------------------------------------------------------------
+# Build lapack library from source
+# -----------------------------------------------------------------------------
+elseif (BUILD_LAPACK)
+    add_subdirectory (dependencies/lapack)
+
+# -----------------------------------------------------------------------------
 # Build armadillo library from source
 # -----------------------------------------------------------------------------
 elseif (BUILD_ARMADILLO)
@@ -117,7 +125,6 @@ else ()
     
     # Armadillo
     find_package(Armadillo REQUIRED)
-    message ("DBG: ${ARMADILLO_INCLUDE_DIRS}")
     
     
     # NumPy
