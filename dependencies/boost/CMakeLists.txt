@@ -13,7 +13,7 @@ set (boost_version "1.62.0")
 set (boost_sha1 "34a745901533cef1a5c066199b50fe83368b961b")
 
 # Path to our working location
-set(boost_root ${CMAKE_SOURCE_DIR}/dependencies/boost)
+#set(boost_root ${CMAKE_SOURCE_DIR}/dependencies/boost)
 
 set (build_dir "build")
 
@@ -70,9 +70,9 @@ ExternalProject_Add_Step (boost enable_mpi
   WORKING_DIRECTORY ${build_path}/src/boost
 )
 
-set(Boost_LIBRARY_DIR ${boost_root}/lib PARENT_SCOPE)
-set(Boost_INCLUDE_DIR ${boost_root}/include PARENT_SCOPE)
-list(APPEND CMAKE_PREFIX_PATH ${boost_root})
-set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} PARENT_SCOPE)
+#set(Boost_LIBRARY_DIR ${boost_root}/lib PARENT_SCOPE)
+#set(Boost_INCLUDE_DIR ${boost_root}/include PARENT_SCOPE)
+#list(APPEND CMAKE_PREFIX_PATH ${boost_root})
+#set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} PARENT_SCOPE)
 
 

@@ -16,12 +16,12 @@ import os, sys, subprocess, shutil
 import argparse, textwrap
 
 ROOT            = os.path.dirname(os.path.realpath(__file__))
-DEBUG           = "Debug"
-RELEASE         = "Debug"
 QUEST           = "QUEST"
 BOOST           = "Boost"
 ARMADILLO       = "Armadillo"
 LAPACK          = "LAPACK"
+DEBUG           = "Debug"
+RELEASE         = "Release"
 
 def main ():
     opts = parse_args ()

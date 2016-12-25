@@ -34,6 +34,11 @@ set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_opt
 #set (boost_component_list "mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 
 # Path to local armadillo build directory 
+set(lapack_root ${CMAKE_SOURCE_DIR}/dependencies/lapack)
+list(APPEND CMAKE_PREFIX_PATH ${lapack_root})
+list(APPEND CMAKE_PREFIX_PATH ${lapack_root}/lib64/)
+
+# Path to local armadillo build directory 
 set(armadillo_root ${CMAKE_SOURCE_DIR}/dependencies/armadillo)
 list(APPEND CMAKE_PREFIX_PATH ${armadillo_root})
 
