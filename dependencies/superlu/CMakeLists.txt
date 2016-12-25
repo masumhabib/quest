@@ -31,7 +31,7 @@ ExternalProject_Add (superlu
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    CONFIGURE_COMMAND cmake -Denable_blaslib=OFF -Denable_tests=OFF -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/ -DCMAKE_INSTALL_PREFIX= .
+    CONFIGURE_COMMAND cmake -Denable_blaslib=OFF -Denable_tests=OFF -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/ -DCMAKE_C_FLAGS=-fPIC -DCMAKE_Fortran_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX= .
     INSTALL_COMMAND make install DESTDIR=${superlu_root}
 )
 

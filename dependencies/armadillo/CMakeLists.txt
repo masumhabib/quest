@@ -30,7 +30,7 @@ ExternalProject_Add (armadillo
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    CONFIGURE_COMMAND cmake -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/ -DCMAKE_INSTALL_PREFIX= .
+    CONFIGURE_COMMAND cmake -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/$<SEMICOLON>${arpack_root}/lib64$<SEMICOLON>${superlu_root}/lib64 -DCMAKE_INSTALL_PREFIX= .
     INSTALL_COMMAND make install DESTDIR=${armadillo_root}
 )
 
