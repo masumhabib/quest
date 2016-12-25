@@ -18,8 +18,10 @@ import argparse, textwrap
 ROOT            = os.path.dirname(os.path.realpath(__file__))
 QUEST           = "QUEST"
 BOOST           = "Boost"
-ARMADILLO       = "Armadillo"
 LAPACK          = "LAPACK"
+ARPACK          = "ARPACK"
+SUPERLU         = "SUPERLU"
+ARMADILLO       = "Armadillo"
 DEBUG           = "Debug"
 RELEASE         = "Release"
 
@@ -44,12 +46,16 @@ def parse_args  ():
             help="build documentation")
     parser.add_argument("--boost", action="store_true", 
             help="build boost library from source")
-    parser.add_argument("--armadillo", action="store_true", 
-            help="build armadillo library from source")
     parser.add_argument("--blas", action="store_true", 
             help="build blas library from source")
     parser.add_argument("--lapack", action="store_true", 
             help="build lapack library from source")
+    parser.add_argument("--arpack", action="store_true", 
+            help="build arpack library from source")
+    parser.add_argument("--superlu", action="store_true", 
+            help="build superlu library from source")
+    parser.add_argument("--armadillo", action="store_true", 
+            help="build armadillo library from source")
     parser.add_argument("--dest", type=str, metavar="/path/to/destination",
             help="destination path where the action will be performed.")
     parser.add_argument("-n", "--num_cpus", type=int, metavar="num_cpus", default=8,
@@ -131,6 +137,10 @@ def do_config(opts):
         cmake_opts += " -DBUILD_ARMADILLO=ON"
     elif library == LAPACK:
         cmake_opts += " -DBUILD_LAPACK=ON"
+    elif library == ARPACK:
+        cmake_opts += " -DBUILD_ARPACK=ON"
+    elif library == SUPERLU:
+        cmake_opts += " -DBUILD_SUPERLU=ON"
 
     run_cmake (build_dir, cmake_opts)
 
@@ -175,7 +185,19 @@ def do_superclean (opts):
             dir_path = lapack_root + "/" + dirname
             print ("II> Deleting " + dir_path)
             shutil.rmtree (dir_path, ignore_errors = True)
-        
+    elif library == ARPACK:
+        arpack_root = ROOT + "/dependencies/arpack"
+        for dirname in ["build", "include", "lib", "lib64", "share"]:
+            dir_path = arpack_root + "/" + dirname
+            print ("II> Deleting " + dir_path)
+            shutil.rmtree (dir_path, ignore_errors = True)
+    elif library == SUPERLU:
+        superlu_root = ROOT + "/dependencies/superlu"
+        for dirname in ["build", "include", "lib", "lib64", "share"]:
+            dir_path = superlu_root + "/" + dirname
+            print ("II> Deleting " + dir_path)
+            shutil.rmtree (dir_path, ignore_errors = True)
+      
 def do_test(opts):
     config = get_config (opts)
     build_dir = get_build_dir (config)
@@ -243,6 +265,10 @@ def get_lib_name (opts):
         return ARMADILLO
     elif opts.lapack:
         return LAPACK
+    elif opts.arpack:
+        return ARPACK
+    elif opts.superlu:
+        return SUPERLU
     else:
         return QUEST
 

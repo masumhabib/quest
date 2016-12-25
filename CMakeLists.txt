@@ -14,6 +14,8 @@ option(LINK_STATIC "Link everything statically" off)
 option(BUILD_BOOST "Build boost from source" off)
 option(BUILD_BLAS "Build blas from source" off)
 option(BUILD_LAPACK "Build lapack from source" off)
+option(BUILD_ARPACK "Build arpack from source" off)
+option(BUILD_SUPERLU "Build superlu from source" off)
 option(BUILD_ARMADILLO "Build boost from source" off)
 
 # For custom cmake scripts
@@ -33,10 +35,18 @@ list(APPEND CMAKE_PREFIX_PATH ${boost_root})
 set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 #set (boost_component_list "mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 
-# Path to local armadillo build directory 
+# Path to local lapack build directory 
 set(lapack_root ${CMAKE_SOURCE_DIR}/dependencies/lapack)
 list(APPEND CMAKE_PREFIX_PATH ${lapack_root})
 list(APPEND CMAKE_PREFIX_PATH ${lapack_root}/lib64/)
+
+# Path to local arpack build directory 
+set(arpack_root ${CMAKE_SOURCE_DIR}/dependencies/arpack)
+list(APPEND CMAKE_PREFIX_PATH ${arpack})
+
+# Path to local superlu build directory 
+set(superlu_root ${CMAKE_SOURCE_DIR}/dependencies/superlu)
+list(APPEND CMAKE_PREFIX_PATH ${superlu})
 
 # Path to local armadillo build directory 
 set(armadillo_root ${CMAKE_SOURCE_DIR}/dependencies/armadillo)
@@ -79,6 +89,18 @@ if (BUILD_BOOST)
 # -----------------------------------------------------------------------------
 elseif (BUILD_LAPACK)
     add_subdirectory (dependencies/lapack)
+
+# -----------------------------------------------------------------------------
+# Build arpack library from source
+# -----------------------------------------------------------------------------
+elseif (BUILD_ARPACK)
+    add_subdirectory (dependencies/arpack)
+
+# -----------------------------------------------------------------------------
+# Build superlu library from source
+# -----------------------------------------------------------------------------
+elseif (BUILD_SUPERLU)
+    add_subdirectory (dependencies/superlu)
 
 # -----------------------------------------------------------------------------
 # Build armadillo library from source
