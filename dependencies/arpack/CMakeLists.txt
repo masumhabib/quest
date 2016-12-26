@@ -7,8 +7,12 @@ cmake_minimum_required(VERSION 3.0)
 set (arpack_version "master")
 set (arpack_sha1 "7220a9bc9c766cb513007f313b804d88f110c228")
 
+# MPI for Boost.MPI
+#find_package(MPI REQUIRED)
+
 # Path to our working location
-#set(arpack_root ${CMAKE_SOURCE_DIR}/dependencies/arpack)
+set (arpack_root ${CMAKE_SOURCE_DIR})
+set (lapack_lib ${arpack_root}/../lapack/lib64)
 
 set (build_dir "build")
 
@@ -31,7 +35,7 @@ ExternalProject_Add (arpack
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    CONFIGURE_COMMAND cmake -DEXAMPLES=OFF -DMPI=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_Fortran_FLAGS=-fPIC -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/ -DCMAKE_INSTALL_PREFIX= .
+    CONFIGURE_COMMAND cmake -DEXAMPLES=OFF -DMPI=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_Fortran_FLAGS=-fPIC -DCMAKE_PREFIX_PATH=${lapack_lib} -DCMAKE_INSTALL_PREFIX= .
     INSTALL_COMMAND make install DESTDIR=${arpack_root}
 )
 

@@ -8,7 +8,7 @@ set (lapack_version "3.6.1")
 set (lapack_sha1 "7220a9bc9c766cb513007f313b804d88f110c228")
 
 # Path to our working location
-#set(lapack_root ${CMAKE_SOURCE_DIR}/dependencies/lapack)
+set(lapack_root ${CMAKE_SOURCE_DIR})
 
 set (build_dir "build")
 

@@ -7,13 +7,24 @@
 cmake_minimum_required(VERSION 3.0)
 
 # Boost settings
-#set (boost_version "1.60.0")
-#set (boost_sha1 "ac74db1324e6507a309c5b139aea41af624c8110")
 set (boost_version "1.62.0")
 set (boost_sha1 "34a745901533cef1a5c066199b50fe83368b961b")
 
+include (${CMAKE_SOURCE_DIR}/../../cmake/boost_components.cmake)
+
+# Just to suppress deprecated warning from boost for using auto_ptr
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
+# Python libs for Boost.Python
+find_package(PythonInterp 3.0 REQUIRED)
+find_package(PythonLibs 3.0 REQUIRED)
+
+# MPI for Boost.MPI
+find_package(MPI REQUIRED)
+
+
 # Path to our working location
-#set(boost_root ${CMAKE_SOURCE_DIR}/dependencies/boost)
+set(boost_root ${CMAKE_SOURCE_DIR})
 
 set (build_dir "build")
 

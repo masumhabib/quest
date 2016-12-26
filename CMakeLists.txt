@@ -11,15 +11,16 @@ project(quest CXX)
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
 option(LINK_STATIC "Link everything statically" off)
-option(BUILD_BOOST "Build boost from source" off)
-option(BUILD_BLAS "Build blas from source" off)
-option(BUILD_LAPACK "Build lapack from source" off)
-option(BUILD_ARPACK "Build arpack from source" off)
-option(BUILD_SUPERLU "Build superlu from source" off)
-option(BUILD_ARMADILLO "Build boost from source" off)
+#option(BUILD_BOOST "Build boost from source" off)
+#option(BUILD_BLAS "Build blas from source" off)
+#option(BUILD_LAPACK "Build lapack from source" off)
+#option(BUILD_ARPACK "Build arpack from source" off)
+#option(BUILD_SUPERLU "Build superlu from source" off)
+#option(BUILD_ARMADILLO "Build boost from source" off)
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+include (cmake/boost_components.cmake)
 
 # To use locally compiled libraries (Armadillo and Boost), create a file
 # that contains the local library paths and include it here. Some examples of
@@ -32,7 +33,7 @@ list(APPEND CMAKE_PREFIX_PATH ${boost_root})
 # ***NOTE:*** it is important to keep python and mpi at the front of this list
 # otherwise, the build system wont build mpi.so required run Boost.MPI
 # from python.
-set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
+#set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 #set (boost_component_list "mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 
 # Path to local lapack build directory 
@@ -78,40 +79,40 @@ find_package(MPI REQUIRED)
 find_package(PythonInterp 3.0 REQUIRED)
 find_package(PythonLibs 3.0 REQUIRED)
 
-# -----------------------------------------------------------------------------
-# Build boost library from source
-# -----------------------------------------------------------------------------
-if (BUILD_BOOST)
-    add_subdirectory (dependencies/boost)
-
-# -----------------------------------------------------------------------------
-# Build lapack library from source
-# -----------------------------------------------------------------------------
-elseif (BUILD_LAPACK)
-    add_subdirectory (dependencies/lapack)
-
-# -----------------------------------------------------------------------------
-# Build arpack library from source
-# -----------------------------------------------------------------------------
-elseif (BUILD_ARPACK)
-    add_subdirectory (dependencies/arpack)
-
-# -----------------------------------------------------------------------------
-# Build superlu library from source
-# -----------------------------------------------------------------------------
-elseif (BUILD_SUPERLU)
-    add_subdirectory (dependencies/superlu)
-
-# -----------------------------------------------------------------------------
-# Build armadillo library from source
-# -----------------------------------------------------------------------------
-elseif (BUILD_ARMADILLO)
-    add_subdirectory (dependencies/armadillo)
-
-# -----------------------------------------------------------------------------
-# QUEST package
-# -----------------------------------------------------------------------------
-else ()
+## -----------------------------------------------------------------------------
+## Build boost library from source
+## -----------------------------------------------------------------------------
+#if (BUILD_BOOST)
+#    add_subdirectory (dependencies/boost)
+#
+## -----------------------------------------------------------------------------
+## Build lapack library from source
+## -----------------------------------------------------------------------------
+#elseif (BUILD_LAPACK)
+#    add_subdirectory (dependencies/lapack)
+#
+## -----------------------------------------------------------------------------
+## Build arpack library from source
+## -----------------------------------------------------------------------------
+#elseif (BUILD_ARPACK)
+#    add_subdirectory (dependencies/arpack)
+#
+## -----------------------------------------------------------------------------
+## Build superlu library from source
+## -----------------------------------------------------------------------------
+#elseif (BUILD_SUPERLU)
+#    add_subdirectory (dependencies/superlu)
+#
+## -----------------------------------------------------------------------------
+## Build armadillo library from source
+## -----------------------------------------------------------------------------
+#elseif (BUILD_ARMADILLO)
+#    add_subdirectory (dependencies/armadillo)
+#
+## -----------------------------------------------------------------------------
+## QUEST package
+## -----------------------------------------------------------------------------
+#else ()
 
     #set(CMAKE_BUILD_TYPE "Debug")
     
@@ -184,7 +185,7 @@ else ()
     add_subdirectory(quester)
     add_subdirectory(tests)
     add_subdirectory(doc)
-endif()
+    #endif()
 
 #add_subdirectory (dependencies)
 

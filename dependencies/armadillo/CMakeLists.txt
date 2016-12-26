@@ -8,7 +8,10 @@ set (armadillo_version "7.500.2")
 set (armadillo_sha1 "75b2266c57f8c51ba76979ee98e6338cb4c9f5fc")
 
 # Path to our working location
-#set(armadillo_root ${CMAKE_SOURCE_DIR}/dependencies/armadillo)
+set(armadillo_root ${CMAKE_SOURCE_DIR})
+set (lapack_lib ${armadillo_root}/../lapack/lib64)
+set (superlu_lib ${armadillo_root}/../superlu/lib64)
+set (arpack_lib ${armadillo_root}/../arpack/lib64)
 
 set (build_dir "build")
 
@@ -30,7 +33,7 @@ ExternalProject_Add (armadillo
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    CONFIGURE_COMMAND cmake -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/$<SEMICOLON>${arpack_root}/lib64$<SEMICOLON>${superlu_root}/lib64 -DCMAKE_INSTALL_PREFIX= .
+    CONFIGURE_COMMAND cmake -DCMAKE_PREFIX_PATH=${lapack_lib}$<SEMICOLON>${arpack_lib}$<SEMICOLON>${superlu_lib} -DCMAKE_INSTALL_PREFIX= .
     INSTALL_COMMAND make install DESTDIR=${armadillo_root}
 )
 

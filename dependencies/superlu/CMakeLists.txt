@@ -8,7 +8,8 @@ set (superlu_version "5.2.1")
 set (superlu_sha1 "7220a9bc9c766cb513007f313b804d88f110c228")
 
 # Path to our working location
-#set(superlu_root ${CMAKE_SOURCE_DIR}/dependencies/superlu)
+set(superlu_root ${CMAKE_SOURCE_DIR})
+set (lapack_lib ${arpack_root}/../lapack/lib64)
 
 set (build_dir "build")
 
@@ -31,7 +32,7 @@ ExternalProject_Add (superlu
     BUILD_IN_SOURCE 1
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    CONFIGURE_COMMAND cmake -Denable_blaslib=OFF -Denable_tests=OFF -DCMAKE_PREFIX_PATH=${lapack_root}/lib64/ -DCMAKE_C_FLAGS=-fPIC -DCMAKE_Fortran_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX= .
+    CONFIGURE_COMMAND cmake -Denable_blaslib=OFF -Denable_tests=OFF -DCMAKE_PREFIX_PATH=${lapack_lib} -DCMAKE_C_FLAGS=-fPIC -DCMAKE_Fortran_FLAGS=-fPIC -DCMAKE_INSTALL_PREFIX= .
     INSTALL_COMMAND make install DESTDIR=${superlu_root}
 )
 
