@@ -22,24 +22,24 @@ include (cmake/boost_components.cmake)
 #include(cmake/local/Armadillo.cmake)
 
 # Path to local boost build directory 
-set(boost_root ${CMAKE_SOURCE_DIR}/dependencies/boost)
+set(boost_root ${CMAKE_SOURCE_DIR}/third_party/boost)
 list(APPEND CMAKE_PREFIX_PATH ${boost_root})
 
 # Path to local lapack build directory 
-set(lapack_root ${CMAKE_SOURCE_DIR}/dependencies/lapack)
+set(lapack_root ${CMAKE_SOURCE_DIR}/third_party/lapack)
 list(APPEND CMAKE_PREFIX_PATH ${lapack_root})
 list(APPEND CMAKE_PREFIX_PATH ${lapack_root}/lib64/)
 
 # Path to local arpack build directory 
-set(arpack_root ${CMAKE_SOURCE_DIR}/dependencies/arpack)
+set(arpack_root ${CMAKE_SOURCE_DIR}/third_party/arpack)
 list(APPEND CMAKE_PREFIX_PATH ${arpack})
 
 # Path to local superlu build directory 
-set(superlu_root ${CMAKE_SOURCE_DIR}/dependencies/superlu)
+set(superlu_root ${CMAKE_SOURCE_DIR}/third_party/superlu)
 list(APPEND CMAKE_PREFIX_PATH ${superlu})
 
 # Path to local armadillo build directory 
-set(armadillo_root ${CMAKE_SOURCE_DIR}/dependencies/armadillo)
+set(armadillo_root ${CMAKE_SOURCE_DIR}/third_party/armadillo)
 list(APPEND CMAKE_PREFIX_PATH ${armadillo_root})
 
 # Ensure that we have a C++11 compiler.

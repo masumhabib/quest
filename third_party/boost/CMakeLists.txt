@@ -69,7 +69,7 @@ ExternalProject_Add (boost
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
     CONFIGURE_COMMAND ${boost_bootstrap_command} --with-icu --with-python=${PYTHON_EXECUTABLE} ${boost_libs} --prefix=${boost_root} 
-    BUILD_COMMAND ${boost_b2_command} variant=release debug-symbols=off threading=multi link=shared,static runtime-link=shared cxxflags=-std=c++14 cxxflags=-fPIC include="${PYTHON_INCLUDE_DIRS}" -j8 install 
+    BUILD_COMMAND ${boost_b2_command} variant=release debug-symbols=off threading=multi link=shared,static runtime-link=shared cxxflags=-std=c++14 cxxflags=-fPIC cxxflags=-Wno-deprecated-declarations include="${PYTHON_INCLUDE_DIRS}" -j8 install 
     INSTALL_COMMAND ""
 )
 
