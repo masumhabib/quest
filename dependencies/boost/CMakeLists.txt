@@ -81,9 +81,3 @@ ExternalProject_Add_Step (boost enable_mpi
   WORKING_DIRECTORY ${build_path}/src/boost
 )
 
-#set(Boost_LIBRARY_DIR ${boost_root}/lib PARENT_SCOPE)
-#set(Boost_INCLUDE_DIR ${boost_root}/include PARENT_SCOPE)
-#list(APPEND CMAKE_PREFIX_PATH ${boost_root})
-#set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} PARENT_SCOPE)
-
-

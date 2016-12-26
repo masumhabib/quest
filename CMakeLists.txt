@@ -119,9 +119,7 @@ find_package(Doxygen)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-#find_package(Boost 1.55 REQUIRED python3 mpi mpi_python filesystem program_options random serialization system unit_test_framework)
 find_package(Boost 1.55 REQUIRED python3 mpi_python ${boost_component_list})
-#set (boost_component_list "python;mpi;unit_test_framework;filesystem;program_options;random;serialization;system")
 
 include_directories(${Boost_INCLUDE_DIR})
 
