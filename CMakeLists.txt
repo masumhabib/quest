@@ -10,10 +10,42 @@ project(quest CXX)
 
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
-option(LINK_STATIC "Link everything statically" off)
+option(LINK_STATIC "Link everything statically" on)
+
+# Ensure that we have a C++11 compiler.
+include(cmake/CXX11.cmake)
+check_for_cxx11_compiler(HAS_CXX11)
+if(NOT HAS_CXX11)
+    message(FATAL_ERROR "No C++11 compiler available!")
+endif(NOT HAS_CXX11)
+enable_cxx11()
+#set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14")
+
+# Version number
+include(cmake/Versioning.cmake)
+get_version (QUEST_MAJOR QUEST_MINOR QUEST_PATCH QUEST_BUILD)
+
+set(QUEST_VERSION v${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH}${QUEST_BUILD})
+set(QUEST_SHORT_VERSION ${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH})
+message(STATUS "--------------------------------------------------------------")
+message(STATUS "Configuring QUEST ${QUEST_VERSION}")
+message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "--------------------------------------------------------------")
+
+# Prefer static libs 
+if (LINK_STATIC)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DLINK_STATIC")
+    set(LINK_SEARCH_START_STATIC    on)
+    if (UNIX)
+        set (CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    elseif (WIN32)
+        set (CMAKE_FIND_LIBRARY_SUFFIXES .lib ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    endif ()
+endif ()
 
 # For custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+include (cmake/FindNumPy.cmake)
 include (cmake/boost_components.cmake)
 
 # To use locally compiled libraries (Armadillo and Boost), create a file
@@ -42,41 +74,15 @@ list(APPEND CMAKE_PREFIX_PATH ${superlu})
 set(armadillo_root ${CMAKE_SOURCE_DIR}/third_party/armadillo)
 list(APPEND CMAKE_PREFIX_PATH ${armadillo_root})
 
-# Ensure that we have a C++11 compiler.
-include(cmake/CXX11.cmake)
-check_for_cxx11_compiler(HAS_CXX11)
-if(NOT HAS_CXX11)
-    message(FATAL_ERROR "No C++11 compiler available!")
-endif(NOT HAS_CXX11)
-enable_cxx11()
-
-#set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14")
+# Find linread algebra libraries: MKL, ACML, LAPACK/BLAS
+include (cmake/FindLinearAlgebraLibs.cmake)
 
 if (VERBOSE_MAKE)
     set(CMAKE_VERBOSE_MAKEFILE      on)
 endif()
 
-if(LINK_STATIC)
-    set(LINK_SEARCH_START_STATIC    on)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DLINK_STATIC")
-endif()
-
-
-#set(CMAKE_BUILD_TYPE "Debug")
-
 # Build and run testing
 enable_testing()
-
-include(cmake/Versioning.cmake)
-get_version (QUEST_MAJOR QUEST_MINOR QUEST_PATCH QUEST_BUILD)
-
-# Start configuration
-set(QUEST_VERSION v${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH}${QUEST_BUILD})
-set(QUEST_SHORT_VERSION ${QUEST_MAJOR}.${QUEST_MINOR}.${QUEST_PATCH})
-message(STATUS "--------------------------------------------------------------")
-message(STATUS "Configuring QUEST ${QUEST_VERSION}")
-message(STATUS "System: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
-message(STATUS "--------------------------------------------------------------")
 
 
 # C++ compiler flags
@@ -110,7 +116,6 @@ find_package(Armadillo REQUIRED)
 
 
 # NumPy
-include(cmake/FindNumPy.cmake)
 find_package(NumPy REQUIRED)
 
 # doxygen
