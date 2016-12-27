@@ -34,8 +34,9 @@ message(STATUS "--------------------------------------------------------------")
 
 # Prefer static libs 
 if (LINK_STATIC)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DLINK_STATIC")
-    set(LINK_SEARCH_START_STATIC    on)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DLINK_STATIC")
+    #set(LINK_SEARCH_START_STATIC    on)
+    #set(LINK_SEARCH_END_STATIC    on)
     if (UNIX)
         set (CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
     elseif (WIN32)
@@ -60,15 +61,15 @@ list(APPEND CMAKE_PREFIX_PATH ${boost_root})
 # Path to local lapack build directory 
 set(lapack_root ${CMAKE_SOURCE_DIR}/third_party/lapack)
 list(APPEND CMAKE_PREFIX_PATH ${lapack_root})
-list(APPEND CMAKE_PREFIX_PATH ${lapack_root}/lib64/)
+#list(APPEND CMAKE_PREFIX_PATH ${lapack_root}/lib64/)
 
 # Path to local arpack build directory 
 set(arpack_root ${CMAKE_SOURCE_DIR}/third_party/arpack)
-list(APPEND CMAKE_PREFIX_PATH ${arpack})
+list(APPEND CMAKE_PREFIX_PATH ${arpack_root})
 
 # Path to local superlu build directory 
 set(superlu_root ${CMAKE_SOURCE_DIR}/third_party/superlu)
-list(APPEND CMAKE_PREFIX_PATH ${superlu})
+list(APPEND CMAKE_PREFIX_PATH ${superlu_root})
 
 # Path to local armadillo build directory 
 set(armadillo_root ${CMAKE_SOURCE_DIR}/third_party/armadillo)
@@ -86,6 +87,7 @@ enable_testing()
 
 
 # C++ compiler flags
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Werror=return-type")
 # Just to suppress deprecated warning from boost for using auto_ptr
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
