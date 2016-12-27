@@ -13,9 +13,16 @@ include_directories(${PYENGINE_INCLUDE_DIRS})
 # sources
 file(GLOB_RECURSE QUEST_SOURCES ${CMAKE_SOURCE_DIR}/quester/*.cpp)
 file(GLOB_RECURSE QUEST_HEADERS ${CMAKE_SOURCE_DIR}/quester/*.h*)
+if (LINK_STATIC)
+    #set(CMAKE_EXE_LINKER_FLAGS " -static")
+endif ()
 add_executable(quester ${QUEST_SOURCES})
 
 # linking
+if (LINK_STATIC)
+    target_link_libraries (quester -static-libgcc -static-libstdc++)
+endif ()
+
 target_link_libraries (quester pyengine)
 #target_link_libraries (quester ${ARMADILLO_LIBRARIES} -fopenmp)
 #target_link_libraries (quester ${MPI_LIBRARIES})
@@ -25,7 +32,7 @@ target_link_libraries (quester ${Boost_FILESYSTEM_LIBRARIES})
 target_link_libraries (quester ${Boost_SYSTEM_LIBRARIES})
 #target_link_libraries (quester ${Boost_SERIALIZATION_LIBRARIES})
 #target_link_libraries (quester ${Boost_RANDOM_LIBRARIES}) 
-target_link_libraries (quester ${PYTHON_LIBRARIES})
+target_link_libraries (quester -Wl,-Bdynamic ${PYTHON_LIBRARIES})
 target_link_libraries (quester ${Boost_PYTHON3_LIBRARIES})
 target_link_libraries (quester -L${Boost_LIBRARY_DIRS} ${Boost_PYTHON_LIBRARIES_SHARED})
 
