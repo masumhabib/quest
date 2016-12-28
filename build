@@ -22,6 +22,7 @@ LAPACK          = "lapack"
 ARPACK          = "arpack"
 SUPERLU         = "superlu"
 ARMADILLO       = "armadillo"
+MPICH           = "mpich"
 DEBUG           = "Debug"
 RELEASE         = "Release"
 
@@ -48,15 +49,17 @@ def parse_args  ():
     parser.add_argument("--doc", action="store_true", 
             help="build documentation")
     parser.add_argument("--boost", action="store_true", 
-            help="build boost library from source")
+            help="build Boost library from source")
     parser.add_argument("--lapack", action="store_true", 
-            help="build lapack library from source")
+            help="build LAPACK library from source")
     parser.add_argument("--arpack", action="store_true", 
-            help="build arpack library from source")
+            help="build ARPACK library from source")
     parser.add_argument("--superlu", action="store_true", 
-            help="build superlu library from source")
+            help="build SuperLU library from source")
     parser.add_argument("--armadillo", action="store_true", 
-            help="build armadillo library from source")
+            help="build Armadillo library from source")
+    parser.add_argument("--mpich", action="store_true", 
+            help="build MPICH2 library from source")
     parser.add_argument("--dest", type=str, metavar="/path/to/destination",
             help="destination path where the action will be performed.")
     parser.add_argument("-n", "--num_cpus", type=int, metavar="num_cpus", default=8,
@@ -234,14 +237,16 @@ def get_config (opts):
 def get_lib_name (opts):
     if opts.boost:
         return BOOST
-    elif opts.armadillo:
-        return ARMADILLO
     elif opts.lapack:
         return LAPACK
     elif opts.arpack:
         return ARPACK
     elif opts.superlu:
         return SUPERLU
+    elif opts.armadillo:
+        return ARMADILLO
+    elif opts.mpich:
+        return MPICH
     else:
         return QUEST
 

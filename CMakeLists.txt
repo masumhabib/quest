@@ -75,6 +75,10 @@ list(APPEND CMAKE_PREFIX_PATH ${superlu_root})
 set(armadillo_root ${CMAKE_SOURCE_DIR}/third_party/armadillo)
 list(APPEND CMAKE_PREFIX_PATH ${armadillo_root})
 
+# Path to local armadillo build directory 
+set(mpich_root ${CMAKE_SOURCE_DIR}/third_party/mpich)
+list(APPEND CMAKE_PREFIX_PATH ${mpich_root})
+
 # Find linread algebra libraries: MKL, ACML, LAPACK/BLAS
 include (cmake/FindLinearAlgebraLibs.cmake)
 

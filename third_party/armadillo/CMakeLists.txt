@@ -25,7 +25,6 @@ set(build_path "${armadillo_root}/${build_dir}")
 
 include(ExternalProject)
 
-message ("DBG: PREFIX ${CMAKE_PREFIX_PATH}")
 ExternalProject_Add (armadillo
     URL ${armadillo_url}
     URL_HASH SHA1=${armadillo_sha1}

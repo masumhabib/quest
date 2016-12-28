@@ -20,6 +20,10 @@ find_package(PythonInterp 3.0 REQUIRED)
 find_package(PythonLibs 3.0 REQUIRED)
 
 # MPI for Boost.MPI
+# Path to local MPICH build directory 
+set(mpich_root ${CMAKE_SOURCE_DIR}/../mpich)
+list(APPEND CMAKE_PREFIX_PATH ${mpich_root})
+
 find_package(MPI REQUIRED)
 
 
@@ -43,11 +47,11 @@ set (boost_enable_mpi)
 if (WIN32)
     set (boost_bootstrap_command bootstrap.bat)
     set (boost_b2_command b2.exe)
-	set (boost_enable_mpi echo "using mpi $<SEMICOLON>" >> project-config.jam)
+    set (boost_enable_mpi echo "using mpi : ${MPI_CXX_COMPILER} $<SEMICOLON>" >> project-config.jam)
 else ()
     set (boost_bootstrap_command ./bootstrap.sh)
     set (boost_b2_command ./b2)
-	set (boost_enable_mpi echo "using mpi $<SEMICOLON>" >> project-config.jam)
+    set (boost_enable_mpi echo "using mpi : ${MPI_CXX_COMPILER} $<SEMICOLON>" >> project-config.jam)
 endif()
 
 include(ExternalProject)
