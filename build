@@ -25,6 +25,9 @@ ARMADILLO       = "armadillo"
 DEBUG           = "Debug"
 RELEASE         = "Release"
 
+class Options (object):
+    pass
+
 def main ():
     opts = parse_args ()
     perform_action (opts)
@@ -46,8 +49,6 @@ def parse_args  ():
             help="build documentation")
     parser.add_argument("--boost", action="store_true", 
             help="build boost library from source")
-    parser.add_argument("--blas", action="store_true", 
-            help="build blas library from source")
     parser.add_argument("--lapack", action="store_true", 
             help="build lapack library from source")
     parser.add_argument("--arpack", action="store_true", 
@@ -62,7 +63,7 @@ def parse_args  ():
             help="number of CPUs that will be used for compilation")
 
     commands = parser.add_argument_group("commands") 
-    commands.add_argument("command", type=str, nargs='?', default='make',
+    commands.add_argument("commands", type=str, nargs='+', default='make',
             choices=["config", "make", "install", "clean", "superclean", 
                      "test", "help"],
             
@@ -79,7 +80,7 @@ def parse_args  ():
 
     args = parser.parse_args()
 
-    if args.command == "help":
+    if "help" in args.commands:
         parser.print_help ()
         exit (0)
 
@@ -90,41 +91,41 @@ def parse_args  ():
     return args
 
 def perform_action (opts = None):
-    command = opts.command
-    if command == "config":
-        do_config (opts)
-    elif command == "make":
-        if is_config_needed (opts):
+    for command in opts.commands:
+        if command == "config":
             do_config (opts)
-        do_make (opts)
-    elif command == "clean":
-        if not is_config_needed (opts):
-            do_clean (opts)
-    elif command == "superclean":
-        do_superclean (opts)
-    elif command == "test":
-        if get_lib_name (opts) == QUEST:
+        elif command == "make":
             if is_config_needed (opts):
                 do_config (opts)
-                do_make (opts)
-            do_test (opts)
+            do_make (opts)
+        elif command == "clean":
+            if not is_config_needed (opts):
+                do_clean (opts)
+        elif command == "superclean":
+            do_superclean (opts)
+        elif command == "test":
+            if get_lib_name (opts) == QUEST:
+                if is_config_needed (opts):
+                    do_config (opts)
+                    do_make (opts)
+                do_test (opts)
+            else:
+                print ("Command 'test' is not applicable for library " 
+                        + get_lib_name (opts))
+                exit (1)
+        elif command == "install":
+            if get_lib_name (opts) == QUEST:
+                if is_config_needed (opts):
+                    do_config (opts)
+                    do_make (opts)
+                do_install (opts)
+            else:
+                print ("Command 'test' is not applicable for library " 
+                        + get_lib_name (opts))
+                exit (1)
         else:
-            print ("Command 'test' is not applicable for library " 
-                    + get_lib_name (opts))
+            print ("Uknown command " + command + ", run 'build -h' for usage details.")
             exit (1)
-    elif command == "install":
-        if get_lib_name (opts) == QUEST:
-            if is_config_needed (opts):
-                do_config (opts)
-                do_make (opts)
-            do_install (opts)
-        else:
-            print ("Command 'test' is not applicable for library " 
-                    + get_lib_name (opts))
-            exit (1)
-    else:
-        print ("Uknown command " + command + ", run 'build -h' for usage details.")
-        exit (1)
 
 def do_config(opts):
     library = get_lib_name (opts)
