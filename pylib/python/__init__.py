@@ -13,10 +13,14 @@
 
 """
 
-import DLFCN as _dl
+# Work around for import problem with openmpi/boost.MPI
 import sys as _sys
-if _sys.platform == "linux" or _sys.platform == "linux2":
-    _sys.setdlopenflags(_dl.RTLD_NOW | _dl.RTLD_GLOBAL)
+if _sys.platform == "linux":
+    try:
+        import DLFCN as _dl
+        _sys.setdlopenflags(_dl.RTLD_NOW | _dl.RTLD_GLOBAL)
+    except ImportError:
+        _sys.stderr.write ("WW> Module DLFCN is unavailable, OpenMPI might not work.\n")
 
 from .quest import *
 from . import linspace
