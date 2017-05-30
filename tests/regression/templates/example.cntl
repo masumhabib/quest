@@ -1,0 +1,19 @@
+#
+#
+#
+#
+#
+
+# List of suites in this test. Each suite consists of a number of tests.
+# Settings in this file will be applied to all the tests in this suite.
+SUITES = [
+    /path/to/suite1, /path/to/suite2
+]
+
+# List of tests in this suite. 
+TESTS = [
+    /path/to/test1, /path/to/test2
+]
+
+
+
