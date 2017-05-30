@@ -137,7 +137,7 @@ cxmat CohRgfa::nOp(uint N, int ib, ucol *traveOveratoms){
 cxmat CohRgfa::DOSop(uint N, ucol *atomsTracedOver){
     cxmat D(N, N, fill::zeros);
     for (uint ib = miLc+1; ib < miRc; ++ib){
-        D += Aop(ib, N, atomsTracedOver);
+        D += Aop(N, ib, atomsTracedOver);
     }  
     return D/(2*pi);
 }
