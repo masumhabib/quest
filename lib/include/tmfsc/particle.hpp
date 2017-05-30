@@ -44,6 +44,8 @@ public:
     virtual double timeToReach(const svec& pos);
     virtual const svec& stepCloseToPoint(const svec& pos, 
             double distanceTol = 0.0);
+
+    virtual void flipCharge();
     //operators
     friend bool operator< (const Particle& lhs, const Particle& rhs){ 
         return lhs.occupation < rhs.occupation; 

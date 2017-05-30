@@ -1,6 +1,7 @@
 /** 
  * File: device.h
  * Author: K M Masum Habib
+ * Co-Author: Mirza M. Elahi
  * All dimensions assumed to be in nano-meters (nm);
  */
 
@@ -44,22 +45,27 @@ using std::pow;
 
 class Edge : public Segment {
 public:
-    Edge(const point &p, const point &q, int type = EDGE_REFLECT, double d = 0);
+    Edge(const point &p, const point &q, int type = EDGE_REFLECT, double d = 0,
+            double bandgap = 0);
 
     void type(int type) { mType = type; }
     int type() { return mType; }
     void split(double d) { md = d; } //!< get split length
     double split() { return md; } //!< set split length
+    void bandgap(double bg) { mBandgap = bg; } //!< get band gap
+    double bandgap() { return mBandgap; } //!< set band gap
 
 public:
     // edge types
     static constexpr int EDGE_REFLECT = 1;
     static constexpr int EDGE_ABSORB = 2;
     static constexpr int EDGE_TRANSMIT = 3;
+    static constexpr int EDGE_SUPERCONDUCTOR = 4;
 
 protected:
     int mType;
     double md; //!< split length of the junction for transmitting edge
+    double mBandgap; //!< bandgap of the superconducting edge
 };
 
 
@@ -71,7 +77,8 @@ public:
      *  first point again. */
     int addPoint(const point &pt);
     void addPoints(const vector<point> &pts);
-    int addEdge(int ipt1, int ipt2, int type = Edge::EDGE_REFLECT, double d =0);
+    int addEdge(int ipt1, int ipt2, int type = Edge::EDGE_REFLECT, double d = 0,
+                    double bg = 0);
     void edgeType(int iEdge, int type);
     int intersects(const point &p, const point &q);
     int intersects(int iEdge, const point &p, const point &q);
@@ -88,6 +95,7 @@ public:
     bool isReflectEdge(int iEdge);
     bool isAbsorbEdge(int iEdge);
     bool isTransmitEdge(int iEdge);
+    bool isSuperconductorEdge(int iEdge);
     const svec& edgeUnitVect(int indx) const { return mEdgs[indx].unitVect(); };
     svec edgeNormVect(int indx) const { return mEdgs[indx].normal(); };
     svec edgeVect(int indx) const { return mEdgs[indx].vect(); };

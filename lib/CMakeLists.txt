@@ -54,6 +54,8 @@ endif ()
 if (NOT APPLE AND UNIX)
     target_link_libraries (quest -fopenmp -lgfortran)
 endif ()
+#target_link_libraries (quest ${ARMADILLO_LIBRARIES})
+#target_link_libraries (quest ${ARMADILLO_LIBRARIES} -fopenmp)
 #set_target_properties(quest PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
 
 # Prepare quest package

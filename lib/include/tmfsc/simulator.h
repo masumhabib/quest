@@ -1,6 +1,7 @@
 /**
  * file: simulator.h
  * author: K M Masum Habib
+ * co-Author: Mirza M. Elahi
  */
 
 #ifndef TMFSC_LIB_SIMULATOR_H

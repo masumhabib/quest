@@ -68,6 +68,10 @@ void Particle::rotateVel(double thti){
 	this->v[1] = vx*sin(thti) + vy*cos(thti);
 }
 
+void Particle::flipCharge(){
+	this->q = -this->q;
+}
+
 }}
 
 

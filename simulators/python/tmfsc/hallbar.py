@@ -2,7 +2,7 @@
 
 from quest import greet
 from quest.tmfsc import Device, Simulator, Trajectory
-from quest.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT
+from quest.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT, EDGE_SUPERCONDUCTOR
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 import matplotlib.patches as patches
@@ -167,8 +167,8 @@ class HallBar(object):
     def addPoint(self, x, y):
         return self.dev.addPoint(np.array([x, y]))
 
-    def addEdge(self, ipt1, ipt2, type = EDGE_REFLECT, d = 0):
-        return self.dev.addEdge(ipt1, ipt2, type, d);
+    def addEdge(self, ipt1, ipt2, type = EDGE_REFLECT, d = 0, bandgap=0):
+        return self.dev.addEdge(ipt1, ipt2, type, d, bandgap);
 
     def addGate(self, lb, rb, rt, lt, VgRatio = 1):
         gate = (np.array([lb[0], lb[1]]), np.array([rb[0], rb[1]]), 
@@ -376,7 +376,10 @@ class HallBar(object):
             pt2 = pt1 + edgeVec
             X = np.array([pt1[0], pt2[0]])
             Y = np.array([pt1[1], pt2[1]])
-            self.axes.plot(X, Y, 'k-', linewidth=width) 
+            style = 'k-'
+            if self.dev.edgeType(ie) == EDGE_SUPERCONDUCTOR:
+                style = 'r-'
+            self.axes.plot(X, Y, style, linewidth=width)
             pt1 = pt2
         # draw gates
         codes = [Path.MOVETO,
