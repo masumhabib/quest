@@ -14,7 +14,7 @@ from quest import setVerbosity, greet, vprint
 from quest.vprint import nprint, dprint, eprint
 from quest.linspace import linspace
 from quest.atoms import AtomicStruct, SVec, LCoord
-from quest.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneTbParams, generateHamOvl
+from quest.hamiltonian import TISurfKpParams4, TISurfKpParams, TI3DKpParams, GrapheneKpParams, GrapheneOneValleyKpParams, GrapheneTwoValleyKpParams, GrapheneTbParams, generateHamOvl
 from quest.negf import CohRgfLoop
 from quest.kpoints import KPoints
 from quest.potential import LinearPot
