@@ -10,7 +10,7 @@ project(quest CXX)
 
 # Options
 option(VERBOSE_MAKE "Verbose cmake for debugging" off)
-option(LINK_STATIC "Link everything statically" on)
+#option(LINK_STATIC "Link everything statically" on)
 
 # Ensure that we have a C++11 compiler.
 include(cmake/CXX11.cmake)
@@ -91,7 +91,7 @@ enable_testing()
 
 
 # C++ compiler flags
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC")
+#set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Werror=return-type")
 # Just to suppress deprecated warning from boost for using auto_ptr
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
@@ -113,8 +113,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 find_package(MPI REQUIRED)
 
 # Python libs
-find_package(PythonInterp 3.0 REQUIRED)
-find_package(PythonLibs 3.0 REQUIRED)
+find_package(PythonInterp 2.7 REQUIRED)
+find_package(PythonLibs 2.7 REQUIRED)
 
 
 # Armadillo
@@ -130,7 +130,7 @@ find_package(Doxygen)
 if(LINK_STATIC)
     set(Boost_USE_STATIC_LIBS       on)
 endif()
-find_package(Boost 1.55 REQUIRED python3 mpi_python ${boost_component_list})
+find_package(Boost 1.55 REQUIRED mpi_python ${boost_component_list})
 
 include_directories(${Boost_INCLUDE_DIR})
 

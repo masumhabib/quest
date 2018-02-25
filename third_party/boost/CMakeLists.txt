@@ -16,8 +16,8 @@ include (${CMAKE_SOURCE_DIR}/../../cmake/boost_components.cmake)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 
 # Python libs for Boost.Python
-find_package(PythonInterp 3.0 REQUIRED)
-find_package(PythonLibs 3.0 REQUIRED)
+find_package(PythonInterp 2.7 REQUIRED)
+find_package(PythonLibs 2.7 REQUIRED)
 
 # MPI for Boost.MPI
 # Path to local MPICH build directory 

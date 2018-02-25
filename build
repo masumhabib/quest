@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 # vim:ft=python
 
 """
@@ -62,7 +62,7 @@ def parse_args  ():
             help="build MPICH2 library from source")
     parser.add_argument("--dest", type=str, metavar="/path/to/destination",
             help="destination path where the action will be performed.")
-    parser.add_argument("-n", "--num_cpus", type=int, metavar="num_cpus", default=8,
+    parser.add_argument("-n", "--num_cpus", type=int, metavar="num_cpus", default=20,
             help="number of CPUs that will be used for compilation")
 
     commands = parser.add_argument_group("commands") 

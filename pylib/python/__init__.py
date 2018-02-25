@@ -27,7 +27,8 @@ from . import linspace
 from . import vprint
 from . import simulators
 
-import copyreg
+#import copyreg
+import copy_reg # TODO: Porting from python3 to python2
 
 # TI surface k.p default parameters
 _TISurfKpParamsOrgInit =  hamiltonian.TISurfKpParams.__init__
@@ -231,7 +232,8 @@ def _tuple2enum(enum, value):
     return e
 
 def _registerEnumPicklers(): 
-    from copyreg import constructor, pickle
+    #from copyreg import constructor, pickle
+    from copy_reg import constructor, pickle # TODO: Porting from py3 to py2
     def reduce_enum(e):
         enum = type(e).__name__.split('.')[-1]
         return ( _tuple2enum, ( enum, int(e) ) )

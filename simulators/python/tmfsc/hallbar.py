@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+from __future__ import print_function
 from quest import greet
 from quest.tmfsc import Device, Simulator, Trajectory
 from quest.tmfsc import nm, AA, EDGE_REFLECT, EDGE_ABSORB, EDGE_TRANSMIT, EDGE_SUPERCONDUCTOR
