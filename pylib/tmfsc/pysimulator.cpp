@@ -122,9 +122,11 @@ void export_Simulator(){
         .add_property("DebugLevel", &PySimulator::getDebugLvl,
                 &PySimulator::setDebugLvl)
         .add_property("MinmNoInjection", &PySimulator::getMinNoInjection,
-                  &PySimulator::setMinNoInjection)
+                &PySimulator::setMinNoInjection)
         .add_property("EdgRghAngleSpread", &PySimulator::getEdgRghAngleSpread,
-                  &PySimulator::setEdgRghAngleSpread)
+                &PySimulator::setEdgRghAngleSpread)
+        .add_property("JuncRghAngleSpread", &PySimulator::getJuncRghAngleSpread, 
+                &PySimulator::setJuncRghAngleSpread)
 
     ;
 }

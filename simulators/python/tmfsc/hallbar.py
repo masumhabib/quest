@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path
 import matplotlib.patches as patches
 from matplotlib import animation,cm
-
+from shutil import rmtree
 import numpy as np
-from math import pi, sqrt, sin, cos, tan
+from math import pi, sqrt, sin, cos, tan, degrees, radians
 import pickle
 import sys
 import os
@@ -230,6 +230,13 @@ class HallBar(object):
     def EdgRghAngleSpread(self, angle):
         self.sim.EdgRghAngleSpread = angle
 
+    @property
+    def JuncRghAngleSpread(self):
+        return self.sim.JuncRghAngleSpread
+    @JuncRghAngleSpread.setter
+    def JuncRghAngleSpread(self, angle):
+        self.sim.JuncRghAngleSpread = angle
+    
     def setupBias(self, Ef, B, V, m = 1, singleResonance = True, 
             Efmax = None, NEf = 1, Bmax = None, NB = 1, Vmax = None, NV = 1):
         """ Sets up the bias points """
@@ -312,8 +319,8 @@ class HallBar(object):
         cpuid = self.mpiworld.rank
         ncpus = self.mpiworld.size
 
-        self.mprint("\nCalculating transmission:",npts, "bias point(s) on",\
-            ncpus, "CPU(s) ...")
+        self.mprint("\nCalculating transmission: ",npts, " bias point(s) on " ,\
+            ncpus, " CPU(s) ...\n")
         if self.verbosity == 0:
             self.mprint("\n Running: ")
 
@@ -495,6 +502,35 @@ class HallBar(object):
             for arg in args:
                 print (arg,end="")
         
+    def printParam(self):
+        """ Helper function for printing simulation parameters """
+
+        # Clean run
+        self.mprint("\n-D- Clean run: ", self.cleanRun)
+        # Occupation tol
+        self.mprint("\n-D- OccupationTol: ", self.OccupationTol)
+        # Minm electron injection
+        self.mprint( "\n-D- Minimum no of electron injection: %d" 
+                                % (self.sim.MinmNoInjection) )
+        # Edge rgh
+        if np.isnan(self.sim.EdgRghAngleSpread) :
+            self.mprint("\n-D- No Edge Roughness Module Set")
+        else :
+            self.mprint(  "\n-D- Edge Roughness with spread angle: pi/%.1f (radians), %.1f (degrees)" 
+                    % ( pi/self.sim.EdgRghAngleSpread, degrees(self.sim.EdgRghAngleSpread) )  )
+        # Junc Rgh
+        if np.isnan(self.sim.JuncRghAngleSpread) :
+            self.mprint("\n-D- No Junc Roughness Module Set")
+        else :
+            self.mprint(  "\n-D- Junc Roughness with spread angle: pi/%.1f (radians), %.1f (degrees)" 
+                    % ( pi/self.sim.JuncRghAngleSpread, degrees(self.sim.JuncRghAngleSpread) )  )
+        # Injection Distribution
+        if np.isnan(self.sim.InjecAngleSpread) :
+            self.mprint("\n-D- Cosine injection distribution")
+        else :
+            self.mprint( "\n-D- Gaussian Injection spread angle: pi/%.1f" 
+                    % (self.sim.InjecAngleSpread) )
+    
     def _getElapsedTime(self):
         currentTime = time.time();
         elapsedTime = currentTime - self.currentTime
@@ -520,8 +556,13 @@ class HallBar(object):
         T = np.zeros((npts, nconts, nconts))
         biasIndx = range(npts)
         doneIndx = []
-
-        if not self.cleanRun and self.mpiworld.rank == 0:
+        if self.cleanRun and os.path.isdir(self.outDir):
+            try:
+                shutil.rmtree(self.outDir, ignore_errors=False, onerror=None)
+                print( "\nRemoved previous output directory ..." )
+            except:
+                print( "\nError deleting output dir ...., skipping" )
+        elif not self.cleanRun and self.mpiworld.rank == 0:
             print ("\n\nChecking if previous state is available ...")
             doneSet = set()
             ifile = 0
@@ -660,7 +701,6 @@ def plotTransVsV1V2(transFileName, T='T12', T2=None):
 def plotTransVsB(transFileName, T='T12', T2=None):
     x,y,z = loadTrans2D(transFileName, Y='B1', Z=T, Z2=T2)
     plot(y, z, 'B (T)', 'T12-T14', transFileName)
-
 
 """
 The main() function.

@@ -148,6 +148,15 @@ inline tuple<mat, TrajectoryVect> Simulator::calcTranRandom(int injCont,
             cout << "DBG: Edge Roughness Distribution Set." << endl;
         }
     }
+    // Junc Roughness setter
+    if (~is_nan(mJuncRghAngleSpread)) { //is_not_nan checking
+        mJuncRghDist = make_unique<NormalRandom>(mJuncRghAngleSpread, 0,
+                                                -pi/2 + mAngleLimit,
+                                                pi/2 - mAngleLimit);
+        if( debug ){
+            cout << "DBG: Junc Roughness Distribution Set." << endl;
+        }
+    }
     // Throw electrons till error is within tolerance and minimum no of
     // electrons are not thrown
     while (maxError > mTransmissionConv || totalN < mNoInjection) {
@@ -364,6 +373,10 @@ inline int Simulator::calcSingleTraj(bool saveTraj, ElectronQueue &electsQu,
                 // about to cross a transmitting edge/gate boundary, let's first
                 // calculate what would be transmission probability. To do so,
                 // first just cross the boundary and get the potential.
+                if( !is_nan(mJuncRghAngleSpread) ) { // is_not_nan checking
+                    double rotateAngle = mJuncRghDist->generate();
+                    electron->rotateVel(rotateAngle);
+                }
                 Particle::ptr transElect = electron->clone();
                 if(!justCrossEdge(transElect, r, rf, iEdge)) {
                     if (debug) {

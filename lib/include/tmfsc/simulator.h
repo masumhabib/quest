@@ -127,7 +127,9 @@ public:
     void setMeanInjecAngle(double angle) { mMeanInjAngle = angle; };
     double getEdgRghAngleSpread() const { return mEdgRghAngleSpread; };
     void setEdgRghAngleSpread(double angle) { mEdgRghAngleSpread = angle; };
-
+    double getJuncRghAngleSpread() const { return mJuncRghAngleSpread; };
+    void setJuncRghAngleSpread(double angle) { mJuncRghAngleSpread = angle; };
+    
     double getFermiVelo() const { return mvF; };
     void getFermiVelo(double vF) { mvF = vF; };
     double getTimeStep() const { return dt; };
@@ -139,9 +141,12 @@ public:
     void setParticleType(ParticleType type) { particleType = type; };
     InjectModel getInjectModel() const { return injectModel; };
     void setInjectModel(InjectModel model) { injectModel = model; };
-    void setMinNoInjection(int mNo) {mNoInjection = mNo;};
+    void setMinNoInjection(int mNo) {
+        if( mNo > 0 ){
+            this->mNoInjection = mNo;
+        }
+    };
     int getMinNoInjection() const {return mNoInjection; };
-
 
     void setDebugLvl(unsigned long debugLevel) { debug = (debugLevel > 0); };
     unsigned long getDebugLvl() { return debug ? 1L : 0L; };
@@ -189,7 +194,7 @@ private:
     double mAngleLimit = pi/20; //!< allowed limit of injection angle.
     double mMeanInjAngle = pi/2; //!< mean of the injection angle
     double mEdgRghAngleSpread = NaN; //!< spread (std dev) of edge roughness
-
+    double mJuncRghAngleSpread = NaN; //!< spread (std dev) of junc roughness 
     bool debug = false; //!< Prints debug message if true.
 
     double mReflectionTol = 1E-4;
