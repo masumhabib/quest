@@ -102,6 +102,7 @@ class HallBar(object):
         self.currentTime = time.time() # for the time keeper
         self.cleanRun = False # If true, does not load previous state from CWD
         self.verbosity = 0
+        self.gateCpy = [] # gate indexes for copying bias
 
         self.bias = Bias()
         self.clear()
@@ -114,6 +115,7 @@ class HallBar(object):
         # Create simulator
         self.sim = Simulator(self.dev)
         self.T = None
+        self.gateCpy = []
  
     def setupDefaults(self):
         """Sets up a default simulation with a default goemetry."""
@@ -276,7 +278,9 @@ class HallBar(object):
         print ("\nInjecting electron from " + str(ri) + " ")
         
         # calculate the trajectory
-        Ef, B, V = self.bias.get(0);
+        Ef, B, V = self.bias.get(0)
+        #TODO
+        self._editVBias(V)
         self.printBias(Ef, B, V, 0)
         print ("")
         if self.dev.NumGates > 0:
@@ -289,7 +293,9 @@ class HallBar(object):
         """ Transmission for single B and V """
         self.sim.dl = dl
         self.sim.nth = nth
-        Ef, B, V = self.bias.get(0);
+        Ef, B, V = self.bias.get(0)
+        #TODO
+        self._editVBias(V)
         self.printBias(Ef, B, V, 0)
         if self.dev.NumGates > 0:
             self.T,self.trajs = self.sim.calcTrans(Ef[0], B[0], V, contId, 
@@ -332,6 +338,8 @@ class HallBar(object):
         for ipt in range(myStart, myEnd):
             ib = biasIndx[ipt]
             Ef, B, V = self.bias.get(ib)
+            #TODO
+            self._editVBias(V)
             if self.verbosity == 1:
                 self.printBias(Ef, B, V, ib)
             if self.dev.NumGates > 0:
@@ -530,6 +538,22 @@ class HallBar(object):
         else :
             self.mprint( "\n-D- Gaussian Injection spread angle: pi/%.1f" 
                     % (self.sim.InjecAngleSpread) )
+    #TODO
+    def copyGate(self, fromInd, toInd):
+        """ adds gate indexes for copying while setting up bias """
+        if fromInd == 0 or toInd == 0:
+            self.mprint("-E- Gate index starts from 1\n")
+        self.gateCpy.append([fromInd, toInd])
+
+    def _editVBias(self, V):
+        """ edits the bias for copy gates """
+        if len(self.gateCpy) == 0:
+            return V
+        
+        for iV, VInd in enumerate(self.gateCpy):
+            V[VInd[1]-1] = V[VInd[0]-1]
+
+        return V
     
     def _getElapsedTime(self):
         currentTime = time.time();
